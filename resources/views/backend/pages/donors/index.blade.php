@@ -1,0 +1,811 @@
+@extends('backend.layouts.master')
+
+@section('styles')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@endsection
+
+@section('content')
+<div class="container-fluid">
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <div class="page-title-right">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#addDonorModal">
+                        <i class="mdi mdi-plus"></i> Add Donor
+                    </button>
+                    <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#importDonorModal">
+                        <i class="mdi mdi-upload"></i> Import Donors
+                    </button>
+                </div>
+                <h4 class="page-title">Donors</h4>
+            </div>
+        </div>
+    </div>
+    <!-- end page title -->
+
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <table id="donors-table" class="table dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th>Area</th>
+                                <th>City</th>
+                                <th>Governorate</th>
+                                <th>Phones</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Donor Modal -->
+<x-modal id="addDonorModal" title="Add New Donor" size="lg">
+    <form id="addDonorForm" method="POST" action="{{ route('donors.store') }}">
+        @csrf
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="governorate_id" class="form-label">Governorate</label>
+                        <select class="form-control select2" id="governorate_id" name="governorate_id" required>
+                            <option value="">Select Governorate</option>
+                            @foreach(\App\Models\Governorate::all() as $governorate)
+                            <option value="{{ $governorate->id }}">{{ $governorate->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="city_id" class="form-label">City</label>
+                        <select class="form-control select2" id="city_id" name="city_id" required>
+                            <option value="">Select City</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+
+                    <div class="mb-3">
+                        <label for="area_id" class="form-label">Area</label>
+                        <select class="form-control select2" id="area_id" name="area_id" required>
+                            <option value="">Select Area</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="mb-3">
+                        <label for="street" class="form-label">Street</label>
+                        <input type="text" class="form-control" id="street" name="street" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <input type="text" class="form-control" id="address" name="address" required>
+                <div class="invalid-feedback"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="form-label">Phone Numbers</label>
+                        <div id="phone-container">
+                            <div class="input-group mb-2">
+                                <input type="text" name="phones[0][number]" class="form-control" placeholder="Enter phone number">
+                                <select name="phones[0][type]" class="form-select" style="max-width: 150px;">
+                                    <option value="mobile">Mobile</option>
+                                    <option value="home">Home</option>
+                                    <option value="work">Work</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <button type="button" class="btn btn-success add-phone"><i class="mdi mdi-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="active" class="form-label">Status</label>
+                <select class="form-select" id="active" name="active">
+                    <option value="1">Active</option>
+                    <option value="0">Inactive</option>
+                </select>
+                <div class="invalid-feedback"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </form>
+</x-modal>
+
+<!-- Edit Donor Modal -->
+<x-modal id="editDonorModal" title="Edit Donor" size="lg">
+    <form id="editDonorForm" method="POST">
+        @csrf
+        @method('PUT')
+        <div class="modal-body">
+            <div class="mb-3">
+                <label for="edit_name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="edit_name" name="name" required>
+                <div class="invalid-feedback"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="edit_governorate_id" class="form-label">Governorate</label>
+                        <select class="form-control select2" id="edit_governorate_id" name="governorate_id" required>
+                            <option value="">Select Governorate</option>
+                            @foreach(\App\Models\Governorate::all() as $governorate)
+                            <option value="{{ $governorate->id }}">{{ $governorate->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="edit_city_id" class="form-label">City</label>
+                        <select class="form-control select2" id="edit_city_id" name="city_id" required>
+                            <option value="">Select City</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="edit_area_id" class="form-label">Area</label>
+                        <select class="form-control select2" id="edit_area_id" name="area_id" required>
+                            <option value="">Select Area</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="edit_street" class="form-label">Street</label>
+                        <input type="text" class="form-control" id="edit_street" name="street" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="edit_address" class="form-label">Address</label>
+                <input type="text" class="form-control" id="edit_address" name="address" required>
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="mb-3">
+                <label for="edit_active" class="form-label">Status</label>
+                <select class="form-select" id="edit_active" name="active">
+                    <option value="1">Active</option>
+                    <option value="0">Inactive</option>
+                </select>
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="form-label">Phone Numbers</label>
+                        <div id="edit-phone-container">
+                            <!-- Phone inputs will be added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+    </form>
+</x-modal>
+
+<x-modal id="importDonorModal" title="Import Donors">
+    <form id="importDonorForm" enctype="multipart/form-data">
+        @csrf
+        <div class="modal-body">
+            <div class="mb-3">
+                <label for="donorFile" class="form-label">Upload Excel File</label>
+                <input type="file" class="form-control" id="donorFile" name="file" accept=".xlsx,.csv" required>
+                <div id="fileError" class="text-danger mt-2" style="display: none;"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success">Import</button>
+        </div>
+    </form>
+    <div id="feedbackMessage" class="alert mt-3" style="display: none;"></div>
+</x-modal>
+
+
+@endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    let table;
+
+    $(document).ready(function() {
+        // Initialize Select2 for main form
+        initializeSelect2();
+
+        // Initialize DataTable
+        initializeDataTable();
+
+        // Bind events
+        bindEvents();
+    });
+
+    function initializeSelect2() {
+        // Main form selects
+        $('#governorate_id').select2({
+            dropdownParent: $('#addDonorModal'),
+            placeholder: 'Select Governorate',
+            allowClear: true,
+            width: '100%'
+        });
+
+        $('#city_id').select2({
+            dropdownParent: $('#addDonorModal'),
+            placeholder: 'Select City',
+            allowClear: true,
+            width: '100%'
+        });
+
+        $('#area_id').select2({
+            dropdownParent: $('#addDonorModal'),
+            placeholder: 'Select Area',
+            allowClear: true,
+            width: '100%'
+        });
+    }
+
+    function initializeModalSelect2() {
+        // Modal form selects
+        $('#edit_governorate_id').select2({
+            dropdownParent: $('#editDonorModal'),
+            placeholder: 'Select Governorate',
+            allowClear: true,
+            width: '100%'
+        });
+
+        $('#edit_city_id').select2({
+            dropdownParent: $('#editDonorModal'),
+            placeholder: 'Select City',
+            allowClear: true,
+            width: '100%'
+        });
+
+        $('#edit_area_id').select2({
+            dropdownParent: $('#editDonorModal'),
+            placeholder: 'Select Area',
+            allowClear: true,
+            width: '100%'
+        });
+    }
+
+    function bindEvents() {
+        // Main form events
+        $('#governorate_id').on('change', function() {
+            var governorateId = $(this).val();
+            if (governorateId) {
+                loadCities(governorateId, $('#city_id'));
+                $('#area_id').empty().trigger('change');
+            } else {
+                $('#city_id, #area_id').empty().trigger('change');
+            }
+        });
+
+        $('#city_id').on('change', function() {
+            var cityId = $(this).val();
+            if (cityId) {
+                loadAreas(cityId, $('#area_id'));
+            } else {
+                $('#area_id').empty().trigger('change');
+            }
+        });
+
+        // Modal form events
+        // $('#edit_governorate_id').on('change', function() {
+        //     var governorateId = $(this).val();
+        //     if (governorateId) {
+        //         loadCities(governorateId, $('#edit_city_id'));
+        //         $('#edit_area_id').empty().trigger('change');
+        //     } else {
+        //         $('#edit_city_id, #edit_area_id').empty().trigger('change');
+        //     }
+        // });
+
+        // $('#edit_city_id').on('change', function() {
+        //     var cityId = $(this).val();
+        //     if (cityId) {
+        //         loadAreas(cityId, $('#edit_area_id'));
+        //     } else {
+        //         $('#edit_area_id').empty().trigger('change');
+        //     }
+        // });
+
+        // Modal events
+        $('#editDonorModal').on({
+            'show.bs.modal': function() {
+                // Clear previous states
+                $(this).find('.is-invalid').removeClass('is-invalid');
+                $(this).find('.invalid-feedback').text('');
+            },
+            'shown.bs.modal': function() {
+                // Initialize Select2 after modal is shown
+                initializeModalSelect2();
+            },
+            'hide.bs.modal': function() {
+                // Destroy Select2 instances
+                $('#edit_governorate_id, #edit_city_id, #edit_area_id').select2('destroy');
+
+                // Reset form
+                $('#editDonorForm').trigger('reset');
+                $('#edit-phone-container').empty();
+                addPhoneField($('#edit-phone-container'));
+            }
+        });
+    }
+
+    function editDonor(id) {
+        // Reset form state
+        var form = $('#editDonorForm');
+        form.trigger('reset');
+        form.find('.is-invalid').removeClass('is-invalid');
+        form.find('.invalid-feedback').text('');
+
+        // Set form action
+        form.attr('action', `{{ route('donors.update', '') }}/${id}`);
+
+        // Show modal
+        $('#editDonorModal').modal('show');
+
+        // Get and populate data
+        $.get(`{{ url('donors') }}/${id}/edit`, function(data) {
+            console.log(data);
+            $('#edit_name').val(data.name);
+            $('#edit_address').val(data.address);
+            $('#edit_street').val(data.street);
+            $('#edit_active')
+                .val(data.active ? "1" : "0") // Convert true/false to "1"/"0"
+                .change();
+
+            // Set governorate and trigger cascading dropdowns
+            if (data.governorate_id) {
+                $('#edit_governorate_id').val(data.governorate_id).trigger('change');
+
+                loadCities(data.governorate_id, $('#edit_city_id'), data.city_id);
+
+                if (data.city_id) {
+                    loadAreas(data.city_id, $('#edit_area_id'), data.area_id);
+                }
+
+
+            }
+
+            // Handle phones
+            const phoneContainer = $('#edit-phone-container');
+            phoneContainer.empty();
+            if (data.phones && data.phones.length > 0) {
+                data.phones.forEach(function(phone) {
+                    addPhoneField(phoneContainer, phone.phone_number, phone.phone_type);
+                });
+            } else {
+                addPhoneField(phoneContainer);
+            }
+        });
+    }
+
+    // Add phone field function
+    function addPhoneField(container, phone = '', type = 'mobile') {
+        const index = container.children().length;
+        const phoneHtml = `
+            <div class="input-group mb-2">
+                <input type="text" name="phones[${index}][number]" class="form-control" placeholder="Enter phone number" value="${phone}">
+                <select name="phones[${index}][type]" class="form-select" style="max-width: 150px;">
+                    <option value="mobile" ${type === 'mobile' ? 'selected' : ''}>Mobile</option>
+                    <option value="home" ${type === 'home' ? 'selected' : ''}>Home</option>
+                    <option value="work" ${type === 'work' ? 'selected' : ''}>Work</option>
+                    <option value="other" ${type === 'other' ? 'selected' : ''}>Other</option>
+                </select>
+                ${index === 0 ? 
+                    `<button type="button" class="btn btn-success add-phone"><i class="mdi mdi-plus"></i></button>` :
+                    `<button type="button" class="btn btn-danger remove-phone"><i class="mdi mdi-minus"></i></button>`
+                }
+            </div>
+        `;
+        container.append(phoneHtml);
+    }
+
+    // Handle add phone button click
+    $(document).on('click', '.add-phone', function() {
+        const container = $(this).closest('.mb-3').find('#phone-container, #edit-phone-container');
+        addPhoneField(container);
+    });
+
+    // Handle remove phone button click
+    $(document).on('click', '.remove-phone', function() {
+        $(this).closest('.input-group').remove();
+    });
+
+    // Initialize DataTable
+    function initializeDataTable() {
+        table = $('#donors-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('donors.data') }}",
+            columns: [{
+                    data: 'id',
+                    name: 'id'
+                },
+                {
+                    data: 'name',
+                    name: 'name'
+                },
+                {
+                    data: 'address',
+                    name: 'address'
+                },
+                {
+                    data: 'area',
+                    name: 'area.name'
+                },
+                {
+                    data: 'city',
+                    name: 'city.name'
+                },
+                {
+                    data: 'governorate',
+                    name: 'governorate.name'
+                },
+                {
+                    data: 'phones',
+                    name: 'phones',
+                    orderable: false,
+                    render: function(data, type, row) {
+                        if (!data) return ''; // Handle empty or null values
+                        return data
+                            .split(', ') // Split the string by ", "
+                            .map(phone => `<div>${phone}</div>`) // Wrap each phone in a div
+                            .join(''); // Join them back into a single string
+                    }
+                },
+                {
+                    data: 'active',
+                    name: 'active',
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                }
+            ],
+            order: [
+                [0, 'desc']
+            ],
+            pageLength: 10,
+            responsive: true,
+            language: languages[language],
+            "drawCallback": function() {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            }
+        });
+    }
+
+    // Load Cities based on Governorate
+    function loadCities(governorateId, targetSelect, selectedCityId = null) {
+        targetSelect.prop('disabled', true);
+        $.ajax({
+            url: "{{ route('cities.by-governorate') }}",
+            type: 'GET',
+            data: {
+                governorate_id: governorateId
+            },
+            success: function(response) {
+                if (response.success) {
+                    targetSelect.empty().append('<option value="">Select City</option>');
+                    if (Array.isArray(response.data)) {
+                        response.data.forEach(function(city) {
+                            targetSelect.append(`<option value="${city.id}" ${city.id == selectedCityId ? 'selected' : ''}>${city.name}</option>`);
+                        });
+                    }
+                    targetSelect.prop('disabled', false).trigger('change');
+                }
+            },
+            error: function(xhr) {
+                console.error('Error loading cities:', xhr);
+                targetSelect.prop('disabled', false);
+            }
+        });
+    }
+
+    // Load Areas based on City
+    function loadAreas(cityId, targetSelect, selectedAreaId = null) {
+        targetSelect.prop('disabled', true);
+        $.ajax({
+            url: "{{ route('areas.by-city') }}",
+            type: 'GET',
+            data: {
+                city_id: cityId
+            },
+            success: function(response) {
+                if (response.success) {
+                    targetSelect.empty().append('<option value="">Select Area</option>');
+                    if (Array.isArray(response.data)) {
+                        response.data.forEach(function(area) {
+                            console.log(area.id, selectedAreaId);
+                            targetSelect.append(`<option value="${area.id}" ${area.id == selectedAreaId ? 'selected' : ''}>${area.name}</option>`);
+                        });
+                    }
+                    targetSelect.prop('disabled', false).trigger('change');
+                }
+            },
+            error: function(xhr) {
+                console.error('Error loading areas:', xhr);
+                targetSelect.prop('disabled', false);
+            }
+        });
+    }
+
+    // Add Donor Form Submit
+    $('#addDonorForm').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var url = form.attr('action');
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: form.serialize(),
+            success: function(response) {
+                if (response.success) {
+                    $('#addDonorModal').modal('hide');
+                    form[0].reset();
+                    $('.select2').val('').trigger('change');
+                    table.ajax.reload();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message
+                    });
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    Object.keys(errors).forEach(function(key) {
+                        var input = form.find(`[name="${key}"]`);
+                        input.addClass('is-invalid');
+                        input.siblings('.invalid-feedback').text(errors[key][0]);
+                    });
+                }
+            }
+        });
+    });
+
+    // Edit Donor Form Submit
+    $('#editDonorForm').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var url = form.attr('action');
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: form.serialize(),
+            success: function(response) {
+                if (response.success) {
+                    $('#editDonorModal').modal('hide');
+                    form[0].reset();
+                    $('.select2').val('').trigger('change');
+                    table.ajax.reload();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message
+                    });
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    Object.keys(errors).forEach(function(key) {
+                        var input = form.find(`[name="${key}"]`);
+                        input.addClass('is-invalid');
+                        input.siblings('.invalid-feedback').text(errors[key][0]);
+                    });
+                }
+            }
+        });
+    });
+
+    // Clear form validation on modal hide
+    $('.modal').on('hidden.bs.modal', function() {
+        var form = $(this).find('form');
+        form.find('.is-invalid').removeClass('is-invalid');
+        form.find('.invalid-feedback').text('');
+    });
+
+    $('#importDonorForm').on('submit', function(e) {
+    e.preventDefault(); // Prevent the default form submission
+
+    let formData = new FormData(this);
+
+    // Clear previous messages
+    $('#feedbackMessage').hide().removeClass('alert-success alert-danger').text('');
+
+    // AJAX request
+    $.ajax({
+        url: "{{ route('donors.import') }}",
+        method: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        beforeSend: function() {
+            $('#importDonorForm button[type="submit"]').prop('disabled', true);
+        },
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Import Successful',
+                    text: response.message,
+                });
+
+                if (response.errors && response.errors.length > 0) {
+                    let errorDetails = response.errors.map(error =>
+                        `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
+
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Some Records Skipped',
+                        html: `<pre>${errorDetails}</pre>`,
+                        customClass: {
+                            popup: 'text-start',
+                        }
+                    });
+                }
+
+                // Close modal and reset form
+                setTimeout(() => {
+                    $('#importDonorModal').modal('hide');
+                    $('#importDonorForm')[0].reset();
+                }, 2000);
+
+                table.ajax.reload();
+            }
+        },
+        error: function(xhr) {
+            if (xhr.status === 422) {
+                // Validation error
+                let response = xhr.responseJSON;
+                let errors = response.errors || [];
+                let errorDetails = '';
+
+                if (Array.isArray(errors)) {
+                    // Handle row-specific errors
+                    errorDetails = errors.map(error =>
+                        `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
+                } else {
+                    // Handle general file validation error
+                    errorDetails = errors.file ? errors.file[0] : 'Invalid file format.';
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    html: `<pre style="direction: ltr;">${errorDetails}</pre>`,
+                    customClass: {
+                        popup: 'text-start',
+                    }
+                });
+            } else {
+                // General error
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Unexpected Error',
+                    text: 'An unexpected error occurred. Please try again later.',
+                });
+            }
+        },
+        complete: function() {
+            $('#importDonorForm button[type="submit"]').prop('disabled', false);
+        }
+    });
+});
+
+$.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    function deleteDonor(donorId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/donors/' + donorId, // Adjust the URL to your route
+                    type: 'DELETE',
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted',
+                            text: 'Donor deleted successfully!',
+                        });
+                        table.ajax.reload();
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while deleting the donor.',
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script>
+@endpush

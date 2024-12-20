@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Governorate;
+use Yajra\DataTables\Facades\DataTables;
+
+class GovernorateController extends BaseController
+{
+    public function __construct()
+    {
+        $this->model = Governorate::class;
+        $this->viewPath = 'backend.pages.governorates';
+        $this->routePrefix = 'governorates';
+        $this->validationRules = [
+            'name' => 'required|string|max:255|unique:governorates,name'
+        ];
+    }
+
+    public function data()
+    {
+        $query = $this->model::query();
+        
+        return DataTables::of($query)
+            ->addColumn('action', function ($item) {
+                return '
+                    <div class="d-flex gap-2">
+                        <a href="javascript:void(0);" class="action-icon" onclick="editGovernorate('.$item->id.', \''.$item->name.'\')">
+                            <i class="mdi mdi-square-edit-outline"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="action-icon" onclick="deleteRecord('.$item->id.', \'governorates\')">
+                            <i class="mdi mdi-delete"></i>
+                        </a>
+                    </div>
+                ';
+            })
+            ->editColumn('created_at', function($item) {
+                return $item->created_at->format('Y-m-d H:i:s');
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+
+    protected function getUpdateValidationRules($id)
+    {
+        return [
+            'name' => 'required|string|max:255|unique:governorates,name,' . $id
+        ];
+    }
+}
