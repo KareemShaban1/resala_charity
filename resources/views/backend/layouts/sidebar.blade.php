@@ -38,26 +38,32 @@
                   </a>
 
               <li class="side-nav-item">
-                  <a data-bs-toggle="collapse" href="#sidebarEcommerce" aria-expanded="false" aria-controls="sidebarEcommerce" class="side-nav-link">
+                  <a data-bs-toggle="collapse" href="#sidebarLocation" aria-expanded="false" aria-controls="sidebarLocation" class="side-nav-link">
                       <i class="uil-map-marker"></i>
-                      <span> Location </span>
+                      <span> {{__('Locations')}} </span>
                       <span class="menu-arrow"></span>
                   </a>
-                  <div class="collapse" id="sidebarEcommerce">
+                  <div class="collapse" id="sidebarLocation">
                       <ul class="side-nav-second-level">
                           <li>
                               <a href="{{route('governorates.index')}}">
-                                  <span> Governorates </span>
+                                  <span>
+                                      {{__('Governorates')}}
+                                  </span>
                               </a>
                           </li>
                           <li>
                               <a href="{{route('cities.index')}}">
-                                  <span> Cities </span>
+                                  <span>
+                                      {{__('Cities')}}
+                                  </span>
                               </a>
                           </li>
                           <li>
                               <a href="{{route('areas.index')}}">
-                                  <span> Areas </span>
+                                  <span>
+                                      {{__('Areas')}}
+                                  </span>
                               </a>
                           </li>
 
@@ -68,25 +74,39 @@
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarDonors" aria-expanded="false" aria-controls="sidebarDonors" class="side-nav-link">
                       <i class="uil-users-alt"></i>
-                      <span> Donors </span>
+                      <span> {{__('Donors')}} </span>
                       <span class="menu-arrow"></span>
                   </a>
                   <div class="collapse" id="sidebarDonors">
                       <ul class="side-nav-second-level">
                           <li>
                               <a href="{{route('donors.index')}}">
-                                  <span> All Donors </span>
+                                  <span> {{__('Donors')}} </span>
+                              </a>
+                          </li>
+                          <li>
+                              <a href="{{route('donation-categories.index')}}">
+                                  <span> {{__('Donation Categories')}} </span>
+                              </a>
+                          </li>
+                          <li>
+                              <a href="{{route('monthly-donations.index')}}">
+                                  <span> {{__('Monthly Donations')}} </span>
                               </a>
                           </li>
                       </ul>
                   </div>
+
+
               </li>
+
+
 
               </li>
 
           </ul>
 
-        
+
           <!-- End Sidebar -->
 
           <div class="clearfix"></div>

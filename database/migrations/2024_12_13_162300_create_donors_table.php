@@ -25,6 +25,8 @@ return new class extends Migration
                        $table->string('street')->nullable();
             $table->text('address');           
             $table->boolean('active')->default(true);
+            $table->enum('donor_type',['normal','monthly'])->default('normal');
+            $table->string('monthly_donation_day')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

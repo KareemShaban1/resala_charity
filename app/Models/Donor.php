@@ -19,7 +19,9 @@ class Donor extends Model
         'governorate_id',
         'city_id',
         'area_id',
-        'active'
+        'active',
+        'donor_type',
+        'monthly_donation_day'
     ];
 
     protected $casts = [

@@ -8,10 +8,10 @@
             <div class="page-title-box">
                 <div class="page-title-right">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAreaModal">
-                        <i class="mdi mdi-plus"></i> Add Area
+                        <i class="mdi mdi-plus"></i> {{__('Add Area')}}
                     </button>
                 </div>
-                <h4 class="page-title">Areas</h4>
+                <h4 class="page-title">{{__('Areas')}}</h4>
             </div>
         </div>
     </div>
@@ -24,12 +24,12 @@
                     <table id="areas-table" class="table dt-responsive nowrap w-100">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>City</th>
-                                <th>Governorate</th>
-                                <th>Created At</th>
-                                <th>Actions</th>
+                                <th>{{__('ID')}}</th>
+                                <th>{{__('Name')}}</th>
+                                <th>{{__('City')}}</th>
+                                <th>{{__('Governorate')}}</th>
+                                <th>{{__('Created At')}}</th>
+                                <th>{{__('Actions')}}</th>
                             </tr>
                         </thead>
                     </table>
@@ -40,35 +40,35 @@
 </div>
 
 <!-- Add Area Modal -->
-<x-modal id="addAreaModal" title="Add New Area">
+<x-modal id="addAreaModal" title="{{__('Add New Area')}}">
     <form id="addAreaForm" method="POST" action="{{ route('areas.store') }}">
         @csrf
         <div class="modal-body">
             <div class="mb-3">
-                <label for="name" class="form-label">Name</label>
+                <label for="name" class="form-label">{{__('Name')}}</label>
                 <input type="text" class="form-control" id="name" name="name" required>
                 <div class="invalid-feedback"></div>
             </div>
             <div class="mb-3">
-                <label for="governorate_id" class="form-label">Governorate</label>
-                <select class="form-control" id="governorate_id" required>
-                    <option value="">Select Governorate</option>
+                <label for="governorate_id" class="form-label">{{__('Governorate')}}</label>
+                <select class="form-control select2" id="governorate_id" required>
+                    <option value="">{{__('Select Governorate')}}</option>
                     @foreach(\App\Models\Governorate::all() as $governorate)
                     <option value="{{ $governorate->id }}">{{ $governorate->name }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="mb-3">
-                <label for="city_id" class="form-label">City</label>
-                <select class="form-control" id="city_id" name="city_id" required>
-                    <option value="">Select City</option>
+                <label for="city_id" class="form-label">{{__('City')}}</label>
+                <select class="form-control select2" id="city_id" name="city_id" required>
+                    <option value=""> {{__('Select City')}}</option>
                 </select>
                 <div class="invalid-feedback"></div>
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{__('Close')}}</button>
+            <button type="submit" class="btn btn-primary">{{__('Save')}}</button>
         </div>
     </form>
 </x-modal>
@@ -80,30 +80,30 @@
         @method('PUT')
         <div class="modal-body">
             <div class="mb-3">
-                <label for="edit_name" class="form-label">Name</label>
+                <label for="edit_name" class="form-label">{{__('Name')}}</label>
                 <input type="text" class="form-control" id="edit_name" name="name" required>
                 <div class="invalid-feedback"></div>
             </div>
             <div class="mb-3">
-                <label for="edit_governorate_id" class="form-label">Governorate</label>
+                <label for="edit_governorate_id" class="form-label">{{__('Governorate')}}</label>
                 <select class="form-control" id="edit_governorate_id" required>
-                    <option value="">Select Governorate</option>
+                    <option value="">{{__('Select Governorate')}}</option>
                     @foreach(\App\Models\Governorate::all() as $governorate)
                     <option value="{{ $governorate->id }}">{{ $governorate->name }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="mb-3">
-                <label for="edit_city_id" class="form-label">City</label>
+                <label for="edit_city_id" class="form-label">{{__('City')}}</label>
                 <select class="form-control" id="edit_city_id" name="city_id" required>
-                    <option value="">Select City</option>
+                    <option value="">{{__('Select City')}}</option>
                 </select>
                 <div class="invalid-feedback"></div>
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{__('Close')}}</button>
+            <button type="submit" class="btn btn-primary">{{__('Update')}}</button>
         </div>
     </form>
 </x-modal>
@@ -122,7 +122,7 @@
             },
             success: function(response) {
                 if (response.success) {
-                    targetSelect.empty().append('<option value="">Select City</option>');
+                    targetSelect.empty().append('<option value="">{{__('Select City')}}</option>');
                     if (Array.isArray(response.data)) {
                         response.data.forEach(function(city) {
                             targetSelect.append(`<option value="${city.id}" ${city.id == selectedCityId ? 'selected' : ''}>${city.name}</option>`);

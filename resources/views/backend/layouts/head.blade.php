@@ -1,6 +1,6 @@
 <head>
     <meta charset="utf-8">
-    <title>Dashboard | Hyper - Responsive Bootstrap 5 Admin Dashboard</title>
+    <title>Admin Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description">
     <meta content="Coderthemes" name="author">
@@ -25,7 +25,7 @@
     @include('backend.layouts.global-assets')
 
     <!-- jQuery -->
-    <script src="{{ asset('plugins/jquery/jquery.min.js') }}" defer></script>
+    <!-- <script src="{{ asset('plugins/jquery/jquery.min.js') }}" defer></script> -->
 
     <!-- Custom CSS -->
     @stack('styles')

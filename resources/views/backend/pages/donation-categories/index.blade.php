@@ -7,11 +7,11 @@
         <div class="col-12">
             <div class="page-title-box">
                 <div class="page-title-right">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addGovernorateModal">
-                        <i class="mdi mdi-plus"></i> {{__('Add Governorate')}}
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDonationCategoryModal">
+                        <i class="mdi mdi-plus"></i> {{__('Add Donation Category')}} 
                     </button>
                 </div>
-                <h4 class="page-title">{{__('Governorates')}}</h4>
+                <h4 class="page-title">{{__('Donation Categories')}}</h4>
             </div>
         </div>
     </div>
@@ -21,7 +21,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <table id="governorates-table" class="table dt-responsive nowrap w-100">
+                    <table id="donation-categories-table" class="table dt-responsive nowrap w-100">
                         <thead>
                             <tr>
                                 <th>{{__('ID')}}</th>
@@ -37,15 +37,28 @@
     </div>
 </div>
 
-<!-- Add Governorate Modal -->
-<x-modal id="addGovernorateModal" title="{{__('Add Governorate')}}">
-    <form id="addGovernorateForm" method="POST" action="{{ route('governorates.store') }}">
+<!-- Add Donation Category Modal -->
+<x-modal id="addDonationCategoryModal" title="{{__('Add Donation Category')}}">
+    <form id="addDonationCategoryForm" method="POST" action="{{ route('donation-categories.store') }}">
         @csrf
         <div class="modal-body">
             <div class="mb-3">
                 <label for="name" class="form-label">{{__('Name')}}</label>
                 <input type="text" class="form-control" id="name" name="name" required>
                 <div class="invalid-feedback"></div>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">{{__('Description')}}</label>
+                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="1" id="active" name="active">
+                    <label class="form-check-label" for="active">
+                        {{__('Active')}}
+                    </label>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -55,9 +68,9 @@
     </form>
 </x-modal>
 
-<!-- Edit Governorate Modal -->
-<x-modal id="editGovernorateModal" title="{{__('Edit Governorate')}}">
-    <form id="editGovernorateForm" method="POST">
+<!-- Edit Donation Category Modal -->
+<x-modal id="editDonationCategoryModal" title="{{__('Edit Donation Category')}}">
+    <form id="editDonationCategoryForm" method="POST">
         @csrf
         @method('PUT')
         <div class="modal-body">
@@ -65,6 +78,19 @@
                 <label for="edit_name" class="form-label">{{__('Name')}}</label>
                 <input type="text" class="form-control" id="edit_name" name="name" required>
                 <div class="invalid-feedback"></div>
+            </div>
+            <div class="mb-3">
+                <label for="edit_description" class="form-label">{{__('Description')}}</label>
+                <textarea class="form-control" id="edit_description" name="description" rows="3"></textarea>
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="1" id="edit_active" name="active">
+                    <label class="form-check-label" for="edit_active">
+                        {{__('Active')}}
+                    </label>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -78,15 +104,28 @@
 
 @push('scripts')
 <script>
-    $(function () {
+    $(function() {
         // Initialize DataTable
-        var table = $('#governorates-table').DataTable({
-            ajax: "{{ route('governorates.data') }}",
-            columns: [
-                {data: 'id', name: 'id'},
-                {data: 'name', name: 'name'},
-                {data: 'created_at', name: 'created_at'},
-                {data: 'action', name: 'action', orderable: false, searchable: false}
+        var table = $('#donation-categories-table').DataTable({
+            ajax: "{{ route('donation-categories.data') }}",
+            columns: [{
+                    data: 'id',
+                    name: 'id'
+                },
+                {
+                    data: 'name',
+                    name: 'name'
+                },
+                {
+                    data: 'created_at',
+                    name: 'created_at'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                }
             ],
             order: [
                 [0, 'desc']
@@ -99,22 +138,44 @@
             }
         });
 
-        // Add Governorate Form Submit
-        $('#addGovernorateForm').on('submit', function(e) {
+        // Add Donation Category Form Submit
+        $('#addDonationCategoryForm').on('submit', function(e) {
             e.preventDefault();
             var form = $(this);
             var url = form.attr('action');
 
+            // Serialize form data
+            var formData = form.serializeArray();
+
+            var activeFieldFound = false; // To track if 'active' is found in formData
+
+            // Find and update the 'active' value to integer (1 for checked, 0 for unchecked)
+            formData.forEach(function(item) {
+                if (item.name === 'active') {
+                    item.value = (item.value === '1') ? 1 : 0; // '1' means checked, set it to 1 or 0
+                    activeFieldFound = true; // Mark as found
+                }
+            });
+
+            // If 'active' was not found in the form data (unchecked), push it with value 0
+            if (!activeFieldFound) {
+                formData.push({
+                    name: 'active',
+                    value: 0
+                });
+            }
+
+
             $.ajax({
                 url: url,
                 type: 'POST',
-                data: form.serialize(),
+                data: $.param(formData), // Convert array to URL-encoded string
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 success: function(response) {
                     if (response.success) {
-                        $('#addGovernorateModal').modal('hide');
+                        $('#addDonationCategoryModal').modal('hide');
                         form[0].reset();
                         table.ajax.reload();
                         Swal.fire({
@@ -143,22 +204,34 @@
             });
         });
 
-        // Edit Governorate Form Submit
-        $('#editGovernorateForm').on('submit', function(e) {
+
+
+        // Edit Donation Category Form Submit
+        $('#editDonationCategoryForm').on('submit', function(e) {
             e.preventDefault();
             var form = $(this);
             var url = form.attr('action');
 
+            // Serialize form data
+            var formData = form.serializeArray();
+
+            // Add the `active` field explicitly
+            var activeCheckbox = form.find('#edit_active');
+            formData.push({
+                name: 'active',
+                value: activeCheckbox.is(':checked') ? 1 : 0
+            });
+
             $.ajax({
                 url: url,
                 type: 'POST',
-                data: form.serialize(),
+                data: $.param(formData), // Convert array to URL-encoded string
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 success: function(response) {
                     if (response.success) {
-                        $('#editGovernorateModal').modal('hide');
+                        $('#editDonationCategoryModal').modal('hide');
                         form[0].reset();
                         table.ajax.reload();
                         Swal.fire({
@@ -186,6 +259,7 @@
                 }
             });
         });
+
 
         // Clear form validation on modal hide
         $('.modal').on('hidden.bs.modal', function() {
@@ -195,12 +269,21 @@
         });
     });
 
-    // Edit Governorate Function
-    function editGovernorate(id, name) {
-        var form = $('#editGovernorateForm');
-        form.attr('action', `{{ route('governorates.update', '') }}/${id}`);
-        form.find('#edit_name').val(name);
-        $('#editGovernorateModal').modal('show');
+    // Edit Donation Category Function
+    function editDonationCategory(item) {
+        console.log(item);
+        var form = $('#editDonationCategoryForm');
+
+        // Update form action URL
+        form.attr('action', `/donation-categories/${item.id}`);
+
+        // Populate form fields with item data
+        form.find('#edit_name').val(item.name);
+        form.find('#edit_description').val(item.description || ''); // Handle empty description
+        form.find('#edit_active').prop('checked', item.active === true);
+
+        // Show the modal
+        $('#editDonationCategoryModal').modal('show');
     }
 </script>
 @endpush

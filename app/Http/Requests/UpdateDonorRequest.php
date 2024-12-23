@@ -29,6 +29,8 @@ class UpdateDonorRequest extends FormRequest
             'city_id' => 'required|exists:cities,id',
             'area_id' => 'required|exists:areas,id',
             'active' => 'required|boolean',
+            'donor_type'=>'required|in:normal,monthly',
+            'monthly_donation_day'=>'nullable',
             'phones' => 'required|array|min:1',
             'phones.*.number' => 'required|string|regex:/^[0-9]{11}$/|distinct',
             'phones.*.type' => 'required|string|in:mobile,home,work,other'

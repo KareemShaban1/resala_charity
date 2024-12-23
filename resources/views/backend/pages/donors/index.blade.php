@@ -13,13 +13,13 @@
                 <div class="page-title-right">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#addDonorModal">
-                        <i class="mdi mdi-plus"></i> Add Donor
+                        <i class="mdi mdi-plus"></i> {{__('Add Donor')}}
                     </button>
                     <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#importDonorModal">
-                        <i class="mdi mdi-upload"></i> Import Donors
+                        <i class="mdi mdi-upload"></i> {{__('Import Donors')}}
                     </button>
                 </div>
-                <h4 class="page-title">Donors</h4>
+                <h4 class="page-title">{{__('Donors')}}</h4>
             </div>
         </div>
     </div>
@@ -29,7 +29,7 @@
     <div class="alert alert-danger">
         <ul>
             @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
+            <li>{{ $error }}</li>
             @endforeach
         </ul>
     </div>
@@ -42,14 +42,14 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Name</th>
-                                <th>Address</th>
-                                <th>Area</th>
-                                <th>City</th>
-                                <th>Governorate</th>
-                                <th>Phones</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                <th>{{__('Name')}}</th>
+                                <!-- <th>{{__('Address')}}</th> -->
+                                <th>{{__('Area')}}</th>
+                                <th>{{__('City')}}</th>
+                                <th>{{__('Governorate')}}</th>
+                                <th>{{__('Phones')}}</th>
+                                <th>{{__('Status')}}</th>
+                                <th>{{__('Actions')}}</th>
                             </tr>
                         </thead>
                     </table>
@@ -60,14 +60,14 @@
 </div>
 
 <!-- Add Donor Modal -->
-<x-modal id="addDonorModal" title="Add New Donor" size="lg">
+<x-modal id="addDonorModal" title="{{__('Add Donor')}}" size="lg">
     <form id="addDonorForm" method="POST" action="{{ route('donors.store') }}">
         @csrf
         <div class="modal-body">
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="name" class="form-label">Name</label>
+                        <label for="name" class="form-label">{{__('Name')}}</label>
                         <input type="text" class="form-control" id="name" name="name" required>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -77,9 +77,9 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="governorate_id" class="form-label">Governorate</label>
+                        <label for="governorate_id" class="form-label">{{__('Governorate')}}</label>
                         <select class="form-control select2" id="governorate_id" name="governorate_id" required>
-                            <option value="">Select Governorate</option>
+                            <option value="">{{__('Select Governorate')}}</option>
                             @foreach(\App\Models\Governorate::all() as $governorate)
                             <option value="{{ $governorate->id }}">{{ $governorate->name }}</option>
                             @endforeach
@@ -89,9 +89,9 @@
 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="city_id" class="form-label">City</label>
+                        <label for="city_id" class="form-label">{{__('City')}}</label>
                         <select class="form-control select2" id="city_id" name="city_id" required>
-                            <option value="">Select City</option>
+                            <option value="">{{__('Select City')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -102,9 +102,9 @@
                 <div class="col-md-6">
 
                     <div class="mb-3">
-                        <label for="area_id" class="form-label">Area</label>
+                        <label for="area_id" class="form-label">{{__('Area')}}</label>
                         <select class="form-control select2" id="area_id" name="area_id" required>
-                            <option value="">Select Area</option>
+                            <option value="">{{__('Select Area')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -114,7 +114,7 @@
                 <div class="col-md-6">
 
                     <div class="mb-3">
-                        <label for="street" class="form-label">Street</label>
+                        <label for="street" class="form-label">{{__('Street')}}</label>
                         <input type="text" class="form-control" id="street" name="street" required>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -123,7 +123,7 @@
             </div>
 
             <div class="mb-3">
-                <label for="address" class="form-label">Address</label>
+                <label for="address" class="form-label">{{__('Address')}}</label>
                 <input type="text" class="form-control" id="address" name="address" required>
                 <div class="invalid-feedback"></div>
             </div>
@@ -131,15 +131,15 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="mb-3">
-                        <label class="form-label">Phone Numbers</label>
+                        <label class="form-label">{{__('Phone Numbers')}}</label>
                         <div id="phone-container">
                             <div class="input-group mb-2">
-                                <input type="text" name="phones[0][number]" class="form-control" placeholder="Enter phone number">
+                                <input type="text" name="phones[0][number]" class="form-control" placeholder="{{__('Enter phone number')}}">
                                 <select name="phones[0][type]" class="form-select" style="max-width: 150px;">
-                                    <option value="mobile">Mobile</option>
-                                    <option value="home">Home</option>
-                                    <option value="work">Work</option>
-                                    <option value="other">Other</option>
+                                    <option value="mobile">{{__('Mobile')}}</option>
+                                    <option value="home">{{__('Home')}}</option>
+                                    <option value="work">{{__('Work')}}</option>
+                                    <option value="other">{{__('Other')}}</option>
                                 </select>
                                 <button type="button" class="btn btn-success add-phone"><i class="mdi mdi-plus"></i></button>
                             </div>
@@ -148,30 +148,53 @@
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label for="active" class="form-label">Status</label>
-                <select class="form-select" id="active" name="active">
-                    <option value="1">Active</option>
-                    <option value="0">Inactive</option>
-                </select>
-                <div class="invalid-feedback"></div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="donor_type" class="form-label">{{__('Donor Type')}}</label>
+                        <select class="form-select" id="donor_type" name="donor_type">
+                            <option value="normal">{{__('Normal')}}</option>
+                            <option value="monthly">{{__('Monthly')}}</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="active" class="form-label">{{__('Status')}}</label>
+                        <select class="form-select" id="active" name="active">
+                            <option value="1">{{__('Active')}}</option>
+                            <option value="0">{{__('Inactive')}}</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="monthly_donation_day" class="form-label">{{__('Monthly Donation Day')}}</label>
+                        <input type="number" class="form-control" name="monthly_donation_day">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{__('Close')}}</button>
+            <button type="submit" class="btn btn-primary">{{__('Save')}}</button>
         </div>
     </form>
 </x-modal>
 
 <!-- Edit Donor Modal -->
-<x-modal id="editDonorModal" title="Edit Donor" size="lg">
+<x-modal id="editDonorModal" title="{{__('Edit Donor')}}" size="lg">
     <form id="editDonorForm" method="POST">
         @csrf
         @method('PUT')
         <div class="modal-body">
             <div class="mb-3">
-                <label for="edit_name" class="form-label">Name</label>
+                <label for="edit_name" class="form-label">{{__('Name')}}</label>
                 <input type="text" class="form-control" id="edit_name" name="name" required>
                 <div class="invalid-feedback"></div>
             </div>
@@ -179,9 +202,9 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="edit_governorate_id" class="form-label">Governorate</label>
+                        <label for="edit_governorate_id" class="form-label">{{__('Governorate')}}</label>
                         <select class="form-control select2" id="edit_governorate_id" name="governorate_id" required>
-                            <option value="">Select Governorate</option>
+                            <option value="">{{__('Select Governorate')}}</option>
                             @foreach(\App\Models\Governorate::all() as $governorate)
                             <option value="{{ $governorate->id }}">{{ $governorate->name }}</option>
                             @endforeach
@@ -191,9 +214,9 @@
 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="edit_city_id" class="form-label">City</label>
+                        <label for="edit_city_id" class="form-label">{{__('City')}}</label>
                         <select class="form-control select2" id="edit_city_id" name="city_id" required>
-                            <option value="">Select City</option>
+                            <option value="">{{__('Select City')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -202,9 +225,9 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="edit_area_id" class="form-label">Area</label>
+                        <label for="edit_area_id" class="form-label">{{__('Area')}}</label>
                         <select class="form-control select2" id="edit_area_id" name="area_id" required>
-                            <option value="">Select Area</option>
+                            <option value="">{{__('Select Area')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -212,29 +235,52 @@
 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="edit_street" class="form-label">Street</label>
+                        <label for="edit_street" class="form-label">{{__('Street')}}</label>
                         <input type="text" class="form-control" id="edit_street" name="street" required>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
             </div>
             <div class="mb-3">
-                <label for="edit_address" class="form-label">Address</label>
+                <label for="edit_address" class="form-label">{{__('Address')}}</label>
                 <input type="text" class="form-control" id="edit_address" name="address" required>
                 <div class="invalid-feedback"></div>
             </div>
-            <div class="mb-3">
-                <label for="edit_active" class="form-label">Status</label>
-                <select class="form-select" id="edit_active" name="active">
-                    <option value="1">Active</option>
-                    <option value="0">Inactive</option>
-                </select>
-                <div class="invalid-feedback"></div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="edit_donor_type" class="form-label">{{__('Donor Type')}}</label>
+                        <select class="form-select" id="edit_donor_type" name="donor_type">
+                            <option value="normal">{{__('Normal')}}</option>
+                            <option value="monthly">{{__('Monthly')}}</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="edit_active" class="form-label">{{__('Status')}}</label>
+                        <select class="form-select" id="edit_active" name="active">
+                            <option value="1">{{__('Active')}}</option>
+                            <option value="0">{{__('Inactive')}}</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="edit_monthly_donation_day" class="form-label">{{__('Monthly Donation Day')}}</label>
+                        <input type="number" class="form-control" id="edit_monthly_donation_day" name="monthly_donation_day">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
             </div>
             <div class="row">
                 <div class="col-md-12">
                     <div class="mb-3">
-                        <label class="form-label">Phone Numbers</label>
+                        <label class="form-label">{{__('Phone Numbers')}}</label>
                         <div id="edit-phone-container">
                             <!-- Phone inputs will be added here -->
                         </div>
@@ -243,25 +289,25 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{__('Close')}}</button>
+            <button type="submit" class="btn btn-primary">{{__('Update')}}</button>
         </div>
     </form>
 </x-modal>
 
-<x-modal id="importDonorModal" title="Import Donors">
+<x-modal id="importDonorModal" title="{{__('Import Donors')}}">
     <form id="importDonorForm" enctype="multipart/form-data">
         @csrf
         <div class="modal-body">
             <div class="mb-3">
-                <label for="donorFile" class="form-label">Upload Excel File</label>
+                <label for="donorFile" class="form-label">{{__('Upload Excel File')}}</label>
                 <input type="file" class="form-control" id="donorFile" name="file" accept=".xlsx,.csv" required>
                 <div id="fileError" class="text-danger mt-2" style="display: none;"></div>
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-success">Import</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('Close')}}</button>
+            <button type="submit" class="btn btn-success">{{__('Import')}}</button>
         </div>
     </form>
     <div id="feedbackMessage" class="alert mt-3" style="display: none;"></div>
@@ -290,21 +336,21 @@
         // Main form selects
         $('#governorate_id').select2({
             dropdownParent: $('#addDonorModal'),
-            placeholder: 'Select Governorate',
+            placeholder: '{{__('Select Governorate')}}',
             allowClear: true,
             width: '100%'
         });
 
         $('#city_id').select2({
             dropdownParent: $('#addDonorModal'),
-            placeholder: 'Select City',
+            placeholder: '{{__('Select City')}}',
             allowClear: true,
             width: '100%'
         });
 
         $('#area_id').select2({
             dropdownParent: $('#addDonorModal'),
-            placeholder: 'Select Area',
+            placeholder: '{{__('Select Area')}}',
             allowClear: true,
             width: '100%'
         });
@@ -314,21 +360,21 @@
         // Modal form selects
         $('#edit_governorate_id').select2({
             dropdownParent: $('#editDonorModal'),
-            placeholder: 'Select Governorate',
+            placeholder: '{{__('Select Governorate')}}',
             allowClear: true,
             width: '100%'
         });
 
         $('#edit_city_id').select2({
             dropdownParent: $('#editDonorModal'),
-            placeholder: 'Select City',
+            placeholder: '{{__('Select City')}}',
             allowClear: true,
             width: '100%'
         });
 
         $('#edit_area_id').select2({
             dropdownParent: $('#editDonorModal'),
-            placeholder: 'Select Area',
+            placeholder: '{{__('Select Area')}}',
             allowClear: true,
             width: '100%'
         });
@@ -417,6 +463,8 @@
             $('#edit_name').val(data.name);
             $('#edit_address').val(data.address);
             $('#edit_street').val(data.street);
+            $('#edit_donor_type').val(data.donor_type);
+            $('#edit_monthly_donation_day').val(data.monthly_donation_day);
             $('#edit_active')
                 .val(data.active ? "1" : "0") // Convert true/false to "1"/"0"
                 .change();
@@ -454,10 +502,10 @@
             <div class="input-group mb-2">
                 <input type="text" name="phones[${index}][number]" class="form-control" placeholder="Enter phone number" value="${phone}">
                 <select name="phones[${index}][type]" class="form-select" style="max-width: 150px;">
-                    <option value="mobile" ${type === 'mobile' ? 'selected' : ''}>Mobile</option>
-                    <option value="home" ${type === 'home' ? 'selected' : ''}>Home</option>
-                    <option value="work" ${type === 'work' ? 'selected' : ''}>Work</option>
-                    <option value="other" ${type === 'other' ? 'selected' : ''}>Other</option>
+                    <option value="mobile" ${type === 'mobile' ? 'selected' : ''}}>{{__('Mobile')}}</option>
+                    <option value="home" ${type === 'home' ? 'selected' : ''}}>{{__('Home')}}</option>
+                    <option value="work" ${type === 'work' ? 'selected' : ''}}>{{__('Work')}}</option>
+                    <option value="other" ${type === 'other' ? 'selected' : ''}}>{{__('Other')}}</option>
                 </select>
                 ${index === 0 ? 
                     `<button type="button" class="btn btn-success add-phone"><i class="mdi mdi-plus"></i></button>` :
@@ -493,10 +541,10 @@
                     data: 'name',
                     name: 'name'
                 },
-                {
-                    data: 'address',
-                    name: 'address'
-                },
+                // {
+                //     data: 'address',
+                //     name: 'address'
+                // },
                 {
                     data: 'area',
                     name: 'area.name'
@@ -513,6 +561,7 @@
                     data: 'phones',
                     name: 'phones',
                     orderable: false,
+                    searchable: true,
                     render: function(data, type, row) {
                         if (!data) return ''; // Handle empty or null values
                         return data
@@ -681,94 +730,94 @@
     });
 
     $('#importDonorForm').on('submit', function(e) {
-    e.preventDefault(); // Prevent the default form submission
+        e.preventDefault(); // Prevent the default form submission
 
-    let formData = new FormData(this);
+        let formData = new FormData(this);
 
-    // Clear previous messages
-    $('#feedbackMessage').hide().removeClass('alert-success alert-danger').text('');
+        // Clear previous messages
+        $('#feedbackMessage').hide().removeClass('alert-success alert-danger').text('');
 
-    // AJAX request
-    $.ajax({
-        url: "{{ route('donors.import') }}",
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        beforeSend: function() {
-            $('#importDonorForm button[type="submit"]').prop('disabled', true);
-        },
-        success: function(response) {
-            if (response.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Import Successful',
-                    text: response.message,
-                });
+        // AJAX request
+        $.ajax({
+            url: "{{ route('donors.import') }}",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function() {
+                $('#importDonorForm button[type="submit"]').prop('disabled', true);
+            },
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Import Successful',
+                        text: response.message,
+                    });
 
-                if (response.errors && response.errors.length > 0) {
-                    let errorDetails = response.errors.map(error =>
-                        `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
+                    if (response.errors && response.errors.length > 0) {
+                        let errorDetails = response.errors.map(error =>
+                            `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
+
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Some Records Skipped',
+                            html: `<pre>${errorDetails}</pre>`,
+                            customClass: {
+                                popup: 'text-start',
+                            }
+                        });
+                    }
+
+                    // Close modal and reset form
+                    setTimeout(() => {
+                        $('#importDonorModal').modal('hide');
+                        $('#importDonorForm')[0].reset();
+                    }, 2000);
+
+                    table.ajax.reload();
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    // Validation error
+                    let response = xhr.responseJSON;
+                    let errors = response.errors || [];
+                    let errorDetails = '';
+
+                    if (Array.isArray(errors)) {
+                        // Handle row-specific errors
+                        errorDetails = errors.map(error =>
+                            `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
+                    } else {
+                        // Handle general file validation error
+                        errorDetails = errors.file ? errors.file[0] : 'Invalid file format.';
+                    }
 
                     Swal.fire({
-                        icon: 'info',
-                        title: 'Some Records Skipped',
-                        html: `<pre>${errorDetails}</pre>`,
+                        icon: 'error',
+                        title: 'Validation Error',
+                        html: `<pre style="direction: ltr;">${errorDetails}</pre>`,
                         customClass: {
                             popup: 'text-start',
                         }
                     });
-                }
-
-                // Close modal and reset form
-                setTimeout(() => {
-                    $('#importDonorModal').modal('hide');
-                    $('#importDonorForm')[0].reset();
-                }, 2000);
-
-                table.ajax.reload();
-            }
-        },
-        error: function(xhr) {
-            if (xhr.status === 422) {
-                // Validation error
-                let response = xhr.responseJSON;
-                let errors = response.errors || [];
-                let errorDetails = '';
-
-                if (Array.isArray(errors)) {
-                    // Handle row-specific errors
-                    errorDetails = errors.map(error =>
-                        `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
                 } else {
-                    // Handle general file validation error
-                    errorDetails = errors.file ? errors.file[0] : 'Invalid file format.';
+                    // General error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Unexpected Error',
+                        text: 'An unexpected error occurred. Please try again later.',
+                    });
                 }
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Error',
-                    html: `<pre style="direction: ltr;">${errorDetails}</pre>`,
-                    customClass: {
-                        popup: 'text-start',
-                    }
-                });
-            } else {
-                // General error
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Unexpected Error',
-                    text: 'An unexpected error occurred. Please try again later.',
-                });
+            },
+            complete: function() {
+                $('#importDonorForm button[type="submit"]').prop('disabled', false);
             }
-        },
-        complete: function() {
-            $('#importDonorForm button[type="submit"]').prop('disabled', false);
-        }
+        });
     });
-});
 
-$.ajaxSetup({
+    $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }

@@ -8,10 +8,10 @@
             <div class="page-title-box">
                 <div class="page-title-right">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCityModal">
-                        <i class="mdi mdi-plus"></i> Add City
+                        <i class="mdi mdi-plus"></i> {{__('Add City')}}
                     </button>
                 </div>
-                <h4 class="page-title">Cities</h4>
+                <h4 class="page-title">{{__('Cities')}}</h4>
             </div>
         </div>
     </div>
@@ -24,11 +24,11 @@
                     <table id="cities-table" class="table dt-responsive nowrap w-100">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Governorate</th>
-                                <th>Created At</th>
-                                <th>Actions</th>
+                                <th>{{__('ID')}}</th>
+                                <th>{{__('Name')}}</th>
+                                <th>{{__('Governorate')}}</th>
+                                <th>{{__('Created At')}}</th>
+                                <th>{{__('Actions')}}</th>
                             </tr>
                         </thead>
                     </table>
@@ -39,19 +39,19 @@
 </div>
 
 <!-- Add City Modal -->
-<x-modal id="addCityModal" title="Add New City">
+<x-modal id="addCityModal" title="{{__('Add City')}}">
     <form id="addCityForm" method="POST" action="{{ route('cities.store') }}">
         @csrf
         <div class="modal-body">
             <div class="mb-3">
-                <label for="name" class="form-label">Name</label>
+                <label for="name" class="form-label">{{__('Name')}}</label>
                 <input type="text" class="form-control" id="name" name="name" required>
                 <div class="invalid-feedback"></div>
             </div>
             <div class="mb-3">
-                <label for="governorate_id" class="form-label">Governorate</label>
+                <label for="governorate_id" class="form-label">{{__('Governorate')}}</label>
                 <select class="form-control" id="governorate_id" name="governorate_id" required>
-                    <option value="">Select Governorate</option>
+                    <option value="">{{__('Select Governorate') }}</option>
                     @foreach(\App\Models\Governorate::all() as $governorate)
                         <option value="{{ $governorate->id }}">{{ $governorate->name }}</option>
                     @endforeach
@@ -60,27 +60,27 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{__('Close')}}</button>
+            <button type="submit" class="btn btn-primary">{{__('Save')}}</button>
         </div>
     </form>
 </x-modal>
 
 <!-- Edit City Modal -->
-<x-modal id="editCityModal" title="Edit City">
+<x-modal id="editCityModal" title="{{__('Edit City')}}">
     <form id="editCityForm" method="POST">
         @csrf
         @method('PUT')
         <div class="modal-body">
             <div class="mb-3">
-                <label for="edit_name" class="form-label">Name</label>
+                <label for="edit_name" class="form-label">{{__('Name')}}</label>
                 <input type="text" class="form-control" id="edit_name" name="name" required>
                 <div class="invalid-feedback"></div>
             </div>
             <div class="mb-3">
-                <label for="edit_governorate_id" class="form-label">Governorate</label>
+                <label for="edit_governorate_id" class="form-label">{{__('Governorate')}}</label>
                 <select class="form-control" id="edit_governorate_id" name="governorate_id" required>
-                    <option value="">Select Governorate</option>
+                    <option value="">{{__('Select Governorate') }}</option>
                     @foreach(\App\Models\Governorate::all() as $governorate)
                         <option value="{{ $governorate->id }}">{{ $governorate->name }}</option>
                     @endforeach
@@ -89,8 +89,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{__('Close')}}</button>
+            <button type="submit" class="btn btn-primary">{{__('Update')}}</button>
         </div>
     </form>
 </x-modal>
@@ -115,14 +115,7 @@
             ],
             pageLength: 10,
             responsive: true,
-            "language": {
-                "paginate": {
-                    "previous": "<i class='mdi mdi-chevron-left'>",
-                    "next": "<i class='mdi mdi-chevron-right'>"
-                },
-                "info": "Showing donors _START_ to _END_ of _TOTAL_",
-                "lengthMenu": "Display _MENU_ donors",
-            },
+            language: languages[language],
             "drawCallback": function() {
                 $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
             }

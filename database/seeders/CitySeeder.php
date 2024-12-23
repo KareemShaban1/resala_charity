@@ -15,7 +15,7 @@ class CitySeeder extends Seeder
     {
         // Get Cairo governorate
         $cairo = Governorate::where('name', 'القاهرة')->first();
-        
+
         // Cairo cities
         $cairoCities = [
             'حلوان',
@@ -51,6 +51,7 @@ class CitySeeder extends Seeder
             'طره',
             'المعصرة',
             'التبين',
+
         ];
 
         foreach ($cairoCities as $cityName) {
@@ -62,7 +63,7 @@ class CitySeeder extends Seeder
 
         // Get Giza governorate
         $giza = Governorate::where('name', 'الجيزة')->first();
-        
+
         // Giza cities
         $gizaCities = [
             'الجيزة',
@@ -89,7 +90,7 @@ class CitySeeder extends Seeder
 
         // Get Alexandria governorate
         $alexandria = Governorate::where('name', 'الإسكندرية')->first();
-        
+
         // Alexandria cities
         $alexandriaCities = [
             'المنتزه',
@@ -106,6 +107,24 @@ class CitySeeder extends Seeder
             City::create([
                 'name' => $cityName,
                 'governorate_id' => $alexandria->id
+            ]);
+        }
+
+
+        // Get Alexandria governorate
+        $qalyubia = Governorate::where('name', 'القليوبية')->first();
+
+        // Alexandria cities
+        $qalyubiaCities = [
+            'بنها',
+            'كفر شكر'
+
+        ];
+
+        foreach ($qalyubiaCities as $cityName) {
+            City::create([
+                'name' => $cityName,
+                'governorate_id' => $qalyubia->id
             ]);
         }
     }
