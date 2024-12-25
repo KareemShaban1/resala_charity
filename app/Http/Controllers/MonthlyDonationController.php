@@ -58,10 +58,10 @@ class MonthlyDonationController extends Controller
                 ';
             })
             ->addColumn('monthly_donation_day', function ($item) {
-                return $item->donor->monthly_donation_day ?? 0;
+                return $item->donor?->monthly_donation_day ?? 0;
             })
             ->addColumn('name', function ($item) {
-                return $item->donor->name ?? 'N/A';
+                return $item->donor?->name ?? 'N/A';
             })
             ->editColumn('created_at', function ($item) {
                 return $item->created_at->format('Y-m-d H:i:s');
