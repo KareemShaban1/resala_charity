@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('donor_phones', function (Blueprint $table) {
+        Schema::create('departments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('donor_id')->constrained()->onDelete('cascade');
-            $table->string('phone_number')->unique();
-            $table->string('phone_type');
-            $table->boolean('is_primary')->default(false);
+            $table->string('name');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('donor_phones');
+        Schema::dropIfExists('departments');
     }
 };

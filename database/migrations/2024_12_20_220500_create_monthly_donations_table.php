@@ -13,13 +13,16 @@ return new class extends Migration
     {
         Schema::create('monthly_donations', function (Blueprint $table) {
             $table->id();
-            $table->string('number');
+            $table->string('number')->unique();
             $table->foreignId('donor_id')->constrained()->onDelete('cascade');
+            $table->foreignId('employee_id')->nullable()
+            ->constrained('employees')->onDelete('cascade');
+            $table->foreignId('department_id')->nullable()
+            ->constrained('departments')->onDelete('cascade');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
-            $table->string('date')->comment('Format: MM-DD');
             $table->text('notes')->nullable();
             $table->enum('collecting_donation_way',['online','location','representative']);
-            // $table->foreignId('collected_by')->nullable()->constrained('users')->onDelete('cascade');
+           
             $table->timestamps();
         });
     }

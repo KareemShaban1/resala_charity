@@ -13,11 +13,17 @@ return new class extends Migration
     {
         Schema::create('monthly_donations_donates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('monthly_donation_id')->references('id')->on('monthly_donations')
+            $table->foreignId('monthly_donation_id')
+            ->constrained('monthly_donations')
             ->onDelete('cascade');
-            $table->foreignId('donation_category_id')->references('id')->on('donation_categories')
-            ->onDelete('cascade');
+
             $table->enum('donation_type', ['Financial','inKind'])->default('Financial');
+
+            $table->foreignId('donation_category_id')
+            ->nullable() // Allow null values
+            ->constrained('donation_categories')
+            ->onDelete('cascade');
+            $table->string('item_name')->nullable();
             $table->string('amount');
             $table->softDeletes();
             $table->timestamps();

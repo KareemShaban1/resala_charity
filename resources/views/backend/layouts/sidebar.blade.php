@@ -26,7 +26,7 @@
           <!--- Sidemenu -->
           <ul class="side-nav">
 
-              <li class="side-nav-title side-nav-item">Navigation</li>
+              <!-- <li class="side-nav-title side-nav-item">Navigation</li> -->
 
               <li class="side-nav-item">
                   <a href="#" data-bs-toggle="collapse" href="#sidebarDashboards" aria-expanded="false" aria-controls="sidebarDashboards" class="side-nav-link">
@@ -36,6 +36,30 @@
                           {{__('Dashboard')}}
                       </span>
                   </a>
+              </li>
+
+              <li class="side-nav-item">
+                  <a data-bs-toggle="collapse" href="#sidebarEmployees" aria-expanded="false" aria-controls="sidebarEmployees" class="side-nav-link">
+                      <i class="uil-users-alt"></i>
+                      <span> {{__('Employees Management')}} </span>
+                      <span class="menu-arrow"></span>
+                  </a>
+                  <div class="collapse" id="sidebarEmployees">
+                      <ul class="side-nav-second-level">
+                          <li>
+                              <a href="{{route('departments.index')}}">
+                                  <span> {{__('Departments')}} </span>
+                              </a>
+                          </li>
+                          <li>
+                              <a href="{{route('employees.index')}}">
+                                  <span> {{__('Employees')}} </span>
+                              </a>
+                          </li>
+                      </ul>
+                  </div>
+              </li>
+
 
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarLocation" aria-expanded="false" aria-controls="sidebarLocation" class="side-nav-link">
@@ -96,13 +120,9 @@
                           </li>
                       </ul>
                   </div>
-
-
               </li>
 
 
-
-              </li>
 
           </ul>
 

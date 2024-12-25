@@ -117,13 +117,14 @@ class DonorsImport implements ToCollection, WithHeadingRow, WithValidation, Skip
             'street' => 'nullable|string|max:255',
             'governorate_name' => 'required|string|exists:governorates,name',
             'city_name' => 'required|string|exists:cities,name',
-            'area_name' => 'required|string|exists:areas,name',
+            'area_name' => 'nullable|string|exists:areas,name',
             'donor_type' => 'required|string|in:normal,monthly',
             'monthly_donation_day' => 'nullable',
             'phones' => [
                 'nullable',
                 'string',
-                // 'regex:/^(\d{11}:(mobile|home|work)(,\d{10,15}:(mobile|home|work))*)?$/',
+                'regex:/^((\d{11}:mobile)|(\d{1,15}:(home|work)))(,((\d{11}:mobile)|(\d{1,15}:(home|work))))*$/',
+                'unique:donor_phones,phone_number'
             ],
             'active' => 'nullable|boolean',
         ];

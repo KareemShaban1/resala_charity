@@ -21,9 +21,9 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->foreignId('governorate_id')->constrained();
             $table->foreignId('city_id')->constrained();
-            $table->foreignId('area_id')->constrained();
-                       $table->string('street')->nullable();
-            $table->text('address');           
+            $table->foreignId('area_id')->nullable()->constrained();
+            $table->string('street')->nullable();
+            $table->text('address')->nullable();           
             $table->boolean('active')->default(true);
             $table->enum('donor_type',['normal','monthly'])->default('normal');
             $table->string('monthly_donation_day')->nullable();

@@ -13,5 +13,31 @@ class DonationCategorySeeder extends Seeder
     public function run(): void
     {
         //
+        \DB::table("donation_categories")->delete();
+        \DB::table("donation_categories")->insert(
+            [
+                [
+                    "name" => "زكاة",
+                    "description" => "زكاة",
+                    "active" => true,
+                    "created_at" => now(),
+                    "updated_at" => now(),
+                ],
+                [
+                    "name" => "صدقة",
+                    "description" => "صدقة",
+                    "active" => true,
+                    "created_at" => now(),
+                    "updated_at" => now(),
+                ],
+                [
+                    "name" => "بيت المال",
+                    "description" => "بيت المال",
+                    "active" => true,
+                    "created_at" => now(),
+                    "updated_at" => now(),
+                ],
+            ]
+        );
     }
 }

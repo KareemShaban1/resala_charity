@@ -11,6 +11,8 @@ class MonthlyDonation extends Model
     protected $fillable = [
         'number',
         'donor_id',
+        'employee_id',
+        'department_id',
         'created_by',
         'date',
         'notes',
@@ -29,13 +31,19 @@ class MonthlyDonation extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
-    public function collectedBy()
+    public function employee()
     {
-        return $this->belongsTo(User::class, 'collected_by');
+        return $this->belongsTo(Employee::class, 'employee_id');
     }
-
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
     public function donor()
     {
         return $this->belongsTo(Donor::class, 'donor_id');
+    }
+    public function donates(){
+        return $this->hasMany(MonthlyDonationsDonate::class,'monthly_donation_id');
     }
 }

@@ -23,6 +23,10 @@ class DatabaseSeeder extends Seeder
             GovernorateSeeder::class,
             CitySeeder::class,
             AreaSeeder::class,
+            DepartmentSeeder::class,
+            EmployeeSeeder::class,
+            DonationCategorySeeder::class,
+            // MonthlyDonationSeeder::class,
             // DonorSeeder::class,
             // DonationSeeder::class,
             // DonationTypeSeeder::class

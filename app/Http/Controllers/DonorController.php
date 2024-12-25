@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Donor;
-use App\Models\DonorPhone;
 use App\Http\Requests\StoreDonorRequest;
 use App\Http\Requests\UpdateDonorRequest;
 use App\Imports\DonorsImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -26,16 +24,24 @@ class DonorController extends Controller
     /**
      * Get donors data for DataTable.
      */
-    public function data()
+    public function data(Request $request)
     {
         $query = Donor::with(['governorate', 'city', 'area', 'phones']);
 
+        if ($request->filled('phone')) {
+            $phone = $request->get('phone');
+            $query->whereHas('phones', function ($q) use ($phone) {
+                $q->where('phone_number', 'like', "%{$phone}%");
+            });
+        }
+
         return datatables()->of($query)
-            ->addColumn('phones', function ($donor) {
-                return $donor->phones->map(function ($phone) {
+        ->addColumn('phones', function ($donor) {
+            return $donor->phones->isNotEmpty() ?
+                $donor->phones->map(function ($phone) {
                     return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
-                })->implode(', ');
-            })
+                })->implode(', ') : 'N/A';
+        })
             ->addColumn('action', function ($donor) {
                 return '
                     <a href="javascript:void(0)" onclick="editDonor(' . $donor->id . ')" class="btn btn-sm btn-info">
@@ -58,6 +64,9 @@ class DonorController extends Controller
             })
             ->editColumn('governorate', function ($donor) {
                 return $donor->governorate ? $donor->governorate->name : '';
+            })
+            ->editColumn('donor_type', function ($donor) {
+                return $donor->donor_type ? $donor->donor_type : '';
             })
             ->rawColumns(['active', 'action'])
             ->make(true);

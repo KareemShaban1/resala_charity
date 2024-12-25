@@ -27,7 +27,7 @@ class StoreDonorRequest extends FormRequest
             'street' => 'nullable|string|max:255',
             'governorate_id' => 'required|exists:governorates,id',
             'city_id' => 'required|exists:cities,id',
-            'area_id' => 'required|exists:areas,id',
+            'area_id' => 'nullable|exists:areas,id',
             'active' => 'required|boolean',
             'donor_type'=>'required|in:normal,monthly',
             'monthly_donation_day'=>'nullable',

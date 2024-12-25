@@ -37,16 +37,21 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
+            
                 <div class="card-body">
+                <div class="col-md-4 mb-4">
+            <input id="phone-search" type="text" class="form-control" placeholder="{{__('Search by Phone')}}">
+        </div>
                     <table id="donors-table" class="table dt-responsive nowrap w-100">
                         <thead>
                             <tr>
                                 <th>#</th>
                                 <th>{{__('Name')}}</th>
                                 <!-- <th>{{__('Address')}}</th> -->
-                                <th>{{__('Area')}}</th>
-                                <th>{{__('City')}}</th>
+                                <th>{{__('Donor Type')}}</th>
                                 <th>{{__('Governorate')}}</th>
+                                <th>{{__('City')}}</th>
+                                <th>{{__('Area')}}</th>
                                 <th>{{__('Phones')}}</th>
                                 <th>{{__('Status')}}</th>
                                 <th>{{__('Actions')}}</th>
@@ -103,7 +108,7 @@
 
                     <div class="mb-3">
                         <label for="area_id" class="form-label">{{__('Area')}}</label>
-                        <select class="form-control select2" id="area_id" name="area_id" required>
+                        <select class="form-control select2" id="area_id" name="area_id">
                             <option value="">{{__('Select Area')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
@@ -115,7 +120,7 @@
 
                     <div class="mb-3">
                         <label for="street" class="form-label">{{__('Street')}}</label>
-                        <input type="text" class="form-control" id="street" name="street" required>
+                        <input type="text" class="form-control" id="street" name="street" >
                         <div class="invalid-feedback"></div>
                     </div>
 
@@ -124,7 +129,7 @@
 
             <div class="mb-3">
                 <label for="address" class="form-label">{{__('Address')}}</label>
-                <input type="text" class="form-control" id="address" name="address" required>
+                <input type="text" class="form-control" id="address" name="address">
                 <div class="invalid-feedback"></div>
             </div>
 
@@ -226,7 +231,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="edit_area_id" class="form-label">{{__('Area')}}</label>
-                        <select class="form-control select2" id="edit_area_id" name="area_id" required>
+                        <select class="form-control select2" id="edit_area_id" name="area_id">
                             <option value="">{{__('Select Area')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
@@ -236,14 +241,14 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="edit_street" class="form-label">{{__('Street')}}</label>
-                        <input type="text" class="form-control" id="edit_street" name="street" required>
+                        <input type="text" class="form-control" id="edit_street" name="street">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
             </div>
             <div class="mb-3">
                 <label for="edit_address" class="form-label">{{__('Address')}}</label>
-                <input type="text" class="form-control" id="edit_address" name="address" required>
+                <input type="text" class="form-control" id="edit_address" name="address">
                 <div class="invalid-feedback"></div>
             </div>
             <div class="row">
@@ -532,7 +537,12 @@
         table = $('#donors-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('donors.data') }}",
+            ajax: {
+            url: "{{ route('donors.data') }}",
+            data: function(d) {
+                d.phone = $('#phone-search').val(); // Include the phone search term
+            }
+        },
             columns: [{
                     data: 'id',
                     name: 'id'
@@ -541,21 +551,28 @@
                     data: 'name',
                     name: 'name'
                 },
+                {
+                    data: 'donor_type',
+                    name: 'donor_type',
+                    render: function(data, type, row) {
+                        return data === 'monthly' ? 'شهرى' : 'عادى';
+                    }
+                },
                 // {
                 //     data: 'address',
                 //     name: 'address'
                 // },
                 {
-                    data: 'area',
-                    name: 'area.name'
+                    data: 'governorate',
+                    name: 'governorate.name'
                 },
                 {
                     data: 'city',
                     name: 'city.name'
                 },
                 {
-                    data: 'governorate',
-                    name: 'governorate.name'
+                    data: 'area',
+                    name: 'area.name'
                 },
                 {
                     data: 'phones',
@@ -563,12 +580,14 @@
                     orderable: false,
                     searchable: true,
                     render: function(data, type, row) {
-                        if (!data) return ''; // Handle empty or null values
+                        console.log(data);
+                        if (!data) return '<div>N/A</div>';
                         return data
-                            .split(', ') // Split the string by ", "
-                            .map(phone => `<div>${phone}</div>`) // Wrap each phone in a div
-                            .join(''); // Join them back into a single string
+                            .split(', ')
+                            .map(phone => `<div>${phone}</div>`)
+                            .join('');
                     }
+
                 },
                 {
                     data: 'active',
@@ -586,6 +605,9 @@
             order: [
                 [0, 'desc']
             ],
+            search: {
+                regex: true
+            },
             pageLength: 10,
             responsive: true,
             language: languages[language],
@@ -594,6 +616,11 @@
             }
         });
     }
+
+    // Trigger DataTable reload on input change
+    $('#phone-search').on('keyup change', function() {
+        table.draw();
+    });
 
     // Load Cities based on Governorate
     function loadCities(governorateId, targetSelect, selectedCityId = null) {
