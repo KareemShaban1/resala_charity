@@ -101,8 +101,8 @@ class MonthlyDonationController extends Controller
         // Validate the incoming request data
         $validatedData = $request->validate([
             'donor_id' => 'required|exists:donors,id',
-            'departments_id' => 'required|exists:departments,id',
-            'employees_id' => 'required|exists:employees,id',
+            'department_id' => 'required|exists:departments,id',
+            'employee_id' => 'required|exists:employees,id',
             'collecting_donation_way' => 'required|string',
             'donates' => 'required|array',
             'donates.*.financial_donation_type' => 'required|in:Financial',

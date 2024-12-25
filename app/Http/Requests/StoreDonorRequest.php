@@ -32,7 +32,7 @@ class StoreDonorRequest extends FormRequest
             'donor_type'=>'required|in:normal,monthly',
             'monthly_donation_day'=>'nullable',
             'phones' => 'required|array|min:1',
-            'phones.*.number' => 'required|string|regex:/^[0-9]{11}$/|distinct',
+            'phones.*.number' => 'required|string|regex:/^[0-9]{11}$/|distinct|unique:donor_phones,phone_number',
             'phones.*.type' => 'required|string|in:mobile,home,work,other'
         ];
     }
@@ -40,12 +40,21 @@ class StoreDonorRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'phones.required' => 'At least one phone number is required.',
-            'phones.*.number.required' => 'Phone number is required.',
-            'phones.*.number.regex' => 'Phone number must be 11 digits.',
-            'phones.*.number.distinct' => 'Phone numbers must be unique.',
-            'phones.*.type.required' => 'Phone type is required.',
-            'phones.*.type.in' => 'Phone type must be one of: mobile, home, work, other.'
+            'phones.required' => 'مطلوب إدخال رقم هاتف واحد على الأقل.',
+            'phones.*.number.required' => 'رقم الهاتف مطلوب.',
+            'phones.*.number.unique' => 'رقم الهاتف موجود بالفعل.',
+            'phones.*.number.regex' => 'يجب أن يتكون رقم الهاتف من 11 رقمًا.',
+            'phones.*.number.distinct' => 'يجب أن تكون أرقام الهواتف فريدة.',
+            'phones.*.type.required' => 'نوع الهاتف مطلوب.',
+            'phones.*.type.in' => 'يجب أن يكون نوع الهاتف واحدًا من الأنواع التالية: موبايل، منزل، عمل، آخر.'
         ];
+        // return [
+        //     'phones.required' => 'At least one phone number is required.',
+        //     'phones.*.number.required' => 'Phone number is required.',
+        //     'phones.*.number.regex' => 'Phone number must be 11 digits.',
+        //     'phones.*.number.distinct' => 'Phone numbers must be unique.',
+        //     'phones.*.type.required' => 'Phone type is required.',
+        //     'phones.*.type.in' => 'Phone type must be one of: mobile, home, work, other.'
+        // ];
     }
 }

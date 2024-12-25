@@ -702,13 +702,17 @@
             },
             error: function(xhr) {
                 if (xhr.status === 422) {
-                    var errors = xhr.responseJSON.errors;
-                    Object.keys(errors).forEach(function(key) {
-                        var input = form.find(`[name="${key}"]`);
-                        input.addClass('is-invalid');
-                        input.siblings('.invalid-feedback').text(errors[key][0]);
-                    });
-                }
+                var errors = xhr.responseJSON.errors;
+                var errorMessages = Object.values(errors).map(function(error) {
+                    return error[0];
+                }).join('<br>');
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Errors',
+                    html: errorMessages
+                });
+            }
             }
         });
     });
