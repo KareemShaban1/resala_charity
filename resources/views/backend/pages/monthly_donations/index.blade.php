@@ -32,6 +32,7 @@
                                 <th>{{__('Donor Name')}}</th>
                                 <th>{{__('Monthly Donation Day')}}</th>
                                 <!-- <th>{{__('Created At')}}</th> -->
+                                 <th>{{__('Donates')}}</th>
                                 <th>{{__('Actions')}}</th>
                             </tr>
                         </thead>
@@ -343,6 +344,12 @@
                     data: 'monthly_donation_day',
                     name: 'monthly_donation_day'
                 },
+                {
+            data: 'donates', // Add the 'donates' column
+            name: 'donates',
+            orderable: false,
+            searchable: false
+        },
                 {
                     data: 'action',
                     name: 'action',

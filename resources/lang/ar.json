@@ -75,6 +75,8 @@
     "Normal": "عادي",
     "Monthly": "شهري",
     "Monthly Donation Day": "يوم التبرع الشهري",
+    "Financial Donation": "تبرع مادي",
+    "inKind Donation": "تبرع عيني",
     "Financial Donations": "التبرعات المادية",
     "In-Kind Donations": "التبرعات العينية",
     "Donation Category": "التوجية / قسم التبرع",    
@@ -133,5 +135,6 @@
     "Yes, delete it!":"نعم, قم بالحذف!",
     "Enter phone number": "أدخل رقم الهاتف",
     "Remove": "حذف",
-    "Search by Phone": "بحث برقم الهاتف"
+    "Search by Phone": "بحث برقم الهاتف",
+    "Donates": "التبرعات"
 }

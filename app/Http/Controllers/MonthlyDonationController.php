@@ -40,7 +40,7 @@ class MonthlyDonationController extends Controller
 
     public function data()
     {
-        $query = MonthlyDonation::query();
+        $query = MonthlyDonation::with('donor','donates');
 
         return DataTables::of($query)
             ->addColumn('action', function ($item) {
@@ -63,10 +63,26 @@ class MonthlyDonationController extends Controller
             ->addColumn('name', function ($item) {
                 return $item->donor?->name ?? 'N/A';
             })
+            ->addColumn('donates', function ($item) {
+                return $item->donates->map(function ($donate) {
+                    // Check donation type and format accordingly
+                    if ($donate->donation_type === 'Financial') {
+                        // Show donation_type, category name, and amount with bold donation type
+                        return '<strong class="donation-type financial">' . __('Financial Donation') . ':' . '</strong> ' . 
+                               ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount;
+                    } elseif ($donate->donation_type === 'inKind') {
+                        // Show donation_type, item_name, and amount with bold donation type
+                        return '<strong class="donation-type in-kind">' . __('inKind Donation') . ':' . '</strong> ' . 
+                               ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount;
+                    }
+                    return ''; // Return empty string if no matching donation type
+                })->implode('<br>'); // Display each donation on a new line
+            })
+            
             ->editColumn('created_at', function ($item) {
                 return $item->created_at->format('Y-m-d H:i:s');
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['action','donates'])
             ->make(true);
     }
 
