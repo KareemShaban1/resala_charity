@@ -57,6 +57,9 @@ class MonthlyDonationController extends Controller
                     </div>
                 ';
             })
+            ->addColumn('monthly_donation_day', function ($item) {
+                return $item->donor->monthly_donation_day;
+            })
             ->addColumn('name', function ($item) {
                 return $item->donor->name;
             })

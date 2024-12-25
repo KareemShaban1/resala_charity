@@ -14,7 +14,7 @@ class MonthlyDonation extends Model
         'employee_id',
         'department_id',
         'created_by',
-        'date',
+        // 'date',
         'notes',
         'collecting_donation_way',
         // 'collected_by'

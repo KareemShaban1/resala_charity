@@ -36,12 +36,12 @@ class DonorController extends Controller
         }
 
         return datatables()->of($query)
-        ->addColumn('phones', function ($donor) {
-            return $donor->phones->isNotEmpty() ?
-                $donor->phones->map(function ($phone) {
-                    return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
-                })->implode(', ') : 'N/A';
-        })
+            ->addColumn('phones', function ($donor) {
+                return $donor->phones->isNotEmpty() ?
+                    $donor->phones->map(function ($phone) {
+                        return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
+                    })->implode(', ') : 'N/A';
+            })
             ->addColumn('action', function ($donor) {
                 return '
                     <a href="javascript:void(0)" onclick="editDonor(' . $donor->id . ')" class="btn btn-sm btn-info">
@@ -273,6 +273,7 @@ class DonorController extends Controller
                 // Normalize phone numbers in the database as well for accurate matching
                 $q->whereRaw('REPLACE(REPLACE(REPLACE(phone_number, "-", ""), "(", ""), ")", "") LIKE ?', ['%' . $normalizedQuery . '%']);
             })
+            ->where('donor_type', "monthly")
             ->get();
 
         // Loop through donors and filter for phone number match

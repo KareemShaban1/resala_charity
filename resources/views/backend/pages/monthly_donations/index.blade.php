@@ -30,7 +30,8 @@
                             <tr>
                                 <th>{{__('ID')}}</th>
                                 <th>{{__('Donor Name')}}</th>
-                                <th>{{__('Created At')}}</th>
+                                <th>{{__('Monthly Donation Day')}}</th>
+                                <!-- <th>{{__('Created At')}}</th> -->
                                 <th>{{__('Actions')}}</th>
                             </tr>
                         </thead>
@@ -339,8 +340,8 @@
                     name: 'name'
                 },
                 {
-                    data: 'created_at',
-                    name: 'created_at'
+                    data: 'monthly_donation_day',
+                    name: 'monthly_donation_day'
                 },
                 {
                     data: 'action',
