@@ -437,7 +437,8 @@
 
         $('#donor_id').select2({
             dropdownParent: $('#addMonthlyDonationModal'),
-            placeholder: '{{__('Select Donor ')}}',
+            placeholder: '{{__('
+            Select Donor ')}}',
             allowClear: true,
             width: '100%'
         });
@@ -471,10 +472,14 @@
                 error: function(xhr) {
                     if (xhr.status === 422) {
                         var errors = xhr.responseJSON.errors;
-                        Object.keys(errors).forEach(function(key) {
-                            var input = form.find(`[name="${key}"]`);
-                            input.addClass('is-invalid');
-                            input.siblings('.invalid-feedback').text(errors[key][0]);
+                        var errorMessages = Object.values(errors).map(function(error) {
+                            return error[0];
+                        }).join('<br>');
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validation Errors',
+                            html: errorMessages
                         });
                     } else {
                         Swal.fire({

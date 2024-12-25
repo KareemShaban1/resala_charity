@@ -49,7 +49,7 @@
                                 <th>{{__('Name')}}</th>
                                 <!-- <th>{{__('Address')}}</th> -->
                                 <th>{{__('Donor Type')}}</th>
-                                <th>{{__('Governorate')}}</th>
+                                <!-- <th>{{__('Governorate')}}</th> -->
                                 <th>{{__('City')}}</th>
                                 <th>{{__('Area')}}</th>
                                 <th>{{__('Phones')}}</th>
@@ -562,10 +562,10 @@
                 //     data: 'address',
                 //     name: 'address'
                 // },
-                {
-                    data: 'governorate',
-                    name: 'governorate.name'
-                },
+                // {
+                //     data: 'governorate',
+                //     name: 'governorate.name'
+                // },
                 {
                     data: 'city',
                     name: 'city.name'

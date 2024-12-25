@@ -120,8 +120,8 @@ class MonthlyDonationController extends Controller
             $monthlyDonation = MonthlyDonation::create([
                 'donor_id' => $validatedData['donor_id'],
                 'collecting_donation_way' => $validatedData['collecting_donation_way'],
-                'department_id' => $validatedData['departments_id'],
-                'employee_id' => $validatedData['employees_id'],
+                'department_id' => $validatedData['department_id'],
+                'employee_id' => $validatedData['employee_id'],
             ]);
     
             $donatesAdded = false; // Flag to check if any donates were added
