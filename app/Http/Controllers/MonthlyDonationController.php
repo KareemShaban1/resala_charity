@@ -46,6 +46,7 @@ class MonthlyDonationController extends Controller
     ->selectRaw('
         monthly_donations.id,
         monthly_donations.donor_id,
+        monthly_donations.collecting_donation_way,
         monthly_donations.created_at,
         donors.name as donor_name,
         areas.name as area_name,
@@ -62,7 +63,8 @@ class MonthlyDonationController extends Controller
         'areas.name',
         'donors.address',
         'monthly_donations.id',
-        'monthly_donations.created_at'
+        'monthly_donations.created_at',
+        'monthly_donations.collecting_donation_way',
     );
 
 
