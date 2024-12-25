@@ -78,9 +78,6 @@ class MonthlyDonationController extends Controller
         ->filterColumn('address', function ($query, $keyword) {
             $query->where('donors.address', 'LIKE', "%{$keyword}%");
         })
-        ->filterColumn('collecting_donation_way', function ($query, $keyword) {
-            $query->where('monthly_donations.collecting_donation_way', 'LIKE', "%{$keyword}%");
-        })
         ->filterColumn('phones', function ($query, $keyword) {
             $query->where('donor_phones.phone_number', 'LIKE', "%{$keyword}%");
         })
