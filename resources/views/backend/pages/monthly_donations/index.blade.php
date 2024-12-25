@@ -437,8 +437,7 @@
 
         $('#donor_id').select2({
             dropdownParent: $('#addMonthlyDonationModal'),
-            placeholder: '{{__('
-            Select Donor ')}}',
+            placeholder: '{{__('Select Donor ')}}',
             allowClear: true,
             width: '100%'
         });
@@ -471,16 +470,28 @@
                 },
                 error: function(xhr) {
                     if (xhr.status === 422) {
-                        var errors = xhr.responseJSON.errors;
-                        var errorMessages = Object.values(errors).map(function(error) {
-                            return error[0];
-                        }).join('<br>');
+                         // Validation error
+                    let response = xhr.responseJSON;
+                    let errors = response.errors || [];
+                    let errorDetails = '';
 
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Validation Errors',
-                            html: errorMessages
-                        });
+                    if (Array.isArray(errors)) {
+                        // Handle row-specific errors
+                        errorDetails = errors.map(error =>
+                            `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
+                    } else {
+                        // Handle general file validation error
+                        errorDetails = errors.file ? errors.file[0] : 'Invalid file format.';
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        html: `<pre style="direction: ltr;">${errorDetails}</pre>`,
+                        customClass: {
+                            popup: 'text-start',
+                        }
+                    });
                     } else {
                         Swal.fire({
                             icon: 'error',
