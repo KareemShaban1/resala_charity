@@ -124,7 +124,7 @@ class DonorsImport implements ToCollection, WithHeadingRow, WithValidation, Skip
                 'nullable',
                 'string',
                 'regex:/^((\d{11}:mobile)|(\d{1,15}:(home|work)))(,((\d{11}:mobile)|(\d{1,15}:(home|work))))*$/',
-                // 'unique:donor_phones,phone_number'
+                'unique:donor_phones,phone_number'
             ],
             'active' => 'nullable|boolean',
         ];
