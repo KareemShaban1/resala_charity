@@ -63,6 +63,34 @@ class MonthlyDonationController extends Controller
             ->addColumn('name', function ($item) {
                 return $item->donor?->name ?? 'N/A';
             })
+            ->addColumn('area', function ($item) {
+                return $item->donor?->area?->name ?? 'N/A';
+            })
+            ->addColumn('address', function ($item) {
+                return $item->donor?->address ?? 'N/A';
+            })
+            ->addColumn('phones', function ($item) {
+                return $item->donor?->phones->isNotEmpty() ?
+                    $item->donor->phones->map(function ($phone) {
+                        return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
+                    })->implode(', ') : 'N/A';
+            })
+            ->addColumn('collecting_donation_way', function ($item) {
+                switch ($item->collecting_donation_way) {
+                    case $item->collecting_donation_way === 'location':
+                        return __('Location');
+                        break;
+                    case $item->collecting_donation_way === 'online':
+                        return __('Online');
+                        break;
+                    case $item->collecting_donation_way === 'representative':
+                        return __('Representative');
+                        break;
+                    default:
+                        return 'N/A';
+                        break;
+                }
+            })
             ->addColumn('donates', function ($item) {
                 return $item->donates->map(function ($donate) {
                     // Check donation type and format accordingly

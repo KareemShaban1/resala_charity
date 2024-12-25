@@ -30,6 +30,10 @@
                             <tr>
                                 <th>{{__('ID')}}</th>
                                 <th>{{__('Donor Name')}}</th>
+                                <th>{{__('Area')}}</th>
+                                <th>{{__('Address')}}</th>
+                                <th>{{__('Phones')}}</th>
+                                <th>{{__('Collecting Donation Way')}}</th>
                                 <th>{{__('Monthly Donation Day')}}</th>
                                 <!-- <th>{{__('Created At')}}</th> -->
                                  <th>{{__('Donates')}}</th>
@@ -341,9 +345,37 @@
                     name: 'name'
                 },
                 {
+                    data: 'area',
+                    name: 'area'
+                },
+                {
+                    data: 'address',
+                    name: 'address'
+                },
+                {
+                    data: 'phones',
+                    name: 'phones',
+                    orderable: false,
+                    searchable: true,
+                    render: function(data, type, row) {
+                        console.log(data);
+                        if (!data) return '<div>N/A</div>';
+                        return data
+                            .split(', ')
+                            .map(phone => `<div>${phone}</div>`)
+                            .join('');
+                    }
+
+                },
+                {
+                    data: 'collecting_donation_way',
+                    name: 'collecting_donation_way'
+                },
+                {
                     data: 'monthly_donation_day',
                     name: 'monthly_donation_day'
                 },
+
                 {
             data: 'donates', // Add the 'donates' column
             name: 'donates',
