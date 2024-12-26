@@ -32,8 +32,9 @@ class StoreDonorRequest extends FormRequest
             'donor_type'=>'required|in:normal,monthly',
             'monthly_donation_day'=>'nullable',
             'phones' => 'required|array|min:1',
-            'phones.*.number' => 'required|string|regex:/^((\d{11}:mobile)|(\d{1,15}:(home|work)))(,((\d{11}:mobile)|(\d{1,15}:(home|work))))*$/|distinct|unique:donor_phones,phone_number',
-            'phones.*.type' => 'required|string|in:mobile,home,work,other'
+           'phones.*.number' => 'required|string|regex:/^\d{11}$/|distinct|unique:donor_phones,phone_number',
+'phones.*.type' => 'required|string|in:mobile,home,work,other',
+
         ];
     }
 
