@@ -139,5 +139,16 @@
     "Donates": "التبرعات",
     "Ongoing":"جارية",
     "Cancelled":"ملغاة",
-    "Search By ID or Phone": "بحث بالرقم التعريفي أو رقم الهاتف"
+    "Search By ID or Phone": "بحث بالرقم التعريفي أو رقم الهاتف",
+    "Cancelled Monthly Donations": "التبرعات الشهرية الملغية",
+    "Assign Donors": " المتبرعين المرتبطين",
+    "Children Donors": "المتبرعين الفرعيين",
+    "Child Donor": "متبرع فرعي",
+    "Select Child Donor": "حدد المتبرع الفرعي",
+    "Parent Donor": "متبرع رئيسي",
+    "Select Parent Donor": "حدد المتبرع الرئيسي",
+    "Assign Donor": "تعيين المتبرع",
+    "Select Donor": "حدد المتبرع",
+    "Select Donors": "حدد المتبرعين",
+    "Assign": "تعيين"
 }

@@ -118,6 +118,11 @@
                                   <span> {{__('Monthly Donations')}} </span>
                               </a>
                           </li>
+                          <li>
+                              <a href="{{route('monthly-donations.cancelled')}}">
+                                  <span> {{__('Cancelled Monthly Donations')}} </span>
+                              </a>
+                          </li>
                       </ul>
                   </div>
               </li>

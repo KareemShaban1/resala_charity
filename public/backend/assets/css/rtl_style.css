@@ -19487,6 +19487,7 @@ body.auth-fluid-pages[data-leftbar-compact-mode=condensed] {
 
 .select2-container--open .select2-dropdown {
     right: 1165px;
+    direction: rtl;
 }
 
 .select2-container--open .select2-dropdown--above {

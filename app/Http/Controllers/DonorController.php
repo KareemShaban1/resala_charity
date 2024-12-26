@@ -49,7 +49,12 @@ class DonorController extends Controller
                     </a>
                     <a href="javascript:void(0)" onclick="deleteDonor(' . $donor->id . ')" class="btn btn-sm btn-danger">
                         <i class="mdi mdi-trash-can"></i>
-                    </a>';
+                    </a>'
+                    .
+                    '<a href="javascript:void(0)" onclick="assignDonor(' . $donor->id . ')" class="btn btn-sm btn-success">
+                        <i class="mdi mdi-account-plus"></i>
+                    </a>'
+                    ;
             })
             ->editColumn('active', function ($donor) {
                 return $donor->active ?
@@ -300,4 +305,44 @@ class DonorController extends Controller
             })
         ], 200);
     }
+
+    public function assignDonors(Request $request)
+    {
+        $request->validate([
+            'parent_donor_id' => 'required|exists:donors,id',
+            'donor_id' => 'required|exists:donors,id',
+        ]);
+        $parentDonor = Donor::where('id', $request->parent_donor_id)->first();
+        $chirdernDonor = Donor::where('id', $request->donor_id)->first();
+
+        if ($parentDonor) {
+            $chirdernDonor->parent_id = $parentDonor->id;
+            $chirdernDonor->save();
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Donors assigned successfully.',
+        ]);
+    }
+
+    public function donorChildren(Request $request){
+        $parentDonor = Donor::where('id', $request->parent_donor_id)->first();
+        $childrenDonors = Donor::where('parent_id', $parentDonor->id)->get();
+        return response()->json($childrenDonors);
+    }
+
+    public function notAssignedDonors(Request $request)
+    {
+        // Get all donors where:
+        // 1. Donor is not the parent donor we are working with
+        // 2. Donor is top-level (parent_id is null)
+        // 3. Donor is not a parent of other donors (exclude donors who appear as parent_id)
+        $childrenDonors = Donor::where('id', '<>', $request->parent_donor_id)
+            ->whereNull('parent_id')  // Ensure it's a top-level donor
+            ->whereNotIn('id', Donor::whereNotNull('parent_id')->pluck('parent_id'))  // Exclude those who are parents for other donors
+            ->get();
+    
+        return response()->json($childrenDonors);
+    }
+    
 }

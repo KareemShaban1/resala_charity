@@ -68,6 +68,9 @@ Route::group(
         Route::get('/donors/data', [DonorController::class, 'data'])->name('donors.data');
         Route::post('/donors/import', [DonorController::class, 'importDonors'])->name('donors.import');
         Route::resource('donors', DonorController::class); // Resource route last
+        Route::post('/donors-assign', [DonorController::class, 'assignDonors'])->name('donors.assign');
+        Route::post('/donors-children', [DonorController::class, 'donorChildren'])->name('donors.children');
+        Route::post('/donors-not-assigned', [DonorController::class, 'notAssignedDonors'])->name('donors.not-assigned');
 
         // Donation Categories Routes
         Route::get('/donation-categories/data', [DonationCategoryController::class, 'data'])->name('donation-categories.data');
@@ -76,9 +79,7 @@ Route::group(
         // Donation Requests Routes
         Route::get('/monthly-donations/data', [MonthlyDonationController::class, 'data'])->name('monthly-donations.data');
         Route::resource('monthly-donations', MonthlyDonationController::class);
-
-        // Monthly Donation Cancellations Routes
-        Route::get('/monthly-donations-cancellations/data', [MonthlyDonationCancellationController::class, 'data'])->name('monthly-donation-cancellations.data');
-        Route::resource('monthly-donations-cancellations', MonthlyDonationCancellationController::class);
+        Route::get('/monthly-donations-cancelled', [MonthlyDonationController::class, 'cancelledMonthlyDonations'])->name('monthly-donations.cancelled');
+      
     }
 );

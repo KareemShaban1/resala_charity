@@ -15,18 +15,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MonthlyDonationController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->model = MonthlyDonation::class;
-    //     $this->viewPath = 'backend.pages.monthly_donations';
-    //     $this->routePrefix = 'monthly_donations';
-    //     $this->validationRules = [
-    //         'donor_id' => 'required|exists:donors,id',
-    //         // 'date' => 'required|string',
-    //         'notes' => 'nullable|string',
-    //         'collecting_donation_way' => 'required|string',
-    //     ];
-    // }
+
 
     public function index()
     {
@@ -40,10 +29,24 @@ class MonthlyDonationController extends Controller
         );
     }
 
+    public function cancelledMonthlyDonations()
+    {
+        $donors = Donor::all();
+        $donationCategories = DonationCategory::all();
+        $departments = Department::all();
+        $employees = Employee::all();
+        return view(
+            'backend.pages.monthly_donations.cancelled',
+            compact('donors', 'donationCategories', 'departments', 'employees')
+        );
+    }
+
+
+
     public function data()
-{
-    $query = MonthlyDonation::query()
-    ->selectRaw('
+    {
+        $query = MonthlyDonation::query()
+            ->selectRaw('
         monthly_donations.id,
         monthly_donations.donor_id,
         monthly_donations.collecting_donation_way,
@@ -53,36 +56,45 @@ class MonthlyDonationController extends Controller
         donors.address,
         GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers
     ')
-    ->leftJoin('donors', 'monthly_donations.donor_id', '=', 'donors.id')
-    ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
-    ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
-    ->with('donor', 'donates')
-    ->groupBy(
-        'monthly_donations.donor_id',
-        'donors.name',
-        'areas.name',
-        'donors.address',
-        'monthly_donations.id',
-        'monthly_donations.created_at',
-        'monthly_donations.collecting_donation_way',
-    );
+            ->leftJoin('donors', 'monthly_donations.donor_id', '=', 'donors.id')
+            ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
+            ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
+            ->with('donor', 'donates')
+            ->groupBy(
+                'monthly_donations.donor_id',
+                'donors.name',
+                'areas.name',
+                'donors.address',
+                'monthly_donations.id',
+                'monthly_donations.created_at',
+                'monthly_donations.collecting_donation_way',
+            );
+
+        if (request()->has('status')) {
+            $status = request('status');
+            if ($status === 'ongoing') {
+                $query->where('monthly_donations.status', 'ongoing');
+            } elseif ($status === 'cancelled') {
+                $query->where('monthly_donations.status', 'cancelled');
+            }
+        }
 
 
-    return DataTables::of($query)
-        ->filterColumn('name', function ($query, $keyword) {
-            $query->where('donors.name', 'LIKE', "%{$keyword}%");
-        })
-        ->filterColumn('area', function ($query, $keyword) {
-            $query->where('areas.name', 'LIKE', "%{$keyword}%");
-        })
-        ->filterColumn('address', function ($query, $keyword) {
-            $query->where('donors.address', 'LIKE', "%{$keyword}%");
-        })
-        ->filterColumn('phones', function ($query, $keyword) {
-            $query->where('donor_phones.phone_number', 'LIKE', "%{$keyword}%");
-        })
-        ->addColumn('action', function ($item) {
-            return '
+        return DataTables::of($query)
+            ->filterColumn('name', function ($query, $keyword) {
+                $query->where('donors.name', 'LIKE', "%{$keyword}%");
+            })
+            ->filterColumn('area', function ($query, $keyword) {
+                $query->where('areas.name', 'LIKE', "%{$keyword}%");
+            })
+            ->filterColumn('address', function ($query, $keyword) {
+                $query->where('donors.address', 'LIKE', "%{$keyword}%");
+            })
+            ->filterColumn('phones', function ($query, $keyword) {
+                $query->where('donor_phones.phone_number', 'LIKE', "%{$keyword}%");
+            })
+            ->addColumn('action', function ($item) {
+                return '
                 <div class="d-flex gap-2">
                     <a href="javascript:void(0);" onclick="editMonthlyDonation(' . $item->id . ')"
                     class="btn btn-sm btn-info">
@@ -94,52 +106,52 @@ class MonthlyDonationController extends Controller
                     </a>
                 </div>
             ';
-        })
-        ->addColumn('name', function ($item) {
-            return $item->donor->name;
-        })
-        ->addColumn('area', function ($item) {
-            return $item->donor->area->name;
-        })
-        ->addColumn('address', function ($item) {
-            return $item->donor->address;
-        })
-        ->addColumn('monthly_donation_day', function ($item) {
-            return $item->donor?->monthly_donation_day ?? 0;
-        })
-        ->addColumn('phones', function ($item) {
-            return $item->donor?->phones->isNotEmpty() ?
-                $item->donor->phones->map(function ($phone) {
-                    return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
-                })->implode(', ') : 'N/A';
-        })
-        ->addColumn('collecting_donation_way', function ($item) {
-            switch ($item->collecting_donation_way) {
-                case 'location':
-                    return __('Location');
-                case 'online':
-                    return __('Online');
-                case 'representative':
-                    return __('Representative');
-                default:
-                    return 'N/A';
-            }
-        })
-        ->addColumn('donates', function ($item) {
-            return $item->donates->map(function ($donate) {
-                if ($donate->donation_type === 'Financial') {
-                    return '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
-                        ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount;
-                } elseif ($donate->donation_type === 'inKind') {
-                    return '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
-                        ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount;
+            })
+            ->addColumn('name', function ($item) {
+                return $item->donor->name;
+            })
+            ->addColumn('area', function ($item) {
+                return $item->donor->area->name;
+            })
+            ->addColumn('address', function ($item) {
+                return $item->donor->address;
+            })
+            ->addColumn('monthly_donation_day', function ($item) {
+                return $item->donor?->monthly_donation_day ?? 0;
+            })
+            ->addColumn('phones', function ($item) {
+                return $item->donor?->phones->isNotEmpty() ?
+                    $item->donor->phones->map(function ($phone) {
+                        return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
+                    })->implode(', ') : 'N/A';
+            })
+            ->addColumn('collecting_donation_way', function ($item) {
+                switch ($item->collecting_donation_way) {
+                    case 'location':
+                        return __('Location');
+                    case 'online':
+                        return __('Online');
+                    case 'representative':
+                        return __('Representative');
+                    default:
+                        return 'N/A';
                 }
-                return '';
-            })->implode('<br>');
-        })
-        ->rawColumns(['action','donates'])
-        ->make(true);
-}
+            })
+            ->addColumn('donates', function ($item) {
+                return $item->donates->map(function ($donate) {
+                    if ($donate->donation_type === 'Financial') {
+                        return '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
+                            ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount;
+                    } elseif ($donate->donation_type === 'inKind') {
+                        return '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
+                            ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount;
+                    }
+                    return '';
+                })->implode('<br>');
+            })
+            ->rawColumns(['action', 'donates'])
+            ->make(true);
+    }
 
 
     protected function getUpdateValidationRules($id)
@@ -169,8 +181,8 @@ class MonthlyDonationController extends Controller
             'employee_id' => 'required|exists:employees,id',
             'collecting_donation_way' => 'required|string|in:location,online,representative',
             'status' => 'required|in:ongoing,cancelled',
-            'cancellation_reason'=>'nullable|string',
-            'cancellation_date'=>'nullable',
+            'cancellation_reason' => 'nullable|string',
+            'cancellation_date' => 'nullable',
             'donates' => 'required|array',
             'donates.*.financial_donation_type' => 'required|in:Financial',
             'donates.*.inKind_donation_type' => 'required|in:inKind',
@@ -190,8 +202,8 @@ class MonthlyDonationController extends Controller
                 'status' => $validatedData['status'],
                 'department_id' => $validatedData['department_id'],
                 'employee_id' => $validatedData['employee_id'],
-                'cancellation_reason'=>$validatedData['cancellation_reason'],
-                'cancellation_date'=>$validatedData['cancellation_date'],
+                'cancellation_reason' => $validatedData['cancellation_reason'],
+                'cancellation_date' => $validatedData['cancellation_date'],
             ]);
 
             $donatesAdded = false; // Flag to check if any donates were added
@@ -270,8 +282,8 @@ class MonthlyDonationController extends Controller
             'employee_id' => 'required|exists:employees,id',
             'collecting_donation_way' => 'required|string|in:location,online,representative',
             'status' => 'required|in:ongoing,cancelled',
-            'cancellation_reason'=>'nullable|string',
-            'cancellation_date'=>'nullable',
+            'cancellation_reason' => 'nullable|string',
+            'cancellation_date' => 'nullable',
             'donates' => 'required|array',
             'donates.*.id' => 'nullable|exists:donates,id',
             'donates.*.financial_monthuly_donation_id' => 'nullable|exists:monthly_donations_donates,id',
@@ -294,8 +306,8 @@ class MonthlyDonationController extends Controller
                 'status' => $validatedData['status'],
                 'department_id' => $validatedData['department_id'],
                 'employee_id' => $validatedData['employee_id'],
-                'cancellation_reason'=> $validatedData['cancellation_reason'],
-                'cancellation_date'=> $validatedData['cancellation_date'],
+                'cancellation_reason' => $validatedData['cancellation_reason'],
+                'cancellation_date' => $validatedData['cancellation_date'],
             ]);
 
             $donatesUpdated = false; // Flag to check if any donations were processed

@@ -1,8 +1,6 @@
 @extends('backend.layouts.master')
 
-@section('styles')
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-@endsection
+
 
 @section('content')
 <div class="container-fluid">
@@ -65,258 +63,15 @@
 </div>
 
 <!-- Add Donor Modal -->
-<x-modal id="addDonorModal" title="{{__('Add Donor')}}" size="lg">
-    <form id="addDonorForm" method="POST" action="{{ route('donors.store') }}">
-        @csrf
-        <div class="modal-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">{{__('Name')}}</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="governorate_id" class="form-label">{{__('Governorate')}}</label>
-                        <select class="form-control select2" id="governorate_id" name="governorate_id" required>
-                            <option value="">{{__('Select Governorate')}}</option>
-                            @foreach(\App\Models\Governorate::all() as $governorate)
-                            <option value="{{ $governorate->id }}">{{ $governorate->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="city_id" class="form-label">{{__('City')}}</label>
-                        <select class="form-control select2" id="city_id" name="city_id" required>
-                            <option value="">{{__('Select City')}}</option>
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-
-                    <div class="mb-3">
-                        <label for="area_id" class="form-label">{{__('Area')}}</label>
-                        <select class="form-control select2" id="area_id" name="area_id">
-                            <option value="">{{__('Select Area')}}</option>
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-
-                </div>
-
-                <div class="col-md-6">
-
-                    <div class="mb-3">
-                        <label for="street" class="form-label">{{__('Street')}}</label>
-                        <input type="text" class="form-control" id="street" name="street" >
-                        <div class="invalid-feedback"></div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label for="address" class="form-label">{{__('Address')}}</label>
-                <input type="text" class="form-control" id="address" name="address">
-                <div class="invalid-feedback"></div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="mb-3">
-                        <label class="form-label">{{__('Phone Numbers')}}</label>
-                        <div id="phone-container">
-                            <div class="input-group mb-2">
-                                <input type="text" name="phones[0][number]" class="form-control" placeholder="{{__('Enter phone number')}}">
-                                <select name="phones[0][type]" class="form-select" style="max-width: 150px;">
-                                    <option value="mobile">{{__('Mobile')}}</option>
-                                    <option value="home">{{__('Home')}}</option>
-                                    <option value="work">{{__('Work')}}</option>
-                                    <option value="other">{{__('Other')}}</option>
-                                </select>
-                                <button type="button" class="btn btn-success add-phone"><i class="mdi mdi-plus"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="mb-3">
-                        <label for="donor_type" class="form-label">{{__('Donor Type')}}</label>
-                        <select class="form-select" id="donor_type" name="donor_type">
-                            <option value="normal">{{__('Normal')}}</option>
-                            <option value="monthly">{{__('Monthly')}}</option>
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="mb-3">
-                        <label for="active" class="form-label">{{__('Status')}}</label>
-                        <select class="form-select" id="active" name="active">
-                            <option value="1">{{__('Active')}}</option>
-                            <option value="0">{{__('Inactive')}}</option>
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="mb-3">
-                        <label for="monthly_donation_day" class="form-label">{{__('Monthly Donation Day')}}</label>
-                        <input type="number" class="form-control" name="monthly_donation_day">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{__('Close')}}</button>
-            <button type="submit" class="btn btn-primary">{{__('Save')}}</button>
-        </div>
-    </form>
-</x-modal>
+@include('backend.pages.donors.add_modal')
 
 <!-- Edit Donor Modal -->
-<x-modal id="editDonorModal" title="{{__('Edit Donor')}}" size="lg">
-    <form id="editDonorForm" method="POST">
-        @csrf
-        @method('PUT')
-        <div class="modal-body">
-            <div class="mb-3">
-                <label for="edit_name" class="form-label">{{__('Name')}}</label>
-                <input type="text" class="form-control" id="edit_name" name="name" required>
-                <div class="invalid-feedback"></div>
-            </div>
+@include('backend.pages.donors.edit_modal')
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="edit_governorate_id" class="form-label">{{__('Governorate')}}</label>
-                        <select class="form-control select2" id="edit_governorate_id" name="governorate_id" required>
-                            <option value="">{{__('Select Governorate')}}</option>
-                            @foreach(\App\Models\Governorate::all() as $governorate)
-                            <option value="{{ $governorate->id }}">{{ $governorate->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
+<!-- Import Donor Modal -->
+@include('backend.pages.donors.import_modal')
 
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="edit_city_id" class="form-label">{{__('City')}}</label>
-                        <select class="form-control select2" id="edit_city_id" name="city_id" required>
-                            <option value="">{{__('Select City')}}</option>
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="edit_area_id" class="form-label">{{__('Area')}}</label>
-                        <select class="form-control select2" id="edit_area_id" name="area_id">
-                            <option value="">{{__('Select Area')}}</option>
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="edit_street" class="form-label">{{__('Street')}}</label>
-                        <input type="text" class="form-control" id="edit_street" name="street">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="mb-3">
-                <label for="edit_address" class="form-label">{{__('Address')}}</label>
-                <input type="text" class="form-control" id="edit_address" name="address">
-                <div class="invalid-feedback"></div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="mb-3">
-                        <label for="edit_donor_type" class="form-label">{{__('Donor Type')}}</label>
-                        <select class="form-select" id="edit_donor_type" name="donor_type">
-                            <option value="normal">{{__('Normal')}}</option>
-                            <option value="monthly">{{__('Monthly')}}</option>
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="mb-3">
-                        <label for="edit_active" class="form-label">{{__('Status')}}</label>
-                        <select class="form-select" id="edit_active" name="active">
-                            <option value="1">{{__('Active')}}</option>
-                            <option value="0">{{__('Inactive')}}</option>
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="mb-3">
-                        <label for="edit_monthly_donation_day" class="form-label">{{__('Monthly Donation Day')}}</label>
-                        <input type="number" class="form-control" id="edit_monthly_donation_day" name="monthly_donation_day">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="mb-3">
-                        <label class="form-label">{{__('Phone Numbers')}}</label>
-                        <div id="edit-phone-container">
-                            <!-- Phone inputs will be added here -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{__('Close')}}</button>
-            <button type="submit" class="btn btn-primary">{{__('Update')}}</button>
-        </div>
-    </form>
-</x-modal>
-
-<x-modal id="importDonorModal" title="{{__('Import Donors')}}">
-    <form id="importDonorForm" enctype="multipart/form-data">
-        @csrf
-        <div class="modal-body">
-            <div class="mb-3">
-                <label for="donorFile" class="form-label">{{__('Upload Excel File')}}</label>
-                <input type="file" class="form-control" id="donorFile" name="file" accept=".xlsx,.csv" required>
-                <div id="fileError" class="text-danger mt-2" style="display: none;"></div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('Close')}}</button>
-            <button type="submit" class="btn btn-success">{{__('Import')}}</button>
-        </div>
-    </form>
-    <div id="feedbackMessage" class="alert mt-3" style="display: none;"></div>
-</x-modal>
+@include('backend.pages.donors.assign_donors_modal')
 
 
 @endsection
@@ -356,6 +111,13 @@
         $('#area_id').select2({
             dropdownParent: $('#addDonorModal'),
             placeholder: '{{__('Select Area')}}',
+            allowClear: true,
+            width: '100%'
+        });
+
+        $('#assign_donor_id').select2({
+            dropdownParent: $('#assignDonorModal'),
+            placeholder: '{{__('Select Donor')}}',
             allowClear: true,
             width: '100%'
         });
@@ -886,5 +648,94 @@
             }
         });
     }
+
+
+    function assignDonor(donorId) {
+    $('#assignDonorModal').modal('show');
+    $('#parent_donor_id').val(donorId);
+    
+    const payload = {
+        parent_donor_id: donorId,
+        _token: $('meta[name="csrf-token"]').attr('content') // Include CSRF token
+    };
+
+    // Perform the AJAX request to fetch non-assigned children
+    $.ajax({
+        url: '/donors-not-assigned',  // New endpoint for non-assigned children
+        method: 'POST',
+        data: payload,
+        success: function(data) {
+            // Populate the donor select dropdown with non-assigned children
+            const donorSelect = $('#assign_donor_id');
+            donorSelect.html('<option value="">{{__('Select Donor')}}</option>'); // Reset the select options
+            data.forEach(donor => {
+                donorSelect.append(`<option value="${donor.id}">${donor.name}</option>`);
+            });
+        },
+        error: function(xhr) {
+            console.error("Error fetching non-assigned children donors:", xhr.responseText);
+        }
+    });
+
+    $.ajax({
+        url: '/donors-children',
+        method: 'POST',
+        data: payload,
+        success: function(data) {
+            // Populate the table
+            const tableBody = $('#childrenDonorTableBody');
+            tableBody.empty(); // Clear previous data
+            data.forEach(donor => {
+                tableBody.append(`
+                    <tr>
+                        <td>${donor.id}</td>
+                        <td>${donor.name}</td>
+                        <td>${donor.address}</td>
+                    </tr>
+                `);
+            });
+        },
+        error: function(xhr) {
+            console.error("Error fetching children donors:", xhr.responseText);
+        }
+    });
+}
+
+
+    $('#assignDonorForm').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var url = form.attr('action');
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: form.serialize(),
+            success: function(response) {
+                if (response.success) {
+                    $('#assignDonorModal').modal('hide');
+                    form[0].reset();
+                    $('.select2').val('').trigger('change');
+                    table.ajax.reload();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message
+                    });
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    Object.keys(errors).forEach(function(key) {
+                        var input = form.find(`[name="${key}"]`);
+                        input.addClass('is-invalid');
+                        input.siblings('.invalid-feedback').text(errors[key][0]);
+                    });
+                }
+            }
+        });
+    });
+
 </script>
 @endpush

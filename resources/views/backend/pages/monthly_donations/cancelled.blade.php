@@ -10,12 +10,8 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box">
-                <div class="page-title-right">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMonthlyDonationModal">
-                        <i class="mdi mdi-plus"></i> {{__('Add Monthly Donation')}}
-                    </button>
-                </div>
-                <h4 class="page-title">{{__('Monthly Donations')}}</h4>
+                
+                <h4 class="page-title">{{__('Cancelled Monthly Donations')}}</h4>
             </div>
         </div>
     </div>
@@ -25,7 +21,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <table id="monthly-donations-table" class="table dt-responsive nowrap w-100">
+                    <table id="cancelled-monthly-donations-table" class="table dt-responsive nowrap w-100">
                         <thead>
                             <tr>
                                 <th>{{__('ID')}}</th>
@@ -46,7 +42,6 @@
         </div>
     </div>
 </div>
-
 
 
 <!-- Add Monthly Donation Modal -->

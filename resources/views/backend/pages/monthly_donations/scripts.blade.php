@@ -5,7 +5,84 @@
     $(function() {
         // Initialize DataTable
         var table = $('#monthly-donations-table').DataTable({
-            ajax: "{{ route('monthly-donations.data') }}",
+            ajax: {
+        url: "{{ route('monthly-donations.data') }}",
+        data: function(d) {
+            d.status = 'ongoing'; // Add the status parameter
+        }
+    },
+            columns: [{
+                    data: 'id',
+                    name: 'id'
+                },
+                {
+                    data: 'name',
+                    name: 'name'
+                },
+                {
+                    data: 'area',
+                    name: 'area'
+                },
+                {
+                    data: 'address',
+                    name: 'address'
+                },
+                {
+                    data: 'phones',
+                    name: 'phones',
+                    orderable: false,
+                    searchable: true,
+                    render: function(data, type, row) {
+                        console.log(data);
+                        if (!data) return '<div>N/A</div>';
+                        return data
+                            .split(', ')
+                            .map(phone => `<div>${phone}</div>`)
+                            .join('');
+                    }
+
+                },
+                {
+                    data: 'collecting_donation_way',
+                    name: 'collecting_donation_way'
+                },
+                {
+                    data: 'monthly_donation_day',
+                    name: 'monthly_donation_day'
+                },
+
+                {
+                    data: 'donates', // Add the 'donates' column
+                    name: 'donates',
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                }
+            ],
+            order: [
+                [0, 'desc']
+            ],
+            pageLength: 10,
+            responsive: true,
+            language: languages[language],
+            "drawCallback": function() {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            }
+        });
+
+
+        var cancelled_table = $('#cancelled-monthly-donations-table').DataTable({
+            ajax: {
+        url: "{{ route('monthly-donations.data') }}",
+        data: function(d) {
+            d.status = 'cancelled'; // Add the status parameter
+        }
+    },
             columns: [{
                     data: 'id',
                     name: 'id'
@@ -269,50 +346,7 @@
 
 
 
-        $('#addMonthlyDonationCancellationForm').on('submit', function(e) {
-            e.preventDefault();
-            var form = $(this);
-            var url = form.attr('action');
-            $.ajax({
-                url: url,
-                type: 'POST',
-                data: form.serialize(),
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                success: function(response) {
-                    console.log(response);
-                    if (response.success) {
-                        $('#addMonthlyDonationCancellationModal').modal('hide');
-                        form[0].reset();
-                        table.ajax.reload();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: response.message
-                        });
-                    }
-                },
-                error: function(xhr) {
-                    console.log(xhr);
-                    if (xhr.status === 422) {
-                        var errors = xhr.responseJSON.errors;
-                        Object.keys(errors).forEach(function(key) {
-                            var input = form.find(`[name="${key}"]`);
-                            input.addClass('is-invalid');
-                            input.siblings('.invalid-feedback').text(errors[key][0]);
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: xhr.responseJSON.message || 'Something went wrong!'
-                        });
-                    }
-                }
-            });
-        });
-
+   
     });
 
 
@@ -508,10 +542,7 @@
         });
     }
 
-    function addCancellation(id) {
-        $('#monthly_donation_id').val(id); // Set the donor_id in the hidden input
-        $('#addMonthlyDonationCancellationModal').modal('show');
-    }
+   
 
     document.getElementById('monthly_donation_status').addEventListener('change', function() {
         const reasonContainer = document.getElementById('reason-container');
