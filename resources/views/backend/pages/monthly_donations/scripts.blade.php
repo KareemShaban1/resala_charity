@@ -145,12 +145,12 @@
         });
 
 
-        $('#donor_id').select2({
-            dropdownParent: $('#addMonthlyDonationModal'),
-            placeholder: '{{__('Select Donor ')}}',
-            allowClear: true,
-            width: '100%'
-        });
+        // $('#donor_id').select2({
+        //     dropdownParent: $('#addMonthlyDonationModal'),
+        //     placeholder: '{{__('Select Donor ')}}',
+        //     allowClear: true,
+        //     width: '100%'
+        // });
 
 
         // Add Monthly Donation Form Submit
@@ -265,6 +265,54 @@
             form.find('.is-invalid').removeClass('is-invalid');
             form.find('.invalid-feedback').text('');
         });
+
+
+
+
+        $('#addMonthlyDonationCancellationForm').on('submit', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: form.serialize(),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(response) {
+                    console.log(response);
+                    if (response.success) {
+                        $('#addMonthlyDonationCancellationModal').modal('hide');
+                        form[0].reset();
+                        table.ajax.reload();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    console.log(xhr);
+                    if (xhr.status === 422) {
+                        var errors = xhr.responseJSON.errors;
+                        Object.keys(errors).forEach(function(key) {
+                            var input = form.find(`[name="${key}"]`);
+                            input.addClass('is-invalid');
+                            input.siblings('.invalid-feedback').text(errors[key][0]);
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: xhr.responseJSON.message || 'Something went wrong!'
+                        });
+                    }
+                }
+            });
+        });
+
     });
 
 
@@ -304,8 +352,41 @@
             }
         });
 
-    });
+        $('#edit_donor_id').select2({
+            dropdownParent: $('#editMonthlyDonationModal'),
+            placeholder: "{{__('Search by ID or Phone')}}",
+            ajax: {
+                url: '{{ route("donors.search") }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        query: params.term // Search query
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.results.map(function(donor) {
+                            return {
+                                id: donor.id,
+                                text: `${donor.text}`, // Display the name and the exact phone that matched the search term
+                            };
+                        })
+                    };
+                },
+                // cache: true
+            },
+            templateResult: function(donor) {
+                if (donor.loading) return donor.text;
 
+                return $('<span>' + donor.text + '</span>'); // Display donor name and matched phone in the dropdown
+            },
+            templateSelection: function(donor) {
+                return donor.text; // When selected, show name and matched phone
+            }
+        });
+
+    });
 
 
     function editMonthlyDonation(id) {
@@ -317,11 +398,24 @@
         $('#editMonthlyDonationModal').modal('show');
 
         $.get(`{{ url('monthly-donations') }}/${id}/edit`, function(data) {
-            $('#edit_donor_id').val(data.donor_id);
+            $('#edit_donor_id').val(data.donor_id).trigger('change');
+
             $('#edit_collecting_donation_way').val(data.collecting_donation_way);
+            $('#edit_monthly_donation_status').val(data.status);
+            $('#edit_cancellation_reason').val(data.cancellation_reason);
+            $('#edit_cancellation_date').val(data.cancellation_date);
             $('#edit_department_id').val(data.department_id);
             $('#edit_employee_id').val(data.employee_id);
-            console.log("Donates Data:", data.donates);
+
+            const reasonContainer = document.getElementById('edit-reason-container');
+            const dateContainer = document.getElementById('edit-date-container');
+            if (data.status === 'cancelled') {
+                reasonContainer.style.display = 'block';
+                dateContainer.style.display = 'block';
+            } else {
+                reasonContainer.style.display = 'none';
+                dateContainer.style.display = 'none';
+            }
 
             const financialContainer = $('#edit-financial-donation-rows-container');
             if (financialContainer.length === 0) {
@@ -413,5 +507,34 @@
             alert('Failed to fetch data. Please try again.');
         });
     }
+
+    function addCancellation(id) {
+        $('#monthly_donation_id').val(id); // Set the donor_id in the hidden input
+        $('#addMonthlyDonationCancellationModal').modal('show');
+    }
+
+    document.getElementById('monthly_donation_status').addEventListener('change', function() {
+        const reasonContainer = document.getElementById('reason-container');
+        const dateContainer = document.getElementById('date-container');
+        if (this.value === 'cancelled') {
+            reasonContainer.style.display = 'block';
+            dateContainer.style.display = 'block';
+        } else {
+            reasonContainer.style.display = 'none';
+            dateContainer.style.display = 'none';
+        }
+    });
+
+    document.getElementById('edit_monthly_donation_status').addEventListener('change', function() {
+        const reasonContainer = document.getElementById('edit-reason-container');
+        const dateContainer = document.getElementById('edit-date-container');
+        if (this.value === 'cancelled') {
+            reasonContainer.style.display = 'block';
+            dateContainer.style.display = 'block';
+        } else {
+            reasonContainer.style.display = 'none';
+            dateContainer.style.display = 'none';
+        }
+    });
 </script>
 @endpush

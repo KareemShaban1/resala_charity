@@ -136,5 +136,8 @@
     "Enter phone number": "أدخل رقم الهاتف",
     "Remove": "حذف",
     "Search by Phone": "بحث برقم الهاتف",
-    "Donates": "التبرعات"
+    "Donates": "التبرعات",
+    "Ongoing":"جارية",
+    "Cancelled":"ملغاة",
+    "Search By ID or Phone": "بحث بالرقم التعريفي أو رقم الهاتف"
 }

@@ -14,16 +14,17 @@ class MonthlyDonation extends Model
         'employee_id',
         'department_id',
         'created_by',
-        // 'date',
+        'status',
         'notes',
         'collecting_donation_way',
+        'cancellation_reason',
+        'cancellation_date'
         // 'collected_by'
     ];
     protected $casts = [
         'donor_id' => 'integer',
         'created_by' => 'integer',
         'collected_by' => 'integer',
-        'date' => 'date',
         'collecting_donation_way' => 'string',
     ];
 

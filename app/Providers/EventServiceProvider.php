@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\MonthlyDonation;
+use App\Models\MonthlyDonationCancellation;
+use App\Observers\MonthlyDonationCancellationObserver;
 use App\Observers\MonthlyDonationObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;

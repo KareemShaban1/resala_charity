@@ -8,6 +8,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DonationCategoryController;
 use App\Http\Controllers\DonorController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\MonthlyDonationCancellationController;
 use App\Http\Controllers\MonthlyDonationController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Month;
@@ -75,5 +76,9 @@ Route::group(
         // Donation Requests Routes
         Route::get('/monthly-donations/data', [MonthlyDonationController::class, 'data'])->name('monthly-donations.data');
         Route::resource('monthly-donations', MonthlyDonationController::class);
+
+        // Monthly Donation Cancellations Routes
+        Route::get('/monthly-donations-cancellations/data', [MonthlyDonationCancellationController::class, 'data'])->name('monthly-donation-cancellations.data');
+        Route::resource('monthly-donations-cancellations', MonthlyDonationCancellationController::class);
     }
 );

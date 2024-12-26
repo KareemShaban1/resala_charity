@@ -432,6 +432,7 @@
                 // Clear previous states
                 $(this).find('.is-invalid').removeClass('is-invalid');
                 $(this).find('.invalid-feedback').text('');
+                
             },
             'shown.bs.modal': function() {
                 // Initialize Select2 after modal is shown
@@ -464,7 +465,6 @@
 
         // Get and populate data
         $.get(`{{ url('donors') }}/${id}/edit`, function(data) {
-            console.log(data);
             $('#edit_name').val(data.name);
             $('#edit_address').val(data.address);
             $('#edit_street').val(data.street);
@@ -492,7 +492,7 @@
             phoneContainer.empty();
             if (data.phones && data.phones.length > 0) {
                 data.phones.forEach(function(phone) {
-                    addPhoneField(phoneContainer, phone.phone_number, phone.phone_type);
+                    addPhoneField(phoneContainer, phone.phone_number, phone.phone_type, phone.id);
                 });
             } else {
                 addPhoneField(phoneContainer);
@@ -501,16 +501,17 @@
     }
 
     // Add phone field function
-    function addPhoneField(container, phone = '', type = 'mobile') {
+    function addPhoneField(container, phone = '', type = 'mobile', id = '') {
         const index = container.children().length;
         const phoneHtml = `
             <div class="input-group mb-2">
+                <input type="hidden" name="phones[${index}][id]" value="${id}">
                 <input type="text" name="phones[${index}][number]" class="form-control" placeholder="Enter phone number" value="${phone}">
                 <select name="phones[${index}][type]" class="form-select" style="max-width: 150px;">
-                    <option value="mobile" ${type === 'mobile' ? 'selected' : ''}}>{{__('Mobile')}}</option>
-                    <option value="home" ${type === 'home' ? 'selected' : ''}}>{{__('Home')}}</option>
-                    <option value="work" ${type === 'work' ? 'selected' : ''}}>{{__('Work')}}</option>
-                    <option value="other" ${type === 'other' ? 'selected' : ''}}>{{__('Other')}}</option>
+                    <option value="mobile" ${type === 'mobile' ? 'selected' : ''}>{{__('Mobile')}}</option>
+                    <option value="home" ${type === 'home' ? 'selected' : ''}>{{__('Home')}}</option>
+                    <option value="work" ${type === 'work' ? 'selected' : ''}>{{__('Work')}}</option>
+                    <option value="other" ${type === 'other' ? 'selected' : ''}>{{__('Other')}}</option>
                 </select>
                 ${index === 0 ? 
                     `<button type="button" class="btn btn-success add-phone"><i class="mdi mdi-plus"></i></button>` :
@@ -580,7 +581,6 @@
                     orderable: false,
                     searchable: true,
                     render: function(data, type, row) {
-                        console.log(data);
                         if (!data) return '<div>N/A</div>';
                         return data
                             .split(', ')
@@ -663,7 +663,6 @@
                     targetSelect.empty().append('<option value="">Select Area</option>');
                     if (Array.isArray(response.data)) {
                         response.data.forEach(function(area) {
-                            console.log(area.id, selectedAreaId);
                             targetSelect.append(`<option value="${area.id}" ${area.id == selectedAreaId ? 'selected' : ''}>${area.name}</option>`);
                         });
                     }

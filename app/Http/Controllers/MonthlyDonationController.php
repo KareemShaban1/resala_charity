@@ -167,7 +167,10 @@ class MonthlyDonationController extends Controller
             'donor_id' => 'required|exists:donors,id',
             'department_id' => 'required|exists:departments,id',
             'employee_id' => 'required|exists:employees,id',
-            'collecting_donation_way' => 'required|string',
+            'collecting_donation_way' => 'required|string|in:location,online,representative',
+            'status' => 'required|in:ongoing,cancelled',
+            'cancellation_reason'=>'nullable|string',
+            'cancellation_date'=>'nullable',
             'donates' => 'required|array',
             'donates.*.financial_donation_type' => 'required|in:Financial',
             'donates.*.inKind_donation_type' => 'required|in:inKind',
@@ -184,8 +187,11 @@ class MonthlyDonationController extends Controller
             $monthlyDonation = MonthlyDonation::create([
                 'donor_id' => $validatedData['donor_id'],
                 'collecting_donation_way' => $validatedData['collecting_donation_way'],
+                'status' => $validatedData['status'],
                 'department_id' => $validatedData['department_id'],
                 'employee_id' => $validatedData['employee_id'],
+                'cancellation_reason'=>$validatedData['cancellation_reason'],
+                'cancellation_date'=>$validatedData['cancellation_date'],
             ]);
 
             $donatesAdded = false; // Flag to check if any donates were added
@@ -262,7 +268,10 @@ class MonthlyDonationController extends Controller
             'donor_id' => 'required|exists:donors,id',
             'department_id' => 'required|exists:departments,id',
             'employee_id' => 'required|exists:employees,id',
-            'collecting_donation_way' => 'required|string',
+            'collecting_donation_way' => 'required|string|in:location,online,representative',
+            'status' => 'required|in:ongoing,cancelled',
+            'cancellation_reason'=>'nullable|string',
+            'cancellation_date'=>'nullable',
             'donates' => 'required|array',
             'donates.*.id' => 'nullable|exists:donates,id',
             'donates.*.financial_monthuly_donation_id' => 'nullable|exists:monthly_donations_donates,id',
@@ -282,8 +291,11 @@ class MonthlyDonationController extends Controller
             $monthlyDonation->update([
                 'donor_id' => $validatedData['donor_id'],
                 'collecting_donation_way' => $validatedData['collecting_donation_way'],
+                'status' => $validatedData['status'],
                 'department_id' => $validatedData['department_id'],
                 'employee_id' => $validatedData['employee_id'],
+                'cancellation_reason'=> $validatedData['cancellation_reason'],
+                'cancellation_date'=> $validatedData['cancellation_date'],
             ]);
 
             $donatesUpdated = false; // Flag to check if any donations were processed

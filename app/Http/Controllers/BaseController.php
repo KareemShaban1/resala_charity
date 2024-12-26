@@ -38,6 +38,10 @@ abstract class BaseController extends Controller
     {
         try {
             $data = $request->validate($this->validationRules);
+            if($data['date']){
+                $convertedDateTime = str_replace('T', ' ', $data['date']) . ':00';
+                $data['date'] = $convertedDateTime;
+            }
             $item = $this->model::create($data);
 
             if ($request->ajax()) {

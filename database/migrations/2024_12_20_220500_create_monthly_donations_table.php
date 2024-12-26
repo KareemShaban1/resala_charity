@@ -22,7 +22,9 @@ return new class extends Migration
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->text('notes')->nullable();
             $table->enum('collecting_donation_way',['online','location','representative']);
-           
+            $table->enum('status',['ongoing','cancelled'])->default('ongoing');
+            $table->text('cancellation_reason')->nullable();
+            $table->dateTime('cancellation_date')->nullable();
             $table->timestamps();
         });
     }
