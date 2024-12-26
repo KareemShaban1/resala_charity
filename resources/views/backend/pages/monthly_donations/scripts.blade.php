@@ -6,11 +6,11 @@
         // Initialize DataTable
         var table = $('#monthly-donations-table').DataTable({
             ajax: {
-        url: "{{ route('monthly-donations.data') }}",
-        data: function(d) {
-            d.status = 'ongoing'; // Add the status parameter
-        }
-    },
+                url: "{{ route('monthly-donations.data') }}",
+                data: function(d) {
+                    d.status = 'ongoing'; // Add the status parameter
+                }
+            },
             columns: [{
                     data: 'id',
                     name: 'id'
@@ -78,11 +78,11 @@
 
         var cancelled_table = $('#cancelled-monthly-donations-table').DataTable({
             ajax: {
-        url: "{{ route('monthly-donations.data') }}",
-        data: function(d) {
-            d.status = 'cancelled'; // Add the status parameter
-        }
-    },
+                url: "{{ route('monthly-donations.data') }}",
+                data: function(d) {
+                    d.status = 'cancelled'; // Add the status parameter
+                }
+            },
             columns: [{
                     data: 'id',
                     name: 'id'
@@ -205,6 +205,9 @@
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                 <input type="hidden" name="donates[${inKindRowIndex}][financial_donation_type]" value="Financial">
+                 <input type="hidden" class="form-control" name="donates[${inKindRowIndex}][financial_amount]">
+                 <input type="hidden" class="form-control" name="donates[${inKindRowIndex}][financial_donation_categories_id]">
                 <div class="col-md-4 d-flex align-items-center">
                     <button type="button" class="btn btn-danger mt-2 remove-row-btn">{{__('Remove')}}</button>
                 </div>
@@ -350,7 +353,7 @@
 
 
 
-   
+
     });
 
 
@@ -428,46 +431,46 @@
 
 
     function editMonthlyDonation(id) {
-    var form = $('#editMonthlyDonationForm');
-    form.trigger('reset');
-    form.find('.is-invalid').removeClass('is-invalid');
-    form.find('.invalid-feedback').text('');
-    form.attr('action', `{{ route('monthly-donations.update', '') }}/${id}`);
-    $('#editMonthlyDonationModal').modal('show');
+        var form = $('#editMonthlyDonationForm');
+        form.trigger('reset');
+        form.find('.is-invalid').removeClass('is-invalid');
+        form.find('.invalid-feedback').text('');
+        form.attr('action', `{{ route('monthly-donations.update', '') }}/${id}`);
+        $('#editMonthlyDonationModal').modal('show');
 
-    $.get(`{{ url('monthly-donations') }}/${id}/edit`, function(data) {
-        $('#edit_donor_id').val(data.donor_id).trigger('change');
-        $('#edit_collecting_donation_way').val(data.collecting_donation_way);
-        $('#edit_monthly_donation_status').val(data.status);
-        $('#edit_cancellation_reason').val(data.cancellation_reason);
-        $('#edit_cancellation_date').val(data.cancellation_date);
-        $('#edit_department_id').val(data.department_id);
-        $('#edit_employee_id').val(data.employee_id);
+        $.get(`{{ url('monthly-donations') }}/${id}/edit`, function(data) {
+            $('#edit_donor_id').val(data.donor_id).trigger('change');
+            $('#edit_collecting_donation_way').val(data.collecting_donation_way);
+            $('#edit_monthly_donation_status').val(data.status);
+            $('#edit_cancellation_reason').val(data.cancellation_reason);
+            $('#edit_cancellation_date').val(data.cancellation_date);
+            $('#edit_department_id').val(data.department_id);
+            $('#edit_employee_id').val(data.employee_id);
 
-        const reasonContainer = document.getElementById('edit-reason-container');
-        const dateContainer = document.getElementById('edit-date-container');
-        if (data.status === 'cancelled') {
-            reasonContainer.style.display = 'block';
-            dateContainer.style.display = 'block';
-        } else {
-            reasonContainer.style.display = 'none';
-            dateContainer.style.display = 'none';
-        }
+            const reasonContainer = document.getElementById('edit-reason-container');
+            const dateContainer = document.getElementById('edit-date-container');
+            if (data.status === 'cancelled') {
+                reasonContainer.style.display = 'block';
+                dateContainer.style.display = 'block';
+            } else {
+                reasonContainer.style.display = 'none';
+                dateContainer.style.display = 'none';
+            }
 
-        const financialContainer = $('#edit-financial-donation-rows-container');
-        const inKindContainer = $('#edit-in-kind-donation-rows-container');
+            const financialContainer = $('#edit-financial-donation-rows-container');
+            const inKindContainer = $('#edit-in-kind-donation-rows-container');
 
-        if (financialContainer.length === 0 || inKindContainer.length === 0) {
-            console.error("Required containers not found.");
-            return;
-        }
+            if (financialContainer.length === 0 || inKindContainer.length === 0) {
+                console.error("Required containers not found.");
+                return;
+            }
 
-        // Handle Financial Donations
-        const financialDonations = data.donates.filter(donation => donation.donation_type === 'Financial');
-        if (financialDonations.length > 0) {
-            financialContainer.empty(); // Clear only if there is data
-            financialDonations.forEach((donation, index) => {
-                const financialRow = `
+            // Handle Financial Donations
+            const financialDonations = data.donates.filter(donation => donation.donation_type === 'Financial');
+            if (financialDonations.length > 0) {
+                financialContainer.empty(); // Clear only if there is data
+                financialDonations.forEach((donation, index) => {
+                    const financialRow = `
                     <div class="row donation-row">
                         <input type="hidden" name="donates[${index}][financial_donation_type]" value="Financial">
                         <input type="hidden" name="donates[${index}][financial_monthuly_donation_id]" value="${donation.id}">
@@ -491,21 +494,24 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
+                         <input type="hidden" name="donates[${index}][inKind_donation_type]" value="inKind">
+                 <input type="hidden" class="form-control" name="donates[${index}][in_kind_item_name]">
+                 <input type="hidden" class="form-control" name="donates[${index}][in_kind_quantity]">
                         <div class="col-md-4 d-flex align-items-center">
                             <button type="button" class="btn btn-secondary mt-2 add-row-btn" data-target="#financial-donation-rows-container">Add Row</button>
                         </div>
                     </div>
                 `;
-                financialContainer.append(financialRow);
-            });
-        }
+                    financialContainer.append(financialRow);
+                });
+            }
 
-        // Handle In-Kind Donations
-        const inKindDonations = data.donates.filter(donation => donation.donation_type === 'inKind');
-        if (inKindDonations.length > 0) {
-            inKindContainer.empty(); // Clear only if there is data
-            inKindDonations.forEach((donation, index) => {
-                const inKindRow = `
+            // Handle In-Kind Donations
+            const inKindDonations = data.donates.filter(donation => donation.donation_type === 'inKind');
+            if (inKindDonations.length > 0) {
+                inKindContainer.empty(); // Clear only if there is data
+                inKindDonations.forEach((donation, index) => {
+                    const inKindRow = `
                     <div class="row donation-row">
                         <input type="hidden" name="donates[${index}][inKind_donation_type]" value="inKind">
                         <input type="hidden" name="donates[${index}][inkind_monthuly_donation_id]" value="${donation.id}">
@@ -523,21 +529,24 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
+                            <input type="hidden" name="donates[${index}][financial_donation_type]" value="Financial">
+                 <input type="hidden" class="form-control" name="donates[${index}][financial_amount]">
+                 <input type="hidden" class="form-control" name="donates[${index}][financial_donation_categories_id]">
                         <div class="col-md-4 d-flex align-items-center">
                             <button type="button" class="btn btn-secondary mt-2 add-row-btn" data-target="#edit-in-kind-donation-rows-container">Add Row</button>
                         </div>
                     </div>
                 `;
-                inKindContainer.append(inKindRow);
-            });
-        }
-    }).fail(function(error) {
-        console.error('Error fetching data:', error);
-        alert('Failed to fetch data. Please try again.');
-    });
-}
+                    inKindContainer.append(inKindRow);
+                });
+            }
+        }).fail(function(error) {
+            console.error('Error fetching data:', error);
+            alert('Failed to fetch data. Please try again.');
+        });
+    }
 
-   
+
 
     document.getElementById('monthly_donation_status').addEventListener('change', function() {
         const reasonContainer = document.getElementById('reason-container');
