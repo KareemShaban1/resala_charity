@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('donation_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('donation_id')->constrained()->onDelete('cascade');
-            $table->enum('donation_type', ['Financial','inKind'])->default('Financial');
+            // $table->enum('donation_type', ['Financial','inKind'])->default('Financial');
 
             $table->foreignId('donation_category_id')->nullable()->constrained('donation_categories')->onDelete('cascade');
             $table->string('item_name')->nullable();

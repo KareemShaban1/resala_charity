@@ -280,24 +280,25 @@ class DonorController extends Controller
         if (empty($query)) {
             return response()->json([], 200); // Return an empty array if no query is provided
         }
-        if($request->get('monthly')){
-            $type =  "monthly" ;
-        }else{
-            $type = "normal";
-        }
+       
 
         // Normalize the query to remove non-numeric characters
         $normalizedQuery = preg_replace('/\D/', '', $query); // Remove non-numeric characters
 
         // Search donors by ID or related phone numbers
-        $donors = Donor::with('phones') // Load phones relationship
+        $query = Donor::with('phones') // Load phones relationship
             ->where('id', 'like', "%$query%")
             ->orWhereHas('phones', function ($q) use ($normalizedQuery) {
                 // Normalize phone numbers in the database as well for accurate matching
                 $q->whereRaw('REPLACE(REPLACE(REPLACE(phone_number, "-", ""), "(", ""), ")", "") LIKE ?', ['%' . $normalizedQuery . '%']);
-            })
-            ->where('donor_type', $type)
-            ->get();
+            });
+
+            if($request->get('monthly')){
+                $query->where('donor_type', 'monthly');
+            }
+
+            $donors = $query->get();
+
 
         // Loop through donors and filter for phone number match
         $donors->each(function ($donor) use ($normalizedQuery) {
