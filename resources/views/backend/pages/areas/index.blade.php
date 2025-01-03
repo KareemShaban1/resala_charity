@@ -28,7 +28,7 @@
                                 <th>{{__('Name')}}</th>
                                 <th>{{__('City')}}</th>
                                 <th>{{__('Governorate')}}</th>
-                                <th>{{__('Created At')}}</th>
+                                <!-- <th>{{__('Created At')}}</th> -->
                                 <th>{{__('Actions')}}</th>
                             </tr>
                         </thead>
@@ -122,7 +122,7 @@
             },
             success: function(response) {
                 if (response.success) {
-                    targetSelect.empty().append('<option value="">{{__('Select City')}}</option>');
+                    targetSelect.empty().append('<option value="">{{__('Select City ')}}</option>');
                     if (Array.isArray(response.data)) {
                         response.data.forEach(function(city) {
                             targetSelect.append(`<option value="${city.id}" ${city.id == selectedCityId ? 'selected' : ''}>${city.name}</option>`);
@@ -176,10 +176,10 @@
                     data: 'governorate',
                     name: 'city.governorate.name'
                 },
-                {
-                    data: 'created_at',
-                    name: 'created_at'
-                },
+                // {
+                //     data: 'created_at',
+                //     name: 'created_at'
+                // },
                 {
                     data: 'action',
                     name: 'action',
@@ -190,6 +190,36 @@
             order: [
                 [0, 'desc']
             ],
+            buttons: [{
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3]
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Areas Data',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3]
+                    }
+                },
+                // {
+                //     extend: 'pdf', 
+                //     text: 'PDF', 
+                //     title: 'Areas Data', 
+                //     exportOptions: {
+                //         columns: [0, 1, 2, 3]
+                //     }
+                // },
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3]
+                    }
+                },
+            ],
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
             pageLength: 10,
             responsive: true,
             language: languages[language], // Apply language dynamically

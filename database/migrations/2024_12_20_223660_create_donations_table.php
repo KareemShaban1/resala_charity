@@ -14,13 +14,10 @@ return new class extends Migration
         Schema::create('donations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('donor_id')->constrained()->onDelete('cascade');
-            $table->integer('amount');
-            $table->text('notes')->nullable();
-            $table->string('payment_method')->nullable();
-            $table->string('receipt')->nullable();
-            $table->string('date')->nullable()->comment('Format: MM-DD');
-            $table->boolean('active')->default(true);
-            $table->string('donate_date')->nullable()->comment('Format: MM-DD for monthly donors');
+            $table->foreignId('created_by')->constrained('employees')->onDelete('cascade');
+            $table->enum('donation_type', ['Financial','inKind'])->default('Financial');
+            $table->string('date');
+            $table->enum('status', ['collected','not_collected'])->default('not_collected');
             $table->softDeletes();
             $table->timestamps();
         });

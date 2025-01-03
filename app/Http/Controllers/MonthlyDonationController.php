@@ -9,16 +9,18 @@ use App\Models\Department;
 use App\Models\DonationCategory;
 use App\Models\Donor;
 use App\Models\Employee;
+use App\Models\MonthlyDonationsDonate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class MonthlyDonationController extends Controller
 {
-
-
     public function index()
     {
+        // Check if the user is authorized to view monthly donation
+        $this->authorize('view', MonthlyDonation::class);
+
         $donors = Donor::all();
         $donationCategories = DonationCategory::all();
         $departments = Department::all();
@@ -45,12 +47,16 @@ class MonthlyDonationController extends Controller
 
     public function data()
     {
+
         $query = MonthlyDonation::query()
             ->selectRaw('
         monthly_donations.id,
         monthly_donations.donor_id,
         monthly_donations.collecting_donation_way,
         monthly_donations.created_at,
+        monthly_donations.status,
+        monthly_donations.cancellation_reason,
+        monthly_donations.cancellation_date,
         donors.name as donor_name,
         areas.name as area_name,
         donors.address,
@@ -68,6 +74,9 @@ class MonthlyDonationController extends Controller
                 'monthly_donations.id',
                 'monthly_donations.created_at',
                 'monthly_donations.collecting_donation_way',
+                'monthly_donations.status',
+                'monthly_donations.cancellation_reason',
+                'monthly_donations.cancellation_date'
             );
 
         if (request()->has('status')) {
@@ -149,6 +158,12 @@ class MonthlyDonationController extends Controller
                     return '';
                 })->implode('<br>');
             })
+            ->addColumn('cancellation_reason', function ($item) {
+                return $item->cancellation_reason;
+            })
+            ->addColumn('cancellation_date', function ($item) {
+                return $item->cancellation_date;
+            })
             ->rawColumns(['action', 'donates'])
             ->make(true);
     }
@@ -172,25 +187,13 @@ class MonthlyDonationController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(StoreMonthlyDonationRequest $request)
     {
+
+        $this->authorize('create', MonthlyDonation::class);
+
         // Validate the incoming request data
-        $validatedData = $request->validate([
-            'donor_id' => 'required|exists:donors,id',
-            'department_id' => 'required|exists:departments,id',
-            'employee_id' => 'required|exists:employees,id',
-            'collecting_donation_way' => 'required|string|in:location,online,representative',
-            'status' => 'required|in:ongoing,cancelled',
-            'cancellation_reason' => 'nullable|string',
-            'cancellation_date' => 'nullable',
-            'donates' => 'required|array',
-            'donates.*.financial_donation_type' => 'required|in:Financial',
-            'donates.*.inKind_donation_type' => 'required|in:inKind',
-            'donates.*.financial_donation_categories_id' => 'nullable|exists:donation_categories,id',
-            'donates.*.financial_amount' => 'nullable|numeric|min:0',
-            'donates.*.in_kind_item_name' => 'nullable|string',
-            'donates.*.in_kind_quantity' => 'nullable|integer|min:1',
-        ]);
+        $validatedData = $request->validated();
 
         DB::beginTransaction(); // Start a transaction
 
@@ -247,7 +250,7 @@ class MonthlyDonationController extends Controller
                 DB::rollBack(); // Rollback the transaction
                 return response()->json([
                     'success' => false,
-                    'message' => 'No valid donations were provided.',
+                    'message' => __('validation.no_valid_donations_provided'),
                 ], 400);
             }
 
@@ -255,7 +258,7 @@ class MonthlyDonationController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Donors imported successfully!',
+                'message' => __('messages.Monthly Donation created successfully'),
                 'data' => $monthlyDonation->load('donates'),
             ]);
         } catch (\Exception $e) {
@@ -271,30 +274,17 @@ class MonthlyDonationController extends Controller
 
     public function edit(MonthlyDonation $monthlyDonation)
     {
+        $this->authorize('update', MonthlyDonation::class);
+
         return response()->json($monthlyDonation->load(['donates', 'donor']));
     }
-    public function update(Request $request, MonthlyDonation $monthlyDonation)
+    public function update(UpdateMonthlyDonationRequest $request, MonthlyDonation $monthlyDonation)
     {
+
+        $this->authorize('update', MonthlyDonation::class);
+
         // Validate the incoming request data
-        $validatedData = $request->validate([
-            'donor_id' => 'required|exists:donors,id',
-            'department_id' => 'required|exists:departments,id',
-            'employee_id' => 'required|exists:employees,id',
-            'collecting_donation_way' => 'required|string|in:location,online,representative',
-            'status' => 'required|in:ongoing,cancelled',
-            'cancellation_reason' => 'nullable|string',
-            'cancellation_date' => 'nullable',
-            'donates' => 'required|array',
-            'donates.*.id' => 'nullable|exists:donates,id',
-            'donates.*.financial_monthuly_donation_id' => 'nullable|exists:monthly_donations_donates,id',
-            'donates.*.inkind_monthuly_donation_id' => 'nullable|exists:monthly_donations_donates,id',
-            'donates.*.financial_donation_type' => 'required|in:Financial',
-            'donates.*.inKind_donation_type' => 'required|in:inKind',
-            'donates.*.financial_donation_categories_id' => 'nullable|exists:donation_categories,id',
-            'donates.*.financial_amount' => 'nullable|numeric|min:0',
-            'donates.*.in_kind_item_name' => 'nullable|string',
-            'donates.*.in_kind_quantity' => 'nullable|integer|min:1',
-        ]);
+        $validatedData = $request->validated();
 
         DB::beginTransaction(); // Start a transaction
 
@@ -316,13 +306,13 @@ class MonthlyDonationController extends Controller
             foreach ($validatedData['donates'] as $donateData) {
                 // Update or create financial donations
                 if (
-                    $donateData['financial_donation_type'] === 'Financial'
+                    isset($donateData['financial_donation_type']) && $donateData['financial_donation_type'] === 'Financial'
                     && !empty($donateData['financial_donation_categories_id'])
                     && !empty($donateData['financial_amount'])
                 ) {
 
                     $donation = $monthlyDonation->donates()->updateOrCreate(
-                        ['id' => $donateData['financial_monthuly_donation_id'] ?? null], // Match by ID if it exists
+                        ['id' => $donateData['financial_monthly_donation_id'] ?? null], // Match by ID if it exists
                         [
                             'donation_type' => $donateData['financial_donation_type'],
                             'donation_category_id' => $donateData['financial_donation_categories_id'],
@@ -336,13 +326,13 @@ class MonthlyDonationController extends Controller
 
                 // Update or create in-kind donations
                 if (
-                    $donateData['inKind_donation_type'] === 'inKind'
+                    isset($donateData['inKind_donation_type']) && $donateData['inKind_donation_type'] === 'inKind'
                     && !empty($donateData['in_kind_item_name'])
                     && !empty($donateData['in_kind_quantity'])
                 ) {
 
                     $donation = $monthlyDonation->donates()->updateOrCreate(
-                        ['id' => $donateData['inkind_monthuly_donation_id'] ?? null], // Match by ID if it exists
+                        ['id' => $donateData['inkind_monthly_donation_id'] ?? null], // Match by ID if it exists
                         [
                             'donation_type' => $donateData['inKind_donation_type'],
                             'donation_category_id' => null, // In-kind donations do not have a category
@@ -360,7 +350,7 @@ class MonthlyDonationController extends Controller
                 DB::rollBack(); // Rollback the transaction
                 return response()->json([
                     'success' => false,
-                    'message' => 'No valid donations were provided.',
+                    'message' => __('validation.no_valid_donations_provided'),
                 ], 400);
             }
 
@@ -368,7 +358,7 @@ class MonthlyDonationController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Monthly donation updated successfully!',
+                'message' => __('messages.Monthly Donation updated successfully'),
                 'data' => $monthlyDonation->load('donates'),
             ]);
         } catch (\Exception $e) {
@@ -378,6 +368,47 @@ class MonthlyDonationController extends Controller
                 'message' => 'An error occurred while processing the request.',
                 'error' => $e->getMessage(),
             ], 500);
+        }
+    }
+
+    public function destroy(MonthlyDonation $monthlyDonation)
+    {
+        DB::beginTransaction(); // Start a transaction
+
+        try {
+            $monthlyDonation->donates()->delete();
+            $monthlyDonation->delete();
+            DB::commit(); // Commit the transaction
+            return response()->json([
+                'success' => true,
+                'message' => __('messages.Monthly Donation deleted successfully'),
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback the transaction on error
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while processing the request.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+    public function deleteDonate($id)
+    {
+        $this->authorize('delete', MonthlyDonation::class);
+
+        $donation = MonthlyDonationsDonate::find($id);
+
+        if (!$donation) {
+            return response()->json(['message' => 'Donation not found.'], 404);
+        }
+
+        try {
+            $donation->delete(); // Soft delete or permanent delete based on your setup
+            return response()->json(['message' => 'Donation deleted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to delete donation.'], 500);
         }
     }
 }

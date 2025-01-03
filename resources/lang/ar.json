@@ -3,6 +3,8 @@
     "Home Page": "الصفحة الرئيسية",
     "Login": "تسجيل الدخول",
     "Locations": "المواقع",
+    "Users Management": "إدارة المستخدمين",
+    "Activity Logs": "سجلات النشاط",
     "Departments": "الأقسام",
     "Add Department": "إضافة قسم",
     "Edit Department": "تعديل قسم",
@@ -150,5 +152,15 @@
     "Assign Donor": "تعيين المتبرع",
     "Select Donor": "حدد المتبرع",
     "Select Donors": "حدد المتبرعين",
-    "Assign": "تعيين"
+    "Assign": "تعيين",
+    "Cancellation Reason": "سبب الإلغاء",
+    "Cancellation Date": "تاريخ الإلغاء",
+    "Financial":"مادى",
+    "In-Kind":"عيني",
+    "Collected":"تم التحصيل",
+    "Not Collected":"لم يتم التحصيل",
+    "Receipt Number":"رقم الايصال",
+    "Collecting Date":"تاريخ التحصيل",
+    "Collecting By":"تم التحصيل بواسطة",
+    "Donation Date":"تاريخ التبرع"
 }

@@ -13,17 +13,29 @@ class Donation extends Model
 
     protected $fillable = [
         'donor_id',
-        'amount',
+        'created_by',
         'date',
-        'notes',
-        'payment_method',
-        'receipt',
-        'active',
-        'donate_date',
+        'status',
+        'donation_type'
     ];
 
     public function donor()
     {
         return $this->belongsTo(Donor::class);
+    }
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function donateItems() 
+    {
+        return $this->hasMany(DonationItem::class, 'donation_id')->with('donationCategory');
+    }
+    
+
+    public function collectingDonation()
+    {
+        return $this->hasOne(DonationCollecting::class, 'donation_id');
     }
 }

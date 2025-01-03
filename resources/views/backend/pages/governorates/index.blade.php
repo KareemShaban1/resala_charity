@@ -26,7 +26,7 @@
                             <tr>
                                 <th>{{__('ID')}}</th>
                                 <th>{{__('Name')}}</th>
-                                <th>{{__('Created At')}}</th>
+                                <!-- <th>{{__('Created At')}}</th> -->
                                 <th>{{__('Actions')}}</th>
                             </tr>
                         </thead>
@@ -85,12 +85,43 @@
             columns: [
                 {data: 'id', name: 'id'},
                 {data: 'name', name: 'name'},
-                {data: 'created_at', name: 'created_at'},
+                // {data: 'created_at', name: 'created_at'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ],
             order: [
                 [0, 'desc']
             ],
+            buttons: [{
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1]
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Governorates Data',
+                    exportOptions: {
+                        columns: [0, 1]
+                    }
+                },
+                // {
+                //     extend: 'pdf', 
+                //     text: 'PDF', 
+                //     title: 'Governorates Data', 
+                //     exportOptions: {
+                //         columns: [0, 1, 2, 3]
+                //     }
+                // },
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: [0, 1]
+                    },
+                },
+            ],
+            
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
             pageLength: 10,
             responsive: true,
             language: languages[language],

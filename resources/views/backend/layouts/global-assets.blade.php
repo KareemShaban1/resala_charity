@@ -3,13 +3,7 @@
 <link href="{{asset('backend/assets/css/vendor/responsive.bootstrap5.css')}}" rel="stylesheet" type="text/css" />
 <link href="{{asset('backend/assets/css/vendor/buttons.bootstrap5.css')}}" rel="stylesheet" type="text/css" />
 
-<!-- DataTables JS -->
-<script defer src="{{asset('backend/assets/js/vendor/jquery.dataTables.min.js')}}"></script>
-<script defer src="{{asset('backend/assets/js/vendor/dataTables.bootstrap5.js')}}"></script>
-<script defer src="{{asset('backend/assets/js/vendor/dataTables.responsive.min.js')}}"></script>
-<script defer src="{{asset('backend/assets/js/vendor/responsive.bootstrap5.min.js')}}"></script>
-<script defer src="{{asset('backend/assets/js/vendor/dataTables.buttons.min.js')}}"></script>
-<script defer src="{{asset('backend/assets/js/vendor/buttons.bootstrap5.min.js')}}"></script>
+
 
 <!-- SweetAlert2 -->
 <!-- <script src="{{asset('backend/assets/js/vendor/sweetalert2.all.min.js')}}" defer></script> -->
@@ -38,6 +32,7 @@
             responsive: true,
             autoWidth: false,
             pageLength: 10,
+            buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
             order: [[0, 'desc']],
             lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]]
         });

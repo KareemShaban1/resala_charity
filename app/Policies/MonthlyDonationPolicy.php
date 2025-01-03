@@ -14,14 +14,18 @@ class MonthlyDonationPolicy
     public function viewAny(User $user): bool
     {
         //
+        return $user->hasPermissionTo('view monthly donations'); // Check permission
+
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, MonthlyDonation $monthlyDonation): bool
+    public function view(User $user): bool
     {
         //
+        return $user->hasPermissionTo('view monthly donations'); // Check permission
+
     }
 
     /**
@@ -30,37 +34,47 @@ class MonthlyDonationPolicy
     public function create(User $user): bool
     {
         //
+        return $user->hasPermissionTo('create monthly donations'); // Check permission
+
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, MonthlyDonation $monthlyDonation): bool
+    public function update(User $user): bool
     {
         //
+        return $user->hasPermissionTo('update monthly donations'); // Check permission
+
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, MonthlyDonation $monthlyDonation): bool
+    public function delete(User $user): bool
     {
         //
+        return $user->hasPermissionTo('delete monthly donations'); // Check permission
+
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, MonthlyDonation $monthlyDonation): bool
+    public function restore(User $user): bool
     {
         //
+        return $user->hasPermissionTo('restore monthly donations'); // Check permission
+
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, MonthlyDonation $monthlyDonation): bool
+    public function forceDelete(User $user): bool
     {
         //
+        return $user->hasPermissionTo('force delete monthly donations'); // Check permission
+
     }
 }

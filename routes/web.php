@@ -1,15 +1,19 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GovernorateController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DonationCategoryController;
+use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonorController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\MonthlyDonationCancellationController;
 use App\Http\Controllers\MonthlyDonationController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Month;
 
@@ -76,10 +80,30 @@ Route::group(
         Route::get('/donation-categories/data', [DonationCategoryController::class, 'data'])->name('donation-categories.data');
         Route::resource('donation-categories', DonationCategoryController::class);
 
+        Route::get('/donations/data', [DonationController::class, 'data'])->name('donations.data');
+        Route::resource('donations', DonationController::class);
+        Route::delete('/donations/delete-donatation-item/{id}', [DonationController::class, 'deleteDonatationItem'])
+            ->name('donations.delete-donatation-item');
+        Route::get(
+            '/donations/{id}/details',
+            [DonationController::class, 'getDonationDetails']
+        )->name('donations.details');
+
+
+
         // Donation Requests Routes
         Route::get('/monthly-donations/data', [MonthlyDonationController::class, 'data'])->name('monthly-donations.data');
         Route::resource('monthly-donations', MonthlyDonationController::class);
         Route::get('/monthly-donations-cancelled', [MonthlyDonationController::class, 'cancelledMonthlyDonations'])->name('monthly-donations.cancelled');
-      
+        Route::delete('/monthly-donations/delete-donate/{id}', [MonthlyDonationController::class, 'deleteDonate'])->name('monthly-donations.delete-donate');
+
+        Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
+        Route::resource('users', UserController::class);
+
+        Route::get('/roles/data', [RoleController::class, 'data'])->name('roles.data');
+        Route::resource('roles', RoleController::class);
+
+        Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+        Route::get('/activity-logs/data', [ActivityLogController::class, 'data'])->name('activity-logs.data');
     }
 );

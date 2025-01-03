@@ -16,7 +16,7 @@
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                
+
             </div>
 
             <div class="row">
@@ -65,7 +65,11 @@
             <!-- Financial Donations Section -->
             <div class="card">
                 <div class="card-header">
+                    <div class="d-flex align-items-center justify-content-between">
                     <h4>{{__('Financial Donations')}}</h4>
+
+                        <button type="button" class="btn btn-secondary mt-2 add-row-btn" data-target="#edit-financial-donation-rows-container">{{__('Add Row')}}</button>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div id="edit-financial-donation-rows-container">
@@ -90,9 +94,7 @@
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-4 d-flex align-items-center">
-                                <button type="button" class="btn btn-secondary mt-2 add-row-btn" data-target="#edit-financial-donation-rows-container">{{__('Add Row')}}</button>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -101,7 +103,11 @@
             <!-- In-Kind Donations Section -->
             <div class="card mt-4">
                 <div class="card-header">
-                    <h4>{{__('In-Kind Donations')}}</h4>
+
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h4>{{__('In-Kind Donations')}}</h4>
+                        <button type="button" class="btn btn-secondary mt-2 add-row-btn" data-target="#edit-in-kind-donation-rows-container">{{__('Add Row')}}</button>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div id="edit-in-kind-donation-rows-container">
@@ -121,16 +127,14 @@
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-4 d-flex align-items-center">
-                                <button type="button" class="btn btn-secondary mt-2 add-row-btn" data-target="#in-kind-donation-rows-container">{{__('Add Row')}}</button>
-                            </div>
+
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="row">
-            <div class="col-md-4">
+                <div class="col-md-4">
                     <div class="mb-3">
                         <label for="edit_monthly_donation_status" class="form-label">{{__('Status')}}</label>
                         <select class="form-control" name="status" id="edit_monthly_donation_status">
@@ -153,7 +157,7 @@
                 </div>
             </div>
 
-         
+
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{__('Close')}}</button>

@@ -26,7 +26,7 @@
                             <tr>
                                 <th>{{__('ID')}}</th>
                                 <th>{{__('Name')}}</th>
-                                <th>{{__('Created At')}}</th>
+                                <!-- <th>{{__('Created At')}}</th> -->
                                 <th>{{__('Actions')}}</th>
                             </tr>
                         </thead>
@@ -116,10 +116,10 @@
                     data: 'name',
                     name: 'name'
                 },
-                {
-                    data: 'created_at',
-                    name: 'created_at'
-                },
+                // {
+                //     data: 'created_at',
+                //     name: 'created_at'
+                // },
                 {
                     data: 'action',
                     name: 'action',
@@ -130,6 +130,36 @@
             order: [
                 [0, 'desc']
             ],
+            buttons: [{
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1]
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Donation Categories Data',
+                    exportOptions: {
+                        columns: [0, 1]
+                    }
+                },
+                // {
+                //     extend: 'pdf', 
+                //     text: 'PDF', 
+                //     title: 'Donation Categories Data', 
+                //     exportOptions: {
+                //         columns: [0, 1]
+                //     }
+                // },
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: [0, 1]
+                    }
+                },
+            ],
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
             pageLength: 10,
             responsive: true,
             language: languages[language],

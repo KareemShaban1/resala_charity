@@ -18,6 +18,9 @@ class DonorController extends Controller
      */
     public function index()
     {
+        $this->authorize('view', Donor::class);
+
+
         return view('backend.pages.donors.index');
     }
 
@@ -82,6 +85,8 @@ class DonorController extends Controller
      */
     public function store(StoreDonorRequest $request)
     {
+        $this->authorize('create', Donor::class);
+
         try {
             DB::beginTransaction();
 
@@ -104,13 +109,13 @@ class DonorController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Donor created successfully.'
+                'message' => __('messages.Donor created successfully.')
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Error creating donor: ' . $e->getMessage()
+                'message' => __('messages.Donor created failed'),
             ], 500);
         }
     }
@@ -120,6 +125,8 @@ class DonorController extends Controller
      */
     public function show(Donor $donor)
     {
+        $this->authorize('view', Donor::class);
+
         return response()->json($donor->load(['governorate', 'city', 'area', 'phones']));
     }
 
@@ -128,6 +135,8 @@ class DonorController extends Controller
      */
     public function edit(Donor $donor)
     {
+        $this->authorize('update', Donor::class);
+
         return response()->json($donor->load(['governorate', 'city', 'area', 'phones']));
     }
 
@@ -136,6 +145,8 @@ class DonorController extends Controller
      */
     public function update(UpdateDonorRequest $request, Donor $donor)
     {
+        $this->authorize('update', Donor::class);
+
         try {
             DB::beginTransaction();
 
@@ -177,13 +188,13 @@ class DonorController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Donor updated successfully.'
+                'message' => __('messages.Donor updated successfully.')
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating donor: ' . $e->getMessage()
+                'message' => __('messages.Donor updated failed'),
             ], 500);
         }
     }
@@ -195,17 +206,19 @@ class DonorController extends Controller
      */
     public function destroy(Donor $donor)
     {
+        $this->authorize('delete', arguments: Donor::class);
+
         try {
             $donor->delete(); // This will also delete related phones due to cascadeOnDelete
 
             return response()->json([
                 'success' => true,
-                'message' => 'Donor deleted successfully.'
+                'message' => __('messages.Donor deleted successfully.')
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error deleting donor: ' . $e->getMessage()
+                'message' => __('messages.Donor deleted failed'),
             ], 500);
         }
     }
@@ -229,7 +242,7 @@ class DonorController extends Controller
             // Return the result with skipped rows if any
             return response()->json([
                 'success' => true,
-                'message' => 'Donors imported successfully!',
+                'message' => __('messages.Donors imported successfully!'),
                 'skipped_rows' => $skippedRows,
             ]);
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
@@ -248,13 +261,13 @@ class DonorController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Some rows failed validation.',
+                'message' => __('messages.Some rows failed validation.'),
                 'errors' => $errorDetails,
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error importing donors: ' . $e->getMessage(),
+                'message' => __('messages.Error importing donors: ' . $e->getMessage()),
             ], 500);
         }
     }
@@ -267,6 +280,11 @@ class DonorController extends Controller
         if (empty($query)) {
             return response()->json([], 200); // Return an empty array if no query is provided
         }
+        if($request->get('monthly')){
+            $type =  "monthly" ;
+        }else{
+            $type = "normal";
+        }
 
         // Normalize the query to remove non-numeric characters
         $normalizedQuery = preg_replace('/\D/', '', $query); // Remove non-numeric characters
@@ -278,7 +296,7 @@ class DonorController extends Controller
                 // Normalize phone numbers in the database as well for accurate matching
                 $q->whereRaw('REPLACE(REPLACE(REPLACE(phone_number, "-", ""), "(", ""), ")", "") LIKE ?', ['%' . $normalizedQuery . '%']);
             })
-            ->where('donor_type', "monthly")
+            ->where('donor_type', $type)
             ->get();
 
         // Loop through donors and filter for phone number match
@@ -321,7 +339,7 @@ class DonorController extends Controller
         }
         return response()->json([
             'success' => true,
-            'message' => 'Donors assigned successfully.',
+            'message' => __('messages.Donors assigned successfully.'),
         ]);
     }
 

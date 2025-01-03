@@ -39,6 +39,35 @@
               </li>
 
               <li class="side-nav-item">
+                  <a data-bs-toggle="collapse" href="#sidebarUsers" aria-expanded="false" aria-controls="sidebarUsers" class="side-nav-link">
+                      <i class="uil-users-alt"></i>
+                      <span> {{__('Users Management')}} </span>
+                      <span class="menu-arrow"></span>
+                  </a>
+                  <div class="collapse" id="sidebarUsers">
+                      <ul class="side-nav-second-level">
+                          <li>
+                              <a href="{{route('users.index')}}">
+                                  <span> {{__('Users')}} </span>
+                              </a>
+                          </li>
+                          
+                          <li>
+                              <a href="{{route('roles.index')}}">
+                                  <span> {{__('Roles')}} </span>
+                              </a>
+                          </li>
+
+                          <li>
+                              <a href="{{route('activity-logs.index')}}">
+                                  <span> {{__('Activity Logs')}} </span>
+                              </a>
+                          </li>
+                      </ul>
+                  </div>
+              </li>
+
+              <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarEmployees" aria-expanded="false" aria-controls="sidebarEmployees" class="side-nav-link">
                       <i class="uil-users-alt"></i>
                       <span> {{__('Employees Management')}} </span>
@@ -121,6 +150,11 @@
                           <li>
                               <a href="{{route('monthly-donations.cancelled')}}">
                                   <span> {{__('Cancelled Monthly Donations')}} </span>
+                              </a>
+                          </li>
+                          <li>
+                              <a href="{{route('donations.index')}}">
+                                  <span> {{__('Donations')}} </span>
                               </a>
                           </li>
                       </ul>

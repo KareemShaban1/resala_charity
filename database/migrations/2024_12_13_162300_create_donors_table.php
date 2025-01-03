@@ -18,7 +18,7 @@ return new class extends Migration
                   ->references('id')
                   ->on('donors')
                   ->nullOnDelete(); // Set the foreign key constraint with on delete set null
-            $table->string('name')->unique();
+            $table->string('name');
             $table->foreignId('governorate_id')->constrained();
             $table->foreignId('city_id')->constrained();
             $table->foreignId('area_id')->nullable()->constrained();

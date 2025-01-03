@@ -1,0 +1,38 @@
+<?php
+
+return [
+    'required' => 'حقل :attribute مطلوب.',
+    'exists' => ':attribute المختار غير صالح.',
+    'in' => 'يجب أن يكون حقل :attribute واحدًا من القيم التالية: :values.',
+    'string' => 'يجب أن يكون حقل :attribute نصًا.',
+    'numeric' => 'يجب أن يكون حقل :attribute رقمًا.',
+    'integer' => 'يجب أن يكون حقل :attribute عددًا صحيحًا.',
+    'array' => 'يجب أن يكون حقل :attribute مصفوفة.',
+    'min' => [
+        'numeric' => 'يجب أن يكون :attribute على الأقل :min.',
+        'integer' => 'يجب أن يكون :attribute على الأقل :min.',
+    ],
+    'nullable' => 'حقل :attribute اختياري.',
+    'attributes' => [
+        'donor_id' => 'المتبرع',
+        'department_id' => 'القسم',
+        'employee_id' => 'الموظف',
+        'collecting_donation_way' => 'طريقة جمع التبرعات',
+        'status' => 'الحالة',
+        'cancellation_reason' => 'سبب الإلغاء',
+        'cancellation_date' => 'تاريخ الإلغاء',
+        'donates' => 'التبرعات',
+        'donates.*.financial_donation_type' => 'نوع التبرع المالي',
+        'donates.*.financial_donation_categories_id' => 'فئة التبرع المالي',
+        'donates.*.financial_monthly_donation_id' => 'معرف التبرع المالي الشهري',
+        'donates.*.financial_amount' => 'المبلغ المالي',
+        'donates.*.inKind_donation_type' => 'نوع التبرع العيني',
+        'donates.*.inkind_monthly_donation_id' => 'معرف التبرع العيني الشهري',
+        'donates.*.in_kind_item_name' => 'اسم العنصر العيني',
+        'donates.*.in_kind_quantity' => 'كمية التبرع العيني',
+    ],
+    "no_valid_donations_provided" => "لم يتم تقديم أي تبرعات صالحة.",
+    "unique_receipt_number_financial"=>"تم استخدام رقم الاستلام مسبقاً فى التبرعات المادية.",
+    "unique_receipt_number_in_kind"=>"تم استخدام رقم الاستلام مسبقاً فى التبرعات العينية .",
+    "Validation Error" => "خطأ في التحقق",
+];

@@ -26,11 +26,13 @@
                             <tr>
                                 <th>{{__('ID')}}</th>
                                 <th>{{__('Donor Name')}}</th>
+                                <th>{{__('Cancellation Reason')}}</th>
+                                <th>{{__('Cancellation Date')}}</th>
                                 <th>{{__('Area')}}</th>
-                                <th>{{__('Address')}}</th>
+                                <!-- <th>{{__('Address')}}</th> -->
                                 <th>{{__('Phones')}}</th>
-                                <th>{{__('Collecting Donation Way')}}</th>
-                                <th>{{__('Monthly Donation Day')}}</th>
+                                <!-- <th>{{__('Collecting Donation Way')}}</th> -->
+                                <!-- <th>{{__('Monthly Donation Day')}}</th> -->
                                 <!-- <th>{{__('Created At')}}</th> -->
                                 <th>{{__('Donates')}}</th>
                                 <th>{{__('Actions')}}</th>

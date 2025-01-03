@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\MonthlyDonationCancellation;
+use App\Models\DonationCollecting;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class MonthlyDonationCancellationPolicy
+class DonationCollectingPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,7 +19,7 @@ class MonthlyDonationCancellationPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, MonthlyDonationCancellation $monthlyDonationCancellation): bool
+    public function view(User $user, DonationCollecting $donationCollecting): bool
     {
         //
     }
@@ -35,7 +35,7 @@ class MonthlyDonationCancellationPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, MonthlyDonationCancellation $monthlyDonationCancellation): bool
+    public function update(User $user, DonationCollecting $donationCollecting): bool
     {
         //
     }
@@ -43,7 +43,7 @@ class MonthlyDonationCancellationPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, MonthlyDonationCancellation $monthlyDonationCancellation): bool
+    public function delete(User $user, DonationCollecting $donationCollecting): bool
     {
         //
     }
@@ -51,7 +51,7 @@ class MonthlyDonationCancellationPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, MonthlyDonationCancellation $monthlyDonationCancellation): bool
+    public function restore(User $user, DonationCollecting $donationCollecting): bool
     {
         //
     }
@@ -59,7 +59,7 @@ class MonthlyDonationCancellationPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, MonthlyDonationCancellation $monthlyDonationCancellation): bool
+    public function forceDelete(User $user, DonationCollecting $donationCollecting): bool
     {
         //
     }

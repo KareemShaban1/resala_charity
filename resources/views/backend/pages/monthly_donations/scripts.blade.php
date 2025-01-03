@@ -67,6 +67,36 @@
             order: [
                 [0, 'desc']
             ],
+            buttons: [{
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1,2,3,4,5,6,7]
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Monthly Donations Data',
+                    exportOptions: {
+                        columns: [0, 1,2,3,4,5,6,7]
+                    }
+                },
+                // {
+                //     extend: 'pdf', 
+                //     text: 'PDF', 
+                //     title: 'Monthly Donations Data', 
+                //     exportOptions: {
+                //         columns: [0, 1]
+                //     }
+                // },
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: [0, 1,2,3,4,5,6,7]
+                    }
+                },
+            ],
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
             pageLength: 10,
             responsive: true,
             language: languages[language],
@@ -92,13 +122,21 @@
                     name: 'name'
                 },
                 {
+                    data: 'cancellation_reason',
+                    name: 'cancellation_reason'
+                },
+                {
+                    data: 'cancellation_date',
+                    name: 'cancellation_date'
+                },
+                {
                     data: 'area',
                     name: 'area'
                 },
-                {
-                    data: 'address',
-                    name: 'address'
-                },
+                // {
+                //     data: 'address',
+                //     name: 'address'
+                // },
                 {
                     data: 'phones',
                     name: 'phones',
@@ -115,15 +153,6 @@
 
                 },
                 {
-                    data: 'collecting_donation_way',
-                    name: 'collecting_donation_way'
-                },
-                {
-                    data: 'monthly_donation_day',
-                    name: 'monthly_donation_day'
-                },
-
-                {
                     data: 'donates', // Add the 'donates' column
                     name: 'donates',
                     orderable: false,
@@ -139,6 +168,36 @@
             order: [
                 [0, 'desc']
             ],
+            buttons: [{
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1,2,3,4,5,6]
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Cancelled Monthly Donations Data',
+                    exportOptions: {
+                        columns: [0, 1,2,3,4,5,6]
+                    }
+                },
+                // {
+                //     extend: 'pdf', 
+                //     text: 'PDF', 
+                //     title: 'Cancelled Monthly Donations Data', 
+                //     exportOptions: {
+                //         columns: [0, 1]
+                //     }
+                // },
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: [0, 1,2,3,4,5,6]
+                    }
+                },
+            ],
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
             pageLength: 10,
             responsive: true,
             language: languages[language],
@@ -158,6 +217,7 @@
                 container.append(`
             <div class="row donation-row">
                 <input type="hidden" name="donates[${financialRowIndex}][financial_donation_type]" value="Financial">
+                
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="donation_category" class="form-label">{{__('Donation Category')}}</label>
@@ -177,9 +237,6 @@
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                 <input type="hidden" name="donates[${financialRowIndex}][inKind_donation_type]" value="inKind">
-                 <input type="hidden" class="form-control" name="donates[${financialRowIndex}][in_kind_item_name]">
-                 <input type="hidden" class="form-control" name="donates[${financialRowIndex}][in_kind_quantity]">
 
                 <div class="col-md-4 d-flex align-items-center">
                     <button type="button" class="btn btn-danger mt-2 remove-row-btn">{{__('Remove')}}</button>
@@ -205,9 +262,6 @@
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                 <input type="hidden" name="donates[${inKindRowIndex}][financial_donation_type]" value="Financial">
-                 <input type="hidden" class="form-control" name="donates[${inKindRowIndex}][financial_amount]">
-                 <input type="hidden" class="form-control" name="donates[${inKindRowIndex}][financial_donation_categories_id]">
                 <div class="col-md-4 d-flex align-items-center">
                     <button type="button" class="btn btn-danger mt-2 remove-row-btn">{{__('Remove')}}</button>
                 </div>
@@ -229,12 +283,59 @@
         });
 
 
-        // $('#donor_id').select2({
-        //     dropdownParent: $('#addMonthlyDonationModal'),
-        //     placeholder: '{{__('Select Donor ')}}',
-        //     allowClear: true,
-        //     width: '100%'
-        // });
+      // Remove Row Edit with SweetAlert Confirmation
+$(document).on('click', '.remove-row-btn-edit', function() {
+    const row = $(this).closest('.donation-row');
+    const donationId = row.find('input[name*="_monthly_donation_id"]').val(); // Extract donation ID
+
+    if (!donationId) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Donation ID not found.'
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `{{ url('monthly-donations/delete-donate') }}/${donationId}`, // Endpoint to handle deletion
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRF token for Laravel
+                },
+                success: function(response) {
+                    Swal.fire(
+                        'Deleted!',
+                        response.message || 'Donation removed successfully.',
+                        'success'
+                    );
+                    row.remove(); // Remove the row from the DOM
+                },
+                error: function(error) {
+                    console.error("Error deleting donation:", error);
+                    Swal.fire(
+                        'Error!',
+                        'Failed to delete the donation. Please try again.',
+                        'error'
+                    );
+                }
+            });
+        }
+    });
+});
+
+
+
 
 
         // Add Monthly Donation Form Submit
@@ -275,7 +376,7 @@
                                 `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
                         } else {
                             // Handle general file validation error
-                            errorDetails = errors.file ? errors.file[0] : 'Invalid file format.';
+                            errorDetails = errors.file ? errors.file[0] : 'Something went wrong.';
                         }
 
                         Swal.fire({
@@ -325,12 +426,28 @@
                 },
                 error: function(xhr) {
                     if (xhr.status === 422) {
-                        var errors = xhr.responseJSON.errors;
-                        Object.keys(errors).forEach(function(key) {
-                            var input = form.find(`[name="${key}"]`);
-                            input.addClass('is-invalid');
-                            input.siblings('.invalid-feedback').text(errors[key][0]);
-                        });
+                        // Validation error
+                    let response = xhr.responseJSON;
+                    let errors = response.errors || [];
+                    let errorDetails = '';
+
+                    if (Array.isArray(errors)) {
+                        // Handle row-specific errors
+                        errorDetails = errors.map(error =>
+                            `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
+                    } else {
+                        // Handle general file validation error
+                        errorDetails = errors.file ? errors.file[0] : 'Something went wrong.';
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        html: `<pre style="direction: ltr;">${errorDetails}</pre>`,
+                        customClass: {
+                            popup: 'text-start',
+                        }
+                    });
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -350,10 +467,6 @@
             form.find('.invalid-feedback').text('');
         });
 
-
-
-
-
     });
 
 
@@ -368,7 +481,8 @@
                 delay: 250,
                 data: function(params) {
                     return {
-                        query: params.term // Search query
+                        query: params.term, // Search query
+                        monthly: true
                     };
                 },
                 processResults: function(data) {
@@ -471,37 +585,35 @@
                 financialContainer.empty(); // Clear only if there is data
                 financialDonations.forEach((donation, index) => {
                     const financialRow = `
-                    <div class="row donation-row">
-                        <input type="hidden" name="donates[${index}][financial_donation_type]" value="Financial">
-                        <input type="hidden" name="donates[${index}][financial_monthuly_donation_id]" value="${donation.id}">
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label class="form-label">{{__('Donation Category')}}</label>
-                                <select class="form-control donation-category" name="donates[${index}][financial_donation_categories_id]">
-                                    ${donationCategories.map(category => `
-                                        <option value="${category.id}" ${Number(category.id) === Number(donation.donation_category_id || 0) ? 'selected' : ''}>
-                                            ${category.name}
-                                        </option>
-                                    `).join('')}
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label class="form-label">{{__('Amount')}}</label>
-                                <input type="number" class="form-control amount" name="donates[${index}][financial_amount]" value="${donation.amount}">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                         <input type="hidden" name="donates[${index}][inKind_donation_type]" value="inKind">
-                 <input type="hidden" class="form-control" name="donates[${index}][in_kind_item_name]">
-                 <input type="hidden" class="form-control" name="donates[${index}][in_kind_quantity]">
-                        <div class="col-md-4 d-flex align-items-center">
-                            <button type="button" class="btn btn-secondary mt-2 add-row-btn" data-target="#financial-donation-rows-container">Add Row</button>
-                        </div>
-                    </div>
-                `;
+        <div class="row donation-row">
+        
+            <input type="hidden" name="donates[${index}][financial_donation_type]" value="Financial">
+            <input type="hidden" name="donates[${index}][financial_monthly_donation_id]" value="${donation.id}">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">{{__('Donation Category')}}</label>
+                    <select class="form-control donation-category" name="donates[${index}][financial_donation_categories_id]">
+                        ${donationCategories.map(category => `
+                            <option value="${category.id}" ${Number(category.id) === Number(donation.donation_category_id || 0) ? 'selected' : ''}>
+                                ${category.name}
+                            </option>
+                        `).join('')}
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">{{__('Amount')}}</label>
+                    <input type="number" class="form-control amount" name="donates[${index}][financial_amount]" value="${donation.amount}">
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex align-items-center">
+                <button type="button" class="btn btn-danger mt-2 remove-row-btn-edit">{{__('Remove')}}</button>
+            </div>
+        </div>
+        `;
                     financialContainer.append(financialRow);
                 });
             }
@@ -512,41 +624,38 @@
                 inKindContainer.empty(); // Clear only if there is data
                 inKindDonations.forEach((donation, index) => {
                     const inKindRow = `
-                    <div class="row donation-row">
-                        <input type="hidden" name="donates[${index}][inKind_donation_type]" value="inKind">
-                        <input type="hidden" name="donates[${index}][inkind_monthuly_donation_id]" value="${donation.id}">
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="item_name" class="form-label">{{__('Item Name')}}</label>
-                                <input type="text" class="form-control" name="donates[${index}][in_kind_item_name]" value="${donation.item_name}">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="quantity" class="form-label">{{__('Amount')}}</label>
-                                <input type="number" class="form-control" name="donates[${index}][in_kind_quantity]" value="${donation.amount}">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                            <input type="hidden" name="donates[${index}][financial_donation_type]" value="Financial">
-                 <input type="hidden" class="form-control" name="donates[${index}][financial_amount]">
-                 <input type="hidden" class="form-control" name="donates[${index}][financial_donation_categories_id]">
-                        <div class="col-md-4 d-flex align-items-center">
-                            <button type="button" class="btn btn-secondary mt-2 add-row-btn" data-target="#edit-in-kind-donation-rows-container">Add Row</button>
-                        </div>
-                    </div>
-                `;
+        <div class="row donation-row">
+            <input type="hidden" name="donates[${index}][inKind_donation_type]" value="inKind">
+            <input type="hidden" name="donates[${index}][inkind_monthly_donation_id]" value="${donation.id}">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="item_name" class="form-label">{{__('Item Name')}}</label>
+                    <input type="text" class="form-control" name="donates[${index}][in_kind_item_name]" value="${donation.item_name}">
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">{{__('Amount')}}</label>
+                    <input type="number" class="form-control" name="donates[${index}][in_kind_quantity]" value="${donation.amount}">
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+           
+            <div class="col-md-4 d-flex align-items-center">
+                <button type="button" class="btn btn-danger mt-2 remove-row-btn-edit">{{__('Remove')}}</button>
+            </div>
+        </div>
+        `;
                     inKindContainer.append(inKindRow);
                 });
             }
+
         }).fail(function(error) {
             console.error('Error fetching data:', error);
             alert('Failed to fetch data. Please try again.');
         });
     }
-
-
 
     document.getElementById('monthly_donation_status').addEventListener('change', function() {
         const reasonContainer = document.getElementById('reason-container');

@@ -14,14 +14,18 @@ class DonorPolicy
     public function viewAny(User $user): bool
     {
         //
+        return $user->hasPermissionTo('view donors');
+
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Donor $donor): bool
+    public function view(User $user): bool
     {
         //
+        return $user->hasPermissionTo('view donors');
+
     }
 
     /**
@@ -30,37 +34,47 @@ class DonorPolicy
     public function create(User $user): bool
     {
         //
+        return $user->hasPermissionTo('create donors');
+
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Donor $donor): bool
+    public function update(User $user): bool
     {
         //
+        return $user->hasPermissionTo('update donors');
+
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Donor $donor): bool
+    public function delete(User $user): bool
     {
         //
+        return $user->hasPermissionTo('delete donors');
+
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Donor $donor): bool
+    public function restore(User $user): bool
     {
         //
+        return $user->hasPermissionTo('restore donors');
+
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Donor $donor): bool
+    public function forceDelete(User $user): bool
     {
         //
+        return $user->hasPermissionTo('force delete donors');
+
     }
 }

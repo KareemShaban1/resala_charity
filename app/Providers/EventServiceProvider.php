@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Donation;
 use App\Models\MonthlyDonation;
 use App\Models\MonthlyDonationCancellation;
+use App\Observers\DonationObserver;
 use App\Observers\MonthlyDonationCancellationObserver;
 use App\Observers\MonthlyDonationObserver;
 use Illuminate\Auth\Events\Registered;
@@ -31,6 +33,7 @@ class EventServiceProvider extends ServiceProvider
     {
         //
         MonthlyDonation::observe(MonthlyDonationObserver::class);
+        Donation::observe(DonationObserver::class);
     }
 
     /**

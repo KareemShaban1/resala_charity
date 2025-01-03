@@ -12,14 +12,21 @@
 <script src="{{asset('backend/assets/js/vendor/dataTables.bootstrap5.js')}}"></script>
 <script src="{{asset('backend/assets/js/vendor/dataTables.responsive.min.js')}}"></script>
 <script src="{{asset('backend/assets/js/vendor/responsive.bootstrap5.min.js')}}"></script>
-
+<script src="{{asset('backend/assets/js/vendor/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('backend/assets/js/vendor/buttons.bootstrap5.min.js')}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="{{asset('backend/assets/js/vendor/buttons.html5.min.js')}} "></script>
+<script src="{{asset('backend/assets/js/vendor/buttons.flash.min.js')}}"></script>
+<script src="{{asset('backend/assets/js/vendor/buttons.print.min.js')}}"></script>
 <!-- Datatable Init js -->
-<script src="{{asset('backend/assets/js/pages/demo.datatable-init.js')}}"></script>
+<!-- <script src="{{asset('backend/assets/js/pages/demo.datatable-init.js')}}"></script> -->
 
 <!-- third party js ends -->
 
 <!-- demo app -->
-<script src="{{asset('backend/assets/js/pages/demo.dashboard.js')}}"></script>
+<!-- <script src="{{asset('backend/assets/js/pages/demo.dashboard.js')}}"></script> -->
 
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

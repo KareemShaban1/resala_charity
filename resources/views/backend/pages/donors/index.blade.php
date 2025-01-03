@@ -45,9 +45,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>{{__('Name')}}</th>
-                                <!-- <th>{{__('Address')}}</th> -->
                                 <th>{{__('Donor Type')}}</th>
-                                <!-- <th>{{__('Governorate')}}</th> -->
                                 <th>{{__('City')}}</th>
                                 <th>{{__('Area')}}</th>
                                 <th>{{__('Phones')}}</th>
@@ -370,6 +368,36 @@
             search: {
                 regex: true
             },
+            buttons: [{
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6]
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Donors Data',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3,4,5,6]
+                    }
+                },
+                // {
+                //     extend: 'pdf', 
+                //     text: 'PDF', 
+                //     title: 'Donors Data', 
+                //     exportOptions: {
+                //         columns: [0, 1, 2, 3]
+                //     }
+                // },
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3,4,5,6]
+                    }
+                },
+            ],
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
             pageLength: 10,
             responsive: true,
             language: languages[language],
@@ -583,7 +611,7 @@
                             `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
                     } else {
                         // Handle general file validation error
-                        errorDetails = errors.file ? errors.file[0] : 'Invalid file format.';
+                        errorDetails = errors.file ? errors.file[0] : 'Something went wrong.';
                     }
 
                     Swal.fire({
