@@ -109,7 +109,7 @@ class MonthlyDonationController extends Controller
                     class="btn btn-sm btn-info">
                         <i class="mdi mdi-square-edit-outline"></i>
                     </a>
-                    <a href="javascript:void(0);" onclick="deleteRecord(' . $item->id . ', \'monthly_donations\')"
+                    <a href="javascript:void(0);" onclick="deleteRecord(' . $item->id . ', \'monthly-donations\')"
                     class="btn btn-sm btn-danger">
                         <i class="mdi mdi-delete"></i>
                     </a>
