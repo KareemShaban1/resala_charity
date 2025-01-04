@@ -463,6 +463,25 @@
         }
     }
 
+    function toggleEditDonationType() {
+        const donationType = document.getElementById('edit_donation_type').value;
+        const editFinancialContainer = document.getElementById('edit-financial-donations-section');
+        const editInKindContainer = document.getElementById('edit-in-kind-donations-section');
+
+        console.log(donationType)
+
+        if (donationType === 'Financial') {
+            console.log("test financial")
+            editFinancialContainer.classList.remove('d-none');
+            editInKindContainer.classList.add('d-none');
+        } else if (donationType === 'inKind') {
+            console.log("test inkind")
+
+            editFinancialContainer.classList.add('d-none');
+            editInKindContainer.classList.remove('d-none');
+        }
+    }
+
     function toggleDonationStatus() {
         const donationStatus = document.getElementById('donation_status').value;
         const CollectingSection = document.getElementById('collecting-section');
@@ -502,15 +521,15 @@
         // });
     });
 
-    function toggleEditDonationType(type) {
-        if (type === 'Financial') {
-            $('#edit-financial-donation-rows').removeClass('d-none');
-            $('#edit-in-kind-donation-rows').addClass('d-none');
-        } else {
-            $('#edit-in-kind-donation-rows').removeClass('d-none');
-            $('#edit-financial-donation-rows').addClass('d-none');
-        }
-    }
+    // function toggleEditDonationType(type) {
+    //     if (type === 'Financial') {
+    //         $('#edit-financial-donation-rows').removeClass('d-none');
+    //         $('#edit-in-kind-donation-rows').addClass('d-none');
+    //     } else {
+    //         $('#edit-in-kind-donation-rows').removeClass('d-none');
+    //         $('#edit-financial-donation-rows').addClass('d-none');
+    //     }
+    // }
 
     // function toggleEditDonationStatus(status) {
     //     console.log(status);
@@ -543,7 +562,7 @@
                 $('#edit_collecting_date').val(formatDate(data.collecting_donation?.collecting_date));
                 $('#edit_receipt_number').val(data.collecting_donation?.receipt_number);
                 $('#edit_employee_id').val(data.collecting_donation?.employee_id).trigger('change');
-                toggleEditDonationType(data.donation_type);
+                // toggleEditDonationType(data.donation_type);
                 // toggleEditDonationStatus(data.status);
 
 
