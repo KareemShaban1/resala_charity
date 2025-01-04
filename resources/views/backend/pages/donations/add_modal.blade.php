@@ -140,7 +140,7 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="name" class="form-label">{{__('Collecting By')}}</label>
-                        <select class="form-control select2" id="employee_id" name="employee_id" required>
+                        <select class="form-control select2" id="employee_id" name="employee_id">
                             <option value="">{{__('Select Employee')}}</option>
                             @foreach($employees as $employee)
                             <option value="{{ $employee->id }}">{{ $employee->name }}</option>

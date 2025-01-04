@@ -25,7 +25,7 @@
                         <label for="edit_donation_status" class="form-label">{{__('Status')}}</label>
                         <select class="form-control" name="status" id="edit_donation_status" onchange="toggleDonationStatus()">
                             <option value="collected">{{__('Collected')}}</option>
-                            <option value="not_collected">{{__('Not_Collected')}}</option>
+                            <option value="not_collected">{{__('Not Collected')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -142,7 +142,7 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="edit_employee_id" class="form-label">{{__('Collecting By')}}</label>
-                        <select class="form-control select2" id="edit_employee_id" name="employee_id" required>
+                        <select class="form-control select2" id="edit_employee_id" name="employee_id">
                             <option value="">{{__('Select Employee')}}</option>
                             @foreach($employees as $employee)
                             <option value="{{ $employee->id }}">{{ $employee->name }}</option>

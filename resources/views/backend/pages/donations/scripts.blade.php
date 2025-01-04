@@ -529,9 +529,9 @@
                 $('#edit_date').val(data.date);
                 $('#edit_donation_status').val(data.status).trigger('change');
                 $('#edit_donation_type').val(data.donation_type).trigger('change');
-                $('#edit_collecting_date').val(formatDate(data.collecting_donation.collecting_date));
-                $('#edit_receipt_number').val(data.collecting_donation.receipt_number);
-                $('#edit_employee_id').val(data.collecting_donation.employee_id).trigger('change');
+                $('#edit_collecting_date').val(formatDate(data.collecting_donation?.collecting_date));
+                $('#edit_receipt_number').val(data.collecting_donation?.receipt_number);
+                $('#edit_employee_id').val(data.collecting_donation?.employee_id).trigger('change');
                 toggleEditDonationType(data.donation_type);
                 toggleEditDonationStatus(data.status);
 
