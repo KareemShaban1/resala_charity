@@ -329,26 +329,26 @@
                     if (xhr.status === 422) {
                         // Validation error
                         let response = xhr.responseJSON;
-                        let errors = response.errors || [];
+                        let errors = response.errors || {};
                         let errorDetails = '';
 
-                        if (Array.isArray(errors)) {
-                            // Handle row-specific errors
-                            errorDetails = errors.map(error =>
-                                `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
-                        } else {
-                            // Handle general file validation error
-                            errorDetails = errors.file ? errors.file[0] : 'Something went wrong.';
+                        // Loop through each field and its errors
+                        for (let field in errors) {
+                            if (errors.hasOwnProperty(field)) {
+                                let fieldErrors = errors[field].join(', ');
+                                errorDetails += `<p>${fieldErrors}</p>`;
+                            }
                         }
 
                         Swal.fire({
                             icon: 'error',
-                            title: 'Validation Error',
-                            html: `<pre style="direction: ltr;">${errorDetails}</pre>`,
+                            title: '{{ __('validation.Validation Error') }}', // Ensure this is rendered as a string by Blade
+                            html: `<div style="direction: rtl; text-align: center;">${errorDetails}</div>`,
                             customClass: {
                                 popup: 'text-start',
                             }
                         });
+
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -474,6 +474,17 @@
         }
     }
 
+    function toggleEditDonationStatus() {
+        const donationStatus = document.getElementById('edit_donation_status').value;
+        const CollectingSection = document.getElementById('edit-collecting-section');
+
+        if (donationStatus === 'collected') {
+            CollectingSection.classList.remove('d-none');
+        } else if (donationStatus === 'not_collected') {
+            CollectingSection.classList.add('d-none');
+        }
+    }
+
     $(document).ready(function() {
         // Initialize event listeners for adding and removing rows
         // $('#add-financial-row-edit').on('click', function() {
@@ -501,16 +512,16 @@
         }
     }
 
-    function toggleEditDonationStatus(status) {
-        console.log(status);
-        const CollectingSection = document.getElementById('edit-collecting-section');
+    // function toggleEditDonationStatus(status) {
+    //     console.log(status);
+    //     const CollectingSection = document.getElementById('edit-collecting-section');
 
-        if (status === 'collected') {
-            CollectingSection.classList.remove('d-none');
-        } else if (status === 'not_collected') {
-            CollectingSection.classList.add('d-none');
-        }
-    }
+    //     if (status === 'collected') {
+    //         CollectingSection.classList.remove('d-none');
+    //     } else if (status === 'not_collected') {
+    //         CollectingSection.classList.add('d-none');
+    //     }
+    // }
 
     function editDonation(id) {
         var form = $('#editDonationForm');
@@ -533,7 +544,7 @@
                 $('#edit_receipt_number').val(data.collecting_donation?.receipt_number);
                 $('#edit_employee_id').val(data.collecting_donation?.employee_id).trigger('change');
                 toggleEditDonationType(data.donation_type);
-                toggleEditDonationStatus(data.status);
+                // toggleEditDonationStatus(data.status);
 
 
                 function formatDate(dateString) {

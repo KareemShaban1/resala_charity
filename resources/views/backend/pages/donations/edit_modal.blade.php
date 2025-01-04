@@ -23,7 +23,7 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="edit_donation_status" class="form-label">{{__('Status')}}</label>
-                        <select class="form-control" name="status" id="edit_donation_status" onchange="toggleDonationStatus()">
+                        <select class="form-control" name="status" id="edit_donation_status" onchange="toggleEditDonationStatus()">
                             <option value="collected">{{__('Collected')}}</option>
                             <option value="not_collected">{{__('Not Collected')}}</option>
                         </select>
