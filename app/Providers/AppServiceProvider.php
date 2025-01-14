@@ -23,10 +23,10 @@ class AppServiceProvider extends ServiceProvider
         //
         $models = [
             'App\Models\User','App\Models\Governorate',
-            'App\Models\City','App\Models\Area','App\Models\DonationCategory', 
-            'App\Models\Department', 'App\Models\Employee', 
+            'App\Models\City','App\Models\Area','App\Models\DonationCategory',
+            'App\Models\Department', 'App\Models\Employee',
             'App\Models\MonthlyDonation','App\Models\MonthlyDonationsDonate',
-            'App\Models\Donation','App\Models\Donationitem', 'App\Models\DonationCollecting',
+            'App\Models\Donation','App\Models\DonationItem', 'App\Models\DonationCollecting',
             'App\Models\Donor', 'App\Models\DonorPhone','App\Models\DonorActivity',
             'App\Models\CallType',
         ];
