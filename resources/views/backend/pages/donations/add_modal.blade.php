@@ -15,11 +15,7 @@
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-
-            </div>
-
-            <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="mb-3">
                         <label for="donation_status" class="form-label">{{__('Status')}}</label>
                         <select class="form-control" name="status" id="donation_status" onchange="toggleDonationStatus()">
@@ -29,7 +25,12 @@
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                <div class="col-md-4">
+
+            </div>
+
+            <div class="row">
+                
+                <div class="col-md-6">
                     <div class="mb-3">
                         <label for="date" class="form-label">{{__('Donation Date')}}</label>
                         <input type="date" class="form-control" id="date" name="date">
@@ -37,14 +38,29 @@
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="mb-3">
                         <label for="donation_type" class="form-label">{{__('Donation Type')}}</label>
                         <select class="form-control" name="donation_type" id="donation_type" onchange="toggleDonationType()">
-                            <option value="Financial">{{__('Financial')}}</option>
+                            <option value="financial">{{__('Financial')}}</option>
                             <option value="inKind">{{__('In-Kind')}}</option>
+                            <option value="both">{{__('Both')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="collecting_time" class="form-label">{{__('Collecting Time')}}</label>
+                        <textarea name="collecting_time" id="collecting_time" class="form-control"></textarea>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">{{__('Notes')}}</label>
+                        <textarea name="notes" id="notes" class="form-control"></textarea>
                     </div>
                 </div>
 
@@ -60,7 +76,7 @@
                     <div id="financial-donation-rows-container">
                         <!-- Example Row -->
                         <div class="row donation-row">
-                            <input type="hidden" name="donates[0][financial_donation_type]" value="Financial">
+                            <input type="hidden" name="donates[0][financial_donation_type]" value="financial">
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="donation_category" class="form-label">{{__('Donation Category')}}</label>
@@ -122,22 +138,30 @@
             </div>
 
             <div class="row d-none" id="collecting-section">
-                <div class="col-md-4">
+                <div class="col-md-6 d-none" id="financial-receipt-container">
                     <div class="mb-3">
-                        <label for="receipt_number" class="form-label">{{__('Receipt Number')}}</label>
-                        <input type="text" class="form-control" id="receipt_number" name="receipt_number">
+                        <label for="receipt_number" class="form-label">{{__('Financial Receipt Number')}}</label>
+                        <input type="text" class="form-control" id="financial_receipt_number" name="financial_receipt_number">
                         <div class="invalid-feedback"></div>
                     </div>
 
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6 d-none" id="in-kind-receipt-container">
+                    <div class="mb-3">
+                        <label for="receipt_number" class="form-label">{{__('In Kind Receipt Number')}}</label>
+                        <input type="text" class="form-control" id="in_kind_receipt_number" name="in_kind_receipt_number">
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                </div>
+                <div class="col-md-6">
                     <div class="mb-3">
                         <label for="collecting_date" class="form-label">{{__('Collecting Date')}}</label>
                         <input type="date" class="form-control" id="collecting_date" name="collecting_date">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="mb-3">
                         <label for="name" class="form-label">{{__('Collecting By')}}</label>
                         <select class="form-control select2" id="employee_id" name="employee_id">

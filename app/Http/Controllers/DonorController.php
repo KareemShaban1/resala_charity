@@ -6,6 +6,7 @@ use App\Models\Donor;
 use App\Http\Requests\StoreDonorRequest;
 use App\Http\Requests\UpdateDonorRequest;
 use App\Imports\DonorsImport;
+use App\Models\DonorActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -31,19 +32,22 @@ class DonorController extends Controller
     {
         $query = Donor::with(['governorate', 'city', 'area', 'phones']);
 
-        if ($request->filled('phone')) {
-            $phone = $request->get('phone');
-            $query->whereHas('phones', function ($q) use ($phone) {
-                $q->where('phone_number', 'like', "%{$phone}%");
-            });
-        }
-
         return datatables()->of($query)
+            ->filterColumn('phones', function ($query, $keyword) {
+                $query->whereHas('phones', function ($q) use ($keyword) {
+                    $q->where('phone_number', 'like', "%{$keyword}%");
+                });
+            })
             ->addColumn('phones', function ($donor) {
                 return $donor->phones->isNotEmpty() ?
                     $donor->phones->map(function ($phone) {
                         return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
                     })->implode(', ') : 'N/A';
+            })
+            ->addColumn('donor_name', function ($donor) {
+                return '<a href="' . route('donor-history.show', [$donor->id]) . '" class="text-info">'
+                    . $donor->name .
+                    '</a>';
             })
             ->addColumn('action', function ($donor) {
                 return '
@@ -52,12 +56,13 @@ class DonorController extends Controller
                     </a>
                     <a href="javascript:void(0)" onclick="deleteDonor(' . $donor->id . ')" class="btn btn-sm btn-danger">
                         <i class="mdi mdi-trash-can"></i>
-                    </a>'
-                    .
-                    '<a href="javascript:void(0)" onclick="assignDonor(' . $donor->id . ')" class="btn btn-sm btn-success">
+                    </a>
+                    <a href="javascript:void(0)" onclick="assignDonor(' . $donor->id . ')" class="btn btn-sm btn-success">
                         <i class="mdi mdi-account-plus"></i>
-                    </a>'
-                    ;
+                    </a>
+                    <a href="javascript:void(0)" onclick="addActivity(' . $donor->id . ')" class="btn btn-sm btn-dark">
+                        <i class="uil-outgoing-call"></i>
+                    </a>';
             })
             ->editColumn('active', function ($donor) {
                 return $donor->active ?
@@ -76,7 +81,7 @@ class DonorController extends Controller
             ->editColumn('donor_type', function ($donor) {
                 return $donor->donor_type ? $donor->donor_type : '';
             })
-            ->rawColumns(['active', 'action'])
+            ->rawColumns(['active', 'action', 'donor_name'])
             ->make(true);
     }
 
@@ -280,7 +285,7 @@ class DonorController extends Controller
         if (empty($query)) {
             return response()->json([], 200); // Return an empty array if no query is provided
         }
-       
+
 
         // Normalize the query to remove non-numeric characters
         $normalizedQuery = preg_replace('/\D/', '', $query); // Remove non-numeric characters
@@ -293,11 +298,11 @@ class DonorController extends Controller
                 $q->whereRaw('REPLACE(REPLACE(REPLACE(phone_number, "-", ""), "(", ""), ")", "") LIKE ?', ['%' . $normalizedQuery . '%']);
             });
 
-            if($request->get('monthly')){
-                $query->where('donor_type', 'monthly');
-            }
+        if ($request->get('monthly')) {
+            $query->where('donor_type', 'monthly');
+        }
 
-            $donors = $query->get();
+        $donors = $query->get();
 
 
         // Loop through donors and filter for phone number match
@@ -344,7 +349,8 @@ class DonorController extends Controller
         ]);
     }
 
-    public function donorChildren(Request $request){
+    public function donorChildren(Request $request)
+    {
         $parentDonor = Donor::where('id', $request->parent_donor_id)->first();
         $childrenDonors = Donor::where('parent_id', $parentDonor->id)->get();
         return response()->json($childrenDonors);
@@ -360,8 +366,31 @@ class DonorController extends Controller
             ->whereNull('parent_id')  // Ensure it's a top-level donor
             ->whereNotIn('id', Donor::whereNotNull('parent_id')->pluck('parent_id'))  // Exclude those who are parents for other donors
             ->get();
-    
+
         return response()->json($childrenDonors);
     }
-    
+
+    public function addActivity(Request $request){
+        $request->validate([
+            'donor_id' => 'required|exists:donors,id',
+            'call_type_id' => 'required|exists:call_types,id',
+            'activity_type' => 'required|in:call',
+            'notes'=> 'nullable|string',
+            'date_time' => 'required|date',
+            'response' => 'nullable|string',
+        ]);
+        DonorActivity::create([
+            'donor_id' => $request->donor_id,
+            'call_type_id' => $request->call_type_id,
+            'activity_type' => $request->activity_type,
+            'notes' => $request->notes,
+            'date_time' => $request->date_time,
+            'response' => $request->response,
+            'created_by' => auth()->user()->id
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.Donor activity added successfully.'),
+        ]);
+    }
 }

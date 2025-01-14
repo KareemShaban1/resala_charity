@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('donation_id')->constrained()->onDelete('cascade');
             $table->date('collecting_date');
-            $table->string('receipt_number');
+            $table->string('financial_receipt_number')->nullable();
+            $table->string('in_kind_receipt_number')->nullable();
             $table->foreignId('employee_id')->constrained()->onDelete('cascade');
 
             $table->timestamps();

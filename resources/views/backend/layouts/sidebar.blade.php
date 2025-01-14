@@ -31,7 +31,7 @@
               <li class="side-nav-item">
                   <a href="#" data-bs-toggle="collapse" href="#sidebarDashboards" aria-expanded="false" aria-controls="sidebarDashboards" class="side-nav-link">
                       <i class="uil-home-alt"></i>
-                      <span class="badge bg-success float-end">4</span>
+                      <!-- <span class="badge bg-success float-end">4</span> -->
                       <span>
                           {{__('Dashboard')}}
                       </span>
@@ -51,7 +51,7 @@
                                   <span> {{__('Users')}} </span>
                               </a>
                           </li>
-                          
+
                           <li>
                               <a href="{{route('roles.index')}}">
                                   <span> {{__('Roles')}} </span>
@@ -133,10 +133,30 @@
                   <div class="collapse" id="sidebarDonors">
                       <ul class="side-nav-second-level">
                           <li>
+                              <a href="{{route('call-types.index')}}">
+                                  <span> {{__('Call Types')}} </span>
+                              </a>
+                          </li>
+                          <li>
                               <a href="{{route('donors.index')}}">
                                   <span> {{__('Donors')}} </span>
                               </a>
                           </li>
+
+
+                      </ul>
+                  </div>
+              </li>
+
+              <li class="side-nav-item">
+                  <a data-bs-toggle="collapse" href="#sidebarDonations" aria-expanded="false" aria-controls="sidebarDonations" class="side-nav-link">
+                      <i class="uil-money-withdraw"></i>
+                      <span> {{__('Donations')}} </span>
+                      <span class="menu-arrow"></span>
+                  </a>
+                  <div class="collapse" id="sidebarDonations">
+                      <ul class="side-nav-second-level">
+
                           <li>
                               <a href="{{route('donation-categories.index')}}">
                                   <span> {{__('Donation Categories')}} </span>
@@ -157,6 +177,7 @@
                                   <span> {{__('Donations')}} </span>
                               </a>
                           </li>
+
                       </ul>
                   </div>
               </li>

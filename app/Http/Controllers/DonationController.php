@@ -41,8 +41,10 @@ class DonationController extends Controller
         donations.status,
         donations.created_by,
         donations.created_at,
+        donations.donation_type,
         donation_collectings.collecting_date,
-        donation_collectings.receipt_number,
+        donation_collectings.financial_receipt_number,
+        donation_collectings.in_kind_receipt_number,
         donors.name as donor_name,
         areas.name as area_name,
         donors.address,
@@ -62,8 +64,10 @@ class DonationController extends Controller
                 'donations.created_at',
                 'donations.status',
                 'donations.created_by',
+                'donations.donation_type',
                 'donation_collectings.collecting_date',
-                'donation_collectings.receipt_number'
+                'donation_collectings.financial_receipt_number',
+                'donation_collectings.in_kind_receipt_number'
             );
 
         if (request()->has('status')) {
@@ -126,21 +130,40 @@ class DonationController extends Controller
                     })->implode(', ') : 'N/A';
             })
             ->addColumn('donateItems', function ($item) {
-                return $item->donateItems->map(function ($donate) {
-                    if ($donate->donation_type === 'Financial') {
+                return $item->donateItems->map(function ($donate) use ($item) {
+                    if ($item->donation_type === 'financial') {
                         return '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
                             ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount;
-                    } elseif ($donate->donation_type === 'inKind') {
+                    } elseif ($item->donation_type === 'inKind') {
                         return '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
                             ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount;
+                    } elseif ($item->donation_type === 'both') {
+                        if(isset($donate->donation_category_id) && isset($donate->amount)){
+                             return '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
+                            ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount . '<br>';
+                        }
+                        if(isset($donate->item_name) && isset($donate->amount)){
+                            return  '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
+                            ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount;   
+                        }
                     }
                     return '';
                 })->implode('<br>');
             })
             ->addColumn('receipt_number', function ($item) {
-                return $item->collectingDonation?->receipt_number ?? 'N/A';
+                if($item->collectingDonation){
+                    if ($item->donation_type === 'inKind') {
+                        return '<span class="text-danger">'. __('Financial Receipt Number'). ' : ' . $item->collectingDonation?->in_kind_receipt_number . '</span>';
+                    } elseif ($item->donation_type === 'financial') {
+                        return ' <span class="text-success">'.  __('In Kind Receipt Number'). ' : ' . $item->collectingDonation?->financial_receipt_number . '</span>';
+                    } else {
+                        return '<span class="text-danger">'. __('Financial Receipt Number'). ' : ' . $item->collectingDonation?->financial_receipt_number . '</span>
+                        <br>
+                        <span class="text-success">'.  __('In Kind Receipt Number'). ' : ' . $item->collectingDonation?->in_kind_receipt_number . '</span>';
+                    }
+                }
             })
-            ->rawColumns(['action', 'donateItems'])
+            ->rawColumns(['action', 'donateItems','receipt_number'])
             ->make(true);
     }
 
@@ -161,11 +184,13 @@ class DonationController extends Controller
         $validatedData = $request->validate([
             'donor_id' => 'required|exists:donors,id',
             'date' => 'required|date',
-            'donation_type' => 'required|string|in:Financial,inKind',
+            'donation_type' => 'required|string|in:financial,inKind,both',
             'status' => 'required|in:collected,not_collected',
             'employee_id' => 'nullable|exists:employees,id',
             'collecting_date' => 'nullable|date',
-            'receipt_number' => [
+            'collecting_time' => 'nullable|string',
+            'notes' => 'nullable|string',
+            'financial_receipt_number' => [
                 'nullable',
                 'string',
                 function ($attribute, $value, $fail) use ($request) {
@@ -173,46 +198,55 @@ class DonationController extends Controller
                         $financialExists = DB::table('donations')
                             ->join('donation_items', 'donations.id', '=', 'donation_items.donation_id')
                             ->join('donation_collectings', 'donations.id', '=', 'donation_collectings.donation_id')
-                            ->where('donation_collectings.receipt_number', $value)
-                            ->where('donation_items.donation_type', 'Financial')
-                            ->exists();
-
-                        $inKindExists = DB::table('donations')
-                            ->join('donation_items', 'donations.id', '=', 'donation_items.donation_id')
-                            ->join('donation_collectings', 'donations.id', '=', 'donation_collectings.donation_id')
-                            ->where('donation_collectings.receipt_number', $value)
-                            ->where('donation_items.donation_type', 'inKind')
+                            ->where('donation_collectings.financial_receipt_number', $value)
+                            ->where('donation_items.donation_type', 'financial')
                             ->exists();
 
                         $donates = $request->get('donates', []);
 
                         $hasFinancial = collect($donates)
                             ->contains(fn($d) =>
-                            isset($d['financial_donation_type']) && $d['financial_donation_type'] === 'Financial' &&
+                            isset($d['financial_donation_type']) &&
+                                ($d['financial_donation_type'] === 'Financial' || $d['financial_donation_type'] === 'Both') &&
                                 !empty($d['financial_donation_categories_id']) &&
                                 !empty($d['financial_amount']));
-                        $hasInKind = collect($donates)->contains(
-                            fn($d) =>
-                            isset($d['inKind_donation_type']) && $d['inKind_donation_type'] === 'inKind' &&
-                                !empty($d['in_kind_item_name']) &&
-                                !empty($d['in_kind_quantity'])
-                        );
-
 
                         // Fail validation if financial donation type exists and receipt number is already used
                         if ($hasFinancial && $financialExists) {
                             $fail(__('validation.unique_receipt_number_financial'));
                         }
+                    }
+                },
+            ],
+            'in_kind_receipt_number' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) use ($request) {
+                    if (!empty($value)) {
+                        $inKindExists = DB::table('donations')
+                            ->join('donation_items', 'donations.id', '=', 'donation_items.donation_id')
+                            ->join('donation_collectings', 'donations.id', '=', 'donation_collectings.donation_id')
+                            ->where('donation_collectings.in_kind_receipt_number', $value)
+                            ->where('donation_items.donation_type', 'inKind')
+                            ->exists();
+
+                        $donates = $request->get('donates', []);
+                        $hasInKind = collect($donates)->contains(
+                            fn($d) =>
+                            isset($d['inKind_donation_type']) && ($d['inKind_donation_type'] === 'inKind' || $d['financial_donation_type'] === 'Both') &&
+                                !empty($d['in_kind_item_name']) &&
+                                !empty($d['in_kind_quantity'])
+                        );
 
                         // Fail validation if in-kind donation type exists and receipt number is already used
                         if ($hasInKind && $inKindExists) {
-                            $fail(__('validation.unique_receipt_number_inKind'));
+                            $fail(__('validation.unique_receipt_number_in_kind'));
                         }
                     }
                 },
             ],
             'donates' => 'required|array',
-            'donates.*.financial_donation_type' => 'nullable|in:Financial',
+            'donates.*.financial_donation_type' => 'nullable|in:financial',
             'donates.*.financial_donation_categories_id' => 'nullable|exists:donation_categories,id',
             'donates.*.financial_amount' => 'nullable|numeric|min:0',
             'donates.*.inKind_donation_type' => 'nullable|in:inKind',
@@ -229,6 +263,8 @@ class DonationController extends Controller
                 'status' => $validatedData['status'],
                 'date' => $validatedData['date'],
                 'donation_type' => $validatedData['donation_type'],
+                'collecting_time' => $validatedData['collecting_time'],
+                'notes' => $validatedData['notes'],
             ]);
 
             $donatesAdded = false;
@@ -236,12 +272,12 @@ class DonationController extends Controller
             // Process and save donates
             foreach ($validatedData['donates'] as $donateData) {
                 if (
-                    isset($donateData['financial_donation_type']) && $donateData['financial_donation_type'] === 'Financial'
+                    isset($donateData['financial_donation_type']) && $donateData['financial_donation_type'] === 'financial'
                     && !empty($donateData['financial_donation_categories_id'])
                     && !empty($donateData['financial_amount'])
                 ) {
                     $donation->donateItems()->create([
-                        // 'donation_type' => $donateData['financial_donation_type'],
+                        'donation_type' => $donateData['financial_donation_type'],
                         'donation_category_id' => $donateData['financial_donation_categories_id'],
                         'amount' => $donateData['financial_amount'],
                     ]);
@@ -255,7 +291,7 @@ class DonationController extends Controller
                     && !empty($donateData['in_kind_quantity'])
                 ) {
                     $donation->donateItems()->create([
-                        // 'donation_type' => $donateData['inKind_donation_type'],
+                        'donation_type' => $donateData['inKind_donation_type'],
                         'donation_category_id' => null,
                         'item_name' => $donateData['in_kind_item_name'],
                         'amount' => $donateData['in_kind_quantity'],
@@ -270,7 +306,8 @@ class DonationController extends Controller
                     "employee_id" => $validatedData["employee_id"],
                     "donation_id" => $donation->id,
                     "collecting_date" => $validatedData["collecting_date"],
-                    'receipt_number' => $validatedData["receipt_number"],
+                    'financial_receipt_number' => $validatedData["financial_receipt_number"] ?? null,
+                    'in_kind_receipt_number' => $validatedData["in_kind_receipt_number"] ?? null,
                 ]);
             }
 
@@ -319,7 +356,10 @@ class DonationController extends Controller
             'status' => 'required|in:collected,not_collected',
             'employee_id' => 'nullable|exists:employees,id',
             'collecting_date' => 'nullable|date',
-            'receipt_number' => [
+            'donation_type' => 'required|string|in:financial,inKind,both',
+            'collecting_time' => 'nullable|string',
+            'notes' => 'nullable|string',
+            'financial_receipt_number' => [
                 'nullable',
                 'string',
                 function ($attribute, $value, $fail) use ($request, $donation) {
@@ -327,16 +367,8 @@ class DonationController extends Controller
                         $financialExists = DB::table('donations')
                             ->join('donation_items', 'donations.id', '=', 'donation_items.donation_id')
                             ->join('donation_collectings', 'donations.id', '=', 'donation_collectings.donation_id')
-                            ->where('donation_collectings.receipt_number', $value)
-                            ->where('donation_items.donation_type', 'Financial')
-                            ->where('donations.id', '!=', $donation->id)
-                            ->exists();
-
-                        $inKindExists = DB::table('donations')
-                            ->join('donation_items', 'donations.id', '=', 'donation_items.donation_id')
-                            ->join('donation_collectings', 'donations.id', '=', 'donation_collectings.donation_id')
-                            ->where('donation_collectings.receipt_number', $value)
-                            ->where('donation_items.donation_type', 'inKind')
+                            ->where('donation_collectings.financial_receipt_number', $value)
+                            ->where('donation_items.donation_type', 'financial')
                             ->where('donations.id', '!=', $donation->id)
                             ->exists();
 
@@ -344,9 +376,32 @@ class DonationController extends Controller
 
                         $hasFinancial = collect($donates)
                             ->contains(fn($d) =>
-                            isset($d['financial_donation_type']) && $d['financial_donation_type'] === 'Financial' &&
+                            isset($d['financial_donation_type']) && $d['financial_donation_type'] === 'financial' &&
                                 !empty($d['financial_donation_categories_id']) &&
                                 !empty($d['financial_amount']));
+
+                        if ($hasFinancial && $financialExists) {
+                            $fail(__('validation.unique_receipt_number_financial'));
+                        }
+
+                    }
+                },
+            ],
+            'in_kind_receipt_number' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) use ($request, $donation) {
+                    if (!empty($value)) {
+
+                        $inKindExists = DB::table('donations')
+                            ->join('donation_items', 'donations.id', '=', 'donation_items.donation_id')
+                            ->join('donation_collectings', 'donations.id', '=', 'donation_collectings.donation_id')
+                            ->where('donation_collectings.in_kind_receipt_number', $value)
+                            ->where('donation_items.donation_type', 'inKind')
+                            ->where('donations.id', '!=', $donation->id)
+                            ->exists();
+
+                        $donates = $request->get('donates', []);
 
                         $hasInKind = collect($donates)->contains(
                             fn($d) =>
@@ -355,18 +410,14 @@ class DonationController extends Controller
                                 !empty($d['in_kind_quantity'])
                         );
 
-                        if ($hasFinancial && $financialExists) {
-                            $fail(__('validation.unique_receipt_number_financial'));
-                        }
-
                         if ($hasInKind && $inKindExists) {
-                            $fail(__('validation.unique_receipt_number_inKind'));
+                            $fail(__('validation.unique_receipt_number_in_kind'));
                         }
                     }
                 },
             ],
             'donates' => 'required|array',
-            'donates.*.financial_donation_type' => 'nullable|in:Financial',
+            'donates.*.financial_donation_type' => 'nullable|in:financial',
             'donates.*.financial_donation_categories_id' => 'nullable|exists:donation_categories,id',
             'donates.*.financial_amount' => 'nullable|numeric|min:0',
             'donates.*.inKind_donation_type' => 'nullable|in:inKind',
@@ -382,6 +433,9 @@ class DonationController extends Controller
                 'donor_id' => $validatedData['donor_id'],
                 'status' => $validatedData['status'],
                 'date' => $validatedData['date'],
+                'donation_type' => $validatedData['donation_type'],
+                'collecting_time' => $validatedData['collecting_time'],
+                'notes' => $validatedData['notes'],
             ]);
 
             $donatesAdded = false;
@@ -391,7 +445,8 @@ class DonationController extends Controller
 
             foreach ($validatedData['donates'] as $donateData) {
                 if (
-                    isset($donateData['financial_donation_type']) && $donateData['financial_donation_type'] === 'Financial' &&
+                    isset($donateData['financial_donation_type']) 
+                    && $donateData['financial_donation_type'] === 'financial' &&
                     !empty($donateData['financial_donation_categories_id']) &&
                     !empty($donateData['financial_amount'])
                 ) {
@@ -427,7 +482,9 @@ class DonationController extends Controller
                     [
                         "employee_id" => $validatedData["employee_id"],
                         "collecting_date" => $validatedData["collecting_date"],
-                        'receipt_number' => $validatedData["receipt_number"],
+                        'financial_receipt_number' => $validatedData["financial_receipt_number"],
+                        'in_kind_receipt_number' => $validatedData["in_kind_receipt_number"],
+
                     ]
                 );
             } else {

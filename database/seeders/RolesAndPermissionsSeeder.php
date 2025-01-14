@@ -54,6 +54,10 @@ class RolesAndPermissionsSeeder extends Seeder
             ['name'=> 'create donations','guard_name' => 'web'],
             ['name'=> 'update donations','guard_name' => 'web'],
             ['name'=> 'delete donations','guard_name' => 'web'],
+            ['name'=> 'view call types','guard_name' => 'web'],
+            ['name'=> 'create call types','guard_name' => 'web'],
+            ['name'=> 'update call types','guard_name' => 'web'],
+            ['name'=> 'delete call types','guard_name' => 'web'],
         ];
         // Create permissions
         Permission::insert($permissions);

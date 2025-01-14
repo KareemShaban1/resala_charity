@@ -12,7 +12,7 @@ class DonationItem extends Model
     protected $fillable = [
         'donation_id',
         'donation_category_id',
-        // 'donation_type',
+        'donation_type',
         'item_name',
         'amount',
     ];

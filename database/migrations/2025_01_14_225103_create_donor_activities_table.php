@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('donations', function (Blueprint $table) {
+        Schema::create('donor_activities', function (Blueprint $table) {
             $table->id();
             $table->foreignId('donor_id')->constrained()->onDelete('cascade');
-            $table->foreignId('created_by')->constrained('employees')->onDelete('cascade');
-            $table->enum('donation_type', ['financial','inKind','both'])->default('financial');
-            $table->string('date');
-            $table->enum('status', ['collected','not_collected'])->default('not_collected');
-            $table->text('collecting_time')->nullable();
+            $table->string('activity_type')->nullable();
+            $table->foreignId('call_type_id')->nullable()->constrained()->nullOnDelete();
+            $table->dateTime('date_time')->nullable();
+            $table->text('response')->nullable();
             $table->text('notes')->nullable();
-            $table->softDeletes();
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('donations');
+        Schema::dropIfExists('donor_activities');
     }
 };

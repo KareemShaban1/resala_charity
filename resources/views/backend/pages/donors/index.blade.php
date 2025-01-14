@@ -37,9 +37,7 @@
             <div class="card">
             
                 <div class="card-body">
-                <div class="col-md-4 mb-4">
-            <input id="phone-search" type="text" class="form-control" placeholder="{{__('Search by Phone')}}">
-        </div>
+                
                     <table id="donors-table" class="table dt-responsive nowrap w-100">
                         <thead>
                             <tr>
@@ -71,6 +69,7 @@
 
 @include('backend.pages.donors.assign_donors_modal')
 
+@include('backend.pages.donors.add_activity_modal')
 
 @endsection
 
@@ -309,8 +308,10 @@
                     name: 'id'
                 },
                 {
-                    data: 'name',
-                    name: 'name'
+                    data: 'donor_name',
+                    name: 'donor_name',
+                    orderable: false,
+                    searchable: false
                 },
                 {
                     data: 'donor_type',
@@ -729,6 +730,46 @@
     });
 }
 
+function addActivity(donorId) {
+    $('#addActivityModal').modal('show');
+    $('#donor_id').val(donorId);
+    
+
+}
+
+$('#addActivityForm').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var url = form.attr('action');
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: form.serialize(),
+            success: function(response) {
+                if (response.success) {
+                    $('#addActivityModal').modal('hide');
+                    form[0].reset();
+                    table.ajax.reload();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message
+                    });
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    Object.keys(errors).forEach(function(key) {
+                        var input = form.find(`[name="${key}"]`);
+                        input.addClass('is-invalid');
+                        input.siblings('.invalid-feedback').text(errors[key][0]);
+                    });
+                }
+            }
+        });
+    });
 
     $('#assignDonorForm').on('submit', function(e) {
         e.preventDefault();

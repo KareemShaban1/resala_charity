@@ -33,7 +33,6 @@
                     orderable: false,
                     searchable: true,
                     render: function(data, type, row) {
-                        console.log(data);
                         if (!data) return '<div>N/A</div>';
                         return data
                             .split(', ')
@@ -49,6 +48,7 @@
                 {
                     data: 'receipt_number',
                     name: 'receipt_number'
+
                 },
 
                 {
@@ -118,7 +118,7 @@
                 financialRowIndex++;
                 container.append(`
             <div class="row donation-row">
-                <input type="hidden" name="donates[${financialRowIndex}][financial_donation_type]" value="Financial">
+                <input type="hidden" name="donates[${financialRowIndex}][financial_donation_type]" value="financial">
                 
                 <div class="col-md-4">
                     <div class="mb-3">
@@ -223,6 +223,8 @@
                             );
                             row.remove(); // Remove the row from the DOM
                             toggleAddRowButton();
+                            table.ajax.reload();
+
                         },
                         error: function(error) {
                             console.error("Error deleting donation:", error);
@@ -280,7 +282,7 @@
 
                         Swal.fire({
                             icon: 'error',
-                            title: '{{ __('validation.Validation Error') }}', // Ensure this is rendered as a string by Blade
+                            title: '{{ __('validation.Validation Error ') }}', // Ensure this is rendered as a string by Blade
                             html: `<div style="direction: rtl; text-align: center;">${errorDetails}</div>`,
                             customClass: {
                                 popup: 'text-start',
@@ -342,7 +344,7 @@
 
                         Swal.fire({
                             icon: 'error',
-                            title: '{{ __('validation.Validation Error') }}', // Ensure this is rendered as a string by Blade
+                            title: '{{ __('validation.Validation Error ') }}', // Ensure this is rendered as a string by Blade
                             html: `<div style="direction: rtl; text-align: center;">${errorDetails}</div>`,
                             customClass: {
                                 popup: 'text-start',
@@ -375,7 +377,7 @@
     $(document).ready(function() {
         $('#donor_id').select2({
             dropdownParent: $('#addDonationModal'),
-            placeholder: "{{__('Search by ID or Phone')}}",
+            placeholder: "{{__('Search By Name or Phone')}}",
             ajax: {
                 url: '{{ route("donors.search") }}',
                 dataType: 'json',
@@ -411,7 +413,7 @@
 
         $('#edit_donor_id').select2({
             dropdownParent: $('#editDonationModal'),
-            placeholder: "{{__('Search by ID or Phone')}}",
+            placeholder: "{{__('Search By Name or Phone')}}",
             ajax: {
                 url: '{{ route("donors.search") }}',
                 dataType: 'json',
@@ -453,45 +455,77 @@
         const donationType = document.getElementById('donation_type').value;
         const financialContainer = document.getElementById('financial-donations-section');
         const inKindContainer = document.getElementById('in-kind-donations-section');
+        const financialReceiptConatiner = document.getElementById('financial-receipt-container');
+        const inKindReceiptConatiner = document.getElementById('in-kind-receipt-container');
 
         if (donationType === 'financial') {
             financialContainer.classList.remove('d-none');
             inKindContainer.classList.add('d-none');
-        } else if (donationType === 'in_kind') {
+            financialReceiptConatiner.classList.remove('d-none');
+            inKindReceiptConatiner.classList.add('d-none');
+        } else if (donationType === 'inKind') {
             financialContainer.classList.add('d-none');
             inKindContainer.classList.remove('d-none');
+            financialReceiptConatiner.classList.add('d-none');
+            inKindReceiptConatiner.classList.remove('d-none');
+        } else {
+            financialContainer.classList.remove('d-none');
+            inKindContainer.classList.remove('d-none');
+            financialReceiptConatiner.classList.remove('d-none');
+            inKindReceiptConatiner.classList.remove('d-none');
         }
     }
-
-    function toggleEditDonationType() {
-        const donationType = document.getElementById('edit_donation_type').value;
-        const editFinancialContainer = document.getElementById('edit-financial-donations-section');
-        const editInKindContainer = document.getElementById('edit-in-kind-donations-section');
-
-        console.log(donationType)
-
-        if (donationType === 'Financial') {
-            console.log("test financial")
-            editFinancialContainer.classList.remove('d-none');
-            editInKindContainer.classList.add('d-none');
-        } else if (donationType === 'inKind') {
-            console.log("test inkind")
-
-            editFinancialContainer.classList.add('d-none');
-            editInKindContainer.classList.remove('d-none');
-        }
-    }
-
     function toggleDonationStatus() {
         const donationStatus = document.getElementById('donation_status').value;
+        const donationType = document.getElementById('donation_type').value;
         const CollectingSection = document.getElementById('collecting-section');
-
+        const financialReceiptConatiner = document.getElementById('financial-receipt-container');
+        const inKindReceiptConatiner = document.getElementById('in-kind-receipt-container');
         if (donationStatus === 'collected') {
             CollectingSection.classList.remove('d-none');
         } else if (donationStatus === 'not_collected') {
             CollectingSection.classList.add('d-none');
         }
+
+        if (donationType === 'financial') {
+            financialReceiptConatiner.classList.remove('d-none');
+            inKindReceiptConatiner.classList.add('d-none');
+        } else if (donationType === 'inKind') {
+            financialReceiptConatiner.classList.add('d-none');
+            inKindReceiptConatiner.classList.remove('d-none');
+        } else {
+            financialReceiptConatiner.classList.remove('d-none');
+            inKindReceiptConatiner.classList.remove('d-none');
+        }
+
     }
+
+
+    function toggleEditDonationType() {
+        const donationType = document.getElementById('edit_donation_type').value;
+        const editFinancialContainer = document.getElementById('edit-financial-donations-section');
+        const editInKindContainer = document.getElementById('edit-in-kind-donations-section');
+        const financialReceiptConatiner = document.getElementById('edit-financial-receipt-container');
+        const inKindReceiptConatiner = document.getElementById('edit-in-kind-receipt-container');
+
+        if (donationType === 'financial') {
+            editFinancialContainer.classList.remove('d-none');
+            editInKindContainer.classList.add('d-none');
+            financialReceiptConatiner.classList.remove('d-none');
+            inKindReceiptConatiner.classList.add('d-none');
+        } else if (donationType === 'inKind') {
+            editFinancialContainer.classList.add('d-none');
+            editInKindContainer.classList.remove('d-none');
+            financialReceiptConatiner.classList.add('d-none');
+            inKindReceiptConatiner.classList.remove('d-none');
+        } else {
+            editFinancialContainer.classList.remove('d-none');
+            editInKindContainer.classList.remove('d-none');
+            financialReceiptConatiner.classList.remove('d-none');
+            inKindReceiptConatiner.classList.remove('d-none');
+        }
+    }
+
 
     function toggleEditDonationStatus() {
         const donationStatus = document.getElementById('edit_donation_status').value;
@@ -552,7 +586,6 @@
 
         $.get(`{{ url('donations') }}/${id}/edit`)
             .done(function(data) {
-                console.log(data);
 
                 // Populate basic fields
                 $('#edit_donor_id').val(data.donor_id).trigger('change');
@@ -560,8 +593,12 @@
                 $('#edit_donation_status').val(data.status).trigger('change');
                 $('#edit_donation_type').val(data.donation_type).trigger('change');
                 $('#edit_collecting_date').val(formatDate(data.collecting_donation?.collecting_date));
-                $('#edit_receipt_number').val(data.collecting_donation?.receipt_number);
+                $('#edit_financial_receipt_number').val(data.collecting_donation?.financial_receipt_number);
+                $('#edit_in_kind_receipt_number').val(data.collecting_donation?.in_kind_receipt_number);
                 $('#edit_employee_id').val(data.collecting_donation?.employee_id).trigger('change');
+                $('#edit_notes').val(data.notes);
+                $('#edit_collecting_time').val(data.collecting_time);
+
                 // toggleEditDonationType(data.donation_type);
                 // toggleEditDonationStatus(data.status);
 
@@ -584,13 +621,13 @@
                 const inKindSection = document.getElementById('edit-in-kind-donations-section');
 
 
-                if (data.donation_type === 'Financial') {
+                if (data.donation_type === 'financial') {
                     financialSection.classList.remove('d-none');
                     inKindSection.classList.add('d-none');
 
                     // Populate financial donations
                     data.donate_items
-                        .filter(donation => donation.donation_type === 'Financial')
+                        .filter(donation => donation.donation_type === 'financial')
                         .forEach((donation, index) => {
                             financialContainer.append(renderFinancialRow(donation, index, donationCategories));
                         });
@@ -611,6 +648,27 @@
                         });
                 }
 
+                if(data.donation_type === 'both') {
+                    financialSection.classList.remove('d-none');
+                    inKindSection.classList.remove('d-none');
+
+                    console.log(data.donate_items);
+                    // Populate financial donations
+                    data.donate_items
+                        .filter(donation => donation.donation_type === 'financial')
+                        .forEach((donation, index) => {
+                            financialContainer.append(renderFinancialRow(donation, index, donationCategories));
+                        });
+
+                    // Populate in-kind donations
+                    data.donate_items
+                        .filter(donation => donation.donation_type === 'inKind')
+                        .forEach((donation, index) => {
+                            inKindContainer.append(renderInKindRow(donation, index));   
+                        });
+
+                }
+
             })
             .fail(function() {
                 alert('{{ __("Failed to load donation details. Please try again.") }}');
@@ -618,13 +676,14 @@
     }
 
     function renderFinancialRow(donation, index, categories) {
+        console.log(donation, index, categories);
         const categoryOptions = categories.map(category =>
             `<option value="${category.id}" ${category.id == donation.donation_category_id ? 'selected' : ''}>${category.name}</option>`
         ).join('');
 
         return `
         <div class="row donation-row">
-            <input type="hidden" name="donates[${index}][financial_donation_type]" value="Financial">
+            <input type="hidden" name="donates[${index}][financial_donation_type]" value="financial">
             <input type="hidden" name="donates[${index}][financial_donation_id]" value="${donation.id || ''}">
             <div class="col-md-4">
                 <label class="form-label">{{__('Donation Category')}}</label>
@@ -656,7 +715,7 @@
             </div>
             <div class="col-md-4">
                 <label class="form-label">{{__('Quantity')}}</label>
-                <input type="number" class="form-control" name="donates[${index}][in_kind_quantity]" value="${donation.quantity || ''}">
+                <input type="number" class="form-control" name="donates[${index}][in_kind_quantity]" value="${donation.amount || ''}">
                 <div class="invalid-feedback"></div>
             </div>
             <div class="col-md-4 d-flex align-items-center">
@@ -675,78 +734,96 @@
     }
 
     function donationDetails(id) {
-        $('#detailsDonationModal').modal('show');
+    $('#detailsDonationModal').modal('show');
 
-        $.get(`{{ url('donations') }}/${id}/details`)
-            .done(function(data) {
-                // Construct the content to be displayed in the modal
-                let modalContent = `
-                <h5>{{__('Donor Information')}}</h5>
-                <p><strong>{{__('Name')}}:</strong> ${data.donor.name}</p>
-                <p><strong>{{__('Address')}}:</strong> ${data.donor.address}</p>
-                <p><strong>{{__('Donor Type')}}:</strong> ${data.donor.donor_type}</p>
+    $.get(`{{ url('donations') }}/${id}/details`)
+        .done(function(data) {
+            // Construct the content to be displayed in the modal
+            let modalContent = `
+            <h5>{{__('Donor Information')}}</h5>
+            <p><strong>{{__('Name')}}:</strong> ${data.donor.name}</p>
+            <p><strong>{{__('Address')}}:</strong> ${data.donor.address}</p>
+            <p><strong>{{__('Donor Type')}}:</strong> 
+            ${data.donor.donor_type === 'normal' ? '{{__("Normal")}}' : '{{__("Monthly")}}'}
+            </p>
 
-                <h5>{{__('Donation Information')}}</h5>
-                <p><strong>{{__('Donation Type')}}:</strong> ${data.donation_type}</p>
-                <p><strong>{{__('Date')}}:</strong> ${data.date}</p>
-                <p><strong>{{__('Status')}}:</strong> ${data.status}</p>
+            <h5>{{__('Donation Information')}}</h5>
+            <p><strong>{{__('Donation Type')}}:</strong> ${data.donation_type}</p>
+            <p><strong>{{__('Donation Date')}}:</strong> ${data.date}</p>
+            <p><strong>{{__('Status')}}:</strong> ${data.status === 'collected' ? '{{__("Collected")}}' : '{{__("Not Collected")}}'}</p>`;
 
-                <h5>{{__('Donate Items')}}</h5>
+            // Financial Donations Table
+            if (data.donation_type === 'financial' || data.donation_type === 'both') {
+                modalContent += `
+                <h5>{{__('Financial Donations')}}</h5>
                 <table class="table table-striped">
                     <thead>
-                        <tr>`;
-
-                // Conditional headers based on donation type
-                if (data.donation_type === 'Financial') {
-                    modalContent += `
-                    <th>{{__('Donation Category')}}</th>
-                    <th>{{__('Amount')}}</th>`;
-                } else if (data.donation_type === 'inKind') {
-                    modalContent += `
-                    <th>{{__('Item Name')}}</th>
-                    <th>{{__('Amount')}}</th>`;
-                }
-
-                modalContent += `
+                        <tr>
+                            <th>{{__('Donation Category')}}</th>
+                            <th>{{__('Amount')}}</th>
                         </tr>
                     </thead>
                     <tbody>`;
 
-                // Loop through donate_items array to display each item in table rows
-                data.donate_items.forEach(item => {
-                    modalContent += `<tr>`;
-
-                    if (data.donation_type === 'Financial') {
+                data.donate_items
+                    .filter(item => item.donation_type === 'financial')
+                    .forEach(item => {
                         modalContent += `
-                        <td>${item.donation_category.name}</td>
-                        <td>${item.amount}</td>`;
-                    } else if (data.donation_type === 'inKind') {
-                        modalContent += `
-                        <td>${item.item_name}</td>
-                        <td>${item.amount}</td>`;
-                    }
-
-                    modalContent += `</tr>`;
-                });
+                        <tr>
+                            <td>${item.donation_category.name}</td>
+                            <td>${item.amount}</td>
+                        </tr>`;
+                    });
 
                 modalContent += `
                     </tbody>
                 </table>`;
+            }
 
-                // Collecting Donation Info
+            // In-Kind Donations Table
+            if (data.donation_type === 'inKind' || data.donation_type === 'both') {
                 modalContent += `
-                <h5>{{__('Collecting Donation Information')}}</h5>
-                <p><strong>{{__('Collecting Date')}}:</strong> ${formatDate(data.collecting_donation.collecting_date)}</p>
-                <p><strong>{{__('Receipt Number')}}:</strong> ${data.collecting_donation.receipt_number}</p>
-            `;
+                <h5>{{__('In-Kind Donations')}}</h5>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>{{__('Item Name')}}</th>
+                            <th>{{__('Amount')}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
 
-                // Add the constructed content to the modal body
-                $('#detailsDonationModal .modal-body').html(modalContent);
-            })
-            .fail(function() {
-                alert('{{ __("Failed to load donation details. Please try again.") }}');
-            });
-    }
+                data.donate_items
+                    .filter(item => item.donation_type === 'inKind')
+                    .forEach(item => {
+                        modalContent += `
+                        <tr>
+                            <td>${item.item_name}</td>
+                            <td>${item.amount}</td>
+                        </tr>`;
+                    });
+
+                modalContent += `
+                    </tbody>
+                </table>`;
+            }
+
+            // Collecting Donation Info
+            modalContent += `
+            <h5>{{__('Collecting Donation Information')}}</h5>
+            <p><strong>{{__('Collecting Date')}}:</strong> ${data.collecting_donation?.collecting_date ? formatDate(data.collecting_donation?.collecting_date) : 'N/A'}</p>
+            <p><strong>{{__('Financial Receipt Number')}}:</strong> ${data.collecting_donation?.financial_receipt_number ?? 'N/A'}</p>
+            <p><strong>{{__('In Kind Receipt Number')}}:</strong> ${data.collecting_donation?.in_kind_receipt_number ?? 'N/A'}</p>`;
+
+            // Add the constructed content to the modal body
+            $('#detailsDonationModal .modal-body').html(modalContent);
+
+        })
+        .fail(function() {
+            alert('{{ __("Failed to load donation details. Please try again.") }}');
+        });
+}
+
 
 
     // Helper function to format date in YYYY-MM-DD

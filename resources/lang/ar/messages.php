@@ -1,9 +1,9 @@
 <?php
 
 return [
-    "Monthly donation created successfully"=> "تم إضافة التبرع الشهري بنجاح",
-    "Monthly donation updated successfully"=> "تم تحديث التبرع الشهري بنجاح",
-    "Monthly donation deleted successfully"=> "تم حذف التبرع الشهري بنجاح",
+    "Monthly Donation created successfully"=> "تم إضافة التبرع الشهري بنجاح",
+    "Monthly Donation updated successfully"=> "تم تحديث التبرع الشهري بنجاح",
+    "Monthly Donation deleted successfully"=> "تم حذف التبرع الشهري بنجاح",
     "Donation created successfully"=> "تم إضافة التبرع بنجاح",
     "Donation updated successfully"=> "تم تحديث التبرع بنجاح",
     "Donation deleted successfully"=> "تم حذف التبرع بنجاح",

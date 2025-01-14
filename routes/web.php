@@ -5,10 +5,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GovernorateController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\AreaController;
+use App\Http\Controllers\CallTypeController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DonationCategoryController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonorController;
+use App\Http\Controllers\DonorHistoryController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\MonthlyDonationCancellationController;
 use App\Http\Controllers\MonthlyDonationController;
@@ -75,6 +77,7 @@ Route::group(
         Route::post('/donors-assign', [DonorController::class, 'assignDonors'])->name('donors.assign');
         Route::post('/donors-children', [DonorController::class, 'donorChildren'])->name('donors.children');
         Route::post('/donors-not-assigned', [DonorController::class, 'notAssignedDonors'])->name('donors.not-assigned');
+        Route::post('/donors-add-activity', [DonorController::class, 'addActivity'])->name('donors.add-activity');
 
         // Donation Categories Routes
         Route::get('/donation-categories/data', [DonationCategoryController::class, 'data'])->name('donation-categories.data');
@@ -105,5 +108,15 @@ Route::group(
 
         Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
         Route::get('/activity-logs/data', [ActivityLogController::class, 'data'])->name('activity-logs.data');
+
+        Route::get('/donor-history/{id}', [DonorHistoryController::class, 'show'])->name('donor-history.show');
+        Route::get('/donor-history/{id}/donations', [DonorHistoryController::class, 'getDonations'])->name('donor-history.getDonations');
+        Route::get('/donor-history/{id}/monthly-donations', [DonorHistoryController::class, 'getMonthlyDonations'])->name('donor-history.getMonthlyDonations');
+        Route::get('/donor-history/{id}/activities', [DonorHistoryController::class, 'getActivities'])->name('donor-history.getActivities');
+
+
+        // Governorates Routes
+        Route::get('/call-types/data', [CallTypeController::class, 'data'])->name('call-types.data');
+        Route::resource('call-types', CallTypeController::class);
     }
 );

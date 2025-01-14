@@ -47,4 +47,17 @@ class Donor extends Model
     {
         return $this->belongsTo(Area::class);
     }
+    public function donations()
+    {
+        return $this->hasMany(Donation::class)->with('donateItems');
+    }
+    public function monthlyDonations()
+    {
+        return $this->hasMany(MonthlyDonation::class)->with('donates');
+    }
+
+    public function activities()
+    {
+        return $this->hasMany(DonorActivity::class)->with(['callType','createdBy']);
+    }
 }
