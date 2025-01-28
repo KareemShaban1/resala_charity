@@ -32,7 +32,7 @@ class CallTypePolicy
     public function create(User $user): bool
     {
         //
-            return $user->hasPermissionTo('create call types');
+            return $user->hasPermissionTo('create call type');
     }
 
     /**
@@ -41,7 +41,7 @@ class CallTypePolicy
     public function update(User $user): bool
     {
         //
-        return $user->hasPermissionTo('update call types');
+        return $user->hasPermissionTo('update call type');
     }
 
     /**
@@ -50,7 +50,7 @@ class CallTypePolicy
     public function delete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('delete call types');
+        return $user->hasPermissionTo('delete call type');
     }
 
     /**
@@ -59,7 +59,7 @@ class CallTypePolicy
     public function restore(User $user): bool
     {
         //
-            return $user->hasPermissionTo('restore call types');
+            return $user->hasPermissionTo('restore call type');
     }
 
     /**
@@ -68,6 +68,6 @@ class CallTypePolicy
     public function forceDelete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('force delete call types');
+        return $user->hasPermissionTo('force delete call type');
     }
 }

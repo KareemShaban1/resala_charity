@@ -16,7 +16,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="governorate_id" class="form-label">{{__('Governorate')}}</label>
-                        <select class="form-control select2" id="governorate_id" name="governorate_id" required>
+                        <select class="form-control select2" id="governorate_id" name="governorate_id">
                             <option value="">{{__('Select Governorate')}}</option>
                             @foreach(\App\Models\Governorate::all() as $governorate)
                             <option value="{{ $governorate->id }}">{{ $governorate->name }}</option>
@@ -28,7 +28,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="city_id" class="form-label">{{__('City')}}</label>
-                        <select class="form-control select2" id="city_id" name="city_id" required>
+                        <select class="form-control select2" id="city_id" name="city_id">
                             <option value="">{{__('Select City')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
@@ -72,7 +72,7 @@
                         <label class="form-label">{{__('Phone Numbers')}}</label>
                         <div id="phone-container">
                             <div class="input-group mb-2">
-                                <input type="text" name="phones[0][number]" class="form-control" placeholder="{{__('Enter phone number')}}">
+                                <input type="text" name="phones[0][number]" class="form-control" placeholder="{{__('Enter phone number')}}" required>
                                 <select name="phones[0][type]" class="form-select" style="max-width: 150px;">
                                     <option value="mobile">{{__('Mobile')}}</option>
                                     <option value="home">{{__('Home')}}</option>
@@ -110,7 +110,7 @@
 
                 <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="monthly_donation_day" class="form-label">{{__('Monthly Donation Day')}}</label>
+                        <label for="monthly_donation_day" class="form-label">{{__('Monthly Form Day')}}</label>
                         <input type="number" class="form-control" name="monthly_donation_day">
                         <div class="invalid-feedback"></div>
                     </div>

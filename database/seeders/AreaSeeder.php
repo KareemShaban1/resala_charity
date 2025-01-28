@@ -143,11 +143,7 @@ class AreaSeeder extends Seeder
             'ميت السباع',
             'ميت العطار',
             'ميت عاصم',
-            'نقباس',
-            '',
-            '',
-            '',
-
+            'نقباس'
         ];
 
         foreach ($benhaAreas as $areaName) {

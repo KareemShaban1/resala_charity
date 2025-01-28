@@ -34,7 +34,7 @@ class DonationCategoryPolicy
     public function create(User $user): bool
     {
         //
-        return $user->hasPermissionTo('create donation categories');
+        return $user->hasPermissionTo('create donation category');
 
     }
 
@@ -44,7 +44,7 @@ class DonationCategoryPolicy
     public function update(User $user): bool
     {
         //
-        return $user->hasPermissionTo('update donation categories');
+        return $user->hasPermissionTo('update donation category');
 
     }
 
@@ -54,7 +54,7 @@ class DonationCategoryPolicy
     public function delete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('delete donation categories');
+        return $user->hasPermissionTo('delete donation category');
 
     }
 
@@ -64,7 +64,7 @@ class DonationCategoryPolicy
     public function restore(User $user): bool
     {
         //
-        return $user->hasPermissionTo('restore donation categories');
+        return $user->hasPermissionTo('restore donation category');
 
     }
 
@@ -74,7 +74,7 @@ class DonationCategoryPolicy
     public function forceDelete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('force delete donation categories');
+        return $user->hasPermissionTo('force delete donation category');
 
     }
 }

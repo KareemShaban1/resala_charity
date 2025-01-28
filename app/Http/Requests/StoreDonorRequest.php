@@ -23,17 +23,17 @@ class StoreDonorRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
             'street' => 'nullable|string|max:255',
-            'governorate_id' => 'required|exists:governorates,id',
-            'city_id' => 'required|exists:cities,id',
+            'governorate_id' => 'nullable|exists:governorates,id',
+            'city_id' => 'nullable|exists:cities,id',
             'area_id' => 'nullable|exists:areas,id',
             'active' => 'required|boolean',
-            'donor_type'=>'required|in:normal,monthly',
-            'monthly_donation_day'=>'nullable',
+            'donor_type' => 'required|in:normal,monthly',
+            'monthly_donation_day' => 'nullable',
             'phones' => 'required|array|min:1',
-           'phones.*.number' => 'required|string|regex:/^\d{11}$/|distinct|unique:donor_phones,phone_number',
-'phones.*.type' => 'required|string|in:mobile,home,work,other',
+            'phones.*.number' => 'required|string|regex:/^\d{11}$/|distinct|unique:donor_phones,phone_number',
+            'phones.*.type' => 'required|string|in:mobile,home,work,other',
 
         ];
     }

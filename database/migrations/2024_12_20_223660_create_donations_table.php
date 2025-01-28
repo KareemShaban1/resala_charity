@@ -14,12 +14,15 @@ return new class extends Migration
         Schema::create('donations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('donor_id')->constrained()->onDelete('cascade');
-            $table->foreignId('created_by')->constrained('employees')->onDelete('cascade');
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
+            $table->enum('donation_category', ['normal','monthly','gathered'])->default('normal');
             $table->enum('donation_type', ['financial','inKind','both'])->default('financial');
             $table->string('date');
-            $table->enum('status', ['collected','not_collected'])->default('not_collected');
+            $table->string('alternate_date')->nullable();
+            $table->enum('status', ['collected','not_collected','followed_up','cancelled'])->default('not_collected');
             $table->text('collecting_time')->nullable();
             $table->text('notes')->nullable();
+            $table->string('reporting_way')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

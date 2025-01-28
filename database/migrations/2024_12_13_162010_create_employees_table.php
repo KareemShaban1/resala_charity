@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('job_title')->nullable();
             $table->foreignId('department_id')->constrained();
             $table->softDeletes();
             $table->timestamps();

@@ -17,12 +17,37 @@ class DepartmentSeeder extends Seeder
         \DB::table("departments")->insert(  
             [
                 [
-                    "name" => "الحسابات",
+                    "name" => "Accounts",
                     "created_at" => now(),
                     "updated_at" => now(),
                 ],
                 [
-                    "name" => "التبرعات",
+                    "name" => "Donations",
+                    "created_at" => now(),
+                    "updated_at" => now(),
+                ],
+                [
+                    "name" => "Management",
+                    "created_at" => now(),
+                    "updated_at" => now(),
+                ],
+                [
+                    "name" => "Employees",
+                    "created_at" => now(),
+                    "updated_at" => now(),
+                ],
+                [
+                    "name" => "Users",
+                    "created_at" => now(),
+                    "updated_at" => now(),
+                ],
+                [
+                    "name" => "Representatives",
+                    "created_at" => now(),
+                    "updated_at" => now(),
+                ],
+                [
+                    "name" => "Drivers",
                     "created_at" => now(),
                     "updated_at" => now(),
                 ],

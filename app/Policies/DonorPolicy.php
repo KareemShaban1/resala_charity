@@ -34,7 +34,7 @@ class DonorPolicy
     public function create(User $user): bool
     {
         //
-        return $user->hasPermissionTo('create donors');
+        return $user->hasPermissionTo('create donor');
 
     }
 
@@ -44,7 +44,7 @@ class DonorPolicy
     public function update(User $user): bool
     {
         //
-        return $user->hasPermissionTo('update donors');
+        return $user->hasPermissionTo('update donor');
 
     }
 
@@ -54,7 +54,7 @@ class DonorPolicy
     public function delete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('delete donors');
+        return $user->hasPermissionTo('delete donor');
 
     }
 
@@ -64,7 +64,7 @@ class DonorPolicy
     public function restore(User $user): bool
     {
         //
-        return $user->hasPermissionTo('restore donors');
+        return $user->hasPermissionTo('restore donor');
 
     }
 
@@ -74,7 +74,7 @@ class DonorPolicy
     public function forceDelete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('force delete donors');
+        return $user->hasPermissionTo('force delete donor');
 
     }
 }

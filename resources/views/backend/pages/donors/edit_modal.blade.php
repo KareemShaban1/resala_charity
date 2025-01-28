@@ -13,7 +13,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="edit_governorate_id" class="form-label">{{__('Governorate')}}</label>
-                        <select class="form-control select2" id="edit_governorate_id" name="governorate_id" required>
+                        <select class="form-control select2" id="edit_governorate_id" name="governorate_id">
                             <option value="">{{__('Select Governorate')}}</option>
                             @foreach(\App\Models\Governorate::all() as $governorate)
                             <option value="{{ $governorate->id }}">{{ $governorate->name }}</option>
@@ -25,7 +25,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="edit_city_id" class="form-label">{{__('City')}}</label>
-                        <select class="form-control select2" id="edit_city_id" name="city_id" required>
+                        <select class="form-control select2" id="edit_city_id" name="city_id">
                             <option value="">{{__('Select City')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
@@ -80,7 +80,7 @@
 
                 <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="edit_monthly_donation_day" class="form-label">{{__('Monthly Donation Day')}}</label>
+                        <label for="edit_monthly_donation_day" class="form-label">{{__('Monthly Form Day')}}</label>
                         <input type="number" class="form-control" id="edit_monthly_donation_day" name="monthly_donation_day">
                         <div class="invalid-feedback"></div>
                     </div>

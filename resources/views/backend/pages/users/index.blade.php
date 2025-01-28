@@ -110,40 +110,40 @@
             [0, 'desc']
         ],
         buttons: [{
-                    extend: 'print',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3, 4]
-                    }
-                },
-                {
-                    extend: 'excel',
-                    text: 'Excel',
-                    title: 'Users Data',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3]
-                    }
-                },
-                // {
-                //     extend: 'pdf', 
-                //     text: 'PDF', 
-                //     title: 'Users Data', 
-                //     exportOptions: {
-                //         columns: [0, 1, 2, 3]
-                //     }
-                // },
-                {
-                    extend: 'copy',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3]
-                    }
-                },
-            ],
-            dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
-            responsive: true,
-            language: languages[language],
-            "drawCallback": function() {
-                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
-            }
+                extend: 'print',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4]
+                }
+            },
+            {
+                extend: 'excel',
+                text: 'Excel',
+                title: 'Users Data',
+                exportOptions: {
+                    columns: [0, 1, 2, 3]
+                }
+            },
+            // {
+            //     extend: 'pdf', 
+            //     text: 'PDF', 
+            //     title: 'Users Data', 
+            //     exportOptions: {
+            //         columns: [0, 1, 2, 3]
+            //     }
+            // },
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: [0, 1, 2, 3]
+                }
+            },
+        ],
+        dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
+        responsive: true,
+        language: languages[language],
+        "drawCallback": function() {
+            $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+        }
     });
 
     // Reset form
@@ -172,40 +172,66 @@
             error: function(xhr) {
                 // handleValidationErrors(xhr);
                 if (xhr.status === 422) {
-                var errors = xhr.responseJSON.errors;
-                var errorMessages = Object.values(errors).map(function(error) {
-                    return error[0];
-                }).join('<br>');
+                    var errors = xhr.responseJSON.errors;
+                    var errorMessages = Object.values(errors).map(function(error) {
+                        return error[0];
+                    }).join('<br>');
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Errors',
-                    html: errorMessages
-                });
-            }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Errors',
+                        html: errorMessages
+                    });
+                }
             },
         });
     });
 
     // Edit user
     function editUser(id) {
-    $.get('{{ route("users.index") }}/' + id, function(data) {
-        $('#userId').val(data.id);
-        $('#name').val(data.name);
-        $('#email').val(data.email);
+        $.get('{{ route("users.index") }}/' + id, function(data) {
+            $('#userId').val(data.id);
+            $('#name').val(data.name);
+            $('#email').val(data.email);
 
-        // Reset all checkboxes
-        $('#roles-container input[type="checkbox"]').prop('checked', false);
+            // Reset all checkboxes
+            $('#roles-container input[type="checkbox"]').prop('checked', false);
 
-        // Check the user's roles
-        data.roles.forEach(role => {
-            $('#role_' + role).prop('checked', true);
+            // Check the user's roles
+            data.roles.forEach(role => {
+                $('#role_' + role).prop('checked', true);
+            });
+
+            $('#userModal .modal-title').text('{{ __("Edit User") }}');
+            $('#userModal').modal('show');
         });
+    }
 
-        $('#userModal .modal-title').text('{{ __("Edit User") }}');
-        $('#userModal').modal('show');
-    });
-}
-
+    // Delete user
+    function deleteUser(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '{{ route("users.index") }}/' + id,
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRF token for Laravel
+                    },
+                    success: function(response) {
+                        table.ajax.reload();
+                        Swal.fire('Deleted!', response.message, 'success');
+                    }
+                });
+            }
+        });
+    }
 </script>
 @endpush

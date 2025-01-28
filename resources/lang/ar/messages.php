@@ -1,9 +1,9 @@
 <?php
 
 return [
-    "Monthly Donation created successfully"=> "تم إضافة التبرع الشهري بنجاح",
-    "Monthly Donation updated successfully"=> "تم تحديث التبرع الشهري بنجاح",
-    "Monthly Donation deleted successfully"=> "تم حذف التبرع الشهري بنجاح",
+    "Monthly Form created successfully"=> "تم إضافة التبرع الشهري بنجاح",
+    "Monthly Form updated successfully"=> "تم تحديث التبرع الشهري بنجاح",
+    "Monthly Form deleted successfully"=> "تم حذف التبرع الشهري بنجاح",
     "Donation created successfully"=> "تم إضافة التبرع بنجاح",
     "Donation updated successfully"=> "تم تحديث التبرع بنجاح",
     "Donation deleted successfully"=> "تم حذف التبرع بنجاح",
@@ -21,10 +21,17 @@ return [
     'Donor deleted successfully'=> 'تم حذف متبرع بنجاح',
     'Donor assigned successfully'=> 'تم تعيين متبرع بنجاح',
     'Donor unassigned successfully'=> 'تم فك تعيين متبرع بنجاح',
+    "Donors imported successfully"=> "تم استيراد المتبرعين بنجاح",
     'Employee created successfully' => 'تم إضافة موظف بنجاح',
     'Employee updated successfully'=> 'تم تحديث موظف بنجاح',
     'Employee deleted successfully'=> 'تم حذف موظف بنجاح',
     'Department created successfully' => 'تم إضافة قسم بنجاح',
     'Department updated successfully'=> 'تم تحديث قسم بنجاح',
     'Department deleted successfully'=> 'تم حذف قسم بنجاح',
+    "User created successfully"=> "تم إضافة مستخدم بنجاح",
+    "User updated successfully"=> "تم تحديث مستخدم بنجاح",
+    "User deleted successfully"=> "تم حذف مستخدم بنجاح",
+    "CallType created successfully"=> "تم إضافة نوع المكالمة بنجاح",
+    "CallType updated successfully"=> "تم تحديث نوع المكالمة بنجاح",
+    "CallType deleted successfully"=> "تم حذف نوع المكالمة بنجاح",
 ];

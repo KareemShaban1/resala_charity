@@ -22323,3 +22323,12 @@ div.table-responsive>div.dataTables_wrapper>div.row>div[class^=col-]:first-child
 }
 
 /*# sourceMappingURL=app.min.css.map */
+
+/* Ensure modals and dropdowns have proper z-index */
+.modal {
+    z-index: 1050 !important;
+}
+
+.select2-container {
+    z-index: 1060 !important;
+}

@@ -13,8 +13,9 @@ class DonationCollecting extends Model
         'donation_id',
         'collecting_date',
         'employee_id',
-        'financial_receipt_number',
+        // 'financial_receipt_number',
         'in_kind_receipt_number',
+        'collecting_way'
     ];
 
     protected $casts = [

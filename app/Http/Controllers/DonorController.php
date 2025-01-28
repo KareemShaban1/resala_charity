@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\NonMatchingNumbersExport;
 use App\Models\Donor;
 use App\Http\Requests\StoreDonorRequest;
 use App\Http\Requests\UpdateDonorRequest;
 use App\Imports\DonorsImport;
+use App\Imports\PhoneNumbersImport;
+use App\Models\DonationCategory;
 use App\Models\DonorActivity;
+use App\Models\DonorPhone;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -21,8 +26,10 @@ class DonorController extends Controller
     {
         $this->authorize('view', Donor::class);
 
-
-        return view('backend.pages.donors.index');
+        $donors = Donor::all();
+        $donationCategories = DonationCategory::all();
+        $employees = Employee::all();
+        return view('backend.pages.donors.index', compact('donors', 'donationCategories', 'employees'));
     }
 
     /**
@@ -30,7 +37,41 @@ class DonorController extends Controller
      */
     public function data(Request $request)
     {
-        $query = Donor::with(['governorate', 'city', 'area', 'phones']);
+        $query = Donor::select('donors.*') // Explicitly select donors columns
+            ->with(['governorate', 'city', 'area', 'phones']);
+
+        if ($request->has('columns')) {
+            foreach ($request->get('columns') as $column) {
+                $searchValue = $column['search']['value'];
+                $columnName = $column['name'];
+
+                if ($searchValue) {
+                    if ($columnName === 'phones') {
+                        $query->whereHas('phones', function ($q) use ($searchValue) {
+                            $q->where('phone_number', 'like', "%{$searchValue}%");
+                        });
+                    } elseif ($columnName === 'city.name') {
+                        $query->whereHas('city', function ($q) use ($searchValue) {
+                            $q->where('name', 'like', "%{$searchValue}%");
+                        });
+                    } elseif ($columnName === 'area.name') {
+                        $query->whereHas('area', function ($q) use ($searchValue) {
+                            $q->where('name', 'like', "%{$searchValue}%");
+                        });
+                    } elseif ($columnName === 'donors.active') {
+                        // dd(strtolower($searchValue));
+                        // Map user-friendly values to database values
+                        // $activeValue = strtolower($searchValue) === 'active' ? 1 : 0;
+                        $query->where('active', strtolower($searchValue));
+                    } else {
+                        $query->where($columnName, 'like', "%{$searchValue}%");
+                    }
+                }
+            }
+        }
+
+        $query->orderBy('donors.id', 'desc');
+
 
         return datatables()->of($query)
             ->filterColumn('phones', function ($query, $keyword) {
@@ -44,7 +85,7 @@ class DonorController extends Controller
                         return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
                     })->implode(', ') : 'N/A';
             })
-            ->addColumn('donor_name', function ($donor) {
+            ->addColumn('name', function ($donor) {
                 return '<a href="' . route('donor-history.show', [$donor->id]) . '" class="text-info">'
                     . $donor->name .
                     '</a>';
@@ -56,14 +97,16 @@ class DonorController extends Controller
                     </a>
                     <a href="javascript:void(0)" onclick="deleteDonor(' . $donor->id . ')" class="btn btn-sm btn-danger">
                         <i class="mdi mdi-trash-can"></i>
-                    </a>
+                    </a>'
+                    . ($donor->donor_type === 'monthly' ? '
                     <a href="javascript:void(0)" onclick="assignDonor(' . $donor->id . ')" class="btn btn-sm btn-success">
                         <i class="mdi mdi-account-plus"></i>
-                    </a>
+                    </a>' : '') . '
                     <a href="javascript:void(0)" onclick="addActivity(' . $donor->id . ')" class="btn btn-sm btn-dark">
                         <i class="uil-outgoing-call"></i>
                     </a>';
             })
+            
             ->editColumn('active', function ($donor) {
                 return $donor->active ?
                     '<span class="badge bg-success">' . __("Active") . '</span>' :
@@ -81,7 +124,7 @@ class DonorController extends Controller
             ->editColumn('donor_type', function ($donor) {
                 return $donor->donor_type ? $donor->donor_type : '';
             })
-            ->rawColumns(['active', 'action', 'donor_name'])
+            ->rawColumns(['active', 'action', 'name'])
             ->make(true);
     }
 
@@ -114,7 +157,7 @@ class DonorController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => __('messages.Donor created successfully.')
+                'message' => __('messages.Donor created successfully')
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -193,7 +236,7 @@ class DonorController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => __('messages.Donor updated successfully.')
+                'message' => __('messages.Donor updated successfully')
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -218,7 +261,7 @@ class DonorController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => __('messages.Donor deleted successfully.')
+                'message' => __('messages.Donor deleted successfully')
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -279,56 +322,62 @@ class DonorController extends Controller
 
     public function search(Request $request)
     {
-        $query = $request->get('query');
+        $query = trim($request->get('query'));
 
-        // Validate that query is provided
+        // Return an empty response if no query is provided
         if (empty($query)) {
-            return response()->json([], 200); // Return an empty array if no query is provided
+            return response()->json([], 200);
         }
 
+        // Normalize the query for name search
+        $query = preg_replace('/\s+/', ' ', $query); // Normalize spaces
+        $query = str_replace(['%', '_'], ['\%', '\_'], $query); // Escape special characters
 
-        // Normalize the query to remove non-numeric characters
-        $normalizedQuery = preg_replace('/\D/', '', $query); // Remove non-numeric characters
+        // Normalize the query for phone search
+        $normalizedQuery = preg_replace('/\D/', '', $query);
 
-        // Search donors by ID or related phone numbers
-        $query = Donor::with('phones') // Load phones relationship
-            ->where('id', 'like', "%$query%")
-            ->orWhereHas('phones', function ($q) use ($normalizedQuery) {
-                // Normalize phone numbers in the database as well for accurate matching
+        // Build the search query
+        $donorsQuery = Donor::with('phones');
+
+        if (is_numeric($query)) {
+            // Search by phone if the query is numeric
+            $donorsQuery->whereHas('phones', function ($q) use ($normalizedQuery) {
                 $q->whereRaw('REPLACE(REPLACE(REPLACE(phone_number, "-", ""), "(", ""), ")", "") LIKE ?', ['%' . $normalizedQuery . '%']);
             });
-
-        if ($request->get('monthly')) {
-            $query->where('donor_type', 'monthly');
+        } else {
+            // Search by name if the query is not numeric
+            $donorsQuery->where('name', 'like', '%' . $query . '%');
         }
 
-        $donors = $query->get();
+        if ($request->has('monthly')) {
+            // dd("test");
+            $donorsQuery->where('donor_type', 'monthly');
+        }
 
+        // Get the donors matching the query
+        $donors = $donorsQuery->get();
 
-        // Loop through donors and filter for phone number match
+        // Filter and normalize matched phones for each donor
         $donors->each(function ($donor) use ($normalizedQuery) {
-            // Get all phones that match the search query
-            $matchedPhones = $donor->phones->filter(function ($phone) use ($normalizedQuery) {
-                // Normalize the phone number and compare
+            $donor->matched_phones = $donor->phones->filter(function ($phone) use ($normalizedQuery) {
+                // Normalize the phone number and check if it contains the query
                 $normalizedPhone = preg_replace('/\D/', '', $phone->phone_number);
                 return strpos($normalizedPhone, $normalizedQuery) !== false;
-            });
-
-            // Add matched phones to the donor object
-            $donor->matched_phones = $matchedPhones->pluck('phone_number');
+            })->pluck('phone_number');
         });
 
-        // Return the modified donor data with the matched phones
+        // Prepare the response with matched phones
         return response()->json([
             'results' => $donors->map(function ($donor) {
                 return [
                     'id' => $donor->id,
-                    'text' => $donor->name . ' (' . implode(', ', $donor->matched_phones->toArray()) . ')', // Show all matched phones
-                    'matched_phones' => $donor->matched_phones, // Pass all matched phones
+                    'text' => $donor->name . ' (' . $donor->matched_phones->implode(', ') . ')',
+                    'matched_phones' => $donor->matched_phones,
                 ];
-            })
+            }),
         ], 200);
     }
+
 
     public function assignDonors(Request $request)
     {
@@ -345,7 +394,7 @@ class DonorController extends Controller
         }
         return response()->json([
             'success' => true,
-            'message' => __('messages.Donors assigned successfully.'),
+            'message' => __('messages.Donor assigned successfully.'),
         ]);
     }
 
@@ -364,18 +413,21 @@ class DonorController extends Controller
         // 3. Donor is not a parent of other donors (exclude donors who appear as parent_id)
         $childrenDonors = Donor::where('id', '<>', $request->parent_donor_id)
             ->whereNull('parent_id')  // Ensure it's a top-level donor
+            ->where('donor_type', 'monthly')
             ->whereNotIn('id', Donor::whereNotNull('parent_id')->pluck('parent_id'))  // Exclude those who are parents for other donors
             ->get();
 
         return response()->json($childrenDonors);
     }
 
-    public function addActivity(Request $request){
+    public function addActivity(Request $request)
+    {
         $request->validate([
             'donor_id' => 'required|exists:donors,id',
             'call_type_id' => 'required|exists:call_types,id',
-            'activity_type' => 'required|in:call',
-            'notes'=> 'nullable|string',
+            'activity_type' => 'required|in:call,whatsapp_chat',
+            'notes' => 'nullable|string',
+            'status' => 'nullable|string',
             'date_time' => 'required|date',
             'response' => 'nullable|string',
         ]);
@@ -384,13 +436,84 @@ class DonorController extends Controller
             'call_type_id' => $request->call_type_id,
             'activity_type' => $request->activity_type,
             'notes' => $request->notes,
+            'status' => $request->status,
             'date_time' => $request->date_time,
             'response' => $request->response,
             'created_by' => auth()->user()->id
         ]);
         return response()->json([
             'success' => true,
-            'message' => __('messages.Donor activity added successfully.'),
+            'message' => __('messages.Donor activity added successfully'),
         ]);
+    }
+
+
+    // public function uploadPhoneNumbers(Request $request)
+    // {
+    //     // Validate the uploaded file
+    //     $request->validate([
+    //         'file' => 'required|mimes:xlsx,xls',
+    //     ]);
+
+    //     // Import phone numbers from the Excel file
+    //     $uploadedNumbers = Excel::toCollection(new PhoneNumbersImport, $request->file('file'))->first();
+
+    //     // Get existing phone numbers from the database
+    //     $existingNumbers = DonorPhone::pluck('phone_number')->toArray();
+
+    //     // Find phone numbers that do not exist in the database
+    //     $nonMatchingNumbers = $uploadedNumbers->diff($existingNumbers);
+
+    //     // Generate a new Excel file with the non-matching numbers
+    //     $fileName = 'non_matching_numbers_' . now()->format('Ymd_His') . '.xlsx';
+
+    //     // Save the file to the storage disk (e.g., "public")
+    //     $filePath = 'exports/' . $fileName;
+    //     Excel::store(new NonMatchingNumbersExport($nonMatchingNumbers), $filePath, 'public');
+
+    //     // Return a JSON response with the file URL
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'File processed successfully.',
+    //         'download_url' => Storage::disk('public')->url($filePath),
+    //     ]);
+    // }
+
+    public function uploadPhoneNumbers(Request $request)
+    {
+        // Validate the uploaded file
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        // Import phone numbers from the Excel file
+        $uploadedNumbers = Excel::toCollection(new PhoneNumbersImport, $request->file('file'))->first();
+
+        // Log the uploaded numbers for debugging
+        Log::info('Uploaded numbers:', $uploadedNumbers->toArray());
+
+        // Get existing phone numbers from the database
+        $existingNumbers = DonorPhone::pluck('phone_number')->toArray();
+
+        // Log the existing numbers for debugging
+        Log::info('Existing numbers:', $existingNumbers);
+
+        // Flatten the uploaded numbers and normalize data types
+        $uploadedNumbers = $uploadedNumbers->flatten()->map(function ($number) {
+            return (string) $number; // Convert to string
+        });
+
+        // Convert existing numbers to strings
+        $existingNumbers = array_map('strval', $existingNumbers);
+
+        // Find phone numbers that do not exist in the database
+        $nonMatchingNumbers = $uploadedNumbers->diff($existingNumbers);
+
+        // Log the non-matching numbers for debugging
+        Log::info('Non-matching numbers:', $nonMatchingNumbers->toArray());
+
+        // Generate a new Excel file with the non-matching numbers
+        $fileName = 'non_matching_numbers_' . now()->format('Ymd_His') . '.xlsx';
+        return Excel::download(new NonMatchingNumbersExport($nonMatchingNumbers), $fileName);
     }
 }

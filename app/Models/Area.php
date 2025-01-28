@@ -16,4 +16,9 @@ class Area extends Model
     {
         return $this->belongsTo(City::class);
     }
+
+    public function areaGroups()
+    {
+        return $this->belongsToMany(AreaGroup::class, 'area_group_members');
+    }
 }

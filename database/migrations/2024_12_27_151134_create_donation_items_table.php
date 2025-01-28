@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('donation_id')->constrained()->onDelete('cascade');
             $table->enum('donation_type', ['financial','inKind'])->default('financial');
-
             $table->foreignId('donation_category_id')->nullable()->constrained('donation_categories')->onDelete('cascade');
             $table->string('item_name')->nullable();
             $table->string('amount');
+            $table->string('financial_receipt_number')->nullable();
+
             $table->softDeletes();
             $table->timestamps();
         });

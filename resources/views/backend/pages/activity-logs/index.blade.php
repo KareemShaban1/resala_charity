@@ -1,5 +1,7 @@
 @extends('backend.layouts.master')
-
+@section('title')
+{{__('Activity Logs')}}
+@endsection
 @section('content')
 <div class="container-fluid">
     <!-- start page title -->

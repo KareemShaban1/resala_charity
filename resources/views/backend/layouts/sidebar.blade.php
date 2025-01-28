@@ -46,23 +46,29 @@
                   </a>
                   <div class="collapse" id="sidebarUsers">
                       <ul class="side-nav-second-level">
+                          @can('view users')
                           <li>
                               <a href="{{route('users.index')}}">
                                   <span> {{__('Users')}} </span>
                               </a>
                           </li>
+                          @endcan
 
+                          @can('view roles')
                           <li>
                               <a href="{{route('roles.index')}}">
                                   <span> {{__('Roles')}} </span>
                               </a>
                           </li>
+                          @endcan
 
+                          @can('view activity logs')
                           <li>
                               <a href="{{route('activity-logs.index')}}">
                                   <span> {{__('Activity Logs')}} </span>
                               </a>
                           </li>
+                          @endcan
                       </ul>
                   </div>
               </li>
@@ -75,16 +81,21 @@
                   </a>
                   <div class="collapse" id="sidebarEmployees">
                       <ul class="side-nav-second-level">
+                          @can('view departments')
                           <li>
                               <a href="{{route('departments.index')}}">
                                   <span> {{__('Departments')}} </span>
                               </a>
                           </li>
+                          @endcan
+
+                          @can('view employees')
                           <li>
                               <a href="{{route('employees.index')}}">
                                   <span> {{__('Employees')}} </span>
                               </a>
                           </li>
+                          @endcan
                       </ul>
                   </div>
               </li>
@@ -98,6 +109,7 @@
                   </a>
                   <div class="collapse" id="sidebarLocation">
                       <ul class="side-nav-second-level">
+                          @can('view governorates')
                           <li>
                               <a href="{{route('governorates.index')}}">
                                   <span>
@@ -105,6 +117,9 @@
                                   </span>
                               </a>
                           </li>
+                          @endcan
+
+                          @can('view cities')
                           <li>
                               <a href="{{route('cities.index')}}">
                                   <span>
@@ -112,6 +127,9 @@
                                   </span>
                               </a>
                           </li>
+                          @endcan
+
+                          @can('view areas')
                           <li>
                               <a href="{{route('areas.index')}}">
                                   <span>
@@ -119,6 +137,17 @@
                                   </span>
                               </a>
                           </li>
+                          @endcan
+
+                          @can('view areas groups')
+                          <li>
+                              <a href="{{route('areas-groups.index')}}">
+                                  <span>
+                                      {{__('Areas Groups')}}
+                                  </span>
+                              </a>
+                          </li>
+                          @endcan
 
                       </ul>
                   </div>
@@ -132,22 +161,53 @@
                   </a>
                   <div class="collapse" id="sidebarDonors">
                       <ul class="side-nav-second-level">
+                          @can('view call types')
                           <li>
                               <a href="{{route('call-types.index')}}">
                                   <span> {{__('Call Types')}} </span>
                               </a>
                           </li>
+                          @endcan
+
+                          @can('view donors')
                           <li>
                               <a href="{{route('donors.index')}}">
                                   <span> {{__('Donors')}} </span>
                               </a>
                           </li>
-
+                          @endcan
 
                       </ul>
                   </div>
               </li>
 
+              <li class="side-nav-item">
+                  <a data-bs-toggle="collapse" href="#sidebarMonthlyForms" aria-expanded="false" aria-controls="sidebarMonthlyForms" class="side-nav-link">
+                      <i class="uil-money-withdraw"></i>
+                      <span> {{__('Monthly Forms')}} </span>
+                      <span class="menu-arrow"></span>
+                  </a>
+                  <div class="collapse" id="sidebarMonthlyForms">
+                      <ul class="side-nav-second-level">
+                          @can('view monthly forms')
+                          <li>
+                              <a href="{{route('monthly-forms.index')}}">
+                                  <span> {{__('Monthly Forms')}} </span>
+                              </a>
+                          </li>
+                          @endcan
+
+                          @can('view cancelled monthly forms')
+                          <li>
+                              <a href="{{route('monthly-forms.cancelled')}}">
+                                  <span> {{__('Cancelled Monthly Forms')}} </span>
+                              </a>
+                          </li>
+                          @endcan
+
+                      </ul>
+                  </div>
+              </li>
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarDonations" aria-expanded="false" aria-controls="sidebarDonations" class="side-nav-link">
                       <i class="uil-money-withdraw"></i>
@@ -157,34 +217,51 @@
                   <div class="collapse" id="sidebarDonations">
                       <ul class="side-nav-second-level">
 
+                          @can('view donation categories')
                           <li>
                               <a href="{{route('donation-categories.index')}}">
                                   <span> {{__('Donation Categories')}} </span>
                               </a>
                           </li>
-                          <li>
-                              <a href="{{route('monthly-donations.index')}}">
-                                  <span> {{__('Monthly Donations')}} </span>
-                              </a>
-                          </li>
-                          <li>
-                              <a href="{{route('monthly-donations.cancelled')}}">
-                                  <span> {{__('Cancelled Monthly Donations')}} </span>
-                              </a>
-                          </li>
+                          @endcan
+
+
+                          @can('view donations')
                           <li>
                               <a href="{{route('donations.index')}}">
                                   <span> {{__('Donations')}} </span>
                               </a>
                           </li>
+                          @endcan
+
+
 
                       </ul>
                   </div>
               </li>
 
-
+              <li class="side-nav-item">
+                  <a data-bs-toggle="collapse" href="#sidebarCollectingLines" aria-expanded="false" aria-controls="sidebarCollectingLines" class="side-nav-link">
+                      <i class="uil-money-withdraw"></i>
+                      <span> {{__('Collecting Lines')}} </span>
+                      <span class="menu-arrow"></span>
+                  </a>
+                  <div class="collapse" id="sidebarCollectingLines">
+                      <ul class="side-nav-second-level">
+                        @can('view collecting lines')
+                          <li>
+                              <a href="{{route('collecting-lines.index')}}">
+                                  <span> {{__('Collecting Lines')}} </span>
+                              </a>
+                          </li>
+                          @endcan
+                      </ul>
+                  </div>
+              </li>
 
           </ul>
+
+
 
 
           <!-- End Sidebar -->

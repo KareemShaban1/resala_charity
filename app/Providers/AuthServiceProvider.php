@@ -11,7 +11,7 @@ use App\Models\DonationCategory;
 use App\Models\Donor;
 use App\Models\Employee;
 use App\Models\Governorate;
-use App\Models\MonthlyDonation;
+use App\Models\MonthlyForm;
 use App\Models\User;
 use App\Policies\AreaPolicy;
 use App\Policies\CityPolicy;
@@ -20,7 +20,7 @@ use App\Policies\DonationCategoryPolicy;
 use App\Policies\DonorPolicy;
 use App\Policies\EmployeePolicy;
 use App\Policies\GovernoratePolicy;
-use App\Policies\MonthlyDonationPolicy;
+use App\Policies\MonthlyFormPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -36,7 +36,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
         DonationCategory::class => DonationCategoryPolicy::class,
-        MonthlyDonation::class => MonthlyDonationPolicy::class,
+        MonthlyForm::class => MonthlyFormPolicy::class,
         Area::class => AreaPolicy::class,
         Governorate::class => GovernoratePolicy::class,
         City::class => CityPolicy::class,

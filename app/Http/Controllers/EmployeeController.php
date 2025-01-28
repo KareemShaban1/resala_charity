@@ -18,6 +18,7 @@ class EmployeeController extends BaseController
         $this->routePrefix = 'employees';
         $this->validationRules = [
             'name' => 'required|string|max:255',
+            'job_title' => 'nullable|string|max:255',
             'department_id' => 'required|exists:departments,id'
         ];
     }
@@ -33,7 +34,8 @@ class EmployeeController extends BaseController
             ->addColumn('action', function ($item) {
                 return '
                     <div class="d-flex gap-2">
-                        <a href="javascript:void(0);"  onclick="editEmployee('.$item->id.', \''.$item->name.'\', '.$item->department_id.')"
+                        <a href="javascript:void(0);"  onclick="editEmployee('.$item->id.', \''.$item->name.'\', 
+                        '.$item->department_id.',  \''.$item->job_title.'\' )"
                         class="btn btn-sm btn-info">
                             <i class="mdi mdi-square-edit-outline"></i>
                         </a>
@@ -55,6 +57,7 @@ class EmployeeController extends BaseController
     {
         return [
             'name' => 'required|string|max:255|unique:employees,name,' . $id,
+            'job_title' => 'nullable|string|max:255',
             'department_id' => 'required|exists:departments,id'
         ];
     }

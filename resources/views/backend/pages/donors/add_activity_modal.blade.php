@@ -10,6 +10,7 @@
                         <select name="activity_type" id="activity_type" class="form-control">
                             <option value="">{{__('Select Activity Type')}}</option>
                             <option value="call">{{__('Call')}}</option>
+                            <option value="whatsapp_chat">{{__('WhatsApp Chat')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -28,11 +29,27 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label for="date_time" class="form-label">{{__('Date Time')}}</label>
-                    <input type="datetime-local" class="form-control" id="date_time" name="date_time" required>
-                    <div class="invalid-feedback"></div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="date_time" class="form-label">{{__('Date Time')}}</label>
+                        <input type="datetime-local" class="form-control" id="date_time" name="date_time" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-6" id="status-container" style="display: none;">
+                    <div class="mb-3">
+                        <label for="activity_status" class="form-label">{{__('Status')}}</label>
+                        <select name="status" id="activity_status" class="form-control">
+                            <option value="" disabled>{{__('Select Status')}}</option>
+                            <option value="ReplyAndDonate">{{__('Reply And Donate')}}</option>
+                            <option value="ReplyAndNotDonate">{{__('Reply And Not Donate')}}</option>
+                            <option value="NoReply">{{__('No Reply')}}</option>
+                            <option value="PhoneNotAvailable">{{__('Phone Not Available')}}</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
                 </div>
             </div>
             <div class="mb-3">

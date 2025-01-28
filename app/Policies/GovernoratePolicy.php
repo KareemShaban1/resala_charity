@@ -23,7 +23,7 @@ class GovernoratePolicy
     public function view(User $user): bool
     {
         //
-        return $user->hasPermissionTo('view governorates'); // Check permission
+        return $user->hasPermissionTo('view governorates');
 
     }
 
@@ -33,7 +33,7 @@ class GovernoratePolicy
     public function create(User $user): bool
     {
         //
-        return $user->hasPermissionTo('create governorates');
+        return $user->hasPermissionTo('create governorate');
     }
 
     /**
@@ -42,7 +42,7 @@ class GovernoratePolicy
     public function update(User $user): bool
     {
         //
-        return $user->hasPermissionTo('update governorates');
+        return $user->hasPermissionTo('update governorate');
     }
 
     /**
@@ -51,7 +51,7 @@ class GovernoratePolicy
     public function delete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('delete governorates');
+        return $user->hasPermissionTo('delete governorate');
     }
 
     /**
@@ -60,7 +60,7 @@ class GovernoratePolicy
     public function restore(User $user): bool
     {
         //
-        return $user->hasPermissionTo('restore governorates');
+        return $user->hasPermissionTo('restore governorate');
     }
 
     /**
@@ -69,6 +69,6 @@ class GovernoratePolicy
     public function forceDelete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('force delete governorates');
+        return $user->hasPermissionTo('force delete governorate');
     }
 }

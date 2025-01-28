@@ -4,6 +4,8 @@ return [
     'required' => 'حقل :attribute مطلوب.',
     'exists' => ':attribute المختار غير صالح.',
     'in' => 'يجب أن يكون حقل :attribute واحدًا من القيم التالية: :values.',
+    'email' => 'يجب أن يكون حقل :attribute محاولة البريد الإلكتروني صالحًا.',
+    'unique' => 'حقل :attribute مسجل مسبقاً.',
     'string' => 'يجب أن يكون حقل :attribute نصًا.',
     'numeric' => 'يجب أن يكون حقل :attribute رقمًا.',
     'integer' => 'يجب أن يكون حقل :attribute عددًا صحيحًا.',
@@ -15,6 +17,8 @@ return [
     'nullable' => 'حقل :attribute اختياري.',
     'attributes' => [
         'donor_id' => 'المتبرع',
+        'email' => 'البريد الإلكتروني',
+        'roles' => 'الصلاحيات',
         'department_id' => 'القسم',
         'employee_id' => 'الموظف',
         'collecting_donation_way' => 'طريقة جمع التبرعات',
@@ -35,4 +39,5 @@ return [
     "unique_receipt_number_financial"=>"تم استخدام رقم الاستلام مسبقاً فى التبرعات المادية.",
     "unique_receipt_number_in_kind"=>"تم استخدام رقم الاستلام مسبقاً فى التبرعات العينية .",
     "Validation Error" => "خطأ في التحقق",
+    "duplicate_receipt_number_in_request"=> "تم استخدام رقم الاستلام مسبقاً فى الطلب"
 ];

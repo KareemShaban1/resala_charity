@@ -24,10 +24,10 @@ class UpdateDonorRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
             'street' => 'nullable|string|max:255',
-            'governorate_id' => 'required|exists:governorates,id',
-            'city_id' => 'required|exists:cities,id',
+            'governorate_id' => 'nullable|exists:governorates,id',
+            'city_id' => 'nullable|exists:cities,id',
             'area_id' => 'nullable|exists:areas,id',
             'active' => 'required|boolean',
             'donor_type' => 'required|in:normal,monthly',
@@ -42,34 +42,35 @@ class UpdateDonorRequest extends FormRequest
                     // Get the index of the phone number being validated (e.g., 0, 1, etc.)
                     preg_match('/phones\.(\d+)\.number/', $attribute, $matches);
                     $index = $matches[1] ?? null; // Extract the index
-            
+
                     if ($index === null) {
                         return; // If index is not found, do nothing (this should never happen)
                     }
-            
+
                     // Get the phone ID from the phones array in the request (phones[$index][id])
                     $phoneId = request()->input("phones.{$index}.id");
-            
+
                     // Build the query to check if the phone number exists, excluding the current phone ID
                     $query = \DB::table('donor_phones')
                         ->where('phone_number', $value)
                         ->whereNull('deleted_at'); // Check for soft deletes if needed
-            
+
                     if ($phoneId) {
                         // If phone ID is provided, exclude it from the check
                         $query->where('id', '<>', $phoneId);
                     }
-            
+
                     // Check if a record exists with the same phone number
                     if ($query->exists()) {
                         $fail("The phone number {$value} has already been taken.");
                     }
-                }   ],
+                }
+            ],
             'phones.*.type' => 'required|string|in:mobile,home,work,other',
         ];
     }
-    
-    
+
+
 
     public function messages(): array
     {

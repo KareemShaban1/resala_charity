@@ -32,7 +32,7 @@ class AreaPolicy
     public function create(User $user): bool
     {
         //
-            return $user->hasPermissionTo('create areas');
+            return $user->hasPermissionTo('create area');
     }
 
     /**
@@ -41,7 +41,7 @@ class AreaPolicy
     public function update(User $user): bool
     {
         //
-        return $user->hasPermissionTo('update areas');
+        return $user->hasPermissionTo('update area');
     }
 
     /**
@@ -50,7 +50,7 @@ class AreaPolicy
     public function delete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('delete areas');
+        return $user->hasPermissionTo('delete area');
     }
 
     /**
@@ -59,7 +59,7 @@ class AreaPolicy
     public function restore(User $user): bool
     {
         //
-            return $user->hasPermissionTo('restore areas');
+            return $user->hasPermissionTo('restore area');
     }
 
     /**
@@ -68,6 +68,6 @@ class AreaPolicy
     public function forceDelete(User $user, Area $area): bool
     {
         //
-        return $user->hasPermissionTo('force delete areas');
+        return $user->hasPermissionTo('force delete area');
     }
 }

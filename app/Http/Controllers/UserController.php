@@ -73,7 +73,7 @@ class UserController extends Controller
 
         $user->syncRoles($request->roles);
 
-        return response()->json(['success' => true, 'message' => 'User added successfully!']);
+        return response()->json(['success' => true, 'message' =>  __('messages.User created successfully')]);
     }
 
     /**
@@ -98,7 +98,7 @@ class UserController extends Controller
 
         $user->syncRoles($request->roles);
 
-        return response()->json(['success' => true, 'message' => 'User updated successfully!']);
+        return response()->json(['success' => true, 'message' =>  __('messages.User updated successfully')]);
     }
 
 
@@ -111,7 +111,7 @@ class UserController extends Controller
 
         $user->delete();
 
-        return response()->json(['success' => true, 'message' => 'User deleted successfully!']);
+        return response()->json(['success' => true, 'message' =>  __('messages.User deleted successfully')]);
     }
 
     public function edit($id)

@@ -16,8 +16,8 @@
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="monthly-donations-tab" data-bs-toggle="tab" data-bs-target="#monthly-donations" type="button" role="tab" aria-controls="monthly-donations" aria-selected="false">
-                        {{ __('Monthly Donations') }}
+                    <button class="nav-link" id="monthly-forms-tab" data-bs-toggle="tab" data-bs-target="#monthly-forms" type="button" role="tab" aria-controls="monthly-forms" aria-selected="false">
+                        {{ __('Monthly Forms') }}
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -53,17 +53,17 @@
                     </div>
                 </div>
 
-                <!-- Monthly Donations Tab -->
-                <div class="tab-pane fade" id="monthly-donations" role="tabpanel" aria-labelledby="monthly-donations-tab">
-                    <div id="monthly-donations-table-container">
-                        <!-- AJAX-loaded monthly donations table will be inserted here -->
+                <!-- Monthly Forms Tab -->
+                <div class="tab-pane fade" id="monthly-forms" role="tabpanel" aria-labelledby="monthly-forms-tab">
+                    <div id="monthly-forms-table-container">
+                        <!-- AJAX-loaded monthly forms table will be inserted here -->
                     </div>
                 </div>
 
-                 <!-- Monthly Donations Tab -->
+                 <!-- Monthly Forms Tab -->
                  <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
                     <div id="activities-table-container">
-                        <!-- AJAX-loaded monthly donations table will be inserted here -->
+                        <!-- AJAX-loaded monthly forms table will be inserted here -->
                     </div>
                 </div>
             </div>
@@ -82,25 +82,25 @@
             switch (tab) {
                 case 'donations':
                     $('#donations-tab').addClass('active');
-                    $('#monthly-donations-tab').removeClass('active');
+                    $('#monthly-forms-tab').removeClass('active');
                     $('#activities-tab').removeClass('active');
                     url = `{{ url('donor-history') }}/{{ $donor->id }}/donations`;
                     break;
-                case 'monthly-donations':
-                    $('#monthly-donations-tab').addClass('active');
+                case 'monthly-forms':
+                    $('#monthly-forms-tab').addClass('active');
                     $('#donations-tab').removeClass('active');
                     $('#activities-tab').removeClass('active');
-                    url = `{{ url('donor-history') }}/{{ $donor->id }}/monthly-donations`;
+                    url = `{{ url('donor-history') }}/{{ $donor->id }}/monthly-forms`;
                     break;
                 case 'activities':
                     $('#activities-tab').addClass('active');
                     $('#donations-tab').removeClass('active');
-                    $('#monthly-donations-tab').removeClass('active');
+                    $('#monthly-forms-tab').removeClass('active');
                     url = `{{ url('donor-history') }}/{{ $donor->id }}/activities`;
                     break;    
                 default:
                     $('#donations-tab').addClass('active');
-                    $('#monthly-donations-tab').removeClass('active');
+                    $('#monthly-forms-tab').removeClass('active');
                     $('#activities-tab').removeClass('active');
                     url = `{{ url('donor-history') }}/{{ $donor->id }}/donations`;
                     break;
@@ -117,8 +117,8 @@
                 success: function(response) {
                     if (tab === 'donations') {
                         $('#donations-table-container').html(response);
-                    } else if(tab === 'monthly-donations') {
-                        $('#monthly-donations-table-container').html(response);
+                    } else if(tab === 'monthly-forms') {
+                        $('#monthly-forms-table-container').html(response);
                     }else if(tab === 'activities') {
                         $('#activities-table-container').html(response);
                     }
@@ -134,14 +134,14 @@
 
         // Handle tab switching
         $('#donorTabs button').on('click', function() {
-            // let tab = $(this).attr('id') === 'donations-tab' ? 'donations' : 'monthly-donations';
+            // let tab = $(this).attr('id') === 'donations-tab' ? 'donations' : 'monthly-forms';
             let tab;
             switch ($(this).attr('id')) {
                 case 'donations-tab':
                     tab = 'donations';
                     break;
-                case 'monthly-donations-tab':
-                    tab = 'monthly-donations';
+                case 'monthly-forms-tab':
+                    tab = 'monthly-forms';
                     break;
                 case 'activities-tab':
                     tab = 'activities';
@@ -154,15 +154,15 @@
         $('#filter-button').on('click', function() {
             let startDate = $('#start-date').val();
             let endDate = $('#end-date').val();
-            // let activeTab = $('#donorTabs .nav-link.active').attr('id') === 'donations-tab' ? 'donations' : 'monthly-donations';
+            // let activeTab = $('#donorTabs .nav-link.active').attr('id') === 'donations-tab' ? 'donations' : 'monthly-forms';
 
             let activeTab;
             switch ($('#donorTabs .nav-link.active').attr('id')) {
                 case 'donations-tab':
                     activeTab = 'donations';
                     break;
-                case 'monthly-donations-tab':
-                    activeTab = 'monthly-donations';
+                case 'monthly-forms-tab':
+                    activeTab = 'monthly-forms';
                     break;
                 case 'activities-tab':
                     activeTab = 'activities';
@@ -182,15 +182,15 @@
             let endDate = $('#end-date').val();
 
             // Determine the active tab
-            // let activeTab = $('#donorTabs .nav-link.active').attr('id') === 'donations-tab' ? 'donations' : 'monthly-donations';
+            // let activeTab = $('#donorTabs .nav-link.active').attr('id') === 'donations-tab' ? 'donations' : 'monthly-forms';
 
             let activeTab;
             switch ($('#donorTabs .nav-link.active').attr('id')) {
                 case 'donations-tab':
                     activeTab = 'donations';
                     break;
-                case 'monthly-donations-tab':
-                    activeTab = 'monthly-donations';
+                case 'monthly-forms-tab':
+                    activeTab = 'monthly-forms';
                     break;
                 case 'activities-tab':
                     activeTab = 'activities';

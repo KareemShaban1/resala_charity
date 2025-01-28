@@ -27,6 +27,7 @@
                                 <th>{{__('ID')}}</th>
                                 <th>{{__('Name')}}</th>
                                 <th>{{__('Department')}}</th>
+                                <th>{{__('Job Title')}}</th>
                                 <!-- <th>{{__('Created At')}}</th> -->
                                 <th>{{__('Actions')}}</th>
                             </tr>
@@ -46,6 +47,11 @@
             <div class="mb-3">
                 <label for="name" class="form-label">{{__('Name')}}</label>
                 <input type="text" class="form-control" id="name" name="name" required>
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="mb-3">
+                <label for="job_title" class="form-label">{{__('Job Title')}}</label>
+                <input type="text" class="form-control" id="job_title" name="job_title">
                 <div class="invalid-feedback"></div>
             </div>
             <div class="mb-3">
@@ -78,6 +84,11 @@
                 <div class="invalid-feedback"></div>
             </div>
             <div class="mb-3">
+                <label for="edit_job_title" class="form-label">{{__('Job Title')}}</label>
+                <input type="text" class="form-control" id="edit_job_title" name="job_title">
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="mb-3">
                 <label for="edit_department_id" class="form-label">{{__('Department')}}</label>
                 <select class="form-control" id="edit_department_id" name="department_id" required>
                     <option value="">{{__('Select Department') }}</option>
@@ -107,6 +118,7 @@
                 {data: 'id', name: 'id'},
                 {data: 'name', name: 'name'},
                 {data: 'department', name: 'department.name'},
+                {data: 'job_title', name: 'job_title'},
                 // {data: 'created_at', name: 'created_at'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ],
@@ -248,10 +260,11 @@
     });
 
     // Edit Employee Function
-    function editEmployee(id, name, department_id) {
+    function editEmployee(id, name, department_id,job_title) {
         var form = $('#editEmployeeForm');
         form.attr('action', `{{ route('employees.update', '') }}/${id}`);
         form.find('#edit_name').val(name);
+        form.find('#edit_job_title').val(job_title);
         form.find('#edit_department_id').val(department_id);
         $('#editEmployeeModal').modal('show');
     }

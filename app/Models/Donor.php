@@ -51,9 +51,9 @@ class Donor extends Model
     {
         return $this->hasMany(Donation::class)->with('donateItems');
     }
-    public function monthlyDonations()
+    public function monthlyForms()
     {
-        return $this->hasMany(MonthlyDonation::class)->with('donates');
+        return $this->hasMany(MonthlyForm::class)->with('items');
     }
 
     public function activities()

@@ -33,7 +33,7 @@ class UserPolicy
     public function create(User $user): bool
     {
         //
-        return $user->hasPermissionTo('create users'); // Check permission
+        return $user->hasPermissionTo('create user'); // Check permission
 
     }
 
@@ -43,7 +43,7 @@ class UserPolicy
     public function update(User $user): bool
     {
         //
-        return $user->hasPermissionTo('update users'); // Check permission
+        return $user->hasPermissionTo('update user'); // Check permission
 
     }
 
@@ -53,7 +53,7 @@ class UserPolicy
     public function delete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('delete users'); // Check permission
+        return $user->hasPermissionTo('delete user'); // Check permission
 
     }
 
@@ -63,7 +63,7 @@ class UserPolicy
     public function restore(User $user): bool
     {
         //
-        return $user->hasPermissionTo('restore users'); // Check permission
+        return $user->hasPermissionTo('restore user'); // Check permission
 
     }
 
@@ -73,7 +73,7 @@ class UserPolicy
     public function forceDelete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('force delete users'); // Check permission
+        return $user->hasPermissionTo('force delete user'); // Check permission
 
     }
 }

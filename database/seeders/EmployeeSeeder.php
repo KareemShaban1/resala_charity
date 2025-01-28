@@ -17,14 +17,38 @@ class EmployeeSeeder extends Seeder
         \DB::table("employees")->insert(
             [
                 [
-                    "name" => " محمد محمود",
-                    "department_id" => 1,
+                    "name" => "مندوب 1",
+                    "department_id" => 6,
                     "created_at" => now(),
                     "updated_at" => now(),
                 ],
                 [
-                    "name" => "أحمد مصطفى",
-                    "department_id" => 2,
+                    "name" => "مندوب 2",
+                    "department_id" => 6,
+                    "created_at" => now(),
+                    "updated_at" => now(),
+                ],
+                [
+                    "name" => "سائق 1",
+                    "department_id" => 7,
+                    "created_at" => now(),
+                    "updated_at" => now(),
+                ],
+                [
+                    "name" => "سائق 2",
+                    "department_id" => 7,
+                    "created_at" => now(),
+                    "updated_at" => now(),
+                ],
+                [
+                    "name" => "موظف 1",
+                    "department_id" => 4,
+                    "created_at" => now(),
+                    "updated_at" => now(),
+                ],
+                [
+                    "name" => "موظف 2",
+                    "department_id" => 4,
                     "created_at" => now(),
                     "updated_at" => now(),
                 ],

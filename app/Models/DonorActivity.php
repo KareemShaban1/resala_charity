@@ -12,6 +12,7 @@ class DonorActivity extends Model
         'donor_id',
         'call_type_id',
         'date_time',
+        'status',
         'response',
         'notes',
         'activity_type',

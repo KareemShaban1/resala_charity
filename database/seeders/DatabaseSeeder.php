@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             EmployeeSeeder::class,
             DonationCategorySeeder::class,
-            // MonthlyDonationSeeder::class,
+            // MonthlyFormSeeder::class,
             // DonorSeeder::class,
             // DonationSeeder::class,
             // DonationTypeSeeder::class

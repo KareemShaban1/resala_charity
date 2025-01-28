@@ -34,7 +34,7 @@ class DepartmentPolicy
     public function create(User $user): bool
     {
         //
-        return $user->hasPermissionTo('create departments');
+        return $user->hasPermissionTo('create department');
 
     }
 
@@ -44,7 +44,7 @@ class DepartmentPolicy
     public function update(User $user): bool
     {
         //
-        return $user->hasPermissionTo('update departments');
+        return $user->hasPermissionTo('update department');
 
     }
 
@@ -54,7 +54,7 @@ class DepartmentPolicy
     public function delete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('delete departments');
+        return $user->hasPermissionTo('delete department');
 
     }
 
@@ -64,7 +64,7 @@ class DepartmentPolicy
     public function restore(User $user): bool
     {
         //
-        return $user->hasPermissionTo('restore departments');
+        return $user->hasPermissionTo('restore department');
 
     }
 
@@ -74,7 +74,7 @@ class DepartmentPolicy
     public function forceDelete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('force delete departments');
+        return $user->hasPermissionTo('force delete department');
 
     }
 }

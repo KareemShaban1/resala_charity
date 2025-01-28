@@ -11,7 +11,7 @@ class DonorHistoryController extends Controller
     public function show($id)
     {
         $donor = Donor::find($id);
-        $donor->load('donations', 'monthlyDonations');
+        $donor->load('donations', 'monthlyForms');
         return view('backend.pages.donor-history.index', compact('donor'));
     }
 
@@ -33,20 +33,20 @@ class DonorHistoryController extends Controller
         return view('backend.pages.donor-history.partials.donations-table', compact('donations'))->render();
     }
 
-    public function getMonthlyDonations(Request $request, $id)
+    public function getMonthlyForms(Request $request, $id)
     {
         $donor = Donor::findOrFail($id);
 
-        $monthlyDonations = $donor->monthlyDonations();
+        $monthlyForms = $donor->monthlyForms();
 
         // Apply date filter if provided
         if ($request->start_date && $request->end_date) {
-            $monthlyDonations->whereBetween('created_at', [$request->start_date, $request->end_date]);
+            $monthlyForms->whereBetween('created_at', [$request->start_date, $request->end_date]);
         }
 
-        $monthlyDonations = $monthlyDonations->get();
+        $monthlyForms = $monthlyForms->get();
 
-        return view('backend.pages.donor-history.partials.monthly-donations-table', compact('monthlyDonations'))->render();
+        return view('backend.pages.donor-history.partials.monthly-forms-table', compact('monthlyForms'))->render();
     }
 
     public function getActivities(Request $request, $id)

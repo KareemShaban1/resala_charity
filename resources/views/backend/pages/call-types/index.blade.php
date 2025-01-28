@@ -1,5 +1,7 @@
 @extends('backend.layouts.master')
-
+@section('title')
+{{__('Call Types')}}
+@endsection
 @section('content')
 <div class="container-fluid">
     <!-- start page title -->
@@ -38,7 +40,7 @@
 </div>
 
 <!-- Add CallType Modal -->
-<x-modal id="addCallTypeModal" title="{{__('Add CallType')}}">
+<x-modal id="addCallTypeModal" title="{{__('Add Call Type')}}">
     <form id="addCallTypeForm" method="POST" action="{{ route('call-types.store') }}">
         @csrf
         <div class="modal-body">
@@ -56,7 +58,7 @@
 </x-modal>
 
 <!-- Edit CallType Modal -->
-<x-modal id="editCallTypeModal" title="{{__('Edit CallType')}}">
+<x-modal id="editCallTypeModal" title="{{__('Edit Call Type')}}">
     <form id="editCallTypeForm" method="POST">
         @csrf
         @method('PUT')

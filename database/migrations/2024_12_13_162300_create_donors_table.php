@@ -15,17 +15,17 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('parent_id')->nullable(); // Ensure unsigned and nullable
             $table->foreign('parent_id')
-                  ->references('id')
-                  ->on('donors')
-                  ->nullOnDelete(); // Set the foreign key constraint with on delete set null
+                ->references('id')
+                ->on('donors')
+                ->nullOnDelete(); // Set the foreign key constraint with on delete set null
             $table->string('name');
-            $table->foreignId('governorate_id')->constrained();
-            $table->foreignId('city_id')->constrained();
-            $table->foreignId('area_id')->nullable()->constrained();
+            $table->foreignId('governorate_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('city_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('area_id')->nullable()->constrained()->nullOnDelete();
             $table->string('street')->nullable();
-            $table->text('address')->nullable();           
+            $table->text('address')->nullable();
             $table->boolean('active')->default(true);
-            $table->enum('donor_type',['normal','monthly'])->default('normal');
+            $table->enum('donor_type', ['normal', 'monthly'])->default('normal');
             $table->string('monthly_donation_day')->nullable();
             $table->softDeletes();
             $table->timestamps();

@@ -3,11 +3,11 @@
 namespace App\Providers;
 
 use App\Models\Donation;
-use App\Models\MonthlyDonation;
-use App\Models\MonthlyDonationCancellation;
+use App\Models\MonthlyForm;
+use App\Models\MonthlyFormCancellation;
 use App\Observers\DonationObserver;
-use App\Observers\MonthlyDonationCancellationObserver;
-use App\Observers\MonthlyDonationObserver;
+use App\Observers\MonthlyFormCancellationObserver;
+use App\Observers\MonthlyFormObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -32,7 +32,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
-        MonthlyDonation::observe(MonthlyDonationObserver::class);
+        MonthlyForm::observe(MonthlyFormObserver::class);
         Donation::observe(DonationObserver::class);
     }
 

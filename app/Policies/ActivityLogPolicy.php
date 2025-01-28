@@ -34,7 +34,7 @@ class ActivityLogPolicy
     public function create(User $user): bool
     {
         //
-        return $user->hasPermissionTo('view activity logs');
+        return $user->hasPermissionTo('create activity log');
 
     }
 
@@ -44,7 +44,7 @@ class ActivityLogPolicy
     public function update(User $user): bool
     {
         //
-        return $user->hasPermissionTo('view activity logs');
+        return $user->hasPermissionTo('update activity log');
 
     }
 
@@ -54,7 +54,7 @@ class ActivityLogPolicy
     public function delete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('view activity logs');
+        return $user->hasPermissionTo('delete activity log');
 
     }
 
@@ -64,7 +64,7 @@ class ActivityLogPolicy
     public function restore(User $user): bool
     {
         //
-        return $user->hasPermissionTo('view activity logs');
+        return $user->hasPermissionTo('view activity log');
 
     }
 
@@ -74,7 +74,7 @@ class ActivityLogPolicy
     public function forceDelete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('view activity logs');
+        return $user->hasPermissionTo('view activity log');
 
     }
 }

@@ -34,7 +34,7 @@ class RolePolicy
     public function create(User $user): bool
     {
         //
-        return $user->hasPermissionTo('create roles'); // Check permission
+        return $user->hasPermissionTo('create role'); // Check permission
 
     }
 
@@ -44,7 +44,7 @@ class RolePolicy
     public function update(User $user): bool
     {
         //
-        return $user->hasPermissionTo('update roles'); // Check permission
+        return $user->hasPermissionTo('update role'); // Check permission
 
     }
 
@@ -54,7 +54,7 @@ class RolePolicy
     public function delete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('delete roles'); // Check permission
+        return $user->hasPermissionTo('delete role'); // Check permission
 
     }
 
@@ -64,7 +64,7 @@ class RolePolicy
     public function restore(User $user): bool
     {
         //
-        return $user->hasPermissionTo('restore roles'); // Check permission
+        return $user->hasPermissionTo('restore role'); // Check permission
 
     }
 
@@ -74,7 +74,7 @@ class RolePolicy
     public function forceDelete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('force delete roles'); // Check permission
+        return $user->hasPermissionTo('force delete role'); // Check permission
 
     }
 }

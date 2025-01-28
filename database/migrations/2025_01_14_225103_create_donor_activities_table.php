@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('activity_type')->nullable();
             $table->foreignId('call_type_id')->nullable()->constrained()->nullOnDelete();
             $table->dateTime('date_time')->nullable();
+            $table->string('status')->nullable();
             $table->text('response')->nullable();
             $table->text('notes')->nullable();
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');

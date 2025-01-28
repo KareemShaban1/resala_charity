@@ -11,6 +11,7 @@ class Employee extends Model
 
     protected $fillable = [
         "name",
+        "job_title",
         "department_id"
     ];
     public function department()

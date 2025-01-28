@@ -5,15 +5,18 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GovernorateController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\AreaController;
+use App\Http\Controllers\AreaGroupController;
 use App\Http\Controllers\CallTypeController;
+use App\Http\Controllers\CollectingLineController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DonationCategoryController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonorController;
 use App\Http\Controllers\DonorHistoryController;
 use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\MonthlyDonationCancellationController;
-use App\Http\Controllers\MonthlyDonationController;
+use App\Http\Controllers\MonthlyFormCancellationController;
+use App\Http\Controllers\MonthlyFormController;
+use App\Http\Controllers\MonthlyFormDonationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
@@ -69,6 +72,9 @@ Route::group(
         Route::get('/areas/by-city', [AreaController::class, 'getAreasByCity'])->name('areas.by-city');
         Route::resource('areas', AreaController::class);
 
+        Route::get('/areas-groups/data', [AreaGroupController::class, 'data'])->name('areas-groups.data');
+        Route::resource('areas-groups', AreaGroupController::class);
+        Route::put('/area-groups/{id}', [AreaGroupController::class, 'update'])->name('area-groups.update');
         // Donors Routes
         Route::get('/donors/search', [DonorController::class, 'search'])->name('donors.search'); // Define search first
         Route::get('/donors/data', [DonorController::class, 'data'])->name('donors.data');
@@ -78,13 +84,16 @@ Route::group(
         Route::post('/donors-children', [DonorController::class, 'donorChildren'])->name('donors.children');
         Route::post('/donors-not-assigned', [DonorController::class, 'notAssignedDonors'])->name('donors.not-assigned');
         Route::post('/donors-add-activity', [DonorController::class, 'addActivity'])->name('donors.add-activity');
-
+        Route::post('/donors/upload-phone-numbers', [DonorController::class, 'uploadPhoneNumbers'])->name('donors.uploadPhoneNumbers');
         // Donation Categories Routes
         Route::get('/donation-categories/data', [DonationCategoryController::class, 'data'])->name('donation-categories.data');
         Route::resource('donation-categories', DonationCategoryController::class);
 
         Route::get('/donations/data', [DonationController::class, 'data'])->name('donations.data');
         Route::resource('donations', DonationController::class);
+
+        Route::post('/donations/store-gathered-donation', [DonationController::class, 'storeGatheredDonation'])
+        ->name('donations.store-gathered-donation');
         Route::delete('/donations/delete-donatation-item/{id}', [DonationController::class, 'deleteDonatationItem'])
             ->name('donations.delete-donatation-item');
         Route::get(
@@ -95,11 +104,14 @@ Route::group(
 
 
         // Donation Requests Routes
-        Route::get('/monthly-donations/data', [MonthlyDonationController::class, 'data'])->name('monthly-donations.data');
-        Route::resource('monthly-donations', MonthlyDonationController::class);
-        Route::get('/monthly-donations-cancelled', [MonthlyDonationController::class, 'cancelledMonthlyDonations'])->name('monthly-donations.cancelled');
-        Route::delete('/monthly-donations/delete-donate/{id}', [MonthlyDonationController::class, 'deleteDonate'])->name('monthly-donations.delete-donate');
-
+        Route::get('/monthly-forms/data', [MonthlyFormController::class, 'data'])->name('monthly-forms.data');
+        Route::resource('monthly-forms', MonthlyFormController::class);
+        Route::get('/monthly-forms-cancelled', [MonthlyFormController::class, 'cancelledMonthlyForms'])->name('monthly-forms.cancelled');
+        Route::delete('/monthly-forms/delete-item/{id}', [MonthlyFormController::class, 'deleteItem'])->name('monthly-forms.delete-item');
+        Route::get(
+            '/monthly-forms/{id}/details',
+            [MonthlyFormController::class, 'getMonthlyFormDetails']
+        )->name('monthly-forms.details');
         Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
         Route::resource('users', UserController::class);
 
@@ -111,12 +123,41 @@ Route::group(
 
         Route::get('/donor-history/{id}', [DonorHistoryController::class, 'show'])->name('donor-history.show');
         Route::get('/donor-history/{id}/donations', [DonorHistoryController::class, 'getDonations'])->name('donor-history.getDonations');
-        Route::get('/donor-history/{id}/monthly-donations', [DonorHistoryController::class, 'getMonthlyDonations'])->name('donor-history.getMonthlyDonations');
+        Route::get('/donor-history/{id}/monthly-forms', [DonorHistoryController::class, 'getMonthlyForms'])->name('donor-history.getMonthlyForms');
         Route::get('/donor-history/{id}/activities', [DonorHistoryController::class, 'getActivities'])->name('donor-history.getActivities');
 
 
         // Governorates Routes
         Route::get('/call-types/data', [CallTypeController::class, 'data'])->name('call-types.data');
         Route::resource('call-types', CallTypeController::class);
+
+        // Collecting Lines Routes
+        // Route::resource('collecting-lines', CollectingLineController::class);
+        Route::get('/collecting-lines', [CollectingLineController::class, 'index'])
+            ->name('collecting-lines.index');
+        Route::post('/collecting-lines', [CollectingLineController::class, 'store'])->name('collecting-lines.store');
+        Route::put('/collecting-lines/{collectingLine}', [CollectingLineController::class, 'update'])->name('collecting-lines.update');
+        Route::delete('/collecting-lines/{collectingLine}', [CollectingLineController::class, 'destroy'])->name('collecting-lines.destroy');
+        // Route::post('/donations/{donation}/assign', [CollectingLineController::class, 'assignDonation'])->name('donations.assign');
+
+        Route::get('/collecting-lines/data', [CollectingLineController::class, 'getCollectingLinesData'])
+            ->name('collecting-lines.data');
+
+        Route::get('/collecting-lines/get-data-by-date', [CollectingLineController::class, 'getCollectingLinesByDate'])
+            ->name('collecting-lines.get-data-by-date');
+        Route::get('/collecting-lines/donations', [CollectingLineController::class, 'getDonationsData'])
+            ->name('collecting-lines.donations');
+        Route::get('/collecting-lines/monthly-forms', [CollectingLineController::class, 'getMonthlyFormsData'])
+            ->name('collecting-lines.monthly-forms');
+
+
+        Route::post('/collecting-lines/assign-donation', [CollectingLineController::class, 'assignDonation'])
+            ->name('collecting-lines.assign-donation');
+
+        Route::get('/collecting-lines/donations/data', [CollectingLineController::class, 'getDonationsByCollectingLine'])
+            ->name('collecting-lines.donations.data');
+
+        Route::post('/monthly-forms/{monthlyFormId}/donations', [MonthlyFormDonationController::class, 'storeMonthlyFormDonation'])
+            ->name('monthly-forms-donations.store');
     }
 );

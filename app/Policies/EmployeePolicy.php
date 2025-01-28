@@ -34,7 +34,7 @@ class EmployeePolicy
     public function create(User $user): bool
     {
         //
-        return $user->hasPermissionTo('create employees');
+        return $user->hasPermissionTo('create employee');
 
     }
 
@@ -44,7 +44,7 @@ class EmployeePolicy
     public function update(User $user): bool
     {
         //
-        return $user->hasPermissionTo('update employees');
+        return $user->hasPermissionTo('update employee');
 
     }
 
@@ -54,7 +54,7 @@ class EmployeePolicy
     public function delete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('delete employees');
+        return $user->hasPermissionTo('delete employee');
 
     }
 
@@ -64,7 +64,7 @@ class EmployeePolicy
     public function restore(User $user): bool
     {
         //
-        return $user->hasPermissionTo('restore employees');
+        return $user->hasPermissionTo('restore employee');
 
     }
 
@@ -74,7 +74,7 @@ class EmployeePolicy
     public function forceDelete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('force delete employees');
+        return $user->hasPermissionTo('force delete employee');
 
     }
 }

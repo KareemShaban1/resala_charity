@@ -32,7 +32,7 @@ class CityPolicy
     public function create(User $user): bool
     {
         //
-        return $user->hasPermissionTo('create cities');
+        return $user->hasPermissionTo('create city');
     }
 
     /**
@@ -41,7 +41,7 @@ class CityPolicy
     public function update(User $user): bool
     {
         //
-        return $user->hasPermissionTo('update cities');
+        return $user->hasPermissionTo('update city');
     }
 
     /**
@@ -50,7 +50,7 @@ class CityPolicy
     public function delete(User $user): bool
     {
         //
-                return $user->hasPermissionTo('delete cities');
+                return $user->hasPermissionTo('delete city');
     }
 
     /**
@@ -59,7 +59,7 @@ class CityPolicy
     public function restore(User $user): bool
     {
         //
-        return $user->hasPermissionTo('restore cities');
+        return $user->hasPermissionTo('restore city');
 
     }
 
@@ -69,7 +69,7 @@ class CityPolicy
     public function forceDelete(User $user): bool
     {
         //
-        return $user->hasPermissionTo('force delete cities');
+        return $user->hasPermissionTo('force delete city');
 
     }
 }
