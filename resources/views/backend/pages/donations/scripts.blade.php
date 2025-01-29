@@ -620,10 +620,10 @@
                  </div>
                   <div class="row">
                   <div class="col-md-6">
-                    <p><strong>{{__('Collecting Time')}}:</strong> ${data.collecting_time}</p>
+                    <p><strong>{{__('Collecting Time')}}:</strong> ${data.collecting_time ?? 'N/A'}</p>
                   </div>
                     <div class="col-md-6">
-                    <p><strong>{{__('Notes')}}:</strong> ${data.notes}</p>
+                    <p><strong>{{__('Notes')}}:</strong> ${data.notes ?? 'N/A'}</p>
                   </div>
                   </div>
        `;
