@@ -47,6 +47,9 @@ class UserController extends Controller
 
                 return $rolesWithBadges;
             })
+            ->addColumn('department', function ($user) {
+                return $user->department ? $user->department->name : '';
+            })
             ->rawColumns(['action', 'roles'])
             ->make(true);
     }

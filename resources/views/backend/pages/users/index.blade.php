@@ -107,8 +107,8 @@
                 name: 'email'
             },
             {
-                data: 'department.name',
-                name: 'department.name'
+                data: 'department',
+                name: 'department'
             },
             {
                 data: 'roles',
