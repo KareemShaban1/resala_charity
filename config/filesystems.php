@@ -36,6 +36,11 @@ return [
             'throw' => false,
         ],
 
+        'c_drive' => [
+            'driver' => 'local',
+            'root' => 'C:/laravel-backups', // Path to your C partition folder
+        ],
+
         // 'public' => [
         //     'driver' => 'local',
         //     'root' => storage_path('app/public'),

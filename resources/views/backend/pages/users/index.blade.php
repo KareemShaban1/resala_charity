@@ -25,6 +25,7 @@
                                 <th>{{ __('ID') }}</th>
                                 <th>{{ __('Name') }}</th>
                                 <th>{{ __('Email') }}</th>
+                                <th>{{ __('Department') }}</th>
                                 <th>{{ __('Roles') }}</th>
                                 <th>{{ __('Actions') }}</th>
                             </tr>
@@ -55,6 +56,16 @@
             <div class="mb-3">
                 <label for="password" class="form-label">{{ __('Password') }}</label>
                 <input type="password" class="form-control" id="password" name="password">
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="mb-3">
+                <label for="department_id" class="form-label">{{__('Department')}}</label>
+                <select class="form-control" id="department_id" name="department_id" required>
+                    <option value="">{{__('Select Department') }}</option>
+                    @foreach(\App\Models\Department::all() as $department)
+                        <option value="{{ $department->id }}">{{ $department->name }}</option>
+                    @endforeach
+                </select>
                 <div class="invalid-feedback"></div>
             </div>
             <div class="mb-3">
@@ -94,6 +105,10 @@
             {
                 data: 'email',
                 name: 'email'
+            },
+            {
+                data: 'department.name',
+                name: 'department.name'
             },
             {
                 data: 'roles',
@@ -193,6 +208,8 @@
             $('#userId').val(data.id);
             $('#name').val(data.name);
             $('#email').val(data.email);
+            $('#department_id').val(data.department_id);
+            console.log(data);
 
             // Reset all checkboxes
             $('#roles-container input[type="checkbox"]').prop('checked', false);

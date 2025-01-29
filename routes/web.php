@@ -6,6 +6,7 @@ use App\Http\Controllers\GovernorateController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AreaGroupController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\CallTypeController;
 use App\Http\Controllers\CollectingLineController;
 use App\Http\Controllers\DepartmentController;
@@ -93,7 +94,7 @@ Route::group(
         Route::resource('donations', DonationController::class);
 
         Route::post('/donations/store-gathered-donation', [DonationController::class, 'storeGatheredDonation'])
-        ->name('donations.store-gathered-donation');
+            ->name('donations.store-gathered-donation');
         Route::delete('/donations/delete-donatation-item/{id}', [DonationController::class, 'deleteDonatationItem'])
             ->name('donations.delete-donatation-item');
         Route::get(
@@ -159,5 +160,18 @@ Route::group(
 
         Route::post('/monthly-forms/{monthlyFormId}/donations', [MonthlyFormDonationController::class, 'storeMonthlyFormDonation'])
             ->name('monthly-forms-donations.store');
+
+
+        Route::get('/backups', [BackupController::class, 'index'])->name('backups.index');
+        Route::get('/backups/create', [BackupController::class, 'create'])->name('backups.create');
+
+        Route::get('/backups/data', [BackupController::class, 'data'])->name('backups.data');
+
     }
+
 );
+
+// Ensure this route is defined
+Route::get('/backups/download/{filename}', [BackupController::class, 'download'])
+    ->where('filename', '.*') // Allow slashes in the filename
+    ->name('backup.download');

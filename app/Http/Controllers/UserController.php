@@ -27,7 +27,7 @@ class UserController extends Controller
      */
     public function data()
     {
-        $query = User::query();
+        $query = User::with('department');
 
         return DataTables::of($query)
             ->addColumn('action', function ($user) {
@@ -62,12 +62,14 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
+            'department_id' => 'required|exists:departments,id',
             'roles' => 'required|array',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'department_id' => $request->department_id,
             'password' => Hash::make($request->password),
         ]);
 
@@ -87,12 +89,14 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|min:8',
+            'department_id' => 'nullable|exists:departments,id',
             'roles' => 'required|array',
         ]);
 
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'department_id' => $request->department_id,
             'password' => $request->password ? Hash::make($request->password) : $user->password,
         ]);
 
@@ -140,6 +144,7 @@ class UserController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
+            'department_id' => $user->department_id,
             'roles' => $user->roles->pluck('name'), // Send only role names
         ]);
     }

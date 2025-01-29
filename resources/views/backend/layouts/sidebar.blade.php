@@ -39,6 +39,15 @@
               </li>
 
               <li class="side-nav-item">
+                  <a href="{{route('backups.index')}}" class="side-nav-link">
+                      <i class="uil-home-alt"></i>
+                      <span>
+                          {{__('Backups')}}
+                      </span>
+                  </a>
+              </li>
+
+              <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarUsers" aria-expanded="false" aria-controls="sidebarUsers" class="side-nav-link">
                       <i class="uil-users-alt"></i>
                       <span> {{__('Users Management')}} </span>
