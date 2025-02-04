@@ -71,13 +71,15 @@
     </div>
 </div>
 
+@include('backend.pages.donor-history.activities.activity_details_modal')
+@include('backend.pages.donor-history.activities.edit_activity_modal')
+
 
 @push('scripts')
 <script>
     $(document).ready(function() {
         // Function to fetch data with optional date filters
         function fetchData(tab, startDate = '', endDate = '') {
-            console.log(tab)
             let url;
             switch (tab) {
                 case 'donations':
@@ -199,6 +201,9 @@
             // Fetch data based on cleared filters
             fetchData(activeTab, startDate, endDate);
         });
+
+
+
 
     });
 </script>

@@ -23,6 +23,8 @@
                         <select class="form-control" name="status" id="edit_donation_status" onchange="toggleEditDonationStatus()">
                             <option value="collected">{{__('Collected')}}</option>
                             <option value="not_collected">{{__('Not Collected')}}</option>
+                            <option value="followed_up">{{__('Followed Up')}}</option>
+                            <option value="cancelled">{{__('Cancelled')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -186,7 +188,7 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="edit_collecting_way" class="form-label">{{__('Collecting Way')}}</label>
-                       <select name="collecting_way" id="edit_collecting_way">
+                       <select name="collecting_way" id="edit_collecting_way" class="form-control">
                            <option value="representative">{{__('Representative')}}</option>
                            <option value="location">{{__('Location')}}</option>
                            <option value="online">{{__('Online')}}</option>

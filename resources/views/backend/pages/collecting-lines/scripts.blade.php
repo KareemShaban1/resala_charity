@@ -1,6 +1,8 @@
 @push('scripts')
 <script>
             let donationsTable;
+            let collectingLinesTable;
+            let monthlyFormstable;
 
     $(document).ready(function() {
         // Set default date to today
@@ -8,7 +10,7 @@
         $('#date').val(today);
 
         // Initialize DataTables
-        var collectingLinesTable = $('#collecting-lines-table').DataTable({
+        collectingLinesTable = $('#collecting-lines-table').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
@@ -21,6 +23,10 @@
             columns: [{
                     data: 'id',
                     name: 'id'
+                },
+                {
+                    data: 'number',
+                    name: 'number',
                 },
                 {
                     data: 'areaGroup',
@@ -122,12 +128,12 @@
                     data: 'collected',
                     name: 'collected'
                 },
-                {
-                    data: 'donateItems',
-                    name: 'donateItems',
-                    orderable: false,
-                    searchable: false
-                },
+                // {
+                //     data: 'donateItems',
+                //     name: 'donateItems',
+                //     orderable: false,
+                //     searchable: false
+                // },
                 {
                     data: 'action',
                     name: 'action',
@@ -177,7 +183,7 @@
         });
 
         // Initialize DataTable
-        var monthlyFormstable = $('#monthly-forms-table').DataTable({
+        monthlyFormstable = $('#monthly-forms-table').DataTable({
             ajax: {
                 url: "{{ route('collecting-lines.monthly-forms') }}",
                 data: function(d) {
@@ -276,6 +282,98 @@
             }
         });
 
+
+
+          // Initialize DataTables
+          allCollectingLinesTable = $('#all-collecting-lines-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('collecting-lines.data') }}",
+                data: function(d) {
+                    // d.date = $('#date').val();
+                    d.area_group = $('#area_group').val();
+                }
+            },
+            columns: [{
+                    data: 'id',
+                    name: 'id'
+                },
+                {
+                    data: 'number',
+                    name: 'number',
+                    render: function(data, type, row) {
+                        return `
+                            <a href="/collecting-lines/${row.id}/show" class="text-info">
+                                ${row.number}
+                            </a>
+                        `;
+                    }
+
+                },
+                {
+                    data: 'areaGroup',
+                    name: 'areaGroup'
+                },
+                {
+                    data: 'representative',
+                    name: 'representative'
+                },
+                {
+                    data: 'driver',
+                    name: 'driver'
+                },
+                {
+                    data: 'employee',
+                    name: 'employee'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                }
+            ],
+            order: [
+                [0, 'desc']
+            ],
+            buttons: [{
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3]
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Areas Data',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3]
+                    }
+                },
+                // {
+                //     extend: 'pdf', 
+                //     text: 'PDF', 
+                //     title: 'Areas Data', 
+                //     exportOptions: {
+                //         columns: [0, 1, 2, 3]
+                //     }
+                // },
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3]
+                    }
+                },
+            ],
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
+            pageLength: 10,
+            responsive: true,
+            language: languages[language], // Apply language dynamically
+            "drawCallback": function() {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            }
+        });
 
 
 
@@ -599,10 +697,10 @@
                 $('#add_monthly_form_id').val(monthlyFormId);
                 // Populate basic fields
                 $('#add_donor_id').val(data.donor_id).trigger('change');
-                $('#add_date').val(today);
+                $('#add_date').val($('#date').val());
                 $('#add_donation_status').val('not_collected').trigger('change');
                 $('#add_donation_type').val(data.donation_type).trigger('change');
-                $('#add_reporting_way').val('monthly_donation').trigger('change');
+                $('#add_reporting_way').val('call').trigger('change');
                 $('#add_collecting_date').val(formatDate(data.collecting_donation?.collecting_date));
                 $('#add_in_kind_receipt_number').val(data.collecting_donation?.in_kind_receipt_number || '');
                 $('#add_employee_id').val(data.collecting_donation?.employee_id).trigger('change');
@@ -652,14 +750,14 @@
                     data.items
                         .filter(donation => donation.donation_type === 'financial')
                         .forEach((donation, index) => {
-                            financialContainer.append(renderFinancialRow(donation, index, donationCategories));
+                            financialContainer.append(renderFinancialRowInAddMonthlyForm(donation, index, donationCategories));
                         });
 
                     // Populate in-kind donations
                     data.items
                         .filter(donation => donation.donation_type === 'inKind')
                         .forEach((donation, index) => {
-                            inKindContainer.append(renderInKindRow(donation, index));
+                            inKindContainer.append(renderInKindRowInAddMonthlyForm(donation, index));
                         });
                 }
             })
@@ -667,6 +765,101 @@
                 alert('{{ __("Failed to load donation details. Please try again.") }}');
             });
     }
+
+
+    
+    // Function to render a financial row
+    function renderFinancialRowInAddMonthlyForm(donation, index, categories) {
+            const categoryOptions = categories.map(category =>
+                `<option value="${category.id}" ${Number(category.id) === Number(donation.donation_category_id || 0) ? 'selected' : ''}>
+                ${category.name}
+            </option>`
+            ).join('');
+
+            return `
+        <div class="row donation-row">
+            <input type="hidden" name="donates[${index}][financial_donation_type]" value="financial">
+            <input type="hidden" name="donates[${index}][financial_monthly_donation_id]" value="${donation.id}">
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label">{{__('Donation Category')}}</label>
+                    <select class="form-control donation-category" name="donates[${index}][financial_donation_categories_id]">
+                        ${categoryOptions}
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+            
+            <div class="col-md-2">
+                <div class="mb-3">
+                    <label class="form-label">{{__('Amount')}}</label>
+                    <input type="number" class="form-control amount" name="donates[${index}][financial_amount]" value="${donation.amount}">
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="receipt_number" class="form-label">{{__('Financial Receipt Number')}}</label>
+                                        <input type="text" class="form-control" name="donates[${index}][financial_receipt_number]"
+                                        value="${donation.financial_receipt_number || ''}">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+
+                                </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label">{{__('Donation Item Type')}}</label>
+                    <select class="form-control" name="donates[${index}][financial_donation_item_type]">
+                        <option value="monthly">{{__('Monthly')}}</option>
+                        <option value="normal">{{__('Normal')}}</option>
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="col-md-1 d-flex align-items-center">
+                <button type="button" class="btn btn-danger mt-2 remove-row-btn-edit">{{__('Remove')}}</button>
+            </div>
+        </div>`;
+        }
+
+
+
+    // Function to render an in-kind row
+    function renderInKindRowInAddMonthlyForm(donation, index) {
+            return `
+        <div class="row donation-row">
+            <input type="hidden" name="donates[${index}][in_kind_donation_type]" value="inKind">
+            <input type="hidden" name="donates[${index}][in_kind_monthly_donation_id]" value="${donation.id || ''}">
+            <div class="col-md-3">
+                <label class="form-label">{{__('Item Name')}}</label>
+                <input type="text" class="form-control" name="donates[${index}][in_kind_item_name]" value="${donation.item_name || ''}">
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">{{__('Quantity')}}</label>
+                <input type="number" class="form-control" name="donates[${index}][in_kind_quantity]" value="${donation.amount || ''}">
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="col-md-3">
+            <div class="mb-3">
+                    <label class="form-label">{{__('Donation Item Type')}}</label>
+                    <select class="form-control" name="donates[${index}][in_kind_donation_item_type]">
+                        <option value="monthly">{{__('Monthly')}}</option>
+                        <option value="normal">{{__('Normal')}}</option>
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex align-items-center">
+                <button type="button" class="btn btn-danger remove-row-btn-edit">{{__('Remove')}}</button>
+            </div>
+        </div>`;
+        }
+
+
+
+
+
 
     // Function to render a financial row
     function renderFinancialRow(donation, index, categories) {
@@ -758,13 +951,13 @@
     $(document).on('click', '#add-financial-row-edit', function() {
         const financialContainer = $('#add-financial-donation-rows-container');
         const index = financialContainer.children().length;
-        financialContainer.append(renderFinancialRow({}, index, donationCategories));
+        financialContainer.append(renderFinancialRowInAddMonthlyForm({}, index, donationCategories));
     });
 
     $(document).on('click', '#add-in-kind-row-edit', function() {
         const inKindContainer = $('#add-in-kind-donation-rows-container');
         const index = inKindContainer.children().length;
-        inKindContainer.append(renderInKindRow({}, index));
+        inKindContainer.append(renderInKindRowInAddMonthlyForm({}, index));
     });
 
     // Handle form submission
@@ -817,7 +1010,7 @@
                 if (response.data.length > 0) {
                     $.each(response.data, function(index, collectingLine) {
                         $('#collecting_line_id').append(
-                            `<option value="${collectingLine.id}">${collectingLine.area_group.name} (${collectingLine.collecting_date})</option>`
+                            `<option value="${collectingLine.id}">(${collectingLine.number}) - ${collectingLine.area_group.name} - (${collectingLine.collecting_date})</option>`
                         );
                     });
                 } else {
@@ -1178,7 +1371,7 @@
                       <tr>
                           <td>${item.donation_category.name}</td>
                           <td>${item.amount}</td>
-                          <td>${item.financial_receipt_number}</td>
+                          <td>${item.financial_receipt_number ?? 'N/A'}</td>
                       </tr>`;
                       });
 
@@ -1368,16 +1561,22 @@
       const row = $(this).closest('.donation-row');
       const donationId = row.find('input[name*="_donation_id"]').val(); // Extract donation ID
 
-      if (!donationId) {
-          Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Donation ID not found.'
-          });
-          return;
+      console.log(donationId);
+      if (donationId === 'undefined' || donationId === '') {
+        $(this).closest('.row').remove();
+        return;
       }
+    //   if (!donationId) {
+    //       Swal.fire({
+    //           icon: 'error',
+    //           title: 'Oops...',
+    //           text: 'Donation ID not found.'
+    //       });
+    //       return;
+    //   }
 
-      Swal.fire({
+    if(donationId !== 'undefined'){
+        Swal.fire({
           title: 'Are you sure?',
           text: "You won't be able to revert this!",
           icon: 'warning',
@@ -1415,6 +1614,7 @@
               });
           }
       });
+    }
   });
 
   // Edit Donation Form Submit

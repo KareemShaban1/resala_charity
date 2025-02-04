@@ -9,6 +9,8 @@ use App\Models\DonationCategory;
 use App\Models\DonationItem;
 use App\Models\Donor;
 use App\Models\Employee;
+use App\Models\MonthlyForm;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -25,6 +27,34 @@ class DonationController extends Controller
         $employees = Employee::all();
         return view(
             'backend.pages.donations.index',
+            compact('donors', 'donationCategories', 'employees')
+        );
+    }
+
+    public function monthlyDonations()
+    {
+        // Check if the user is authorized to view donation
+        $this->authorize('view', Donation::class);
+
+        $donors = Donor::all();
+        $donationCategories = DonationCategory::all();
+        $employees = Employee::all();
+        return view(
+            'backend.pages.donations.monthly_donation',
+            compact('donors', 'donationCategories', 'employees')
+        );
+    }
+
+    public function gatheredDonations()
+    {
+        // Check if the user is authorized to view donation
+        $this->authorize('view', Donation::class);
+
+        $donors = Donor::all();
+        $donationCategories = DonationCategory::all();
+        $employees = Employee::all();
+        return view(
+            'backend.pages.donations.gathered_donation',
             compact('donors', 'donationCategories', 'employees')
         );
     }
@@ -99,6 +129,12 @@ class DonationController extends Controller
         // Donation category filter
         if (request()->has('donation_category') && request('donation_category') !== 'all') {
             $query->where('donations.donation_category', request('donation_category'));
+            if (request('donation_category') === 'monthly') {
+                $query->whereIn('donations.donation_category', [
+                    'monthly',
+                    'normal_and_monthly'
+                ]);
+            }
         }
 
 
@@ -150,6 +186,8 @@ class DonationController extends Controller
                     return __('Monthly Donation');
                 } elseif ($item->donation_category === 'gathered') {
                     return __('Gathered Donation');
+                } elseif ($item->donation_category === 'normal_and_monthly') {
+                    return __('Normal and Monthly Donation');
                 }
             })
             ->addColumn('phones', function ($item) {
@@ -190,6 +228,12 @@ class DonationController extends Controller
                     return ' <span class="text-white badge bg-danger">' .  __('Not Collected') . '</span><br>' . __('') . '';
                 }
             })
+            ->addColumn('group_key', function ($item) {
+                if ($item->donation_category === 'gathered') {
+                    return $item->donor_id . '-' . $item->created_at;
+                }
+                return null;
+            })
             ->rawColumns(['action', 'donateItems', 'receipt_number', 'donation_status'])
             ->make(true);
     }
@@ -199,6 +243,23 @@ class DonationController extends Controller
     public function getDonationDetails($id)
     {
         $donation = Donation::with('donor', 'donateItems', 'collectingDonation', 'createdBy')->findOrFail($id);
+
+        // Check if the donation category is "gathered"
+        if ($donation->donation_category === 'gathered') {
+            // Get all donations with the same donor_id, category, and created_at
+            $relatedDonations = Donation::where('donor_id', $donation->donor_id)
+                ->where('donation_category', 'gathered')
+                ->whereDate('created_at', $donation->created_at) // Ensuring same creation date
+                ->pluck('id'); // Get only the IDs
+
+            // Calculate the total amount of donation items for these donations
+            $totalAmount = DonationItem::whereIn('donation_id', $relatedDonations)
+                ->sum('amount');
+
+            // Add total amount to the response
+            $donation->total_gathered_amount = $totalAmount;
+        }
+
         return response()->json($donation);
     }
 
@@ -212,7 +273,7 @@ class DonationController extends Controller
             'donor_id' => 'required|exists:donors,id',
             'date' => 'required|date',
             'donation_type' => 'required|string|in:financial,inKind,both',
-            'status' => 'required|in:collected,not_collected',
+            'status' => 'required|in:collected,not_collected,followed_up,cancelled',
             'reporting_way' => 'required|string|in:call,whatsapp_chat,other',
             'alternate_date' => 'sometime|date',
             'donation_category' => 'required|string|in:normal,monthly',
@@ -249,6 +310,7 @@ class DonationController extends Controller
                 },
             ],
             'donates' => 'required|array',
+            'donates.*.financial_donation_item_type' => 'nullable|in:normal,monthly',
             'donates.*.financial_donation_type' => 'nullable|in:financial',
             'donates.*.financial_donation_categories_id' => 'nullable|exists:donation_categories,id',
             'donates.*.financial_amount' => 'nullable|numeric|min:0',
@@ -284,6 +346,7 @@ class DonationController extends Controller
                 },
             ],
             'donates.*.inKind_donation_type' => 'nullable|in:inKind',
+            'donates.*.in_kind_donation_item_type' => 'nullable|in:normal,monthly',
             'donates.*.in_kind_item_name' => 'nullable|string',
             'donates.*.in_kind_quantity' => 'nullable|integer|min:1',
         ]);
@@ -318,6 +381,7 @@ class DonationController extends Controller
                         'donation_category_id' => $donateData['financial_donation_categories_id'],
                         'financial_receipt_number' => $donateData["financial_receipt_number"] ?? null,
                         'amount' => $donateData['financial_amount'],
+                        'donation_item_type' => $donateData['financial_donation_item_type'],
                     ]);
 
                     $donatesAdded = true;
@@ -333,6 +397,7 @@ class DonationController extends Controller
                         'donation_category_id' => null,
                         'item_name' => $donateData['in_kind_item_name'],
                         'amount' => $donateData['in_kind_quantity'],
+                        'donation_item_type' => $donateData['in_kind_donation_item_type'],
                     ]);
 
                     $donatesAdded = true;
@@ -362,7 +427,7 @@ class DonationController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => __('messages.Donation created successfully.'),
+                'message' => __('messages.Donation created successfully'),
                 'data' => $donation->load('donateItems'),
             ]);
         } catch (\Exception $e) {
@@ -392,7 +457,7 @@ class DonationController extends Controller
         $validatedData = $request->validate([
             'donor_id' => 'required|exists:donors,id',
             'date' => 'required|date',
-            'status' => 'required|in:collected,not_collected',
+            'status' => 'required|in:collected,not_collected,followed_up,cancelled',
             'reporting_way' => 'required|string|in:call,whatsapp_chat,other',
             'alternate_date' => 'sometime|date',
             'employee_id' => 'nullable|exists:employees,id',
@@ -402,34 +467,6 @@ class DonationController extends Controller
             'collecting_time' => 'nullable|string',
             'collecting_way' => 'nullable|string|in:representative,location,online',
             'notes' => 'nullable|string',
-            // 'financial_receipt_number' => [
-            //     'nullable',
-            //     'string',
-            //     function ($attribute, $value, $fail) use ($request, $donation) {
-            //         if (!empty($value)) {
-            //             $financialExists = DB::table('donations')
-            //                 ->join('donation_items', 'donations.id', '=', 'donation_items.donation_id')
-            //                 ->join('donation_collectings', 'donations.id', '=', 'donation_collectings.donation_id')
-            //                 ->where('donation_collectings.financial_receipt_number', $value)
-            //                 ->where('donation_items.donation_type', 'financial')
-            //                 ->where('donations.id', '!=', $donation->id)
-            //                 ->exists();
-
-            //             $donates = $request->get('donates', []);
-
-            //             $hasFinancial = collect($donates)
-            //                 ->contains(fn($d) =>
-            //                 isset($d['financial_donation_type']) && $d['financial_donation_type'] === 'financial' &&
-            //                     !empty($d['financial_donation_categories_id']) &&
-            //                     !empty($d['financial_amount']));
-
-            //             if ($hasFinancial && $financialExists) {
-            //                 $fail(__('validation.unique_receipt_number_financial'));
-            //             }
-
-            //         }
-            //     },
-            // ],
             'in_kind_receipt_number' => [
                 'nullable',
                 'string',
@@ -460,6 +497,7 @@ class DonationController extends Controller
                 },
             ],
             'donates' => 'required|array',
+            'donates.*.financial_donation_item_type' => 'nullable|in:normal,monthly',
             'donates.*.financial_donation_type' => 'nullable|in:financial',
             'donates.*.financial_donation_categories_id' => 'nullable|exists:donation_categories,id',
             'donates.*.financial_amount' => 'nullable|numeric|min:0',
@@ -472,13 +510,17 @@ class DonationController extends Controller
                         $currentDonationItemId = $this->getCurrentDonationItemId($attribute, $request);
 
                         // Check if the receipt number already exists in the database, excluding the current record
-                        $financialExists = DB::table('donation_items')
+                        $query = DB::table('donation_items')
                             ->where('financial_receipt_number', $value)
-                            ->where('donation_type', 'financial')
-                            ->when($currentDonationItemId, function ($query, $currentDonationItemId) {
-                                return $query->where('id', '!=', $currentDonationItemId); // Exclude the current record
-                            })
-                            ->exists();
+                            ->where('donation_type', 'financial');
+
+                        // Exclude the current record if it's being updated
+                        if (!empty($currentDonationItemId)) {
+                            $query->where('id', '!=', $currentDonationItemId);
+                        }
+
+                        $financialExists = $query->exists();
+
 
                         if ($financialExists) {
                             $fail(__('validation.unique_receipt_number_financial'));
@@ -500,6 +542,7 @@ class DonationController extends Controller
                 },
             ],
             'donates.*.inKind_donation_type' => 'nullable|in:inKind',
+            'donates.*.in_kind_donation_item_type' => 'nullable|in:normal,monthly',
             'donates.*.in_kind_item_name' => 'nullable|string',
             'donates.*.in_kind_quantity' => 'nullable|integer|min:1',
         ]);
@@ -537,6 +580,7 @@ class DonationController extends Controller
                         'donation_category_id' => $donateData['financial_donation_categories_id'],
                         'amount' => $donateData['financial_amount'],
                         'financial_receipt_number' => $donateData["financial_receipt_number"],
+                        'donation_item_type' => $donateData['financial_donation_item_type'],
                     ]);
 
                     $donatesAdded = true;
@@ -552,6 +596,7 @@ class DonationController extends Controller
                         'donation_category_id' => null,
                         'item_name' => $donateData['in_kind_item_name'],
                         'amount' => $donateData['in_kind_quantity'],
+                        'donation_item_type' => $donateData['in_kind_donation_item_type'],
                     ]);
 
                     $donatesAdded = true;
@@ -570,6 +615,29 @@ class DonationController extends Controller
                         "collecting_way" => $validatedData["collecting_way"],
                     ]
                 );
+                // Get the latest monthly_form_donations entry
+                $latestMonthlyFormDonation = DB::table('monthly_form_donations')
+                    ->where('donation_id', $donation->id)
+                    ->latest('donation_date')
+                    ->first();
+
+                    // dd($latestMonthlyFormDonation);
+
+                    // \Log::info('latestMonthlyFormDonation : ' . $latestMonthlyFormDonation);
+
+                // If an entry exists, update the monthly_donation_day in monthly_forms
+                if ($latestMonthlyFormDonation) {
+                    $donationDate = Carbon::parse($latestMonthlyFormDonation->donation_date);
+                    $monthlyDonationDay = $donationDate->day; // Extract the day
+
+                    // \Log::info('monthlyDonationDay : ' . $monthlyDonationDay);
+                    // Update the monthly_forms table
+                    DB::table('donors')
+                        ->where('id', $donation->donor_id)
+                        ->update(['monthly_donation_day' => $monthlyDonationDay]);
+
+                        \Log::info('updated monthly_forms');
+                }
             } else {
                 $donation->collectingDonation()->delete();
             }
@@ -608,7 +676,7 @@ class DonationController extends Controller
 
         if ($index !== null) {
             // Get the donation item ID from the request (if provided)
-            return $request->input("donates.{$index}.id");
+            return $request->input("donates.{$index}.financial_donation_item_id");
         }
 
         return null;
@@ -636,7 +704,7 @@ class DonationController extends Controller
 
         try {
             $donation->delete(); // Soft delete or permanent delete based on your setup
-            return response()->json(['message' => 'Donation item deleted successfully.']);
+            return response()->json(['message' => 'Donation item deleted successfully']);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to delete donation item.'], 500);
         }
@@ -657,7 +725,7 @@ class DonationController extends Controller
             'reporting_way' => 'required|string|in:call,whatsapp_chat,other',
             'donation_category' => 'required|string|in:normal,monthly,gathered',
             'employee_id' => 'nullable|exists:employees,id',
-            // 'collecting_date' => 'nullable|date',
+            'collecting_date' => 'nullable|date',
             'collecting_time' => 'nullable|string',
             'collecting_way' => 'nullable|string|in:representative,location,online',
             'notes' => 'nullable|string',
@@ -665,7 +733,7 @@ class DonationController extends Controller
             'donates.*.financial_donation_type' => 'nullable|in:financial',
             'donates.*.financial_donation_categories_id' => 'nullable|exists:donation_categories,id',
             'donates.*.financial_amount' => 'nullable|numeric|min:0',
-            'donates.*.collecting_date' => 'required|date',
+            'donates.*.date' => 'required|date',
             'financial_receipt_number' => [
                 'nullable',
                 'string',
@@ -710,7 +778,7 @@ class DonationController extends Controller
                 $donation = Donation::create([
                     'donor_id' => $validatedData['donor_id'],
                     'status' => $validatedData['status'],
-                    'date' => $donateData['collecting_date'],
+                    'date' => $donateData['date'],
                     'donation_type' => $validatedData['donation_type'],
                     'donation_category' => $validatedData['donation_category'],
                     'collecting_time' => $validatedData['collecting_time'],
@@ -739,7 +807,7 @@ class DonationController extends Controller
                     $donation->collectingDonation()->create([
                         "employee_id" => $validatedData["employee_id"],
                         "donation_id" => $donation->id,
-                        "collecting_date" => $donateData["collecting_date"],
+                        "collecting_date" => $validatedData["collecting_date"],
                         // 'financial_receipt_number' => $validatedData["financial_receipt_number"] ?? null,
                         'in_kind_receipt_number' => $validatedData["in_kind_receipt_number"] ?? null,
                         "collecting_way" => $validatedData["collecting_way"]

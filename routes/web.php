@@ -12,6 +12,7 @@ use App\Http\Controllers\CollectingLineController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DonationCategoryController;
 use App\Http\Controllers\DonationController;
+use App\Http\Controllers\DonorActivityController;
 use App\Http\Controllers\DonorController;
 use App\Http\Controllers\DonorHistoryController;
 use App\Http\Controllers\EmployeeController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\MonthlyFormController;
 use App\Http\Controllers\MonthlyFormDonationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Artisan;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Month;
 
@@ -48,7 +50,7 @@ Route::group(
 
         Route::get('/', function () {
             return view('backend.dashboard');
-        });
+        })->name('dashboard');
 
         // Departments Routes
         Route::get('/departments/data', [DepartmentController::class, 'data'])->name('departments.data');
@@ -84,13 +86,21 @@ Route::group(
         Route::post('/donors-assign', [DonorController::class, 'assignDonors'])->name('donors.assign');
         Route::post('/donors-children', [DonorController::class, 'donorChildren'])->name('donors.children');
         Route::post('/donors-not-assigned', [DonorController::class, 'notAssignedDonors'])->name('donors.not-assigned');
-        Route::post('/donors-add-activity', [DonorController::class, 'addActivity'])->name('donors.add-activity');
+        // Route::post('/activity', [DonorController::class, 'addActivity'])->name('donors.add-activity');
+        // Route::post('/update-activity/{id}', [DonorController::class, 'addActivity'])->name('donors.add-activity');
+
+        Route::resource('activities', DonorActivityController::class);
+
+
         Route::post('/donors/upload-phone-numbers', [DonorController::class, 'uploadPhoneNumbers'])->name('donors.uploadPhoneNumbers');
         // Donation Categories Routes
         Route::get('/donation-categories/data', [DonationCategoryController::class, 'data'])->name('donation-categories.data');
         Route::resource('donation-categories', DonationCategoryController::class);
 
         Route::get('/donations/data', [DonationController::class, 'data'])->name('donations.data');
+        Route::get('/monthly-donations', [DonationController::class, 'monthlyDonations'])->name('donations.monthly-donations');
+        Route::get('/gathered-donations', [DonationController::class, 'gatheredDonations'])->name('donations.gathered-donations');
+
         Route::resource('donations', DonationController::class);
 
         Route::post('/donations/store-gathered-donation', [DonationController::class, 'storeGatheredDonation'])
@@ -127,6 +137,8 @@ Route::group(
         Route::get('/donor-history/{id}/monthly-forms', [DonorHistoryController::class, 'getMonthlyForms'])->name('donor-history.getMonthlyForms');
         Route::get('/donor-history/{id}/activities', [DonorHistoryController::class, 'getActivities'])->name('donor-history.getActivities');
 
+        Route::get('donor-history/activity/{id}', [DonorHistoryController::class, 'showActivity'])->name('donor-history.showActivity');
+
 
         // Governorates Routes
         Route::get('/call-types/data', [CallTypeController::class, 'data'])->name('call-types.data');
@@ -136,6 +148,10 @@ Route::group(
         // Route::resource('collecting-lines', CollectingLineController::class);
         Route::get('/collecting-lines', [CollectingLineController::class, 'index'])
             ->name('collecting-lines.index');
+        Route::get('/add-collecting-lines', [CollectingLineController::class, 'addCollectingLines'])
+            ->name('collecting-lines.addCollectingLines');
+        Route::get('/collecting-lines/{id}/show', [CollectingLineController::class, 'showCollectingLine'])
+            ->name('collecting-lines.showCollectingLine');
         Route::post('/collecting-lines', [CollectingLineController::class, 'store'])->name('collecting-lines.store');
         Route::put('/collecting-lines/{collectingLine}', [CollectingLineController::class, 'update'])->name('collecting-lines.update');
         Route::delete('/collecting-lines/{collectingLine}', [CollectingLineController::class, 'destroy'])->name('collecting-lines.destroy');
@@ -163,13 +179,13 @@ Route::group(
 
 
         Route::get('/backups', [BackupController::class, 'index'])->name('backups.index');
-        Route::get('/backups/create', [BackupController::class, 'create'])->name('backups.create');
 
         Route::get('/backups/data', [BackupController::class, 'data'])->name('backups.data');
-
     }
 
 );
+
+Route::get('/backups/create', [BackupController::class, 'create'])->name('backups.create');
 
 // Ensure this route is defined
 Route::get('/backups/download/{filename}', [BackupController::class, 'download'])

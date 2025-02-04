@@ -3,7 +3,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="assignDonationModalLabel">Assign Donation to Collecting Line</h5>
+                <h5 class="modal-title" id="assignDonationModalLabel">{{__('Assign Donation to Collecting Line')}}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -11,7 +11,7 @@
                     @csrf
                     <input type="hidden" name="donation_id" id="donation_id">
                     <div class="mb-3">
-                        <label for="collecting_line_id" class="form-label">Select Collecting Line</label>
+                        <label for="collecting_line_id" class="form-label">{{__('Select Collecting Line')}}</label>
                         <select class="form-control" id="collecting_line_id" name="collecting_line_id" required>
                             <!-- Collecting lines will be populated here dynamically -->
                         </select>
@@ -19,8 +19,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="assignDonationSubmit">Assign</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('Close')}}</button>
+                <button type="button" class="btn btn-primary" id="assignDonationSubmit">{{__('Assign')}}</button>
             </div>
         </div>
     </div>

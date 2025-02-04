@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('donor_id')->constrained()->onDelete('cascade');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
-            $table->enum('donation_category', ['normal','monthly','gathered'])->default('normal');
+            $table->enum('donation_category', ['normal','monthly','gathered','normal_and_monthly'])->default('normal');
             $table->enum('donation_type', ['financial','inKind','both'])->default('financial');
             $table->string('date');
             $table->string('alternate_date')->nullable();

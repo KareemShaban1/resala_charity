@@ -321,13 +321,33 @@
     "create area group":"أضافة منطقة كبرى",
     "update area group":"تعديل منطقة كبرى",
     "delete area group":"حذف منطقة كبرى",
-
-
-
     "Check Phones":"تحقق من الهواتف",
     "Monthly Form Information":"معلومات أستمارة شهرية",
     "Monthly Form Details":"تفاصيل أستمارة شهرية",
-    "Monthly Donation Day":"يوم التبرع الشهري"
+    "Monthly Donation Day":"يوم التبرع الشهري",
+    "Due Date":"تاريخ الاستحقاق",
+    "Add Monthly Form Donation":"أضافة تبرع لأستمارة شهرية",
+    "Normal and Monthly":"عادي وشهري",
+    "Activity Details":"تفاصيل النشاط",
+    "Monthly Donations":"تبرعات شهرية",
+    "Gathered Donations":"تبرعات مجمعة",
+    "Add Collecting Lines":"إضافة خطوط السير",
+    "All Collecting Lines":"جميع خطوط السير",
+    "Backups":"النسخ الاحتياطية",
+    "Backup":"نسخ احتياطية",
+    "Create Backup":"إنشاء نسخ احتياطية",
+    "Restore Backup":"استرجاع نسخ احتياطية",
+    "Delete Backup":"حذف نسخ احتياطية",
+    "Select Backup":"حدد نسخ احتياطية",
+    "Collecting Line Number":"رقم خط السير",
+    "Add To Collecting Line":"أضافة إلى خط السير",
+    "Donation Item Type":"نوع عنصر التبرع",
+    "Assign Donation to Collecting Line":"أضافة تبرع لخط السير",
+    "Select Collecting Line":"حدد خط السير",
+    "No Collecting Lines Found":"لا يوجد خطوط السير",
+    "Add Activity":"أضافة نشاط",
+    "Edit Activity":"تعديل نشاط"
+
 
 
 }

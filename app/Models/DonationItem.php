@@ -15,7 +15,8 @@ class DonationItem extends Model
         'donation_type',
         'item_name',
         'amount',
-        'financial_receipt_number'
+        'financial_receipt_number',
+        'donation_item_type'
     ];
     public function donation(){
         return $this->belongsTo(Donation::class);

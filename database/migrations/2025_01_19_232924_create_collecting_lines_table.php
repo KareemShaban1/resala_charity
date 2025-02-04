@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('collecting_lines', function (Blueprint $table) {
             $table->id();
+            $table->string('number')->unique();
             $table->foreignId('representative_id')->constrained('employees')->onDelete('cascade');
             $table->foreignId('driver_id')->nullable()->constrained('employees')
             ->nullOnDelete();

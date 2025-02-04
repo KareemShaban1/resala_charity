@@ -60,6 +60,7 @@ class MonthlyFormDonationController extends Controller
             ],
             'donates' => 'required|array',
             'donates.*.financial_donation_type' => 'nullable|in:financial',
+            'donates.*.financial_donation_item_type' => 'nullable|in:normal,monthly',
             'donates.*.financial_donation_categories_id' => 'nullable|exists:donation_categories,id',
             'donates.*.financial_amount' => 'nullable|numeric|min:0',
             'donates.*.financial_receipt_number' => [
@@ -93,7 +94,8 @@ class MonthlyFormDonationController extends Controller
                     }
                 },
             ],
-            'donates.*.inKind_donation_type' => 'nullable|in:inKind',
+            'donates.*.in_kind_donation_type' => 'nullable|in:inKind',
+            'donates.*.in_kind_donation_item_type' => 'nullable|in:normal,monthly',
             'donates.*.in_kind_item_name' => 'nullable|string',
             'donates.*.in_kind_quantity' => 'nullable|integer|min:1',
         ]);
@@ -128,21 +130,23 @@ class MonthlyFormDonationController extends Controller
                         'donation_category_id' => $donateData['financial_donation_categories_id'],
                         'financial_receipt_number' => $donateData["financial_receipt_number"] ?? null,
                         'amount' => $donateData['financial_amount'],
+                        'donation_item_type' => $donateData['financial_donation_item_type'],
                     ]);
 
                     $donatesAdded = true;
                 }
 
                 if (
-                    isset($donateData['inKind_donation_type']) && $donateData['inKind_donation_type'] === 'inKind'
+                    isset($donateData['in_kind_donation_type']) && $donateData['in_kind_donation_type'] === 'inKind'
                     && !empty($donateData['in_kind_item_name'])
                     && !empty($donateData['in_kind_quantity'])
                 ) {
                     $donation->donateItems()->create([
-                        'donation_type' => $donateData['inKind_donation_type'],
+                        'donation_type' => $donateData['in_kind_donation_type'],
                         'donation_category_id' => null,
                         'item_name' => $donateData['in_kind_item_name'],
                         'amount' => $donateData['in_kind_quantity'],
+                        'donation_item_type' => $donateData['in_kind_donation_item_type'],
                     ]);
 
                     $donatesAdded = true;

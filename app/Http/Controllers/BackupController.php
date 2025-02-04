@@ -44,20 +44,48 @@ class BackupController extends Controller
             ->make(true);
     }
 
+    // public function create()
+    // {
+    //     try {
+    //         /* only database backup*/
+    //         Artisan::call('backup:run --only-db');
+    //         /* all backup */
+    //         /* Artisan::call('backup:run'); */
+    //         $output = Artisan::output();
+    //         Log::info("Backpack\BackupManager -- new backup started \r\n" . $output);
+    //         session()->flash('success', 'Successfully created backup!');
+    //         return redirect()->back();
+    //     } catch (Exception $e) {
+    //         Log::info('error', [$e]);
+    //         session()->flash('danger', $e->getMessage());
+    //         return redirect()->back();
+    //     }
+    // }
+
     public function create()
     {
         try {
-            // Run the backup command
-            Artisan::call('backup:run --only-db');
-            $output = Artisan::output();
-            Log::info("Backup created successfully: " . $output);
+            $output = [];
+            $returnVar = null;
+
+            // Run backup command directly
+            exec('php ' . base_path('artisan') . ' backup:run --only-db 2>&1', $output, $returnVar);
+
+            if ($returnVar !== 0) {
+                throw new Exception("Backup failed: " . implode("\n", $output));
+            }
+
+            Log::info("Backup created successfully: " . implode("\n", $output));
             session()->flash('success', 'Successfully created backup!');
         } catch (Exception $e) {
             Log::error("Backup failed: " . $e->getMessage());
             session()->flash('danger', 'Backup failed: ' . $e->getMessage());
         }
+
         return redirect()->back();
     }
+
+
 
     public function download($filename)
     {

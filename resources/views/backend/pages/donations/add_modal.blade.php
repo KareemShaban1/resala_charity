@@ -22,6 +22,8 @@
                         <select class="form-control" name="status" id="donation_status" onchange="toggleDonationStatus()">
                             <option value="not_collected">{{__('Not Collected')}}</option>
                             <option value="collected">{{__('Collected')}}</option>
+                            <option value="followed_up">{{__('Followed Up')}}</option>
+                            <option value="cancelled">{{__('Cancelled')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -82,8 +84,12 @@
             <!-- Financial Donations Section -->
             <div class="card" id="financial-donations-section">
                 <div class="card-header">
-                    <h4>{{__('Financial Donations')}}</h4>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h4>{{__('Financial Donations')}}</h4>
+                        <button type="button" class="btn btn-secondary mt-2 add-row-btn" data-target="#financial-donation-rows-container">{{__('Add Row')}}</button>
+                    </div>
                 </div>
+
                 <div class="card-body">
                     <div id="financial-donation-rows-container">
                         <!-- Example Row -->
@@ -101,6 +107,7 @@
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
+                            
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="amount" class="form-label">{{__('Amount')}}</label>
@@ -116,9 +123,18 @@
                                 </div>
 
                             </div>
-                            <div class="col-md-3 d-flex align-items-center">
-                                <button type="button" class="btn btn-secondary mt-2 add-row-btn" data-target="#financial-donation-rows-container">{{__('Add Row')}}</button>
+
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="donation_item_type" class="form-label">{{__('Donation Item Type')}}</label>
+                                    <select class="form-control" name="donates[0][financial_donation_item_type]">
+                                        <option value="normal">{{__('Normal')}}</option>
+                                        <!-- <option value="monthly">{{__('Monthly')}}</option> -->
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                </div>
                             </div>
+
                         </div>
                     </div>
 
@@ -135,21 +151,31 @@
                         <!-- Rows for in-kind donations will be added here -->
                         <div class="row donation-row">
                             <input type="hidden" name="donates[0][inKind_donation_type]" value="inKind">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="item_name" class="form-label">{{__('Item Name')}}</label>
                                     <input type="text" class="form-control" name="donates[0][in_kind_item_name]">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="quantity" class="form-label">{{__('Quantity')}}</label>
                                     <input type="number" class="form-control" name="donates[0][in_kind_quantity]">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-4 d-flex align-items-center">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="donation_item_type" class="form-label">{{__('Donation Item Type')}}</label>
+                                    <select class="form-control" name="donates[0][in_kind_donation_item_type]">
+                                        <option value="normal">{{__('Normal')}}</option>
+                                        <!-- <option value="monthly">{{__('Monthly')}}</option> -->
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-center">
                                 <button type="button" class="btn btn-secondary mt-2 add-row-btn" data-target="#in-kind-donation-rows-container">{{__('Add Row')}}</button>
                             </div>
                         </div>
@@ -184,11 +210,11 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="collecting_way" class="form-label">{{__('Collecting Way')}}</label>
-                       <select name="collecting_way" id="collecting_way">
-                           <option value="representative">{{__('Representative')}}</option>
-                           <option value="location">{{__('Location')}}</option>
-                           <option value="online">{{__('Online')}}</option>
-                       </select>
+                        <select name="collecting_way" id="collecting_way" class="form-control">
+                            <option value="representative">{{__('Representative')}}</option>
+                            <option value="location">{{__('Location')}}</option>
+                            <option value="online">{{__('Online')}}</option>
+                        </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>

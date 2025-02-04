@@ -12,6 +12,7 @@ use App\Models\DonationCategory;
 use App\Models\DonorActivity;
 use App\Models\DonorPhone;
 use App\Models\Employee;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -106,7 +107,7 @@ class DonorController extends Controller
                         <i class="uil-outgoing-call"></i>
                     </a>';
             })
-            
+
             ->editColumn('active', function ($donor) {
                 return $donor->active ?
                     '<span class="badge bg-success">' . __("Active") . '</span>' :
@@ -420,32 +421,35 @@ class DonorController extends Controller
         return response()->json($childrenDonors);
     }
 
-    public function addActivity(Request $request)
-    {
-        $request->validate([
-            'donor_id' => 'required|exists:donors,id',
-            'call_type_id' => 'required|exists:call_types,id',
-            'activity_type' => 'required|in:call,whatsapp_chat',
-            'notes' => 'nullable|string',
-            'status' => 'nullable|string',
-            'date_time' => 'required|date',
-            'response' => 'nullable|string',
-        ]);
-        DonorActivity::create([
-            'donor_id' => $request->donor_id,
-            'call_type_id' => $request->call_type_id,
-            'activity_type' => $request->activity_type,
-            'notes' => $request->notes,
-            'status' => $request->status,
-            'date_time' => $request->date_time,
-            'response' => $request->response,
-            'created_by' => auth()->user()->id
-        ]);
-        return response()->json([
-            'success' => true,
-            'message' => __('messages.Donor activity added successfully'),
-        ]);
-    }
+    // public function addActivity(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'donor_id' => 'required|exists:donors,id',
+    //         'call_type_id' => 'required|exists:call_types,id',
+    //         'activity_type' => 'required|in:call,whatsapp_chat',
+    //         'notes' => 'nullable|string',
+    //         'status' => 'nullable|string',
+    //         'date_time' => 'required|date',
+    //         'response' => 'nullable|string',
+    //     ]);
+    //     // Convert `date_time` to proper format
+    //     $validatedData['date_time'] = Carbon::parse($validatedData['date_time'])->format('Y-m-d H:i:s');
+    //     // dd($validatedData);
+    //     DonorActivity::create([
+    //         'donor_id' => $request->donor_id,
+    //         'call_type_id' => $request->call_type_id,
+    //         'activity_type' => $request->activity_type,
+    //         'notes' => $request->notes,
+    //         'status' => $request->status,
+    //         'response' => $request->response,
+    //         'date_time' => $validatedData['date_time'],
+    //         'created_by' => auth()->user()->id
+    //     ]);
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => __('messages.Donor activity added successfully'),
+    //     ]);
+    // }
 
 
     // public function uploadPhoneNumbers(Request $request)

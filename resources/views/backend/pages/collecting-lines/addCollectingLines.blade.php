@@ -50,6 +50,7 @@
                 <thead>
                     <tr>
                         <th>{{__('ID')}}</th>
+                        <th>{{__('Collecting Line Number')}}</th>
                         <th>{{__('Area Group')}}</th>
                         <th>{{__('Representative')}}</th>
                         <th>{{__('Driver')}}</th>
@@ -79,7 +80,7 @@
                         <th>{{__('Phones')}}</th>
                         <th>{{__('Monthly Form Day')}}</th>
                         <th>{{__('Collected')}}</th>
-                        <th>{{__('Donates')}}</th>
+                        <!-- <th>{{__('Donates')}}</th> -->
                         <th>{{__('Actions')}}</th>
                     </tr>
                 </thead>

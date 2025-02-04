@@ -17,37 +17,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CollectingLineController extends Controller
 {
-
-    public function index()
-    {
-
-        $representatives = Employee::whereHas('department', function ($q) {
-            $q->where('name', 'Representatives');
-        })->get();
-        $drivers = Employee::whereHas('department', function ($q) {
-            $q->where('name', 'Drivers');
-        })->get();
-        $employees = Employee::whereHas(
-            'department',
-            function ($q) {
-                $q->whereNotIn('name', ['Representatives', 'Drivers']);
-            }
-        )->get();
-        $areaGroups = AreaGroup::all();
-        $donationCategories = DonationCategory::all();
-        $donors = Donor::all();
-
-        return view(
-            'backend.pages.collecting-lines.allCollectingLines',
-            compact('representatives', 'drivers', 'donors', 'employees', 'areaGroups', 'donationCategories')
-        );
-    }
     /**
      * Display a listing of the resource.
      */
-    public function addCollectingLines()
+    public function index()
     {
-
         $representatives = Employee::whereHas('department', function ($q) {
             $q->where('name', 'Representatives');
         })->get();
@@ -65,7 +39,7 @@ class CollectingLineController extends Controller
         $donors = Donor::all();
 
         return view(
-            'backend.pages.collecting-lines.addCollectingLines',
+            'backend.pages.collecting-lines.index',
             compact('representatives', 'drivers', 'donors', 'employees', 'areaGroups', 'donationCategories')
         );
     }
@@ -136,17 +110,6 @@ class CollectingLineController extends Controller
             'message' => __('messages.' . class_basename(CollectingLine::class) . ' retrieved successfully'),
             'data' => $data
         ]);
-    }
-
-    public function showCollectingLine($id)
-    {
-        $collectingLine = CollectingLine::with('areaGroup', 'representative', 'driver', 'employee')->findOrFail($id);
-
-        $donors = Donor::all();
-        $donationCategories = DonationCategory::all();
-        $employees = Employee::all();
-        return view('backend.pages.collecting-lines.showCollectingLine', 
-        compact('collectingLine', 'donors', 'donationCategories', 'employees'));
     }
 
     /**
@@ -225,9 +188,7 @@ class CollectingLineController extends Controller
                     class="btn btn-sm btn-info">
                         <i class="mdi mdi-square-edit-outline"></i>
                     </a>
-                     <button class="btn btn-sm btn-primary assign-btn" data-id="' . $item->id . '">
-                     '. __('Add To Collecting Line').'
-                     </button>
+                     <button class="btn btn-sm btn-primary assign-btn" data-id="' . $item->id . '">Select</button>
                 </div>
             ';
                 })
@@ -260,7 +221,7 @@ class CollectingLineController extends Controller
                         } elseif ($item->donation_type === 'both') {
                             if (isset($donate->donation_category_id) && isset($donate->amount)) {
                                 return '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
-                                    ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount;
+                                    ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount . '<br>';
                             }
                             if (isset($donate->item_name) && isset($donate->amount)) {
                                 return  '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
@@ -313,12 +274,7 @@ class CollectingLineController extends Controller
         donors.monthly_donation_day,
         areas.name as area_name,
         donors.address,
-        GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers,
-          (SELECT donation_date 
-         FROM monthly_form_donations 
-         WHERE monthly_form_donations.monthly_form_id = monthly_forms.id 
-         ORDER BY donation_date DESC 
-         LIMIT 1) as last_donation_date
+        GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers
     ')
             ->leftJoin('donors', 'monthly_forms.donor_id', '=', 'donors.id')
             ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
@@ -342,8 +298,7 @@ class CollectingLineController extends Controller
         // Apply filters
         if ($request->has('date') && $request->date != '') {
             // Extract the day, month, and year from the selected date
-            // $day = date('d', strtotime($request->date));
-            $day = ltrim(date('d', strtotime($request->date)), '0'); // Remove leading zero
+            $day = date('d', strtotime($request->date));
             $month = date('m', strtotime($request->date));
             $year = date('Y', strtotime($request->date));
 
@@ -552,13 +507,7 @@ class CollectingLineController extends Controller
                         return ' <span class="text-danger">' .  __('Not Collected') . '</span><br>' . __('') . '';
                     }
                 })
-                ->addColumn('actions', function ($item) {
-                    return '<a href="javascript:void(0);" onclick="editDonation(' . $item->id . ')"
-                    class="btn btn-sm btn-info">
-                        <i class="mdi mdi-square-edit-outline"></i>
-                    </a>';
-                })
-                ->rawColumns(['donateItems', 'receipt_number', 'collected','actions'])
+                ->rawColumns(['donateItems', 'receipt_number', 'collected'])
                 ->make(true);
         }
     }

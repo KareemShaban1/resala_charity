@@ -13,9 +13,6 @@
         <div class="col-12">
             <div class="page-title-box">
                 <div class="page-title-right">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDonationModal">
-                        <i class="mdi mdi-plus"></i> {{__('Add Donation')}}
-                    </button>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addGatheredDonationModal">
                         <i class="mdi mdi-plus"></i> {{__('Gathered Donation')}}
                     </button>
@@ -44,15 +41,6 @@
                     <input type="date" id="end-date" class="form-control">
                 </div>
                 <div class="col-md-3">
-                    <label for="donation-category-filter" class="form-label">{{__('Donation Category')}}</label>
-                    <select id="donation-category-filter" class="form-control">
-                        <option value="all">{{__('All')}}</option>
-                        <option value="normal">{{__('Normal Donation')}}</option>
-                        <option value="monthly">{{__('Monthly Donation')}}</option>
-                        <option value="gathered">{{__('Gathered Donation')}}</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
                     <button id="clear-filters" class="btn btn-secondary mt-4">{{__('Clear Filters')}}</button>
                 </div>
             </div>
@@ -64,7 +52,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <table id="donations-table" class="table dt-responsive nowrap w-100">
+                    <table id="gathered-donations-table" class="table dt-responsive nowrap w-100">
                         <thead>
                             <tr>
                                 <th>{{__('ID')}}</th>
@@ -101,6 +89,7 @@
 
 <script>
     var donationCategories = @json($donationCategories);
+    var donationCategory = 'gathered';
 </script>
 
 @endsection

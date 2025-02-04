@@ -29,7 +29,7 @@
               <!-- <li class="side-nav-title side-nav-item">Navigation</li> -->
 
               <li class="side-nav-item">
-                  <a href="#" data-bs-toggle="collapse" href="#sidebarDashboards" aria-expanded="false" aria-controls="sidebarDashboards" class="side-nav-link">
+                  <a href="{{route('dashboard')}}"class="side-nav-link">
                       <i class="uil-home-alt"></i>
                       <!-- <span class="badge bg-success float-end">4</span> -->
                       <span>
@@ -243,6 +243,23 @@
                           </li>
                           @endcan
 
+                          @can('view donations')
+                          <li>
+                              <a href="{{route('donations.monthly-donations')}}">
+                                  <span> {{__('Monthly Donations')}} </span>
+                              </a>
+                          </li>
+                          @endcan
+
+                          @can('view donations')
+                          <li>
+                              <a href="{{route('donations.gathered-donations')}}">
+                                  <span> {{__('Gathered Donations')}} </span>
+                              </a>
+                          </li>
+                          @endcan
+
+
 
 
                       </ul>
@@ -259,8 +276,15 @@
                       <ul class="side-nav-second-level">
                         @can('view collecting lines')
                           <li>
+                              <a href="{{route('collecting-lines.addCollectingLines')}}">
+                                  <span> {{__('Add Collecting Lines')}} </span>
+                              </a>
+                          </li>
+                          @endcan
+                          @can('view collecting lines')
+                          <li>
                               <a href="{{route('collecting-lines.index')}}">
-                                  <span> {{__('Collecting Lines')}} </span>
+                                  <span> {{__('All Collecting Lines')}} </span>
                               </a>
                           </li>
                           @endcan

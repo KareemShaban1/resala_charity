@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Donor;
+use App\Models\DonorActivity;
 use Illuminate\Http\Request;
 
 class DonorHistoryController extends Controller
@@ -27,7 +28,7 @@ class DonorHistoryController extends Controller
         }
 
         $donations = $donations->get();
-        $donations->load('collectingDonation','donateItems');
+        $donations->load('collectingDonation', 'donateItems');
 
 
         return view('backend.pages.donor-history.partials.donations-table', compact('donations'))->render();
@@ -63,5 +64,13 @@ class DonorHistoryController extends Controller
         $activities = $activities->get();
 
         return view('backend.pages.donor-history.partials.activities-table', compact('activities'))->render();
+    }
+
+    public function showActivity($id)
+    {
+        $activity = DonorActivity::findOrFail($id);
+
+        $activity->load('donor', 'callType', 'createdBy');
+        return response()->json($activity);
     }
 }

@@ -4,6 +4,8 @@
 <script>
     // Declare donationTable as a global variable
     let donationTable;
+    let monthlyDonationTable;
+    let gatheredDonationTable;
 
     $(function() {
         // Initialize DataTable
@@ -13,9 +15,10 @@
                 data: function(d) {
                     d.status = 'ongoing';
                     d.date_filter = $('#date-filter').val();
-                d.start_date = $('#start-date').val();
-                d.end_date = $('#end-date').val();
-                d.donation_category = $('#donation-category-filter').val();                }
+                    d.start_date = $('#start-date').val();
+                    d.end_date = $('#end-date').val();
+                    d.donation_category = $('#donation-category-filter').val();
+                                }
             },
             columns: [{
                     data: 'id',
@@ -107,6 +110,232 @@
             }
         });
 
+        monthlyDonationTable = $('#monthly-donations-table').DataTable({
+            ajax: {
+                url: "{{ route('donations.data') }}",
+                data: function(d) {
+                    d.status = 'ongoing';
+                    d.test = 'test';
+                    d.donation_category = 'monthly';
+                    d.date_filter = $('#date-filter').val();
+                    d.start_date = $('#start-date').val();
+                    d.end_date = $('#end-date').val();
+                    // d.donation_category = $('#donation-category-filter').val(); 
+                               }
+            },
+            columns: [{
+                    data: 'id',
+                    name: 'id'
+                },
+                {
+                    data: 'name',
+                    name: 'name'
+                },
+                {
+                    data: 'area',
+                    name: 'area'
+                },
+                {
+                    data: 'phones',
+                    name: 'phones',
+                    orderable: false,
+                    searchable: true,
+                    render: function(data, type, row) {
+                        if (!data) return '<div>N/A</div>';
+                        return data
+                            .split(', ')
+                            .map(phone => `<div>${phone}</div>`)
+                            .join('');
+                    }
+
+                },
+                {
+                    data: 'donation_category',
+                    name: 'donation_category'
+                },
+                {
+                    data: 'donation_status',
+                    name: 'donation_status'
+                },
+
+                {
+                    data: 'donateItems', // Add the 'donates' column
+                    name: 'donateItems',
+                    orderable: false,
+                    searchable: false
+                },
+
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                }
+            ],
+            order: [
+                [0, 'desc']
+            ],
+            buttons: [{
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6]
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Donations Data',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6]
+                    }
+                },
+                // {
+                //     extend: 'pdf', 
+                //     text: 'PDF', 
+                //     title: 'Donations Data', 
+                //     exportOptions: {
+                //         columns: [0, 1]
+                //     }
+                // },
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6]
+                    }
+                },
+            ],
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
+            pageLength: 10,
+            responsive: true,
+            language: languages[language],
+            "drawCallback": function() {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            }
+        });
+
+        gatheredDonationTable = $('#gathered-donations-table').DataTable({
+            ajax: {
+                url: "{{ route('donations.data') }}",
+                data: function(d) {
+                    d.status = 'ongoing';
+                    d.donation_category = 'gathered';
+                    d.date_filter = $('#date-filter').val();
+                    d.start_date = $('#start-date').val();
+                    d.end_date = $('#end-date').val();
+                    // d.donation_category = $('#donation-category-filter').val(); 
+                               }
+            },
+            columns: [{
+                    data: 'id',
+                    name: 'id'
+                },
+                {
+                    data: 'name',
+                    name: 'name'
+                },
+                {
+                    data: 'area',
+                    name: 'area'
+                },
+                {
+                    data: 'phones',
+                    name: 'phones',
+                    orderable: false,
+                    searchable: true,
+                    render: function(data, type, row) {
+                        if (!data) return '<div>N/A</div>';
+                        return data
+                            .split(', ')
+                            .map(phone => `<div>${phone}</div>`)
+                            .join('');
+                    }
+
+                },
+                {
+                    data: 'donation_category',
+                    name: 'donation_category'
+                },
+                {
+                    data: 'donation_status',
+                    name: 'donation_status'
+                },
+
+                {
+                    data: 'donateItems', // Add the 'donates' column
+                    name: 'donateItems',
+                    orderable: false,
+                    searchable: false
+                },
+
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                }
+            ],
+            order: [
+                [0, 'desc']
+            ],
+            buttons: [{
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6]
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Donations Data',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6]
+                    }
+                },
+                // {
+                //     extend: 'pdf', 
+                //     text: 'PDF', 
+                //     title: 'Donations Data', 
+                //     exportOptions: {
+                //         columns: [0, 1]
+                //     }
+                // },
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6]
+                    }
+                },
+            ],
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
+            pageLength: 10,
+            responsive: true,
+            language: languages[language],
+            "drawCallback": function() {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            rowCallback: function(row, data) {
+                if (data.donation_category === 'تبرع مجمع' && data.group_key) {
+                    let color = generateColor(data.group_key);
+                    $('td:eq(0)', row).css('background-color', color); // Apply color only to the first column (ID)
+                    $('td:eq(0)', row).css('color', 'white'); // Apply color only to the first column (ID)
+
+                }
+            }
+        });
+
+        // Function to generate a consistent color based on the group_key
+        function generateColor(groupKey) {
+            let hash = 0;
+            for (let i = 0; i < groupKey.length; i++) {
+                hash = groupKey.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            let color = '#';
+            for (let i = 0; i < 3; i++) {
+                color += ('00' + ((hash >> (i * 8)) & 0xFF).toString(16)).slice(-2);
+            }
+            return color;
+        }
+
          // Date filter change
     $('#date-filter').on('change', function () {
         if ($(this).val() === 'range') {
@@ -116,6 +345,8 @@
             $('#start-date, #end-date').val('');
         }
         donationTable.ajax.reload();
+        gatheredDonationTable.ajax.reload();
+        monthlyDonationTable.ajax.reload();
     });
 
     // Start date and end date change
@@ -237,7 +468,8 @@
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                
+                <div class="col-md-2">
                     <div class="mb-3">
                         <label for="amount" class="form-label">{{__('Amount')}}</label>
                         <input type="number" class="form-control amount" name="donates[${newIndex}][financial_amount]">
@@ -251,7 +483,16 @@
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                <div class="col-md-3 d-flex align-items-center">
+                 <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label">{{__('Donation Item Type')}}</label>
+                    <select class="form-control" name="donates[${newIndex}][financial_donation_item_type]">
+                        <option value="normal">{{__('Normal')}}</option>
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+                <div class="col-md-1 d-flex align-items-center">
                     <button type="button" class="btn btn-danger mt-2 remove-row-btn">{{__('Remove')}}</button>
                 </div>
             </div>
@@ -267,21 +508,30 @@
                 container.append(`
             <div class="row donation-row">
                 <input type="hidden" name="donates[${newIndex}][inKind_donation_type]" value="inKind">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="mb-3">
                         <label for="item_name" class="form-label">{{__('Item Name')}}</label>
                         <input type="text" class="form-control" name="donates[${newIndex}][in_kind_item_name]">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="mb-3">
                         <label for="quantity" class="form-label">{{__('Quantity')}}</label>
                         <input type="number" class="form-control" name="donates[${newIndex}][in_kind_quantity]">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                <div class="col-md-4 d-flex align-items-center">
+                 <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label">{{__('Donation Item Type')}}</label>
+                    <select class="form-control" name="donates[${newIndex}][in_kind_donation_item_type]">
+                        <option value="normal">{{__('Normal')}}</option>
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+                <div class="col-md-3 d-flex align-items-center">
                     <button type="button" class="btn btn-danger mt-2 remove-row-btn">{{__('Remove')}}</button>
                 </div>
             </div>
@@ -461,6 +711,12 @@
             }
         });
 
+        $('#gathered_donation_donor_id').select2({
+            dropdownParent: $('#addGatheredDonationModal'),
+            placeholder: '{{__('Select Donor')}}',
+            allowClear: true,
+            width: '100%'
+        });
 
         $('#add-in-kind-row-edit').on('click', function() {
             const index = $('#edit-in-kind-donation-rows-container .donation-row').length;
@@ -595,7 +851,10 @@
                     </p>
                 </div>
                 <div class="col-md-3">
-                    <p><strong>{{__('Donation Date')}}:</strong> ${data.date}</p>
+                    <p><strong>
+                    ${data.donation_category === 'gathered' ? '{{__("Due Date")}}' : '{{__("Donation Date")}}'}:
+                    </strong>
+                     ${data.date}</p>
                 </div>
                 <div class="col-md-3">
                     <p><strong>{{__('Status')}}:</strong> 
@@ -605,11 +864,14 @@
                 </div>
                  <div class="row">
                   <div class="col-md-3">
-                    <p><strong>{{__('Reporting Date')}}:</strong> ${formatDate(data.created_at)}</p>
+                    <p><strong>
+                    ${data.donation_category === 'gathered' ? '{{__("Collecting Date")}}' : '{{__("Reporting Date")}}'}:</strong> 
+                    
+                    ${data.donation_category === 'gathered' ? formatDate(data.collecting_donation.collecting_date) : formatDate(data.created_at)}</p>
                  </div>
                  <div class="col-md-3">
                     <p><strong>{{__('Reporting Way')}}:</strong> 
-                    ${data.reporting_way === 'call' ? '{{__("Call")}}' : data.reporting_way === 'whatsapp_chat' ? '{{__("Whatsapp Chat")}}' : '{{__("Other")}}' }</p>
+                    ${data.reporting_way === 'call' ? '{{__("Call")}}' : data.reporting_way === 'whatsapp_chat' ? '{{__("Whatsapp Chat")}}' : '{{__("Monthly Donation")}}' }</p>
                  </div>
                   <div class="col-md-3">
                     <p><strong>{{__('Created By')}}:</strong> ${data.created_by?.name}</p>
@@ -638,6 +900,7 @@
                             <th>{{__('Donation Category')}}</th>
                             <th>{{__('Amount')}}</th>
                             <th>{{__('Financial Receipt Number')}}</th>
+                             <th>{{__('Total Gathered Amount')}}</th>
                         </tr>
                     </thead>
                     <tbody>`;
@@ -650,6 +913,7 @@
                             <td>${item.donation_category.name}</td>
                             <td>${item.amount}</td>
                             <td>${item.financial_receipt_number ?? "{{ __('N/A') }}"}</td>
+                            <td>${data.total_gathered_amount ?? "{{ __('N/A') }}"}</td>
                         </tr>`;
                         });
 
@@ -686,6 +950,7 @@
                 </table>`;
                 }
 
+                if(data.donation_category !== 'gathered'){
                 // Collecting Donation Info
                 modalContent += `
             <h4 class="text-success">{{__('Collecting Donation Information')}}</h4>
@@ -698,6 +963,7 @@
                 ${data.collecting_donation?.in_kind_receipt_number ?? "{{ __('N/A') }}"}
                 </p>
                 `;
+                }
 
                 // Add the constructed content to the modal body
                 $('#detailsDonationModal .modal-body').html(modalContent);
@@ -718,109 +984,6 @@
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-
-
-    // function editDonation(id) {
-    //     var form = $('#editDonationForm');
-    //     form.trigger('reset');
-    //     form.find('.is-invalid').removeClass('is-invalid');
-    //     form.find('.invalid-feedback').text('');
-    //     form.attr('action', `{{ route('donations.update', '') }}/${id}`);
-    //     $('#editDonationModal').modal('show');
-
-    //     $.get(`{{ url('donations') }}/${id}/edit`)
-    //         .done(function(data) {
-
-    //             // Populate basic fields
-    //             $('#edit_donor_id').val(data.donor_id).trigger('change');
-    //             $('#edit_date').val(data.date);
-    //             $('#edit_donation_status').val(data.status).trigger('change');
-    //             $('#edit_donation_type').val(data.donation_type).trigger('change');
-    //             $('#edit_reporting_way').val(data.reporting_way).trigger('change');
-    //             $('#edit_collecting_date').val(formatDate(data.collecting_donation?.collecting_date));
-    //             // $('#edit_financial_receipt_number').val(data.collecting_donation?.financial_receipt_number);
-    //             $('#edit_in_kind_receipt_number').val(data.collecting_donation?.in_kind_receipt_number);
-    //             $('#edit_employee_id').val(data.collecting_donation?.employee_id).trigger('change');
-    //             $('#edit_notes').val(data.notes);
-    //             $('#edit_collecting_time').val(data.collecting_time);
-    //             $('#edit_collecting_way').val(data.collecting_way);
-
-    //             // toggleEditDonationType(data.donation_type);
-    //             // toggleEditDonationStatus(data.status);
-
-
-    //             function formatDate(dateString) {
-    //                 const date = new Date(dateString);
-    //                 const year = date.getFullYear();
-    //                 const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    //                 const day = String(date.getDate()).padStart(2, '0');
-    //                 return `${year}-${month}-${day}`;
-    //             }
-
-
-    //             const financialContainer = $('#edit-financial-donation-rows-container');
-    //             const inKindContainer = $('#edit-in-kind-donation-rows-container');
-    //             financialContainer.empty();
-    //             inKindContainer.empty();
-
-    //             const financialSection = document.getElementById('edit-financial-donations-section');
-    //             const inKindSection = document.getElementById('edit-in-kind-donations-section');
-
-
-    //             if (data.donation_type === 'financial') {
-    //                 financialSection.classList.remove('d-none');
-    //                 inKindSection.classList.add('d-none');
-
-    //                 // Populate financial donations
-    //                 data.donate_items
-    //                     .filter(donation => donation.donation_type === 'financial')
-    //                     .forEach((donation, index) => {
-    //                         financialContainer.append(renderFinancialRow(donation, index, donationCategories));
-    //                     });
-
-    //                 // Check and toggle visibility of the add button
-    //                 // toggleAddRowButton();
-    //                 $('#add-financial-row-edit').show();
-    //             }
-
-    //             if (data.donation_type === 'inKind') {
-    //                 financialSection.classList.add('d-none');
-    //                 inKindSection.classList.remove('d-none');
-
-    //                 // Populate in-kind donations
-    //                 data.donate_items
-    //                     .filter(donation => donation.donation_type === 'inKind')
-    //                     .forEach((donation, index) => {
-    //                         inKindContainer.append(renderInKindRow(donation, index));
-    //                     });
-    //             }
-
-    //             if (data.donation_type === 'both') {
-    //                 financialSection.classList.remove('d-none');
-    //                 inKindSection.classList.remove('d-none');
-
-    //                 console.log(data.donate_items);
-    //                 // Populate financial donations
-    //                 data.donate_items
-    //                     .filter(donation => donation.donation_type === 'financial')
-    //                     .forEach((donation, index) => {
-    //                         financialContainer.append(renderFinancialRow(donation, index, donationCategories));
-    //                     });
-
-    //                 // Populate in-kind donations
-    //                 data.donate_items
-    //                     .filter(donation => donation.donation_type === 'inKind')
-    //                     .forEach((donation, index) => {
-    //                         inKindContainer.append(renderInKindRow(donation, index));
-    //                     });
-
-    //             }
-
-    //         })
-    //         .fail(function() {
-    //             alert('{{ __("Failed to load donation details. Please try again.") }}');
-    //         });
-    // }
 
 
     let existingFinancialIndices = new Set();
@@ -851,16 +1014,16 @@
                 $('#edit_employee_id').val(data.collecting_donation?.employee_id).trigger('change');
                 $('#edit_notes').val(data.notes);
                 $('#edit_collecting_time').val(data.collecting_time);
-                $('#edit_collecting_way').val(data.collecting_way);
+                $('#edit_collecting_way').val(data.collecting_donation.collecting_way).trigger('change');
 
                 // Populate financial donations
                 const financialContainer = $('#edit-financial-donation-rows-container');
                 financialContainer.empty();
                 data.donate_items
                     .filter(item => item.donation_type === 'financial')
-                    .forEach((donation, index) => {
+                    .forEach((donationItem, index) => {
                         existingFinancialIndices.add(index); // Track existing indices
-                        financialContainer.append(renderFinancialRow(donation, index, donationCategories));
+                        financialContainer.append(renderFinancialRow(donationItem, index, donationCategories));
                     });
 
                 // Populate in-kind donations
@@ -868,9 +1031,9 @@
                 inKindContainer.empty();
                 data.donate_items
                     .filter(item => item.donation_type === 'inKind')
-                    .forEach((donation, index) => {
+                    .forEach((donationItem, index) => {
                         existingInKindIndices.add(index); // Track existing indices
-                        inKindContainer.append(renderInKindRow(donation, index));
+                        inKindContainer.append(renderInKindRow(donationItem, index));
                     });
 
                 // Toggle sections based on donation type
@@ -883,16 +1046,16 @@
     }
 
 
-    function renderFinancialRow(donation, index, categories) {
-        console.log(donation, index, categories);
+    function renderFinancialRow(donationItem, index, categories) {
+        console.log(donationItem);
         const categoryOptions = categories.map(category =>
-            `<option value="${category.id}" ${category.id == donation.donation_category_id ? 'selected' : ''}>${category.name}</option>`
+            `<option value="${category.id}" ${category.id == donationItem.donation_category_id ? 'selected' : ''}>${category.name}</option>`
         ).join('');
 
         return `
         <div class="row donation-row">
             <input type="hidden" name="donates[${index}][financial_donation_type]" value="financial">
-            <input type="hidden" name="donates[${index}][financial_donation_id]" value="${donation.id || ''}">
+            <input type="hidden" name="donates[${index}][financial_donation_item_id]" value="${donationItem.id || ''}">
             <div class="col-md-3">
                 <label class="form-label">{{__('Donation Category')}}</label>
                 <select class="form-control" name="donates[${index}][financial_donation_categories_id]">
@@ -900,38 +1063,59 @@
                 </select>
                 <div class="invalid-feedback"></div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">{{__('Amount')}}</label>
-                <input type="number" class="form-control" name="donates[${index}][financial_amount]" value="${donation.amount || ''}">
+                <input type="number" class="form-control" name="donates[${index}][financial_amount]" value="${donationItem.amount || ''}">
                 <div class="invalid-feedback"></div>
             </div>
              <div class="col-md-3">
                 <label class="form-label">{{__('Financial Receipt Number')}}</label>
-                <input type="text" class="form-control" name="donates[${index}][financial_receipt_number]" value="${donation.financial_receipt_number || ''}">
+                <input type="text" class="form-control" name="donates[${index}][financial_receipt_number]" value="${donationItem.financial_receipt_number || ''}">
                 <div class="invalid-feedback"></div>
             </div>
-            <div class="col-md-3 d-flex align-items-center">
+             <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label">{{__('Donation Item Type')}}</label>
+                    <select class="form-control" name="donates[${index}][financial_donation_item_type]">
+                        <option value="normal" ${donationItem.donation_item_type === 'normal' ? 'selected' : ''}>{{__('Normal')}}</option>
+                        <option value="monthly" ${donationItem.donation_item_type === 'monthly' ? 'selected' : ''}>{{__('Monthly')}}</option>
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="col-md-1 d-flex align-items-center">
                 <button type="button" class="btn btn-danger remove-row-btn-edit">{{__('Remove')}}</button>
             </div>
         </div>`;
     }
 
-    function renderInKindRow(donation, index) {
+    function renderInKindRow(donationItem, index) {
+        console.log(donation);
         return `
         <div class="row donation-row">
             <input type="hidden" name="donates[${index}][inKind_donation_type]" value="inKind">
-            <input type="hidden" name="donates[${index}][inKind_donation_id]" value="${donation.id || ''}">
-            <div class="col-md-4">
+            <input type="hidden" name="donates[${index}][inKind_donation_id]" value="${donationItem.id || ''}">
+            <div class="col-md-3">
                 <label class="form-label">{{__('Item Name')}}</label>
-                <input type="text" class="form-control" name="donates[${index}][in_kind_item_name]" value="${donation.item_name || ''}">
+                <input type="text" class="form-control" name="donates[${index}][in_kind_item_name]" value="${donationItem.item_name || ''}">
                 <div class="invalid-feedback"></div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="form-label">{{__('Quantity')}}</label>
-                <input type="number" class="form-control" name="donates[${index}][in_kind_quantity]" value="${donation.amount || ''}">
+                <input type="number" class="form-control" name="donates[${index}][in_kind_quantity]" value="${donationItem.amount || ''}">
                 <div class="invalid-feedback"></div>
             </div>
-            <div class="col-md-4 d-flex align-items-center">
+             <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label">{{__('Donation Item Type')}}</label>
+                    <select class="form-control" name="donates[${index}][financial_donation_item_type]">
+                        <option value="normal" ${donationItem.donation_item_type === 'normal' ? 'selected' : ''}>{{__('Normal')}}</option>
+                        <option value="monthly" ${donationItem.donation_item_type === 'monthly' ? 'selected' : ''}>{{__('Monthly')}}</option>
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex align-items-center">
                 <button type="button" class="btn btn-danger remove-row-btn-edit">{{__('Remove')}}</button>
             </div>
         </div>`;
@@ -1145,8 +1329,8 @@ function generateDonationRows(numberOfMonths) {
                 </div>
                 <div class="col-md-3">
                     <div class="mb-3">
-                        <label class="form-label">{{__('Collecting Date')}}</label>
-                        <input type="date" class="form-control" name="donates[${i}][collecting_date]" value="${formattedDate}">
+                        <label class="form-label">{{__('Date')}}</label>
+                        <input type="date" class="form-control" name="donates[${i}][date]" value="${formattedDate}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -1184,11 +1368,20 @@ function generateDonationRows(numberOfMonths) {
                         text: response.message
                     });
                 },
-                error: function (xhr) {
-                    // Handle errors
-                    console.log(xhr.responseText);
-                    alert('An error occurred. Please try again.');
-                }
+                error: function(xhr) {
+                if (xhr.status === 422) {
+                var errors = xhr.responseJSON.errors;
+                var errorMessages = Object.values(errors).map(function(error) {
+                    return error[0];
+                }).join('<br>');
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Errors',
+                    html: errorMessages
+                });
+            }
+            }
             });
         });
 </script>

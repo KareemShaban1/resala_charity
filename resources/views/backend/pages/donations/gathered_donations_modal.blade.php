@@ -7,7 +7,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="name" class="form-label">{{__('Donor Name')}}</label>
-                        <select class="form-control select2" id="donor_id" name="donor_id" required>
+                        <select class="form-control select2" id="gathered_donation_donor_id" name="donor_id" required>
                             <option value="">{{__('Select Donor')}}</option>
                             @foreach($donors as $donor)
                             <option value="{{ $donor->id }}">{{ $donor->name }}</option>
@@ -31,7 +31,7 @@
             <div class="row">
 
 
-                 <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="mb-3">
                         <label for="number_of_months" class="form-label">{{__('Number of Months')}}</label>
                         <input type="number" class="form-control" id="number_of_months" name="number_of_months">
@@ -48,7 +48,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="mb-3">
                         <label for="donation_type" class="form-label">{{__('Donation Type')}}</label>
                         <select class="form-control" name="donation_type" id="donation_type" onchange="toggleDonationType()">
@@ -59,7 +59,7 @@
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="mb-3">
                         <label for="reporting_way" class="form-label">{{__('Activity Way')}}</label>
                         <select class="form-control" name="reporting_way" id="reporting_way">
@@ -71,6 +71,8 @@
                     </div>
                 </div>
 
+                </div>
+                <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="collecting_time" class="form-label">{{__('Collecting Time')}}</label>
@@ -117,11 +119,11 @@
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
-                           
+
                             <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label for="collecting_date" class="form-label">{{__('Collecting Date')}}</label>
-                                    <input type="date" class="form-control" id="collecting_date" name="donates[0][collecting_date]">
+                                    <label for="date" class="form-label">{{__('Due Date')}}</label>
+                                    <input type="date" class="form-control" id="date" name="donates[0][date]">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -134,10 +136,18 @@
                 </div>
             </div>
 
-         
+
 
             <div class="row" id="collecting-section">
-               
+
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="collecting_date" class="form-label">{{__('Collecting Date')}}</label>
+                        <input type="date" class="form-control" id="collecting_date" name="collecting_date">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="collecting_way" class="form-label">{{__('Collecting Way')}}</label>
