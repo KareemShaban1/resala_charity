@@ -26,10 +26,10 @@ class AreaController extends BaseController
         
         return DataTables::of($query)
             ->addColumn('city', function ($item) {
-                return $item->city->name;
+                return $item->city->name ?? '';
             })
             ->addColumn('governorate', function ($item) {
-                return $item->city->governorate->name;
+                return $item->city->governorate->name ?? '';
             })
             ->addColumn('action', function ($item) {
                 return '

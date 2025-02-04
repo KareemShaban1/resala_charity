@@ -172,11 +172,11 @@
                 },
                 {
                     data: 'city',
-                    name: 'city.name'
+                    name: 'city'
                 },
                 {
                     data: 'governorate',
-                    name: 'city.governorate.name'
+                    name: 'governorate'
                 },
                 // {
                 //     data: 'created_at',
