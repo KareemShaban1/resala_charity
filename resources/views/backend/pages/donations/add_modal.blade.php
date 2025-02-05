@@ -2,7 +2,7 @@
     <form id="addDonationForm" method="POST" action="{{ route('donations.store') }}">
         @csrf
         <div class="modal-body">
-            <input type="hidden" name="donation_category" value="normal">
+            <!-- <input type="hidden" name="donation_category" value="normal"> -->
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
@@ -33,7 +33,7 @@
 
             <div class="row">
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="mb-3">
                         <label for="date" class="form-label">{{__('Donation Date')}}</label>
                         <input type="date" class="form-control" id="date" name="date">
@@ -41,7 +41,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="mb-3">
                         <label for="donation_type" class="form-label">{{__('Donation Type')}}</label>
                         <select class="form-control" name="donation_type" id="donation_type" onchange="toggleDonationType()">
@@ -52,13 +52,24 @@
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="mb-3">
                         <label for="reporting_way" class="form-label">{{__('Activity Way')}}</label>
                         <select class="form-control" name="reporting_way" id="reporting_way">
                             <option value="call">{{__('Call')}}</option>
                             <option value="whatsapp_chat">{{__('Whatsapp Chat')}}</option>
                             <option value="other">{{__('Other')}}</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="donation_category" class="form-label">{{__('Donation Type')}}</label>
+                        <select class="form-control" name="donation_category" id="donation_category">
+                        <option value="monthly">{{__('Monthly')}}</option>
+                        <option value="normal">{{__('Normal')}}</option>
+                            <option value="normal_and_monthly">{{__('Normal and Monthly')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>

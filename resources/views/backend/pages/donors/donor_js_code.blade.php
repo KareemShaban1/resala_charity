@@ -816,13 +816,32 @@ $('#addActivityForm').on('submit', function(e) {
     }
 
 
-
-
-
-
-
 });
 
+document.addEventListener('keydown', function(event) {
+    // Check if Ctrl (or Cmd on Mac) is pressed
+    if (event.ctrlKey || event.metaKey) {
+        // Prevent the default behavior (if needed)
+        event.preventDefault();
+
+        // Check for F1 key
+        if (event.key === 'F1') {
+            $('#addDonorModal').modal('show'); // Open the "Add Donor" modal
+        }
+
+    }
+    if (event.key === 'F2') {
+            // Check if the "Add Monthly Form" modal is open
+            if ($('#addDonorModal').is(':visible')) {
+                $('#addDonorForm').submit(); // Submit the "Add" form
+            }
+            // Check if the "Edit Monthly Form" modal is open
+            else if ($('#editDonorModal').is(':visible')) {
+                $('#editDonorForm').submit(); // Submit the "Edit" form
+            }
+
+        }
+});
 
 
 

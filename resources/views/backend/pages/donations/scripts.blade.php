@@ -1008,6 +1008,7 @@
                 $('#edit_date').val(data.date);
                 $('#edit_donation_status').val(data.status).trigger('change');
                 $('#edit_donation_type').val(data.donation_type).trigger('change');
+                $('#edit_donation_category').val(data.donation_category).trigger('change');
                 $('#edit_reporting_way').val(data.reporting_way).trigger('change');
                 $('#edit_collecting_date').val(formatDate(data.collecting_donation?.collecting_date));
                 $('#edit_in_kind_receipt_number').val(data.collecting_donation?.in_kind_receipt_number);
@@ -1384,5 +1385,32 @@ function generateDonationRows(numberOfMonths) {
             }
             });
         });
+
+
+        document.addEventListener('keydown', function(event) {
+            // Check if Ctrl (or Cmd on Mac) is pressed
+            if (event.ctrlKey || event.metaKey) {
+                // Prevent the default behavior (if needed)
+                event.preventDefault();
+
+                // Check for F1 key
+                if (event.key === 'F2') {
+                    $('#addDonationModal').modal('show'); // Open the "Add Donor" modal
+                }
+            }
+            if (event.key === 'F2') {
+            // Check if the "Add Monthly Form" modal is open
+            if ($('#addDonationModal').is(':visible')) {
+                $('#addDonationForm').submit(); // Submit the "Add" form
+            }
+            // Check if the "Edit Monthly Form" modal is open
+            else if ($('#editDonationModal').is(':visible')) {
+                $('#editDonationForm').submit(); // Submit the "Edit" form
+            }
+
+        }
+        });
+
+       
 </script>
 @endpush

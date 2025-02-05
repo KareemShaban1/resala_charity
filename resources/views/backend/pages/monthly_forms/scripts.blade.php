@@ -920,5 +920,29 @@
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
+
+    document.addEventListener('keydown', function(event) {
+    // Check if Ctrl (or Cmd on Mac) is pressed
+        if (event.ctrlKey || event.metaKey) {
+            // Prevent the default behavior (if needed)
+            event.preventDefault();
+
+            // Check for F1 key
+            if (event.key === 'F3') {
+                $('#addMonthlyFormModal').modal('show'); // Open the "Add Donor" modal
+            }
+        }
+        if (event.key === 'F2') {
+            // Check if the "Add Monthly Form" modal is open
+            if ($('#addMonthlyFormModal').is(':visible')) {
+                $('#addMonthlyFormForm').submit(); // Submit the "Add" form
+            }
+            // Check if the "Edit Monthly Form" modal is open
+            else if ($('#editMonthlyFormModal').is(':visible')) {
+                $('#editMonthlyFormForm').submit(); // Submit the "Edit" form
+            }
+
+        }
+});
 </script>
 @endpush

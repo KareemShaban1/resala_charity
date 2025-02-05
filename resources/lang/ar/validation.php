@@ -17,6 +17,8 @@ return [
     'nullable' => 'حقل :attribute اختياري.',
     'attributes' => [
         'donor_id' => 'المتبرع',
+        'name'=> 'الأسم',
+        'date'=> 'التاريخ',
         'email' => 'البريد الإلكتروني',
         'roles' => 'الصلاحيات',
         'department_id' => 'القسم',
