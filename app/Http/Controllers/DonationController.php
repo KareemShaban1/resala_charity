@@ -106,7 +106,13 @@ class DonationController extends Controller
                 $query->where('donations.status', 'collected');
             } elseif ($status === 'not_collected') {
                 $query->where('donations.status', 'not_collected');
+            }elseif($status === 'followed_up'){
+                $query->where('donations.status', 'followed_up');
+            }elseif($status === 'cancelled'){
+                $query->where('donations.status', 'cancelled');
             }
+
+            // followed_up,cancelled
         }
 
         // Date filter
@@ -223,9 +229,9 @@ class DonationController extends Controller
                 } elseif ($item->status === 'not_collected') {
                     return ' <span class="text-white badge bg-primary">' .  __('Not Collected') . '</span><br>' . __('') . '';
                 } elseif ($item->status === 'followed_up') {
-                    return ' <span class="text-white badge bg-warning">' .  __('Not Collected') . '</span><br>' . __('') . '';
+                    return ' <span class="text-white badge bg-warning">' .  __('Followed Up') . '</span><br>' . __('') . '';
                 } elseif ($item->status === 'cancelled') {
-                    return ' <span class="text-white badge bg-danger">' .  __('Not Collected') . '</span><br>' . __('') . '';
+                    return ' <span class="text-white badge bg-danger">' .  __('Cancelled') . '</span><br>' . __('') . '';
                 }
             })
             ->addColumn('group_key', function ($item) {
