@@ -79,12 +79,12 @@
                 </p>
                 <p>
 
-                    @if ($donation->donation_type === 'inKind')
+                    @isset($donation->collectingDonation->in_kind_receipt_number)
                     <span class="fw-bold me-2">
                         {{ __('In Kind Receipt Number') }}:
                     </span>
                     {{ $donation->collectingDonation->in_kind_receipt_number ?? '' }}
-                    @endif
+                    @endisset
                 </p>
 
 

@@ -1048,7 +1048,6 @@
 
 
     function renderFinancialRow(donationItem, index, categories) {
-        console.log(donationItem);
         const categoryOptions = categories.map(category =>
             `<option value="${category.id}" ${category.id == donationItem.donation_category_id ? 'selected' : ''}>${category.name}</option>`
         ).join('');
@@ -1091,7 +1090,6 @@
     }
 
     function renderInKindRow(donationItem, index) {
-        console.log(donation);
         return `
         <div class="row donation-row">
             <input type="hidden" name="donates[${index}][inKind_donation_type]" value="inKind">
@@ -1458,8 +1456,7 @@ $('#addActivityForm').on('submit', function(e) {
     const callTypeSelect = document.getElementById('call_type_id');
     const statusContainer = document.getElementById('status-container');
 
-    // Debugging: Check if elements are properly loaded
-    console.log(callTypeSelect, statusContainer);
+
 
     // Ensure the status container visibility changes based on the selected value
     if (callTypeSelect.value === '1') {
