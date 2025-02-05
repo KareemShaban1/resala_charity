@@ -84,20 +84,6 @@
                         {{ __('In Kind Receipt Number') }}:
                     </span>
                     {{ $donation->collectingDonation->in_kind_receipt_number ?? '' }}
-                    <!-- @elseif ($donation->donation_type === 'financial')
-                    <span class="fw-bold me-2">
-                        {{ __('Financial Receipt Number') }}:
-                    </span>
-                    {{ $donation->collectingDonation->financial_receipt_number ?? '' }}
-                    @else
-                    <span class="fw-bold me-2">
-                        {{ __('Financial Receipt Number') }}:
-                    </span>
-                    {{ $donation->collectingDonation->financial_receipt_number ?? '' }}
-                    <span class="fw-bold me-2">
-                        {{ __('In Kind Receipt Number') }}:
-                    </span>-
-                    {{ $donation->collectingDonation->in_kind_receipt_number ?? '' }} -->
                     @endif
                 </p>
 
