@@ -29,16 +29,35 @@
 
                 @endif
             </td>
-            <td>{{ $donation->status === 'collected' ? __('Collected') : __('Not Collected') }}</td>
+            <td>
+            @if ($donation->status === 'collected')
+            <span class="text-white badge bg-success">{{ __('Collected') }}</span>
+            @elseif ($donation->status === 'not_collected')
+            <span class="text-white badge bg-danger">{{ __('Not Collected') }}</span>
+            @elseif($donation->status === 'followed_up')
+            <span class="text-white badge bg-warning">{{ __('Followed Up') }}</span>
+            @elseif($donation->status === 'cancelled')
+            <span class="text-white badge bg-danger">{{ __('Cancelled Donation') }}</span>
+            @endif
+
+            <!-- {{ $donation->status === 'collected' ? __('Collected') : __('Not Collected') }}</td> -->
             <td>{{ $donation->createdBy->name }}</td>
             <td>
                 @foreach ($donation->donateItems as $item)
                 <div>
-
+                    @if ($item->donation_type === 'financial')
                     <span class="fw-bold me-2">
-                        {{ $item->item_name ?? $item->donationCategory->name }} :
+                        {{ $item->donationCategory->name }} :
                     </span>
                     {{ $item->amount }}
+                    <span class="text-info"> ({{ $item->financial_receipt_number }}) </span>
+                    @else
+                    <span class="fw-bold me-2">
+                        {{ $item->item_name}} :
+                    </span>
+                    {{ $item->amount }}
+                    @endif
+                  
                 </div>
                 @endforeach
             </td>
@@ -65,7 +84,7 @@
                         {{ __('In Kind Receipt Number') }}:
                     </span>
                     {{ $donation->collectingDonation->in_kind_receipt_number ?? '' }}
-                    @elseif ($donation->donation_type === 'financial')
+                    <!-- @elseif ($donation->donation_type === 'financial')
                     <span class="fw-bold me-2">
                         {{ __('Financial Receipt Number') }}:
                     </span>
@@ -78,7 +97,7 @@
                     <span class="fw-bold me-2">
                         {{ __('In Kind Receipt Number') }}:
                     </span>-
-                    {{ $donation->collectingDonation->in_kind_receipt_number ?? '' }}
+                    {{ $donation->collectingDonation->in_kind_receipt_number ?? '' }} -->
                     @endif
                 </p>
 
