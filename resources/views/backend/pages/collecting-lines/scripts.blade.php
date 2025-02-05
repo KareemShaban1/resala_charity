@@ -179,6 +179,24 @@
             language: languages[language], // Apply language dynamically
             "drawCallback": function() {
                 $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data, dataIndex) {
+                if (data.is_child === 'Parent') {
+                    $(row).addClass('child-row');
+
+                    // Get the parent ID or group ID from the data
+                    const parentId = data.parent_donor_group_id;
+
+                    // Generate a unique color for this parent
+                    const color = getColorForParent(parentId);
+
+                    // Apply the color to the row
+                    $(row).find('td').attr('style', 'background-color: ' + color + ' !important');
+                } else if (data.is_child === 'Child') {
+                    // For parent rows, apply the color only to the first column
+                    const color = getColorForParent(data.parent_donor_group_id);
+                    $(row).find('td:first').attr('style', 'background-color: ' + color + ' !important');
+                }
             }
         });
 
@@ -258,14 +276,6 @@
                         columns: [0, 1, 2, 3, 4, 5, 6, 7]
                     }
                 },
-                // {
-                //     extend: 'pdf', 
-                //     text: 'PDF', 
-                //     title: 'Monthly Forms Data', 
-                //     exportOptions: {
-                //         columns: [0, 1]
-                //     }
-                // },
                 {
                     extend: 'copy',
                     exportOptions: {
@@ -279,8 +289,36 @@
             language: languages[language],
             "drawCallback": function() {
                 $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data, dataIndex) {
+
+                // Get the parent ID or group ID from the data
+                const parentId = data.parent_donor_group_id;
+
+                // Generate a unique color for this parent
+                const color = getColorForParent(parentId);
+
+                if (data.is_child === 'Parent') {
+                    // For child rows, apply the color to all columns
+                    $(row).addClass('child-row');
+                    $(row).find('td').attr('style', 'background-color: ' + color + ' !important');
+                } else if (data.is_child === 'Child') {
+                    // For parent rows, apply the color only to the first column
+                    $(row).find('td:first').attr('style', 'background-color: ' + color + ' !important');
+                }
             }
         });
+
+
+        function getColorForParent(parentId) {
+    // Use a hash function to generate a unique color
+    const colors = [
+        '#f9f9f9', '#e6f7ff', '#fff7e6', '#e6ffe6', '#ffe6e6', 
+        '#e6e6ff', '#f0e6ff', '#ffe6f0', '#e6fff0', '#fff0e6'
+    ];
+    const index = parentId % colors.length; // Ensure the index is within the array bounds
+    return colors[index];
+}
 
 
 
@@ -555,8 +593,6 @@
         // Open the View Donations Modal when the "View Donations" button is clicked
         $('#collecting-lines-table').on('click', '.view-donations-btn', function() {
             var collectingLineId = $(this).data('id'); // Ensure this matches the button's data attribute
-            console.log('Collecting Line ID:', collectingLineId); // Debugging: Verify the ID
-
             // Store the collectingLine ID in the modal's data attribute
             $('#viewDonationsModal').data('collecting-line-id', collectingLineId);
 
@@ -573,7 +609,6 @@
                         data: function(d) {
                             // Retrieve the collectingLine ID from the modal's data attribute
                             d.collecting_line_id = $('#viewDonationsModal').data('collecting-line-id');
-                            console.log('Sending Collecting Line ID:', d.collecting_line_id); // Debugging: Verify the ID being sent
                             // Additional filters (if needed)
                             d.date = $('#date').val();
                             d.area_group = $('#area_group').val();
@@ -724,7 +759,7 @@
                     data.items
                         .filter(donation => donation.donation_type === 'financial')
                         .forEach((donation, index) => {
-                            financialContainer.append(renderFinancialRow(donation, index, donationCategories));
+                            financialContainer.append(renderFinancialRowInAddMonthlyForm(donation, index, donationCategories));
                         });
 
                     $('#add-financial-row-edit').show();
@@ -738,7 +773,7 @@
                     data.items
                         .filter(donation => donation.donation_type === 'inKind')
                         .forEach((donation, index) => {
-                            inKindContainer.append(renderInKindRow(donation, index));
+                            inKindContainer.append(renderInKindRowInAddMonthlyForm(donation, index));
                         });
                 }
 
@@ -1014,7 +1049,7 @@
                         );
                     });
                 } else {
-                    $('#collecting_line_id').append('<option value="">No collecting lines found</option>');
+                    $('#collecting_line_id').append(`<option value="">{{__('No Collecting Lines Found')}}</option>`);
                 }
 
                 // Show the modal

@@ -24,7 +24,9 @@
             <td>{{ $activity->date_time }}</td>
             <td>{{ $activity->createdBy->name }}</td>
             <td>
+                @if ($activity->created_by === Auth::user()->id)
                 <button class="btn btn-danger" onclick="editActivity({{ $activity->id }})">{{ __('Edit') }}</button>
+                @endif
 
                 <button class="btn btn-primary" onclick="showActivityDetails({{ $activity->id }})">
                     {{ __('Activity Details') }}</button>

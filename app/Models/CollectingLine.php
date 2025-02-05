@@ -18,6 +18,11 @@ class CollectingLine extends Model
         'number',
     ];
 
+    protected $casts = [
+        'collecting_date' => 'date',
+    ];
+    
+
     public function representative()
     {
         return $this->belongsTo(Employee::class, 'representative_id');

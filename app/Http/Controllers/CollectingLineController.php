@@ -11,9 +11,12 @@ use App\Models\DonationCategory;
 use App\Models\Donor;
 use App\Models\Employee;
 use App\Models\MonthlyForm;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use Mpdf\Mpdf;
+use Illuminate\Support\Facades\View;
 
 class CollectingLineController extends Controller
 {
@@ -112,6 +115,7 @@ class CollectingLineController extends Controller
                         '" data-collecting-date="' . $row->collecting_date . '">' . __('Edit') . '</button>';
                     $btn .= ' <button class="delete-btn btn btn-sm btn-danger" data-id="' . $row->id . '">' . __('Delete') . '</button>';
                     $btn .= '<button class="btn btn-sm btn-info view-donations-btn" data-id="' . $row->id . '">' . __('View Donations') . '</button>';
+                    $btn .= ' <a href="' . route('collecting-lines.export-pdf', ['collecting_line_id' => $row->id]) . '" class="btn btn-sm btn-info">' . __('View Collecting Line') . '</a>';
                     return $btn;
                 })
                 ->rawColumns(['action'])
@@ -145,31 +149,39 @@ class CollectingLineController extends Controller
         $donors = Donor::all();
         $donationCategories = DonationCategory::all();
         $employees = Employee::all();
-        return view('backend.pages.collecting-lines.showCollectingLine', 
-        compact('collectingLine', 'donors', 'donationCategories', 'employees'));
+        return view(
+            'backend.pages.collecting-lines.showCollectingLine',
+            compact('collectingLine', 'donors', 'donationCategories', 'employees')
+        );
     }
 
-    /**
-     * Fetch donations data for DataTables.
-     */
     public function getDonationsData(Request $request)
     {
         if ($request->ajax()) {
             $data = Donation::query()
                 ->selectRaw('
-        donations.id,
-        donations.donor_id,
-        donations.status,
-        donations.created_by,
-        donations.created_at,
-        donations.donation_type,
-        donation_collectings.collecting_date,
-        donation_collectings.in_kind_receipt_number,
-        donors.name as donor_name,
-        areas.name as area_name,
-        donors.address,
-        GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers
-    ')
+                donations.id,
+                donations.donor_id,
+                donations.status,
+                donations.created_by,
+                donations.created_at,
+                donations.donation_type,
+                donation_collectings.collecting_date,
+                donation_collectings.in_kind_receipt_number,
+                donors.name as donor_name,
+                donors.parent_id,
+                CASE 
+                    WHEN donors.parent_id IS NOT NULL THEN donors.parent_id
+                    ELSE donors.id
+                END as parent_donor_group_id,
+                CASE 
+                    WHEN donors.parent_id IS NOT NULL THEN "Child"
+                    ELSE "Parent"
+                END as is_child,
+                areas.name as area_name,
+                donors.address,
+                GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers
+            ')
                 ->leftJoin('donors', 'donations.donor_id', '=', 'donors.id')
                 ->leftJoin('donation_collectings', 'donations.id', '=', 'donation_collectings.donation_id')
                 ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
@@ -179,7 +191,9 @@ class CollectingLineController extends Controller
                 ->where('donations.status', 'not_collected')
                 ->groupBy(
                     'donations.donor_id',
+                    'donors.id',
                     'donors.name',
+                    'donors.parent_id',
                     'areas.name',
                     'donors.address',
                     'donations.id',
@@ -191,10 +205,11 @@ class CollectingLineController extends Controller
                     'donation_collectings.in_kind_receipt_number'
                 );
 
-            // Apply filters
+
             if ($request->has('date') && $request->date != '') {
                 $data->whereDate('donations.date',  $request->date);
             }
+
             if ($request->has('area_group') && $request->area_group != '') {
                 $data->whereHas('donor.area.areaGroups', function ($q) use ($request) {
                     $q->where('area_groups.id', $request->area_group);
@@ -216,20 +231,20 @@ class CollectingLineController extends Controller
                 })
                 ->addColumn('action', function ($item) {
                     return '
-                <div class="d-flex gap-2">
-                 <a href="javascript:void(0);" onclick="donationDetails(' . $item->id . ')"
-                    class="btn btn-sm btn-light">
-                        <i class="mdi mdi-eye"></i>
-                    </a>
-                    <a href="javascript:void(0);" onclick="editDonation(' . $item->id . ')"
-                    class="btn btn-sm btn-info">
-                        <i class="mdi mdi-square-edit-outline"></i>
-                    </a>
-                     <button class="btn btn-sm btn-primary assign-btn" data-id="' . $item->id . '">
-                     '. __('Add To Collecting Line').'
-                     </button>
-                </div>
-            ';
+                    <div class="d-flex gap-2">
+                        <a href="javascript:void(0);" onclick="donationDetails(' . $item->id . ')"
+                        class="btn btn-sm btn-light">
+                            <i class="mdi mdi-eye"></i>
+                        </a>
+                        <a href="javascript:void(0);" onclick="editDonation(' . $item->id . ')"
+                        class="btn btn-sm btn-info">
+                            <i class="mdi mdi-square-edit-outline"></i>
+                        </a>
+                        <button class="btn btn-sm btn-primary assign-btn" data-id="' . $item->id . '">
+                            ' . __('Add To Collecting Line') . '
+                        </button>
+                    </div>
+                ';
                 })
                 ->addColumn('name', function ($item) {
                     return $item->donor->name;
@@ -263,7 +278,7 @@ class CollectingLineController extends Controller
                                     ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount;
                             }
                             if (isset($donate->item_name) && isset($donate->amount)) {
-                                return  '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
+                                return '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
                                     ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount;
                             }
                         }
@@ -296,30 +311,38 @@ class CollectingLineController extends Controller
     }
 
 
+
     public function getMonthlyFormsData(Request $request)
     {
-
-
         $query = MonthlyForm::query()
             ->selectRaw('
-        monthly_forms.id,
-        monthly_forms.donor_id,
-        monthly_forms.collecting_donation_way,
-        monthly_forms.created_at,
-        monthly_forms.status,
-        monthly_forms.cancellation_reason,
-        monthly_forms.cancellation_date,
-        donors.name as donor_name,
-        donors.monthly_donation_day,
-        areas.name as area_name,
-        donors.address,
-        GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers,
-          (SELECT donation_date 
-         FROM monthly_form_donations 
-         WHERE monthly_form_donations.monthly_form_id = monthly_forms.id 
-         ORDER BY donation_date DESC 
-         LIMIT 1) as last_donation_date
-    ')
+            monthly_forms.id,
+            monthly_forms.donor_id,
+            monthly_forms.collecting_donation_way,
+            monthly_forms.created_at,
+            monthly_forms.status,
+            monthly_forms.cancellation_reason,
+            monthly_forms.cancellation_date,
+            donors.name as donor_name,
+            donors.monthly_donation_day,
+            areas.name as area_name,
+            donors.address,
+            donors.parent_id,
+            GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers,
+            (SELECT donation_date 
+             FROM monthly_form_donations 
+             WHERE monthly_form_donations.monthly_form_id = monthly_forms.id 
+             ORDER BY donation_date DESC 
+             LIMIT 1) as last_donation_date,
+            CASE 
+                WHEN donors.parent_id IS NOT NULL THEN donors.parent_id
+                ELSE donors.id
+            END as parent_donor_group_id,
+            CASE 
+                WHEN donors.parent_id IS NOT NULL THEN "Child"
+                ELSE "Parent"
+            END as is_child
+        ')
             ->leftJoin('donors', 'monthly_forms.donor_id', '=', 'donors.id')
             ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
             ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
@@ -328,6 +351,7 @@ class CollectingLineController extends Controller
             ->with('donor', 'items')
             ->groupBy(
                 'monthly_forms.donor_id',
+                'donors.id',
                 'donors.name',
                 'areas.name',
                 'donors.address',
@@ -337,18 +361,28 @@ class CollectingLineController extends Controller
                 'monthly_forms.collecting_donation_way',
                 'monthly_forms.status',
                 'monthly_forms.cancellation_reason',
-                'monthly_forms.cancellation_date'
+                'monthly_forms.cancellation_date',
+                'donors.parent_id'
             );
+
         // Apply filters
         if ($request->has('date') && $request->date != '') {
-            // Extract the day, month, and year from the selected date
-            // $day = date('d', strtotime($request->date));
             $day = ltrim(date('d', strtotime($request->date)), '0'); // Remove leading zero
             $month = date('m', strtotime($request->date));
             $year = date('Y', strtotime($request->date));
 
             // Filter by the extracted day
             $query->where('donors.monthly_donation_day', $day);
+
+            // Filter by the extracted day (only for parent donors)
+            // $query->where(function ($q) use ($day) {
+            //     $q->where('donors.parent_id','<>', null) // Only parent donors
+            //     ->orWhere('donors.monthly_donation_day', $day);
+            // });
+
+            // dd($query->get());
+
+
 
             // Filter out monthly_forms that have donations in the same month
             $query->whereDoesntHave('donations', function ($q) use ($month, $year) {
@@ -362,8 +396,6 @@ class CollectingLineController extends Controller
                 $q->where('area_groups.id', $request->area_group);
             });
         }
-
-
 
         return DataTables::of($query)
             ->filterColumn('name', function ($query, $keyword) {
@@ -380,13 +412,13 @@ class CollectingLineController extends Controller
             })
             ->addColumn('action', function ($item) {
                 return '
-                <div class="d-flex gap-2">
-                    <a href="javascript:void(0);" onclick="addMonthlyFormDonation(' . $item->id . ')"
-                    class="btn btn-sm btn-dark">
-                        <i class="mdi mdi-plus"></i>
-                    </a>
-                </div>
-            ';
+            <div class="d-flex gap-2">
+                <a href="javascript:void(0);" onclick="addMonthlyFormDonation(' . $item->id . ')"
+                class="btn btn-sm btn-dark">
+                    <i class="mdi mdi-plus"></i>
+                </a>
+            </div>
+        ';
             })
             ->addColumn('name', function ($item) {
                 return $item->donor->name;
@@ -441,9 +473,14 @@ class CollectingLineController extends Controller
             ->addColumn('cancellation_date', function ($item) {
                 return $item->cancellation_date;
             })
+            ->addColumn('is_child', function ($item) {
+                return $item->donor->parent_id ? 'Child' : 'Parent';
+            })
             ->rawColumns(['action', 'items'])
             ->make(true);
     }
+
+
 
     public function getDonationsByCollectingLine(Request $request)
     {
@@ -558,9 +595,123 @@ class CollectingLineController extends Controller
                         <i class="mdi mdi-square-edit-outline"></i>
                     </a>';
                 })
-                ->rawColumns(['donateItems', 'receipt_number', 'collected','actions'])
+                ->rawColumns(['donateItems', 'receipt_number', 'collected', 'actions'])
                 ->make(true);
         }
+    }
+
+
+
+    public function exportCollectingLineToPdf(Request $request)
+    {
+        // Fetch the collecting line
+        $collectingLine = CollectingLine::find($request->collecting_line_id);
+
+        // Fetch the donations data with parent-child relationships based on donors.parent_id
+        $data = $collectingLine->donations()
+            ->selectRaw('
+            donations.id,
+            donations.donor_id,
+            donations.status,
+            donations.created_by,
+            donations.created_at,
+            donations.donation_type,
+            donation_collectings.collecting_date,
+            donation_collectings.in_kind_receipt_number,
+            donors.name as donor_name,
+            donors.parent_id as donor_parent_id,
+            areas.name as area_name,
+            donors.address,
+            GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers
+        ')
+            ->leftJoin('donors', 'donations.donor_id', '=', 'donors.id')
+            ->leftJoin('donation_collectings', 'donations.id', '=', 'donation_collectings.donation_id')
+            ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
+            ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
+            ->with('donor', 'donateItems.donationCategory')
+            ->groupBy(
+                'donations.id',
+                'donations.donor_id',
+                'donations.status',
+                'donations.created_by',
+                'donations.created_at',
+                'donations.donation_type',
+                'donation_collectings.collecting_date',
+                'donation_collectings.in_kind_receipt_number',
+                'donors.name',
+                'donors.parent_id',
+                'areas.name',
+                'donors.address',
+                'collecting_line_donations.collecting_line_id',
+                'collecting_line_donations.donation_id'
+            )
+            ->get();
+
+        // Organize data based on donor.parent_id
+        // Organize data based on donor.parent_id
+        $organizedData = [];
+
+        // First, initialize parents
+        foreach ($data as $donation) {
+            if ($donation->donor_parent_id === null) {
+                // This is a parent donor
+                $organizedData[$donation->donor_id] = [
+                    'parent' => $donation,
+                    'children' => [],
+                ];
+            }
+        }
+
+        // Second, attach children correctly
+        foreach ($data as $donation) {
+            if ($donation->donor_parent_id !== null) {
+                // Ensure parent exists, if not initialize it
+                if (!isset($organizedData[$donation->donor_parent_id])) {
+                    $organizedData[$donation->donor_parent_id] = [
+                        'parent' => null, // Parent might not be in data (edge case)
+                        'children' => [],
+                    ];
+                }
+
+                // Append the child donation correctly
+                $organizedData[$donation->donor_parent_id]['children'][] = $donation;
+            }
+        }
+
+
+        // Additional data for the PDF
+        $additionalData = [
+
+            'collecting_line_name' => $collectingLine->number,
+            'representative'=>$collectingLine->representative->name ?? '',
+            'driver'=>$collectingLine->driver->name ?? '',
+            'employee'=>$collectingLine->employee->name ?? '',
+            'area_group'=>$collectingLine->areaGroup->name ?? '',
+            'collecting_line_date' => Carbon::parse($collectingLine->collecting_date)->format('Y-m-d'),
+            'total_donations' => $data->count(),
+        ];
+
+        // Render the HTML view with the data
+        $html = View::make('backend.pages.collecting-lines.collectingLineDetails', [
+            'organizedData' => $organizedData,
+            'additionalData' => $additionalData,
+        ])->render();
+
+        // Configure mpdf for Arabic support
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4-L',
+            'default_font' => 'xbriyaz',
+        ]);
+
+        // Write the HTML content to the PDF
+        $mpdf->WriteHTML($html);
+
+        // Output the PDF as a download
+        return response($mpdf->Output('donations_report.pdf', 'I'), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="donations_report.pdf"',
+        ]);
     }
 
     public function show($id) {}

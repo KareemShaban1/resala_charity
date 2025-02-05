@@ -174,6 +174,9 @@ Route::group(
         Route::get('/collecting-lines/donations/data', [CollectingLineController::class, 'getDonationsByCollectingLine'])
             ->name('collecting-lines.donations.data');
 
+            Route::get('/collecting-lines/export-pdf', [CollectingLineController::class, 'exportCollectingLineToPdf'])
+            ->name('collecting-lines.export-pdf');
+
         Route::post('/monthly-forms/{monthlyFormId}/donations', [MonthlyFormDonationController::class, 'storeMonthlyFormDonation'])
             ->name('monthly-forms-donations.store');
 

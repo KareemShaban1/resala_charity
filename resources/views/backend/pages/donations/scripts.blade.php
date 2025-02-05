@@ -1014,7 +1014,7 @@
                 $('#edit_employee_id').val(data.collecting_donation?.employee_id).trigger('change');
                 $('#edit_notes').val(data.notes);
                 $('#edit_collecting_time').val(data.collecting_time);
-                $('#edit_collecting_way').val(data.collecting_donation.collecting_way).trigger('change');
+                $('#edit_collecting_way').val(data.collecting_donation?.collecting_way).trigger('change');
 
                 // Populate financial donations
                 const financialContainer = $('#edit-financial-donation-rows-container');
