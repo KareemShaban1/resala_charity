@@ -237,7 +237,7 @@ class DonationController extends Controller
                 } elseif ($item->status === 'followed_up') {
                     return ' <span class="text-white badge bg-warning">' .  __('Followed Up') . '</span><br>' . __('') . '';
                 } elseif ($item->status === 'cancelled') {
-                    return ' <span class="text-white badge bg-danger">' .  __('Cancelled') . '</span><br>' . __('') . '';
+                    return ' <span class="text-white badge bg-danger">' .  __('Cancelled Donation') . '</span><br>' . __('') . '';
                 }
             })
             ->addColumn('group_key', function ($item) {
