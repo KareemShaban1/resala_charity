@@ -928,7 +928,7 @@
             event.preventDefault();
 
             // Check for F1 key
-            if (event.key === 'F3') {
+            if (event.key === 'F1') {
                 $('#addMonthlyFormModal').modal('show'); // Open the "Add Donor" modal
             }
         }

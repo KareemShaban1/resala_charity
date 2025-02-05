@@ -1394,7 +1394,7 @@ function generateDonationRows(numberOfMonths) {
                 event.preventDefault();
 
                 // Check for F1 key
-                if (event.key === 'F2') {
+                if (event.key === 'F1') {
                     $('#addDonationModal').modal('show'); // Open the "Add Donor" modal
                 }
             }
