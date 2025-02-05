@@ -99,6 +99,9 @@
 <!-- Gathered Donations Modal -->
 @include('backend.pages.donations.gathered_donations_modal')
 
+@include('backend.pages.donors.add_activity_modal')
+
+
 <script>
     var donationCategories = @json($donationCategories);
 </script>

@@ -24,7 +24,7 @@
                             <option value="collected">{{__('Collected')}}</option>
                             <option value="not_collected">{{__('Not Collected')}}</option>
                             <option value="followed_up">{{__('Followed Up')}}</option>
-                            <option value="cancelled">{{__('Cancelled')}}</option>
+                            <option value="cancelled">{{__('Cancelled Donation')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>

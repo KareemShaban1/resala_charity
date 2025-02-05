@@ -1411,6 +1411,64 @@ function generateDonationRows(numberOfMonths) {
         }
         });
 
-       
+        function addActivity(donorId) {
+            console.log(donorId);
+    $('#addActivityModal').modal('show');
+    $('#add_activity_donor_id').val(donorId);
+    
+
+}
+
+$('#addActivityForm').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var url = form.attr('action');
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: form.serialize(),
+            success: function(response) {
+                if (response.success) {
+                    $('#addActivityModal').modal('hide');
+                    form[0].reset();
+                    donationTable.ajax.reload();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message
+                    });
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    Object.keys(errors).forEach(function(key) {
+                        var input = form.find(`[name="${key}"]`);
+                        input.addClass('is-invalid');
+                        input.siblings('.invalid-feedback').text(errors[key][0]);
+                    });
+                }
+            }
+        });
+    });
+
+      
+    $('#call_type_id').on('change', function () {
+    const callTypeSelect = document.getElementById('call_type_id');
+    const statusContainer = document.getElementById('status-container');
+
+    // Debugging: Check if elements are properly loaded
+    console.log(callTypeSelect, statusContainer);
+
+    // Ensure the status container visibility changes based on the selected value
+    if (callTypeSelect.value === '1') {
+        statusContainer.style.display = 'block';
+    } else {
+        statusContainer.style.display = 'none';
+    }
+
+
+});
 </script>
 @endpush

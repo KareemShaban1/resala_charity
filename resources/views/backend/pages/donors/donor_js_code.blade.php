@@ -725,8 +725,9 @@
 }
 
 function addActivity(donorId) {
+    
     $('#addActivityModal').modal('show');
-    $('#donor_id').val(donorId);
+    $('#add_activity_donor_id').val(donorId);
     
 
 }

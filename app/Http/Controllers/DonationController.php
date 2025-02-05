@@ -172,11 +172,17 @@ class DonationController extends Controller
                     class="btn btn-sm btn-danger">
                         <i class="mdi mdi-delete"></i>
                     </a>
+                     <a href="javascript:void(0)" onclick="addActivity(' . $item->donor->id . ')" class="btn btn-sm btn-dark">
+                        <i class="uil-outgoing-call"></i>
+                    </a>
                 </div>
             ';
             })
             ->addColumn('name', function ($item) {
-                return $item->donor->name;
+                // return $item->donor->name;
+                return '<a href="' . route('donor-history.show', [$item->donor->id]) . '" class="text-info">'
+                . $item->donor->name .
+                '</a>';
             })
             ->addColumn('area', function ($item) {
                 return $item->donor->area->name;
@@ -240,7 +246,7 @@ class DonationController extends Controller
                 }
                 return null;
             })
-            ->rawColumns(['action', 'donateItems', 'receipt_number', 'donation_status'])
+            ->rawColumns(['name','action', 'donateItems', 'receipt_number', 'donation_status'])
             ->make(true);
     }
 

@@ -1,7 +1,7 @@
 <x-modal id="addActivityModal" title="{{__('Add Activity')}}" size="lg">
     <form id="addActivityForm" method="POST" action="{{ route('activities.store') }}">
         @csrf
-        <input type="hidden" name="donor_id" id="donor_id">
+        <input type="hidden" name="donor_id" id="add_activity_donor_id">
         <div class="modal-body">
             <div class="row">
                 <div class="col-md-6">
