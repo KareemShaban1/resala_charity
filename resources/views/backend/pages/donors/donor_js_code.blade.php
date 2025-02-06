@@ -806,18 +806,22 @@ $('#addActivityForm').on('submit', function(e) {
     const callTypeSelect = document.getElementById('call_type_id');
     const statusContainer = document.getElementById('status-container');
 
-    // Debugging: Check if elements are properly loaded
-    console.log(callTypeSelect.value, statusContainer);
+    // Ensure there are at least two options
+    if (callTypeSelect.options.length > 1) {
+        const secondOptionValue = callTypeSelect.options[1].value; // Get the second option's value
 
-    // Ensure the status container visibility changes based on the selected value
-    if (callTypeSelect.value === '1') {
-        statusContainer.style.display = 'block';
-    } else {
-        statusContainer.style.display = 'none';
+        // Debugging: Check selected value and second option value
+        console.log(callTypeSelect.value, secondOptionValue);
+
+        // Ensure the status container visibility changes based on the selected value
+        if (callTypeSelect.value === secondOptionValue) {
+            statusContainer.style.display = 'block';
+        } else {
+            statusContainer.style.display = 'none';
+        }
     }
-
-
 });
+
 
 document.addEventListener('keydown', function(event) {
     // Check if Ctrl (or Cmd on Mac) is pressed
