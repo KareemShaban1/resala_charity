@@ -44,7 +44,7 @@
                     <div class="mb-3">
                         <label for="activity_status" class="form-label">{{__('Status')}}</label>
                         <select name="status" id="edit_activity_status" class="form-control">
-                            <option value="" disabled>{{__('Select Status')}}</option>
+                            <option value="" selected>{{__('Select Status')}}</option>
                             <option value="ReplyAndDonate">{{__('Reply And Donate')}}</option>
                             <option value="ReplyAndNotDonate">{{__('Reply And Not Donate')}}</option>
                             <option value="NoReply">{{__('No Reply')}}</option>
