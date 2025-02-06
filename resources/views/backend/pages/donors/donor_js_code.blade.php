@@ -807,7 +807,7 @@ $('#addActivityForm').on('submit', function(e) {
     const statusContainer = document.getElementById('status-container');
 
     // Debugging: Check if elements are properly loaded
-    console.log(callTypeSelect, statusContainer);
+    console.log(callTypeSelect.value, statusContainer);
 
     // Ensure the status container visibility changes based on the selected value
     if (callTypeSelect.value === '1') {
