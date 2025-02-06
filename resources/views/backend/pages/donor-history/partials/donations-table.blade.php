@@ -70,9 +70,8 @@
 
                 <p>
                     <span class="fw-bold me-2">
-                        {{ __('Reporting way') }}:
+                        {{ __('Reporting way') }}
                     </span>
-                    <!-- {{ $donation->reporting_way }} -->
                     @if ($donation->reporting_way === 'call')
                     <span class="fw-bold me-2">
                         {{ __('Call') }}:
