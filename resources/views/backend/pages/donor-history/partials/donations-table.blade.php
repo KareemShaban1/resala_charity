@@ -73,19 +73,19 @@
                         {{ __('Reporting way') }}
                     </span>
                     @if ($donation->reporting_way === 'call')
-                    <span class="fw-bold me-2">
+                    <span class="me-2">
                         {{ __('Call') }}:
                     </span>
                     @elseif($donation->reporting_way === 'whatsapp_chat')
-                    <span class="fw-bold me-2">
+                    <span class="me-2">
                         {{ __('WhatsApp Chat') }}:
                     </span>
                     @elseif($donation->reporting_way === 'location')
-                    <span class="fw-bold me-2">
+                    <span class="me-2">
                         {{ __('Location') }}:
                     </span>
                     @elseif($donation->reporting_way === 'other')
-                    <span class="fw-bold me-2">
+                    <span class="me-2">
                         {{ __('Other') }}:
                     </span>
                     @endif
