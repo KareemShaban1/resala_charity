@@ -70,25 +70,42 @@
 
                 <p>
                     <span class="fw-bold me-2">
+                        {{ __('Reporting way') }}:
+                    </span>
+                    <!-- {{ $donation->reporting_way }} -->
+                    @if ($donation->reporting_way === 'call')
+                    <span class="fw-bold me-2">
+                        {{ __('Call') }}:
+                    </span>
+                    @elseif($donation->reporting_way === 'whatsapp_chat')
+                    <span class="fw-bold me-2">
+                        {{ __('WhatsApp Chat') }}:
+                    </span>
+                    @elseif($donation->reporting_way === 'location')
+                    <span class="fw-bold me-2">
+                        {{ __('Location') }}:
+                    </span>
+                    @elseif($donation->reporting_way === 'other')
+                    <span class="fw-bold me-2">
+                        {{ __('Other') }}:
+                    </span>
+                    @endif
+
+                </p>
+                <p>
+                    <span class="fw-bold me-2">
                         {{ __('Employee') }}:
                     </span>
                     {{ $donation->collectingDonation->employee->name }}
                 </p>
-                <p>
-                    <span class="fw-bold me-2">
-                        {{ __('Donation Date') }}:
-                    </span>
-                    {{ $donation->collectingDonation->collecting_date }}
-                </p>
-                <p>
 
-                    <!-- @isset($donation->collectingDonation->in_kind_receipt_number)
+                <p>
                     <span class="fw-bold me-2">
-                        {{ __('In Kind Receipt Number') }}:
+                        {{ __('Collecting Date') }}:
                     </span>
-                    {{ $donation->collectingDonation->in_kind_receipt_number ?? '' }}
-                    @endisset -->
-                </p>
+                    {{ \Carbon\Carbon::parse($donation->collectingDonation->collecting_date)->format('d/m/Y') }}
+                    </p>
+            
 
 
 
