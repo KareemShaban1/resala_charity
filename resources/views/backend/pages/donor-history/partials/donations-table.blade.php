@@ -49,14 +49,14 @@
                     <span class="fw-bold me-2">
                         {{ $item->donationCategory->name }} :
                     </span>
-                    {{ $item->amount }}
+                    {{ $item->amount }} -----
                     ( {{ __('Receipt') }}: 
                     <span class="text-info"> {{ $item->financial_receipt_number }} </span>)
                     @else
                     <span class="fw-bold me-2">
                         {{ $item->item_name}} :
                     </span>
-                    {{ $item->amount }} - 
+                    {{ $item->amount }} ----- 
                    ( {{ __('Receipt') }}: 
                    <span class="text-info">  {{ $donation->collectingDonation->in_kind_receipt_number ?? '' }} </span> )
                     @endif
