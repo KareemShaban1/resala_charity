@@ -58,6 +58,7 @@
                         <select class="form-control" name="reporting_way" id="reporting_way">
                             <option value="call">{{__('Call')}}</option>
                             <option value="whatsapp_chat">{{__('Whatsapp Chat')}}</option>
+                            <option value="location">{{__('Location')}}</option>
                             <option value="other">{{__('Other')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
