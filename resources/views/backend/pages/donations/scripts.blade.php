@@ -13,7 +13,7 @@
             ajax: {
                 url: "{{ route('donations.data') }}",
                 data: function(d) {
-                    d.status = 'ongoing';
+                    // d.status = 'ongoing';
                     d.date_filter = $('#date-filter').val();
                     d.start_date = $('#start-date').val();
                     d.end_date = $('#end-date').val();

@@ -26,7 +26,10 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->boolean('active')->default(true);
             $table->enum('donor_type', ['normal', 'monthly'])->default('normal');
+            $table->enum('donor_category', ['normal', 'special'])->default('normal');
             $table->string('monthly_donation_day')->nullable();
+            $table->foreignId('department_id')->nullable()->constrained()->nullOnDelete();
+            $table->text('notes')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

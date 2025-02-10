@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class MonthlyFormDonation extends Model
 {
     use HasFactory;
+
+    public function donation(){
+        return $this->belongsTo(Donation::class);
+    }
 }

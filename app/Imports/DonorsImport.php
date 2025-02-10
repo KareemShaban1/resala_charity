@@ -5,6 +5,7 @@ use App\Models\Donor;
 use App\Models\Governorate;
 use App\Models\City;
 use App\Models\Area;
+use App\Models\Department;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -63,6 +64,10 @@ class DonorsImport implements ToCollection, WithHeadingRow, WithValidation, Skip
                     ->where('city_id', $city->id ?? null)
                     ->first();
 
+                    $department = Department::where('name', $data['department_name'])
+                    ->first();    
+
+                   \Log::info('donors',[$data]);
                 // Handle donor record (update or create)
                 try {
                     $donor = Donor::updateOrCreate(
@@ -76,6 +81,11 @@ class DonorsImport implements ToCollection, WithHeadingRow, WithValidation, Skip
                             'active' => $data['active'] ?? true,
                             'donor_type' => $data['donor_type'],
                             'monthly_donation_day' => $data['monthly_donation_day'],
+                            'donor_category' => $data['donor_category'],
+                            'department_id' => $department->id ?? null,
+                            'notes'=> $data['notes'],
+
+
                         ]
                     );
                 } catch (\Exception $e) {
@@ -115,10 +125,13 @@ class DonorsImport implements ToCollection, WithHeadingRow, WithValidation, Skip
             'name' => 'required|string|max:255',
             'address' => 'nullable|string|max:255',
             'street' => 'nullable|string|max:255',
-            'governorate_name' => 'required|string|exists:governorates,name',
-            'city_name' => 'required|string|exists:cities,name',
+            'governorate_name' => 'nullable|string|exists:governorates,name',
+            'city_name' => 'nullable|string|exists:cities,name',
             'area_name' => 'nullable|string|exists:areas,name',
-            'donor_type' => 'required|string|in:normal,monthly',
+            'department_name'=>'nullable|string|exists:departments,name',
+            'donor_type' => 'nullable|string|in:normal,monthly',
+            'donor_category' => 'nullable|string|in:normal,special',
+            'notes'=>'',
             'monthly_donation_day' => 'nullable',
             'phones' => [
                 'nullable',

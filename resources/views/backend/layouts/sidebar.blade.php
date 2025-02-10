@@ -29,7 +29,7 @@
               <!-- <li class="side-nav-title side-nav-item">Navigation</li> -->
 
               <li class="side-nav-item">
-                  <a href="{{route('dashboard')}}"class="side-nav-link">
+                  <a href="{{route('dashboard.index')}}" class="side-nav-link">
                       <i class="uil-home-alt"></i>
                       <!-- <span class="badge bg-success float-end">4</span> -->
                       <span>
@@ -274,7 +274,7 @@
                   </a>
                   <div class="collapse" id="sidebarCollectingLines">
                       <ul class="side-nav-second-level">
-                        @can('view collecting lines')
+                          @can('view collecting lines')
                           <li>
                               <a href="{{route('collecting-lines.addCollectingLines')}}">
                                   <span> {{__('Add Collecting Lines')}} </span>
@@ -288,6 +288,27 @@
                               </a>
                           </li>
                           @endcan
+                      </ul>
+                  </div>
+              </li>
+
+
+              <li class="side-nav-item">
+                  <a data-bs-toggle="collapse" href="#sidebarMonthlyFormsReport" aria-expanded="false" aria-controls="sidebarMonthlyFormsReport" class="side-nav-link">
+                      <i class="uil-money-withdraw"></i>
+                      <span> {{__('Reports')}} </span>
+                      <span class="menu-arrow"></span>
+                  </a>
+                  <div class="collapse" id="sidebarMonthlyFormsReport">
+                      <ul class="side-nav-second-level">
+                          <!-- @can('view collecting lines') -->
+                          <li>
+                              <a href="{{route('monthly-forms-report.index')}}">
+                                  <span> {{__('Monthly Forms Reports')}} </span>
+                              </a>
+                          </li>
+                          <!-- @endcan -->
+
                       </ul>
                   </div>
               </li>

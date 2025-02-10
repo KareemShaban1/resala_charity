@@ -16,6 +16,9 @@
                     </button>
                 </div>
                 <h4 class="page-title">{{__('Monthly Forms')}}</h4>
+
+                <!-- Filters -->
+                @include('backend.pages.monthly_forms.partials.filters')
             </div>
         </div>
     </div>
@@ -34,10 +37,19 @@
                                 <th>{{__('Phones')}}</th>
                                 <th>{{__('Monthly Form Day')}}</th>
                                 <th>{{__('Donates')}}</th>
+                                <!-- <th>{{__('Financial Amount')}}</th> Ensure financial column is here -->
                                 <th>{{__('Actions')}}</th>
                             </tr>
                         </thead>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3" style="text-align:right">{{__('Total Financial Donations')}}</th>
+                                <th id="financial-total" colspan="4"></th> <!-- Make sure this matches the column index -->
+                                <!-- <th></th> Empty column for action buttons -->
+                            </tr>
+                        </tfoot>
                     </table>
+
                 </div>
             </div>
         </div>

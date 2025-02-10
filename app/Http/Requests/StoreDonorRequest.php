@@ -28,12 +28,15 @@ class StoreDonorRequest extends FormRequest
             'governorate_id' => 'nullable|exists:governorates,id',
             'city_id' => 'nullable|exists:cities,id',
             'area_id' => 'nullable|exists:areas,id',
+            'department_id' => 'nullable|exists:departments,id',
             'active' => 'required|boolean',
             'donor_type' => 'required|in:normal,monthly',
+            'donor_category' => 'required|in:normal,special',
+            'notes'=>'nullable|string',
             'monthly_donation_day' => 'nullable',
-            'phones' => 'required|array|min:1',
-            'phones.*.number' => 'required|string|regex:/^\d{11}$/|distinct|unique:donor_phones,phone_number',
-            'phones.*.type' => 'required|string|in:mobile,home,work,other',
+            'phones' => 'nullable|array|min:1',
+            'phones.*.number' => 'nullable|string|regex:/^\d{11}$/|distinct|unique:donor_phones,phone_number',
+            'phones.*.type' => 'nullable|string|in:mobile,home,work,other',
 
         ];
     }

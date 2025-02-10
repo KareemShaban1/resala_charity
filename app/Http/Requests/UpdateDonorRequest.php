@@ -29,12 +29,15 @@ class UpdateDonorRequest extends FormRequest
             'governorate_id' => 'nullable|exists:governorates,id',
             'city_id' => 'nullable|exists:cities,id',
             'area_id' => 'nullable|exists:areas,id',
+            'department_id' => 'nullable|exists:departments,id',
             'active' => 'required|boolean',
             'donor_type' => 'required|in:normal,monthly',
+            'donor_category' => 'required|in:normal,special',
+            'notes'=>'nullable|string',
             'monthly_donation_day' => 'nullable|integer|min:1|max:31|exclude_if:donor_type,normal',
-            'phones' => 'required|array|min:1',
+            'phones' => 'nullable|array|min:1',
             'phones.*.number' => [
-                'required',
+                'nullable',
                 'string',
                 // 'regex:/^(\d{11}:mobile|(\d{1,15}:(home|work|other)))$/',
                 'distinct',
@@ -66,7 +69,7 @@ class UpdateDonorRequest extends FormRequest
                     }
                 }
             ],
-            'phones.*.type' => 'required|string|in:mobile,home,work,other',
+            'phones.*.type' => 'nullable|string|in:mobile,home,work,other',
         ];
     }
 

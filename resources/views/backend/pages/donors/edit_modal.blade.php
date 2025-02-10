@@ -10,7 +10,7 @@
             </div>
 
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="mb-3">
                         <label for="edit_governorate_id" class="form-label">{{__('Governorate')}}</label>
                         <select class="form-control select2" id="edit_governorate_id" name="governorate_id">
@@ -22,7 +22,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="mb-3">
                         <label for="edit_city_id" class="form-label">{{__('City')}}</label>
                         <select class="form-control select2" id="edit_city_id" name="city_id">
@@ -31,9 +31,7 @@
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="mb-3">
                         <label for="edit_area_id" class="form-label">{{__('Area')}}</label>
                         <select class="form-control select2" id="edit_area_id" name="area_id">
@@ -42,11 +40,36 @@
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-
+            </div>
+            <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="edit_street" class="form-label">{{__('Street')}}</label>
                         <input type="text" class="form-control" id="edit_street" name="street">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="edit_department_id" class="form-label">{{__('Department')}}</label>
+                        <select class="form-control" id="edit_department_id" name="department_id">
+                            <option value="">{{__('Select Department') }}</option>
+                            @foreach(\App\Models\Department::all() as $department)
+                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="edit_donor_category" class="form-label">{{__('Donor Category')}}</label>
+                        <select class="form-select" id="edit_donor_category" name="donor_category">
+                            <option value="normal">{{__('Normal')}}</option>
+                            <option value="special">{{__('Special')}}</option>
+                        </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -86,6 +109,13 @@
                     </div>
                 </div>
 
+            </div>
+
+            <div class="col-md-12">
+                <div class="mb-3">
+                    <label for="notes" class="form-label">{{__('Notes')}}</label>
+                    <textarea name="notes" id="edit_notes" class="form-control"></textarea>
+                </div>
             </div>
             <div class="row">
                 <div class="col-md-12">

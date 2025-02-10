@@ -509,6 +509,7 @@ class CollectingLineController extends Controller
                 ->groupBy(
                     'donations.donor_id',
                     'donors.name',
+                    'donors.parent_id',
                     'areas.name',
                     'donors.address',
                     'donations.id',
@@ -720,8 +721,12 @@ class CollectingLineController extends Controller
      */
     public function store(StoreCollectingLineRequest $request)
     {
-        CollectingLine::create($request->validated());
-        return response()->json(['success' => 'Collecting Line created successfully.']);
+        $collectingLine = CollectingLine::create($request->validated());
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.Collecting Line  created successfully'),
+            'data' => $collectingLine,
+        ]);
     }
 
     /**
@@ -730,7 +735,11 @@ class CollectingLineController extends Controller
     public function update(UpdateCollectingLineRequest $request, CollectingLine $collectingLine)
     {
         $collectingLine->update($request->validated());
-        return response()->json(['success' => 'Collecting Line updated successfully.']);
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.Collecting Line updated successfully'),
+            'data' => $collectingLine,
+        ]);
     }
 
     /**
@@ -739,7 +748,11 @@ class CollectingLineController extends Controller
     public function destroy(CollectingLine $collectingLine)
     {
         $collectingLine->delete();
-        return response()->json(['success' => 'Collecting Line deleted successfully.']);
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.Collecting Line deleted successfully'),
+            'data' => null,
+        ]);
     }
 
 
@@ -760,6 +773,10 @@ class CollectingLineController extends Controller
         // Assign the donation to the collecting line
         $donation->collectingLines()->attach($request->collecting_line_id);
 
-        return response()->json(['success' => 'Donation assigned successfully.']);
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.Donation assigned successfully'),
+            'data' => $donation,
+        ]);
     }
 }

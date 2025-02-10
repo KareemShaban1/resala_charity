@@ -60,11 +60,14 @@ class MonthlyFormController extends Controller
         donors.name as donor_name,
         areas.name as area_name,
         donors.address,
-        GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers
+        GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers,
+        SUM(CASE WHEN monthly_forms_items.donation_type = "financial" THEN monthly_forms_items.amount ELSE 0 END) as financial_amount
+
     ')
             ->leftJoin('donors', 'monthly_forms.donor_id', '=', 'donors.id')
             ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
             ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
+            ->leftJoin('monthly_forms_items', 'monthly_forms.id', '=', 'monthly_forms_items.monthly_form_id')
             ->with('donor', 'items')
             ->groupBy(
                 'monthly_forms.donor_id',
@@ -87,6 +90,37 @@ class MonthlyFormController extends Controller
                 $query->where('monthly_forms.status', 'cancelled');
             }
         }
+
+          // Date filter
+          if (request()->has('date_filter')) {
+            $dateFilter = request('date_filter');
+            $startDate = request('start_date');
+            $endDate = request('end_date');
+
+            if ($dateFilter === 'today') {
+                $query->whereDate('monthly_forms.created_at', operator: today());
+            } elseif ($dateFilter === 'week') {
+                $query->whereBetween('monthly_forms.created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+            } elseif ($dateFilter === 'month') {
+                $query->whereBetween('monthly_forms.created_at', [now()->startOfMonth(), now()->endOfMonth()]);
+            } elseif ($dateFilter === 'range' && $startDate && $endDate) {
+                $query->whereBetween('monthly_forms.created_at', [$startDate, $endDate]);
+            }
+        }
+
+        // Donation category filter
+        if (request()->has('department') &&
+        request('department') != null && request('department') !== 'all') {
+            $query->where('monthly_forms.department_id', request('department'));
+        }
+
+        if (request()->has('employee') &&
+        request('employee') != null
+        && request('employee') !== 'all') {
+            $query->where('monthly_forms.employee_id', request('employee'));
+        }
+
+
 
 
         return DataTables::of($query)
@@ -167,6 +201,11 @@ class MonthlyFormController extends Controller
             })
             ->addColumn('cancellation_date', function ($item) {
                 return $item->cancellation_date;
+            })
+            ->addColumn('financial_amount', function ($item) {
+                return $item->items->sum(function ($donate) {
+                    return $donate->donation_type === 'financial' ? $donate->amount : 0;
+                });
             })
             ->rawColumns(['action', 'items'])
             ->make(true);

@@ -27,6 +27,9 @@
                     </button> -->
                 </div>
                 <h4 class="page-title">{{__('Donors')}}</h4>
+
+                   <!-- Filters -->
+             @include('backend.pages.donors.partials.filters')
             </div>
         </div>
     </div>
@@ -106,6 +109,7 @@
 
 @include('backend.pages.donors.check_phones_modal')
 
+@include('backend.pages.donors.donor_details_modal')
 
 <!-- Add Donation Modal -->
 @include('backend.pages.donations.add_modal')

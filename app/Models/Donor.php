@@ -21,7 +21,10 @@ class Donor extends Model
         'area_id',
         'active',
         'donor_type',
-        'monthly_donation_day'
+        'monthly_donation_day',
+        'department_id',
+        'notes',
+        'donor_category'
     ];
 
     protected $casts = [
@@ -59,5 +62,12 @@ class Donor extends Model
     public function activities()
     {
         return $this->hasMany(DonorActivity::class)->with(['callType','createdBy']);
+    }
+
+    public function department(){
+        return $this->belongsTo(Department::class);
+    }
+    public function childrenDonors(){
+        return $this->hasMany(Donor::class,'parent_id');
     }
 }

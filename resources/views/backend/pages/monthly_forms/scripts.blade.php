@@ -2,13 +2,19 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
+    let monthlyFormsTable;
     $(function() {
         // Initialize DataTable
-        var table = $('#monthly-forms-table').DataTable({
+        var monthlyFormsTable = $('#monthly-forms-table').DataTable({
             ajax: {
                 url: "{{ route('monthly-forms.data') }}",
                 data: function(d) {
                     d.status = 'ongoing'; // Add the status parameter
+                    d.date_filter = $('#date-filter').val();
+                    d.start_date = $('#start-date').val();
+                    d.end_date = $('#end-date').val();
+                    d.department = $('#department-filter').val();
+                    d.employee = $('#employee-filter').val();
                 }
             },
             columns: [{
@@ -73,14 +79,6 @@
                         columns: [0, 1, 2, 3, 4, 5, 6, 7]
                     }
                 },
-                // {
-                //     extend: 'pdf', 
-                //     text: 'PDF', 
-                //     title: 'Monthly Forms Data', 
-                //     exportOptions: {
-                //         columns: [0, 1]
-                //     }
-                // },
                 {
                     extend: 'copy',
                     exportOptions: {
@@ -88,6 +86,23 @@
                     }
                 },
             ],
+            footerCallback: function(row, data, start, end, display) {
+                    var api = this.api();
+                    var columnIndex = 6;
+
+                    var totalFinancial = api
+                        .rows({ search: 'applied' })
+                        .data()
+                        .pluck('financial_amount')
+                        .reduce((acc, val) => acc + parseFloat(val || 0), 0);
+
+                    var footerCell = $(api.column(columnIndex).footer());
+                    if (footerCell.length) {
+                        footerCell.html(`<strong>${totalFinancial.toFixed(2)}</strong>`);
+                    }
+                },
+
+
             dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
             pageLength: 10,
             responsive: true,
@@ -197,6 +212,71 @@
                 $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
             }
         });
+
+
+
+
+
+        $('#department-filter').on('change', function() {
+        let departmentId = $(this).val();
+
+        if (departmentId === 'all') {
+            $('#employee-filter').html(`<option value="all">{{__('All')}}</option>`);
+            return;
+        }
+
+        $.ajax({
+            url: '{{ route("employee.getEmployeesByDepartment") }}', // Adjust route as needed
+            type: 'GET',
+            data: { department_id: departmentId },
+            success: function(response) {
+                if (response.success) {
+                    let options = `<option value="all">{{__('All')}}</option>`;
+                    response.data.forEach(employee => {
+                        options += `<option value="${employee.id}">${employee.name}</option>`;
+                    });
+                    $('#employee-filter').html(options);
+                }
+            }
+        });
+
+        monthlyFormsTable.ajax.reload();
+
+    });
+
+
+          // Date filter change
+          $('#date-filter').on('change', function () {
+        if ($(this).val() === 'range') {
+            $('#custom-range, #end-date-container').show();
+        } else {
+            $('#custom-range, #end-date-container').hide();
+            $('#start-date, #end-date').val('');
+        }
+        monthlyFormsTable.ajax.reload();
+    });
+
+
+    // Start date and end date change
+    $('#start-date, #end-date').on('change', function () {
+        monthlyFormsTable.ajax.reload();
+    });
+
+    $('#employee-filter').on('change', function () {
+        monthlyFormsTable.ajax.reload();
+    });
+
+
+
+    $('#clear-filters').on('click', function() {
+        $('#date-filter').val('all').trigger('change');
+        $('#department-filter').val('all').trigger('change');
+        $('#employee-filter').html('<option value="all">All</option>');
+        $('#start-date, #end-date').val('');
+        monthlyFormsTable.ajax.reload();
+    });
+
+
 
         let financialRowIndex = 0;
         let inKindRowIndex = 0;
@@ -347,7 +427,7 @@
                     if (response.success) {
                         $('#addMonthlyFormModal').modal('hide');
                         form[0].reset();
-                        table.ajax.reload();
+                        monthlyFormsTable.ajax.reload();
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
@@ -408,7 +488,7 @@
                     if (response.success) {
                         $('#editMonthlyFormModal').modal('hide');
                         form[0].reset();
-                        table.ajax.reload();
+                        monthlyFormsTable.ajax.reload();
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',

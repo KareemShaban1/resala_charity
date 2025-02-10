@@ -13,68 +13,7 @@
         // Bind events
         bindEvents();
 
-        
-
-//      // Handle form submission
-//      $('#submitUpload').on('click', function() {
-//     // Get the form data
-//     var formData = new FormData($('#uploadForm')[0]);
-
-//     // Send the AJAX request
-//     $.ajax({
-//         url: "{{ route('donors.uploadPhoneNumbers') }}",
-//         type: "POST",
-//         data: formData,
-//         processData: false,
-//         contentType: false,
-//         headers: {
-//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//         },
-//         success: function(response) {
-//             // Handle success response
-//             if (response.success) {
-//                 // Close the modal
-//                 $('#uploadModal').modal('hide');
-
-//                 // Show success message
-//                 Swal.fire({
-//                     icon: 'success',
-//                     title: 'Success',
-//                     text: response.message,
-//                 });
-
-//                 // Trigger file download
-//                 window.location.href = response.download_url;
-//             }
-//         },
-//         error: function(xhr) {
-//             // Handle error response
-//             if (xhr.status === 422) {
-//                 var errors = xhr.responseJSON.errors;
-//                 for (var key in errors) {
-//                     if (errors.hasOwnProperty(key)) {
-//                         var input = $('[name="' + key + '"]');
-//                         input.addClass('is-invalid');
-//                         input.siblings('.invalid-feedback').text(errors[key][0]);
-//                     }
-//                 }
-//             } else {
-//                 Swal.fire({
-//                     icon: 'error',
-//                     title: 'Error',
-//                     text: xhr.responseJSON.message || 'Something went wrong!',
-//                 });
-//             }
-//         }
-//     });
-// });
-
-//         // Reset form and validation on modal close
-//         $('#uploadModal').on('hidden.bs.modal', function() {
-//             $('#uploadForm')[0].reset();
-//             $('#uploadForm .is-invalid').removeClass('is-invalid');
-//             $('#uploadForm .invalid-feedback').text('');
-//         });
+    
     });
 
     function initializeSelect2() {
@@ -153,26 +92,6 @@
             }
         });
 
-        // Modal form events
-        // $('#edit_governorate_id').on('change', function() {
-        //     var governorateId = $(this).val();
-        //     if (governorateId) {
-        //         loadCities(governorateId, $('#edit_city_id'));
-        //         $('#edit_area_id').empty().trigger('change');
-        //     } else {
-        //         $('#edit_city_id, #edit_area_id').empty().trigger('change');
-        //     }
-        // });
-
-        // $('#edit_city_id').on('change', function() {
-        //     var cityId = $(this).val();
-        //     if (cityId) {
-        //         loadAreas(cityId, $('#edit_area_id'));
-        //     } else {
-        //         $('#edit_area_id').empty().trigger('change');
-        //     }
-        // });
-
         // Modal events
         $('#editDonorModal').on({
             'show.bs.modal': function() {
@@ -216,6 +135,9 @@
             $('#edit_address').val(data.address);
             $('#edit_street').val(data.street);
             $('#edit_donor_type').val(data.donor_type);
+            $('#edit_donor_category').val(data.donor_category);
+            $('#edit_department_id').val(data.department_id).trigger('change');
+            $('#edit_notes').val(data.notes);
             $('#edit_monthly_donation_day').val(data.monthly_donation_day);
             $('#edit_active')
                 .val(data.active ? "1" : "0") // Convert true/false to "1"/"0"
@@ -246,6 +168,90 @@
             }
         });
     }
+
+
+    function donorDetails(id){
+
+        $('#donorDetailsModal').modal('show');
+
+        $.get(`{{ url('donors') }}/${id}`)
+        .done(function(data) {
+
+            let modalContent = `
+            <h4 class="text-primary">{{__('Donor Information')}}</h4>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                            <p><strong>{{__('Name')}}:</strong> ${data.name}</p>
+                </div>
+                  <div class="row">
+                    <div class="col-md-4">
+                          <p><strong>{{__('Governorate')}}:</strong> ${data.governorate?.name}</p>
+                    </div>
+                     <div class="col-md-4">
+                          <p><strong>{{__('City')}}:</strong> ${data.city?.name}</p>
+                    </div>
+                     <div class="col-md-4">
+                          <p><strong>{{__('Area')}}:</strong> ${data.area?.name}</p>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                            <p><strong>{{__('Address')}}:</strong> ${data.address ?? ''}</p>
+                </div>
+                  <div class="col-md-12">
+                            <p><strong>{{__('Street')}}:</strong> ${data.street ?? ''}</p>
+                </div>
+
+              
+                <div class="col-md-4">
+                            <p><strong>{{__('Donor Type')}}:</strong> 
+                            ${data.donor_type === 'normal' ? "{{ __('Normal')}}" : 
+                            "{{__('Monthly') }}" ?? ''}</p>
+                </div>
+
+                 <div class="col-md-4">
+                            <p><strong>{{__('Monthly Donation Day')}}:</strong> 
+                            ${data.donor_type === 'monthly' ? data.monthly_donation_day : ''}</p>
+                </div>
+
+                <div class="col-md-4">
+                            <p><strong>{{__('Donor Category')}}:</strong> ${
+                            
+                            data.donor_category === 'normal' ? " {{__('Normal') }}" 
+                            : "{{__('Special')}}" ?? ''}</p>
+                </div>
+
+                 <div class="col-md-4">
+                            <p><strong>{{__('Status')}}:</strong> 
+                            ${data.active === true ? "{{__('Active')}}" : "{{__('Not Active')}}"}</p>
+                </div>
+
+                 <div class="col-md-4">
+                          <p><strong>{{__('Department')}}:</strong> ${data.department?.name ?? ''}</p>
+                    </div>
+                
+
+                  <div class="col-md-12">
+                            <p><strong>{{__('Notes')}}:</strong> ${data.notes ?? ''}</p>
+                </div>
+
+
+                 <h4 class="text-primary">{{__('Donor Phones')}}</h4>
+                
+                `;
+
+                data.phones
+                        .forEach(phone => {
+                            modalContent += `
+                            <div class="col-md-12"> ${phone.phone_number} --- (${phone.phone_type}) </div>
+                            `;
+                        })
+
+              // Add the constructed content to the modal body
+              $('#donorDetailsModal .modal-body').html(modalContent);    
+        });
+
+    }
+
 
     // Add phone field function
     function addPhoneField(container, phone = '', type = 'mobile', id = '') {
@@ -280,15 +286,19 @@
         $(this).closest('.input-group').remove();
     });
 
+    let donorsTable;
+
     // Initialize DataTable
     function initializeDataTable() {
-        table = $('#donors-table').DataTable({
+        donorsTable = $('#donors-table').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
             url: "{{ route('donors.data') }}",
             data: function(d) {
-                d.phone = $('#phone-search').val(); // Include the phone search term
+                d.date_filter = $('#date-filter').val();
+                d.start_date = $('#start-date').val();
+                d.end_date = $('#end-date').val();
             }
         },
             columns: [{
@@ -404,8 +414,34 @@
 
     // Trigger DataTable reload on input change
     $('#phone-search').on('keyup change', function() {
-        table.draw();
+        donorsTable.draw();
     });
+
+       // Date filter change
+       $('#date-filter').on('change', function () {
+        if ($(this).val() === 'range') {
+            $('#custom-range, #end-date-container').show();
+        } else {
+            $('#custom-range, #end-date-container').hide();
+            $('#start-date, #end-date').val('');
+        }
+        donorsTable.ajax.reload();
+    });
+
+
+    // Start date and end date change
+    $('#start-date, #end-date').on('change', function () {
+        donorsTable.ajax.reload();
+    });
+
+
+    $('#clear-filters').on('click', function() {
+        $('#date-filter').val('all').trigger('change');
+        $('#start-date, #end-date').val('');
+        donorsTable.ajax.reload();
+    });
+
+
 
     // Load Cities based on Governorate
     function loadCities(governorateId, targetSelect, selectedCityId = null) {
@@ -476,7 +512,7 @@
                     $('#addDonorModal').modal('hide');
                     form[0].reset();
                     $('.select2').val('').trigger('change');
-                    table.ajax.reload();
+                    donorsTable.ajax.reload();
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',
@@ -516,7 +552,7 @@
                     $('#editDonorModal').modal('hide');
                     form[0].reset();
                     $('.select2').val('').trigger('change');
-                    table.ajax.reload();
+                    donorsTable.ajax.reload();
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',
@@ -590,7 +626,7 @@
                         $('#importDonorForm')[0].reset();
                     }, 2000);
 
-                    table.ajax.reload();
+                    donorsTable.ajax.reload();
                 }
             },
             error: function(xhr) {
@@ -658,7 +694,7 @@
                             title: 'Deleted',
                             text: 'Donor deleted successfully!',
                         });
-                        table.ajax.reload();
+                        donorsTable.ajax.reload();
                     },
                     error: function(xhr) {
                         Swal.fire({

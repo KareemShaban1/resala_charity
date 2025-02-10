@@ -9,6 +9,7 @@ use App\Http\Controllers\AreaGroupController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\CallTypeController;
 use App\Http\Controllers\CollectingLineController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DonationCategoryController;
 use App\Http\Controllers\DonationController;
@@ -19,11 +20,13 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\MonthlyFormCancellationController;
 use App\Http\Controllers\MonthlyFormController;
 use App\Http\Controllers\MonthlyFormDonationController;
+use App\Http\Controllers\MonthlyFormReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Artisan;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Month;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,9 +51,12 @@ Route::group(
     ],
     function () {
 
-        Route::get('/', function () {
-            return view('backend.dashboard');
-        })->name('dashboard');
+        Route::get('/', [DashboardController::class , 'index'])->name('dashboard.index');
+        Route::get('/dashboard/filter', [DashboardController::class, 'filter'])->name('dashboard.filter');
+
+        Route::get('/monthly-forms-report', [MonthlyFormReportController::class , 'index'])->name('monthly-forms-report.index');
+        Route::get('/monthly-forms-report/filter', [MonthlyFormReportController::class, 'filter'])->name('monthly-forms-report.filter');
+
 
         // Departments Routes
         Route::get('/departments/data', [DepartmentController::class, 'data'])->name('departments.data');
@@ -59,6 +65,8 @@ Route::group(
         // Employees Routes
         Route::get('/employees/data', [EmployeeController::class, 'data'])->name('employees.data');
         Route::resource('employees', EmployeeController::class);
+        Route::get('/get-employee-by-department',[EmployeeController::class,'getEmployeesByDepartment'])
+        ->name('employee.getEmployeesByDepartment');
 
 
         // Governorates Routes
@@ -194,3 +202,5 @@ Route::get('/backups/create', [BackupController::class, 'create'])->name('backup
 Route::get('/backups/download/{filename}', [BackupController::class, 'download'])
     ->where('filename', '.*') // Allow slashes in the filename
     ->name('backup.download');
+    Route::get('/export-reports', [DashboardController::class, 'exportMonthlyForms'])->name('dashboard.export_reports');
+

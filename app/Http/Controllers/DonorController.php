@@ -9,10 +9,8 @@ use App\Http\Requests\UpdateDonorRequest;
 use App\Imports\DonorsImport;
 use App\Imports\PhoneNumbersImport;
 use App\Models\DonationCategory;
-use App\Models\DonorActivity;
 use App\Models\DonorPhone;
 use App\Models\Employee;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -73,6 +71,23 @@ class DonorController extends Controller
 
         $query->orderBy('donors.id', 'desc');
 
+         // Date filter
+         if (request()->has('date_filter')) {
+            $dateFilter = request('date_filter');
+            $startDate = request('start_date');
+            $endDate = request('end_date');
+
+            if ($dateFilter === 'today') {
+                $query->whereDate('donors.created_at', operator: today());
+            } elseif ($dateFilter === 'week') {
+                $query->whereBetween('donors.created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+            } elseif ($dateFilter === 'month') {
+                $query->whereBetween('donors.created_at', [now()->startOfMonth(), now()->endOfMonth()]);
+            } elseif ($dateFilter === 'range' && $startDate && $endDate) {
+                $query->whereBetween('donors.created_at', [$startDate, $endDate]);
+            }
+        }
+
 
         return datatables()->of($query)
             ->filterColumn('phones', function ($query, $keyword) {
@@ -93,6 +108,9 @@ class DonorController extends Controller
             })
             ->addColumn('action', function ($donor) {
                 return '
+                    <a href="javascript:void(0)" onclick="donorDetails(' . $donor->id . ')" class="btn btn-sm btn-light">
+                        <i class="mdi mdi-eye"></i>
+                    </a>
                     <a href="javascript:void(0)" onclick="editDonor(' . $donor->id . ')" class="btn btn-sm btn-info">
                         <i class="mdi mdi-pencil"></i>
                     </a>
@@ -176,7 +194,10 @@ class DonorController extends Controller
     {
         $this->authorize('view', Donor::class);
 
-        return response()->json($donor->load(['governorate', 'city', 'area', 'phones']));
+        $childrenDonors = Donor::where('parent_id', $donor->id)->get();
+
+        return response()->json($donor->load(['governorate', 'city', 'area', 'phones','childrenDonors']));
+
     }
 
     /**
@@ -291,7 +312,7 @@ class DonorController extends Controller
             // Return the result with skipped rows if any
             return response()->json([
                 'success' => true,
-                'message' => __('messages.Donors imported successfully!'),
+                'message' => __('messages.Donors imported successfully'),
                 'skipped_rows' => $skippedRows,
             ]);
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
@@ -421,67 +442,6 @@ class DonorController extends Controller
         return response()->json($childrenDonors);
     }
 
-    // public function addActivity(Request $request)
-    // {
-    //     $validatedData = $request->validate([
-    //         'donor_id' => 'required|exists:donors,id',
-    //         'call_type_id' => 'required|exists:call_types,id',
-    //         'activity_type' => 'required|in:call,whatsapp_chat',
-    //         'notes' => 'nullable|string',
-    //         'status' => 'nullable|string',
-    //         'date_time' => 'required|date',
-    //         'response' => 'nullable|string',
-    //     ]);
-    //     // Convert `date_time` to proper format
-    //     $validatedData['date_time'] = Carbon::parse($validatedData['date_time'])->format('Y-m-d H:i:s');
-    //     // dd($validatedData);
-    //     DonorActivity::create([
-    //         'donor_id' => $request->donor_id,
-    //         'call_type_id' => $request->call_type_id,
-    //         'activity_type' => $request->activity_type,
-    //         'notes' => $request->notes,
-    //         'status' => $request->status,
-    //         'response' => $request->response,
-    //         'date_time' => $validatedData['date_time'],
-    //         'created_by' => auth()->user()->id
-    //     ]);
-    //     return response()->json([
-    //         'success' => true,
-    //         'message' => __('messages.Donor activity added successfully'),
-    //     ]);
-    // }
-
-
-    // public function uploadPhoneNumbers(Request $request)
-    // {
-    //     // Validate the uploaded file
-    //     $request->validate([
-    //         'file' => 'required|mimes:xlsx,xls',
-    //     ]);
-
-    //     // Import phone numbers from the Excel file
-    //     $uploadedNumbers = Excel::toCollection(new PhoneNumbersImport, $request->file('file'))->first();
-
-    //     // Get existing phone numbers from the database
-    //     $existingNumbers = DonorPhone::pluck('phone_number')->toArray();
-
-    //     // Find phone numbers that do not exist in the database
-    //     $nonMatchingNumbers = $uploadedNumbers->diff($existingNumbers);
-
-    //     // Generate a new Excel file with the non-matching numbers
-    //     $fileName = 'non_matching_numbers_' . now()->format('Ymd_His') . '.xlsx';
-
-    //     // Save the file to the storage disk (e.g., "public")
-    //     $filePath = 'exports/' . $fileName;
-    //     Excel::store(new NonMatchingNumbersExport($nonMatchingNumbers), $filePath, 'public');
-
-    //     // Return a JSON response with the file URL
-    //     return response()->json([
-    //         'success' => true,
-    //         'message' => 'File processed successfully.',
-    //         'download_url' => Storage::disk('public')->url($filePath),
-    //     ]);
-    // }
 
     public function uploadPhoneNumbers(Request $request)
     {
