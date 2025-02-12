@@ -295,7 +295,7 @@ class DonorController extends Controller
 
     public function importDonors(Request $request)
     {
-        ini_set('max_execution_time', 600); // Extends execution time to 300 seconds
+        ini_set('max_execution_time', 1200); // Extends execution time to 300 seconds
         ini_set('memory_limit', '512M');
 
         $request->validate([
