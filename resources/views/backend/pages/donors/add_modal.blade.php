@@ -139,7 +139,7 @@
                         <label class="form-label">{{__('Phone Numbers')}}</label>
                         <div id="phone-container">
                             <div class="input-group mb-2">
-                                <input type="text" name="phones[0][number]" class="form-control" placeholder="{{__('Enter phone number')}}" required>
+                                <input type="text" name="phones[0][number]" class="form-control" placeholder="{{__('Enter phone number')}}">
                                 <select name="phones[0][type]" class="form-select" style="max-width: 150px;">
                                     <option value="mobile">{{__('Mobile')}}</option>
                                     <option value="home">{{__('Home')}}</option>

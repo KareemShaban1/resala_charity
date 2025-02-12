@@ -151,4 +151,22 @@ class UserController extends Controller
             'roles' => $user->roles->pluck('name'), // Send only role names
         ]);
     }
+
+    public function changePassword(Request $request){
+
+        $this->authorize('update', User::class);
+
+        $validated = $request->validate([
+            'password' => 'required|min:8',
+            'confirm_password' => 'required|same:password',
+        ]);
+
+        $user = User::findOrFail(auth()->user()->id);
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+
+        return redirect()->route('users.change-password.view')->with('success', __('messages.Password changed successfully'));
+
+    }
 }

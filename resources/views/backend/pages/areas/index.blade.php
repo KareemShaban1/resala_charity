@@ -12,6 +12,9 @@
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAreaModal">
                         <i class="mdi mdi-plus"></i> {{__('Add Area')}}
                     </button>
+                    <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#importAreaModal">
+                        <i class="mdi mdi-upload"></i> {{__('Import Area')}}
+                    </button>
                 </div>
                 <h4 class="page-title">{{__('Areas')}}</h4>
             </div>
@@ -30,7 +33,6 @@
                                 <th>{{__('Name')}}</th>
                                 <th>{{__('City')}}</th>
                                 <th>{{__('Governorate')}}</th>
-                                <!-- <th>{{__('Created At')}}</th> -->
                                 <th>{{__('Actions')}}</th>
                             </tr>
                         </thead>
@@ -42,73 +44,14 @@
 </div>
 
 <!-- Add Area Modal -->
-<x-modal id="addAreaModal" title="{{__('Add New Area')}}">
-    <form id="addAreaForm" method="POST" action="{{ route('areas.store') }}">
-        @csrf
-        <div class="modal-body">
-            <div class="mb-3">
-                <label for="name" class="form-label">{{__('Name')}}</label>
-                <input type="text" class="form-control" id="name" name="name" required>
-                <div class="invalid-feedback"></div>
-            </div>
-            <div class="mb-3">
-                <label for="governorate_id" class="form-label">{{__('Governorate')}}</label>
-                <select class="form-control select2" id="governorate_id" required>
-                    <option value="">{{__('Select Governorate')}}</option>
-                    @foreach(\App\Models\Governorate::all() as $governorate)
-                    <option value="{{ $governorate->id }}">{{ $governorate->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="city_id" class="form-label">{{__('City')}}</label>
-                <select class="form-control select2" id="city_id" name="city_id" required>
-                    <option value=""> {{__('Select City')}}</option>
-                </select>
-                <div class="invalid-feedback"></div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{__('Close')}}</button>
-            <button type="submit" class="btn btn-primary">{{__('Save')}}</button>
-        </div>
-    </form>
-</x-modal>
+@include('backend.pages.areas.add_modal')
 
 <!-- Edit Area Modal -->
-<x-modal id="editAreaModal" title="Edit Area">
-    <form id="editAreaForm" method="POST">
-        @csrf
-        @method('PUT')
-        <div class="modal-body">
-            <div class="mb-3">
-                <label for="edit_name" class="form-label">{{__('Name')}}</label>
-                <input type="text" class="form-control" id="edit_name" name="name" required>
-                <div class="invalid-feedback"></div>
-            </div>
-            <div class="mb-3">
-                <label for="edit_governorate_id" class="form-label">{{__('Governorate')}}</label>
-                <select class="form-control" id="edit_governorate_id" required>
-                    <option value="">{{__('Select Governorate')}}</option>
-                    @foreach(\App\Models\Governorate::all() as $governorate)
-                    <option value="{{ $governorate->id }}">{{ $governorate->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="edit_city_id" class="form-label">{{__('City')}}</label>
-                <select class="form-control" id="edit_city_id" name="city_id" required>
-                    <option value="">{{__('Select City')}}</option>
-                </select>
-                <div class="invalid-feedback"></div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{__('Close')}}</button>
-            <button type="submit" class="btn btn-primary">{{__('Update')}}</button>
-        </div>
-    </form>
-</x-modal>
+@include('backend.pages.areas.edit_modal')
+
+<!-- Import Area Modal -->
+@include('backend.pages.areas.import_modal')
+
 
 @endsection
 
@@ -148,6 +91,7 @@
         $.get(`{{ url('areas') }}/${id}/edit`, function(data) {
             $('#edit_governorate_id').val(data.governorate_id);
             $('#edit_city_id').val(data.city_id);
+            $('#edit_area_group_id').val(data.area_group_id);
             console.log(data);
             loadCities(data.governorate_id, $('#edit_city_id'), cityId);
         });
@@ -155,12 +99,13 @@
         $('#editAreaModal').modal('show');
     }
 
+    let areasTable;
     $(function() {
         // Initialize DataTable
 
 
 
-        var table = $('#areas-table').DataTable({
+        areasTable = $('#areas-table').DataTable({
             ajax: "{{ route('areas.data') }}",
             columns: [{
                     data: 'id',
@@ -257,7 +202,7 @@
                     if (response.success) {
                         $('#addAreaModal').modal('hide');
                         form[0].reset();
-                        table.ajax.reload();
+                        areasTable.ajax.reload();
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
@@ -301,7 +246,7 @@
                     if (response.success) {
                         $('#editAreaModal').modal('hide');
                         form[0].reset();
-                        table.ajax.reload();
+                        areasTable.ajax.reload();
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
@@ -334,6 +279,96 @@
             form.find('.is-invalid').removeClass('is-invalid');
             form.find('.invalid-feedback').text('');
         });
+
+        $('#importAreaForm').on('submit', function(e) {
+        e.preventDefault(); // Prevent the default form submission
+
+        let formData = new FormData(this);
+
+        // Clear previous messages
+        $('#feedbackMessage').hide().removeClass('alert-success alert-danger').text('');
+
+        // AJAX request
+        $.ajax({
+            url: "{{ route('areas.import') }}",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function() {
+                $('#importAreaForm button[type="submit"]').prop('disabled', true);
+            },
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Import Successful',
+                        text: response.message,
+                    });
+
+                    if (response.errors && response.errors.length > 0) {
+                        let errorDetails = response.errors.map(error =>
+                            `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
+
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Some Records Skipped',
+                            html: `<pre>${errorDetails}</pre>`,
+                            customClass: {
+                                popup: 'text-start',
+                            }
+                        });
+                    }
+
+                    // Close modal and reset form
+                    setTimeout(() => {
+                        $('#importAreaModal').modal('hide');
+                        $('#importAreaForm')[0].reset();
+                    }, 2000);
+
+                    areasTable.ajax.reload();
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    // Validation error
+                    let response = xhr.responseJSON;
+                    let errors = response.errors || [];
+                    let errorDetails = '';
+
+                    if (Array.isArray(errors)) {
+                        // Handle row-specific errors
+                        errorDetails = errors.map(error =>
+                            `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
+                    } else {
+                        // Handle general file validation error
+                        errorDetails = errors.file ? errors.file[0] : 'Something went wrong.';
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        html: `<pre style="direction: ltr;">${errorDetails}</pre>`,
+                        customClass: {
+                            popup: 'text-start',
+                        }
+                    });
+                } else {
+                    // General error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Unexpected Error',
+                        text: 'An unexpected error occurred. Please try again later.',
+                    });
+                }
+            },
+            complete: function() {
+                $('#importAreaForm button[type="submit"]').prop('disabled', false);
+            }
+        });
+    });
+
+
     });
 </script>
 @endpush

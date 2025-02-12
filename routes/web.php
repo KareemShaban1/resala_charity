@@ -82,6 +82,9 @@ Route::group(
         Route::get('/areas/data', [AreaController::class, 'data'])->name('areas.data');
         Route::get('/areas/by-city', [AreaController::class, 'getAreasByCity'])->name('areas.by-city');
         Route::resource('areas', AreaController::class);
+        Route::post('/areas/import', [AreaController::class, 'importAreas'])
+        ->name('areas.import');
+
 
         Route::get('/areas-groups/data', [AreaGroupController::class, 'data'])->name('areas-groups.data');
         Route::resource('areas-groups', AreaGroupController::class);
@@ -133,6 +136,13 @@ Route::group(
         )->name('monthly-forms.details');
         Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
         Route::resource('users', UserController::class);
+        Route::post('/users/change-password', [UserController::class, 'changePassword']
+        )->name('users.change-password');
+        Route::get('/users/change-password/view', function () {
+            return view('backend.pages.settings.account');
+        }
+        )->name('users.change-password.view');
+
 
         Route::get('/roles/data', [RoleController::class, 'data'])->name('roles.data');
         Route::resource('roles', RoleController::class);
