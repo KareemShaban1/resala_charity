@@ -49,7 +49,7 @@
                 <input type="text" class="form-control" id="name" name="name" required>
                 <div class="invalid-feedback"></div>
             </div>
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label for="areas" class="form-label">{{__('Areas')}}</label>
                 <select class="form-control select2" id="areas" name="areas[]" multiple required>
                     <option value="">{{__('Select Area')}}</option>
@@ -57,7 +57,7 @@
                     <option value="{{ $area->id }}">{{ $area->name }}</option>
                     @endforeach
                 </select>
-            </div>
+            </div> -->
 
         </div>
         <div class="modal-footer">
@@ -78,7 +78,7 @@
                 <input type="text" class="form-control" id="edit_name" name="name" required>
                 <div class="invalid-feedback"></div>
             </div>
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label for="edit_areas" class="form-label">{{__('Areas')}}</label>
                 <select class="form-control" id="edit_areas" name="areas[]" multiple required>
                     <option value="">{{__('Select Area')}}</option>
@@ -86,7 +86,7 @@
                     <option value="{{ $area->id }}">{{ $area->name }}</option>
                     @endforeach
                 </select>
-            </div>
+            </div> -->
 
         </div>
         <div class="modal-footer">

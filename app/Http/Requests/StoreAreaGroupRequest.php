@@ -24,7 +24,7 @@ class StoreAreaGroupRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255', // Area group name is required
-            'areas' => 'required|array', // At least one area must be selected
+            'areas' => 'nullable|array', // Areas are optional (can be empty)
             'areas.*' => 'exists:areas,id', // Each area ID must exist in the areas table
         ];
     }
