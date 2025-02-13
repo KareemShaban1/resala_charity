@@ -16,8 +16,13 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 
-class DonorsImport implements ToCollection, WithHeadingRow, WithValidation, SkipsEmptyRows,ShouldQueue,
-WithChunkReading
+class DonorsImport implements
+    ToCollection,
+    WithHeadingRow,
+    WithValidation,
+    SkipsEmptyRows,
+    ShouldQueue,
+    WithChunkReading
 {
 
     private $skippedRows = [];
@@ -53,15 +58,25 @@ WithChunkReading
                     try {
                         // Validate required fields
                         if (empty($data['name'])) {
-                            throw new \Exception('Name is required '.$data['name'] . '');
+                            throw new \Exception('Name is required ' . $data['name'] . '');
                         }
 
-                        // Process phones
-                        $phones = explode(',', $data['phones']);
+                        // Process phones only if the field is not empty
                         $validPhones = [];
-                        foreach ($phones as $phone) {
-                            [$number, $type] = explode(':', $phone) + [null, null];
-                            $validPhones[] = ['number' => trim($number), 'type' => trim($type ?? 'unknown')];
+                        if (!empty($data['phones'])) {
+                            $phones = explode(',', $data['phones']);
+                            foreach ($phones as $phone) {
+                                [$number, $type] = explode(':', $phone) + [null, null];
+                                $number = trim($number);
+                                $type = trim($type ?? 'unknown');
+
+                                // Skip if the phone number is empty
+                                if (empty($number)) {
+                                    continue;
+                                }
+
+                                $validPhones[] = ['number' => $number, 'type' => $type];
+                            }
                         }
 
                         // Find relationships using cached data
@@ -88,9 +103,8 @@ WithChunkReading
                             ]
                         );
 
-                        // Process phones
+                        // Process phones only if there are valid phone numbers
                         foreach ($validPhones as $index => $validPhone) {
-                            if (isset($validPhone['number'])) {
                             $donor->phones()->updateOrCreate(
                                 ['phone_number' => $validPhone['number']],
                                 [
@@ -99,15 +113,14 @@ WithChunkReading
                                 ]
                             );
                         }
-                        }
                     } catch (\Exception $e) {
-                        \Log::info('errors',[$e]);
+                        \Log::info('errors', [$e]);
                         $this->skippedRows[] = [
                             'row' => $index + 2,
                             'data' => $data,
                             'error' => $e->getMessage(),
                         ];
-                        \Log::info('skipped rows',[$this->skippedRows]);
+                        \Log::info('skipped rows', [$this->skippedRows]);
                     }
                 }
             });
@@ -140,7 +153,6 @@ WithChunkReading
                 'nullable',
                 'string',
                 'regex:/^((\d{11}:mobile)|(\d{1,15}:(home|work)))(,((\d{11}:mobile)|(\d{1,15}:(home|work))))*$/',
-                'unique:donor_phones,phone_number'
             ],
             'active' => 'nullable|boolean',
         ];
