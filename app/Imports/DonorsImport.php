@@ -90,6 +90,7 @@ WithChunkReading
 
                         // Process phones
                         foreach ($validPhones as $index => $validPhone) {
+                            if (isset($validPhone['number'])) {
                             $donor->phones()->updateOrCreate(
                                 ['phone_number' => $validPhone['number']],
                                 [
@@ -97,6 +98,7 @@ WithChunkReading
                                     'is_primary' => $index === 0,
                                 ]
                             );
+                        }
                         }
                     } catch (\Exception $e) {
                         \Log::info('errors',[$e]);
