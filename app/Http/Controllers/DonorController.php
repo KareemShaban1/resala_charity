@@ -316,12 +316,11 @@ class DonorController extends Controller
 
             $skippedRows = $import->getSkippedRows(); // Retrieve skipped rows for feedback
 
-            \Log::info('skipps',[$skippedRows]);
             // Return the result with skipped rows if any
             return response()->json([
                 'success' => true,
                 'message' => __('messages.Donors imported successfully'),
-                // 'skipped_rows' => $skippedRows,
+                'skipped_rows' => $skippedRows,
             ]);
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
