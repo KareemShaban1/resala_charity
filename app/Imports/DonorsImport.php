@@ -99,6 +99,7 @@ WithChunkReading
                             );
                         }
                     } catch (\Exception $e) {
+                        \Log::info('errors',[$e]);
                         $this->skippedRows[] = [
                             'row' => $index + 2,
                             'data' => $data,
