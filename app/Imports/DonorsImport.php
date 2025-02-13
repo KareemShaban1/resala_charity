@@ -47,8 +47,8 @@ class DonorsImport implements
 
     public function collection(Collection $rows)
     {
-        \DB::disableQueryLog(); // Disable query logging
-        \DB::beginTransaction(); // Start transaction
+        // \DB::disableQueryLog(); // Disable query logging
+        // \DB::beginTransaction(); // Start transaction
 
         try {
             $rows->chunk(500)->each(function ($chunk) {
@@ -125,7 +125,7 @@ class DonorsImport implements
                 }
             });
 
-            \DB::commit(); // Commit transaction
+            // \DB::commit(); // Commit transaction
         } catch (\Exception $e) {
             \DB::rollBack(); // Rollback on error
             throw $e;
