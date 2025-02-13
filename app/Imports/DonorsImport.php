@@ -71,9 +71,9 @@ WithChunkReading
                         $departmentId = $this->departments[$data['department_name']] ?? null;
 
                         // Create or update donor
-                        $donor = Donor::updateOrCreate(
-                            ['name' => $data['name']],
+                        $donor = Donor::create(
                             [
+                                'name' => $data['name'],
                                 'address' => $data['address'] ?? null,
                                 'street' => $data['street'] ?? null,
                                 'governorate_id' => $governorateId,
