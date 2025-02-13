@@ -17,109 +17,95 @@ use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 class DonorsImport implements ToCollection, WithHeadingRow, WithValidation, SkipsEmptyRows
 {
 
-    private $skippedRows = []; // Collect skipped rows
+    private $skippedRows = [];
+    private $governorates;
+    private $cities;
+    private $areas;
+    private $departments;
 
-    /**
-     * Process the collection.
-     */
+    public function __construct()
+    {
+        // Cache data to reduce database queries
+        $this->governorates = Governorate::pluck('id', 'name')->toArray();
+        $this->cities = City::pluck('id', 'name')->toArray();
+        $this->areas = Area::pluck('id', 'name')->toArray();
+        $this->departments = Department::pluck('id', 'name')->toArray();
+    }
+
     public function collection(Collection $rows)
     {
+        \DB::disableQueryLog(); // Disable query logging
+        \DB::beginTransaction(); // Start transaction
 
-        $rows->chunk(500)->each(function ($chunk) {
-            foreach ($chunk as $index => $row) {
+        try {
+            $rows->chunk(500)->each(function ($chunk) {
+                foreach ($chunk as $index => $row) {
+                    $data = $row->toArray();
 
-                $data = $row->toArray();
-
-                try {
-                    // Skip if the name is missing
-                    if (empty($data['name'])) {
-                        throw new \Exception('Name is required.');
-                    }
-
-                    // Skip if no phone is provided
-                    if (empty($data['phones'])) {
-                        throw new \Exception('No phone records provided.');
-                    }
-
-                    // Validate phones
-                    $phones = explode(',', $data['phones']);
-                    $validPhones = [];
-                    foreach ($phones as $phone) {
-                        [$number, $type] = explode(':', $phone) + [null, null];
-
-                        // Skip if phone number is "0" regardless of type
-                        // if (trim($number) === '0') {
-                        //     throw new \Exception("Invalid phone number: {$number}");
-                        // }
-                        // Skip if phone number is not 11 digits for mobiles
-                        // if ($type === 'mobile' && strlen(trim($number)) !== 11) {
-                        //     throw new \Exception("Invalid mobile phone number: {$number}");
-                        // }
-
-                        $validPhones[] = ['number' => trim($number), 'type' => trim($type ?? 'unknown')];
-                    }
-
-                    // Find relationships for governorate, city, and area
-                    $governorate = Governorate::where('name', $data['governorate_name'])->first();
-                    $city = City::where('name', $data['city_name'])
-                        ->where('governorate_id', $governorate->id ?? null)
-                        ->first();
-                    $area = Area::where('name', $data['area_name'])
-                        ->where('city_id', $city->id ?? null)
-                        ->first();
-
-                    $department = Department::where('name', $data['department_name'])
-                        ->first();
-
-                    \Log::info('donors', [$data]);
-                    // Handle donor record (update or create)
                     try {
+                        // Validate required fields
+                        if (empty($data['name']) || empty($data['phones'])) {
+                            throw new \Exception('Name and phones are required.');
+                        }
+
+                        // Process phones
+                        $phones = explode(',', $data['phones']);
+                        $validPhones = [];
+                        foreach ($phones as $phone) {
+                            [$number, $type] = explode(':', $phone) + [null, null];
+                            $validPhones[] = ['number' => trim($number), 'type' => trim($type ?? 'unknown')];
+                        }
+
+                        // Find relationships using cached data
+                        $governorateId = $this->governorates[$data['governorate_name']] ?? null;
+                        $cityId = $this->cities[$data['city_name']] ?? null;
+                        $areaId = $this->areas[$data['area_name']] ?? null;
+                        $departmentId = $this->departments[$data['department_name']] ?? null;
+
+                        // Create or update donor
                         $donor = Donor::updateOrCreate(
                             ['name' => $data['name']],
                             [
                                 'address' => $data['address'] ?? null,
                                 'street' => $data['street'] ?? null,
-                                'governorate_id' => $governorate->id ?? null,
-                                'city_id' => $city->id ?? null,
-                                'area_id' => $area->id ?? null,
+                                'governorate_id' => $governorateId,
+                                'city_id' => $cityId,
+                                'area_id' => $areaId,
                                 'active' => $data['active'] ?? true,
                                 'donor_type' => $data['donor_type'],
                                 'monthly_donation_day' => $data['monthly_donation_day'],
                                 'donor_category' => $data['donor_category'],
-                                'department_id' => $department->id ?? null,
+                                'department_id' => $departmentId,
                                 'notes' => $data['notes'],
-
-
                             ]
                         );
+
+                        // Process phones
+                        foreach ($validPhones as $index => $validPhone) {
+                            $donor->phones()->updateOrCreate(
+                                ['phone_number' => $validPhone['number']],
+                                [
+                                    'phone_type' => $validPhone['type'],
+                                    'is_primary' => $index === 0,
+                                ]
+                            );
+                        }
                     } catch (\Exception $e) {
-                        \Log::error("Error creating donor: {$e->getMessage()}", ['data' => $data]);
-                        throw $e; // Optional: Let it bubble up
+                        $this->skippedRows[] = [
+                            'row' => $index + 2,
+                            'data' => $data,
+                            'error' => $e->getMessage(),
+                        ];
                     }
-
-
-                    // Process valid phones and associate them with the donor
-                    foreach ($validPhones as $index => $validPhone) {
-                        $donor->phones()->updateOrCreate(
-                            ['phone_number' => $validPhone['number']],
-                            [
-                                'phone_type' => $validPhone['type'],
-                                'is_primary' => $index === 0,
-                            ]
-                        );
-                    }
-                } catch (\Exception $e) {
-                    // Skip rows with issues
-                    $this->skippedRows[] = [
-                        'row' => $index + 2, // Offset for heading row
-                        'data' => $data,
-                        'error' => $e->getMessage(),
-                    ];
                 }
-            }
-        });
-    }
+            });
 
+            \DB::commit(); // Commit transaction
+        } catch (\Exception $e) {
+            \DB::rollBack(); // Rollback on error
+            throw $e;
+        }
+    }
 
     /**
      * Define validation rules for rows.

@@ -305,12 +305,14 @@ class DonorController extends Controller
 
         try {
             // Import the donors using the DonorsImport class
-            $import = new DonorsImport();
-            Excel::import($import, $request->file('file'));
+            // $import = new DonorsImport();
+            // Excel::import($import, $request->file('file'));
 
-            $path = $request->file('file')->store('imports');
+            Excel::queueImport(new DonorsImport(), $request->file('file'));
 
-            ImportDonorsJob::dispatch(storage_path("app/{$path}"));
+            // $path = $request->file('file')->store('imports');
+
+            // ImportDonorsJob::dispatch(storage_path("app/{$path}"));
 
             // $skippedRows = $import->getSkippedRows(); // Retrieve skipped rows for feedback
 
