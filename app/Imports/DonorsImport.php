@@ -53,7 +53,7 @@ WithChunkReading
                     try {
                         // Validate required fields
                         if (empty($data['name'])) {
-                            throw new \Exception('Name and phones are required.');
+                            throw new \Exception('Name is required '.$data['name'] . '');
                         }
 
                         // Process phones
@@ -105,6 +105,7 @@ WithChunkReading
                             'data' => $data,
                             'error' => $e->getMessage(),
                         ];
+                        \Log::info('skipped rows',[$this->skippedRows]);
                     }
                 }
             });
