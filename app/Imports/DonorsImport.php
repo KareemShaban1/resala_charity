@@ -7,6 +7,7 @@ use App\Models\Governorate;
 use App\Models\City;
 use App\Models\Area;
 use App\Models\Department;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -14,7 +15,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 
-class DonorsImport implements ToCollection, WithHeadingRow, WithValidation, SkipsEmptyRows
+class DonorsImport implements ToCollection, WithHeadingRow, WithValidation, SkipsEmptyRows,ShouldQueue
 {
 
     private $skippedRows = [];
@@ -30,6 +31,11 @@ class DonorsImport implements ToCollection, WithHeadingRow, WithValidation, Skip
         $this->cities = City::pluck('id', 'name')->toArray();
         $this->areas = Area::pluck('id', 'name')->toArray();
         $this->departments = Department::pluck('id', 'name')->toArray();
+    }
+
+    public function chunkSize(): int
+    {
+        return 500; // Process 500 rows at a time
     }
 
     public function collection(Collection $rows)
