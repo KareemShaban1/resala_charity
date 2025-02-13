@@ -8,6 +8,7 @@ use App\Http\Requests\StoreDonorRequest;
 use App\Http\Requests\UpdateDonorRequest;
 use App\Imports\DonorsImport;
 use App\Imports\PhoneNumbersImport;
+use App\Jobs\ImportDonorsJob;
 use App\Models\DonationCategory;
 use App\Models\DonorPhone;
 use App\Models\Employee;
@@ -295,8 +296,8 @@ class DonorController extends Controller
 
     public function importDonors(Request $request)
     {
-        ini_set('max_execution_time', 1200); // Extends execution time to 300 seconds
-        ini_set('memory_limit', '512M');
+        ini_set('max_execution_time', 3600); // Extends execution time to 300 seconds
+        ini_set('memory_limit', '1024M');
 
         $request->validate([
             'file' => 'required|file|mimes:xlsx,csv',
@@ -307,13 +308,17 @@ class DonorController extends Controller
             $import = new DonorsImport();
             Excel::import($import, $request->file('file'));
 
-            $skippedRows = $import->getSkippedRows(); // Retrieve skipped rows for feedback
+            $path = $request->file('file')->store('imports');
+
+            ImportDonorsJob::dispatch(storage_path("app/{$path}"));
+
+            // $skippedRows = $import->getSkippedRows(); // Retrieve skipped rows for feedback
 
             // Return the result with skipped rows if any
             return response()->json([
                 'success' => true,
                 'message' => __('messages.Donors imported successfully'),
-                'skipped_rows' => $skippedRows,
+                // 'skipped_rows' => $skippedRows,
             ]);
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
