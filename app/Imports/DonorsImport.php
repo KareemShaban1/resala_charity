@@ -14,8 +14,10 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 
-class DonorsImport implements ToCollection, WithHeadingRow, WithValidation, SkipsEmptyRows,ShouldQueue
+class DonorsImport implements ToCollection, WithHeadingRow, WithValidation, SkipsEmptyRows,ShouldQueue,
+WithChunkReading
 {
 
     private $skippedRows = [];
