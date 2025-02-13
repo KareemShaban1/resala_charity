@@ -152,7 +152,7 @@ class DonorsImport implements
             'phones' => [
                 'nullable',
                 'string',
-                'regex:/^((\d{11}:mobile)|(\d{1,15}:(home|work)))(,((\d{11}:mobile)|(\d{1,15}:(home|work))))*$/',
+                // 'regex:/^((\d{11}:mobile)|(\d{1,15}:(home|work)))(,((\d{11}:mobile)|(\d{1,15}:(home|work))))*$/',
             ],
             'active' => 'nullable|boolean',
         ];
