@@ -52,7 +52,7 @@ WithChunkReading
 
                     try {
                         // Validate required fields
-                        if (empty($data['name']) || empty($data['phones'])) {
+                        if (empty($data['name'])) {
                             throw new \Exception('Name and phones are required.');
                         }
 
