@@ -17,6 +17,7 @@ use App\Http\Controllers\DonorActivityController;
 use App\Http\Controllers\DonorController;
 use App\Http\Controllers\DonorHistoryController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\MonthlyFormCancellationController;
 use App\Http\Controllers\MonthlyFormController;
 use App\Http\Controllers\MonthlyFormDonationController;
@@ -51,10 +52,10 @@ Route::group(
     ],
     function () {
 
-        Route::get('/', [DashboardController::class , 'index'])->name('dashboard.index');
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
         Route::get('/dashboard/filter', [DashboardController::class, 'filter'])->name('dashboard.filter');
 
-        Route::get('/monthly-forms-report', [MonthlyFormReportController::class , 'index'])->name('monthly-forms-report.index');
+        Route::get('/monthly-forms-report', [MonthlyFormReportController::class, 'index'])->name('monthly-forms-report.index');
         Route::get('/monthly-forms-report/filter', [MonthlyFormReportController::class, 'filter'])->name('monthly-forms-report.filter');
 
 
@@ -65,8 +66,8 @@ Route::group(
         // Employees Routes
         Route::get('/employees/data', [EmployeeController::class, 'data'])->name('employees.data');
         Route::resource('employees', EmployeeController::class);
-        Route::get('/get-employee-by-department',[EmployeeController::class,'getEmployeesByDepartment'])
-        ->name('employee.getEmployeesByDepartment');
+        Route::get('/get-employee-by-department', [EmployeeController::class, 'getEmployeesByDepartment'])
+            ->name('employee.getEmployeesByDepartment');
 
 
         // Governorates Routes
@@ -83,7 +84,7 @@ Route::group(
         Route::get('/areas/by-city', [AreaController::class, 'getAreasByCity'])->name('areas.by-city');
         Route::resource('areas', AreaController::class);
         Route::post('/areas/import', [AreaController::class, 'importAreas'])
-        ->name('areas.import');
+            ->name('areas.import');
 
 
         Route::get('/areas-groups/data', [AreaGroupController::class, 'data'])->name('areas-groups.data');
@@ -136,11 +137,15 @@ Route::group(
         )->name('monthly-forms.details');
         Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
         Route::resource('users', UserController::class);
-        Route::post('/users/change-password', [UserController::class, 'changePassword']
+        Route::post(
+            '/users/change-password',
+            [UserController::class, 'changePassword']
         )->name('users.change-password');
-        Route::get('/users/change-password/view', function () {
-            return view('backend.pages.settings.account');
-        }
+        Route::get(
+            '/users/change-password/view',
+            function () {
+                return view('backend.pages.settings.account');
+            }
         )->name('users.change-password.view');
 
 
@@ -192,7 +197,7 @@ Route::group(
         Route::get('/collecting-lines/donations/data', [CollectingLineController::class, 'getDonationsByCollectingLine'])
             ->name('collecting-lines.donations.data');
 
-            Route::get('/collecting-lines/export-pdf', [CollectingLineController::class, 'exportCollectingLineToPdf'])
+        Route::get('/collecting-lines/export-pdf', [CollectingLineController::class, 'exportCollectingLineToPdf'])
             ->name('collecting-lines.export-pdf');
 
         Route::post('/monthly-forms/{monthlyFormId}/donations', [MonthlyFormDonationController::class, 'storeMonthlyFormDonation'])
@@ -202,6 +207,15 @@ Route::group(
         Route::get('/backups', [BackupController::class, 'index'])->name('backups.index');
 
         Route::get('/backups/data', [BackupController::class, 'data'])->name('backups.data');
+
+
+        Route::resource('events', EventController::class);
+        Route::get('/events-data', [EventController::class, 'data'])->name('events.data');
+        Route::get('/calendar', [EventController::class, 'calendar'])->name('calendar');
+        Route::post('/calendar', [EventController::class, 'storeCalendarEvent'])->name('calendar.store');
+        Route::get('/calendar-events', [EventController::class, 'calendarEvents'])->name('calendar-events');
+        Route::delete('/calendar-events/{id}', [EventController::class, 'destroy'])->name('calendar-events.destroy');
+
     }
 
 );
@@ -212,5 +226,4 @@ Route::get('/backups/create', [BackupController::class, 'create'])->name('backup
 Route::get('/backups/download/{filename}', [BackupController::class, 'download'])
     ->where('filename', '.*') // Allow slashes in the filename
     ->name('backup.download');
-    Route::get('/export-reports', [DashboardController::class, 'exportMonthlyForms'])->name('dashboard.export_reports');
-
+Route::get('/export-reports', [DashboardController::class, 'exportMonthlyForms'])->name('dashboard.export_reports');

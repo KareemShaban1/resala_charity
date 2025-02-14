@@ -48,6 +48,31 @@
               </li>
 
               <li class="side-nav-item">
+                  <a data-bs-toggle="collapse" href="#sidebarEventsReport" aria-expanded="false" aria-controls="sidebarEventsReport" class="side-nav-link">
+                      <i class="uil-money-withdraw"></i>
+                      <span> {{__('Events')}} </span>
+                      <span class="menu-arrow"></span>
+                  </a>
+                  <div class="collapse" id="sidebarEventsReport">
+                      <ul class="side-nav-second-level">
+                          <!-- @can('view collecting lines') -->
+                          <li>
+                              <a href="{{route('events.index')}}">
+                                  <span> {{__('Events')}} </span>
+                              </a>
+                          </li>
+                          <li>
+                              <a href="{{route('calendar')}}">
+                                  <span> {{__('Calendar')}} </span>
+                              </a>
+                          </li>
+                          <!-- @endcan -->
+
+                      </ul>
+                  </div>
+              </li>
+
+              <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarUsers" aria-expanded="false" aria-controls="sidebarUsers" class="side-nav-link">
                       <i class="uil-users-alt"></i>
                       <span> {{__('Users Management')}} </span>

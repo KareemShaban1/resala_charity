@@ -44,7 +44,7 @@
                 <div class="col-md-3">
                     <div class="mb-3">
                         <label for="add_donation_type" class="form-label">{{__('Donation Type')}}</label>
-                        <select class="form-control" name="donation_type" id="add_donation_type" onchange="toggleEditDonationType()">
+                        <select class="form-control" name="donation_type" id="add_donation_type" onchange="toggleAddDonationType()">
                             <option value="financial">{{__('Financial')}}</option>
                             <option value="inKind">{{__('In-Kind')}}</option>
                             <option value="both">{{__('Both')}}</option>

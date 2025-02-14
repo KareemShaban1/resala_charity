@@ -1321,6 +1321,45 @@
 
 
 
+  function toggleAddDonationType() {
+      const donationType = document.getElementById('add_donation_type').value;
+      const editFinancialContainer = document.getElementById('add-financial-donations-section');
+      const editInKindContainer = document.getElementById('add-in-kind-donations-section');
+      const financialReceiptConatiner = document.getElementById('add-financial-receipt-container');
+      const inKindReceiptConatiner = document.getElementById('add-in-kind-receipt-container');
+
+      if (donationType === 'financial') {
+          editFinancialContainer.classList.remove('d-none');
+          editInKindContainer.classList.add('d-none');
+          // financialReceiptConatiner.classList.remove('d-none');
+          inKindReceiptConatiner.classList.add('d-none');
+      } else if (donationType === 'inKind') {
+          editFinancialContainer.classList.add('d-none');
+          editInKindContainer.classList.remove('d-none');
+          // financialReceiptConatiner.classList.add('d-none');
+          inKindReceiptConatiner.classList.remove('d-none');
+      } else {
+          editFinancialContainer.classList.remove('d-none');
+          editInKindContainer.classList.remove('d-none');
+          // financialReceiptConatiner.classList.remove('d-none');
+          inKindReceiptConatiner.classList.remove('d-none');
+      }
+  }
+
+
+  function toggleAddDonationStatus() {
+      const donationStatus = document.getElementById('add_donation_status').value;
+      const CollectingSection = document.getElementById('add-collecting-section');
+
+      if (donationStatus === 'collected') {
+          CollectingSection.classList.remove('d-none');
+      } else if (donationStatus === 'not_collected') {
+          CollectingSection.classList.add('d-none');
+      }
+  }
+
+
+
 
   function donationDetails(id) {
       $('#detailsDonationModal').modal('show');
