@@ -49,12 +49,13 @@
             <div class="card">
 
                 <div class="card-body">
+                <div style="width: 100%; overflow-x: auto;">
 
                     <table id="donors-table" class="table dt-responsive nowrap w-100">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>{{__('Name')}}</th>
+                                <th style="width: 30px;">{{__('Name')}}</th>
                                 <th>{{__('Donor Type')}}</th>
                                 <th>{{__('City')}}</th>
                                 <th>{{__('Area')}}</th>
@@ -88,6 +89,7 @@
                             </tr>
                         </thead>
                     </table>
+                    </div>
                 </div>
             </div>
         </div>

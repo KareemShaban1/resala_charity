@@ -301,10 +301,11 @@
                 d.end_date = $('#end-date').val();
             }
         },
+        autoWidth:false,
         columnDefs: [
-        { targets: [0], width: "20px" }, // Set width for the first column (ID)
-        { targets: [1], width: "50px" }, // Adjust other columns if needed
-        { targets: [2], width: "50px" }  // Example for another column
+            {width: "20px"  , targets: 0}, // ID column
+    { width: "10p%" ,targets: 1,  }, // Name column
+    {  width: "50px",targets: 2 }, // Donor type column
     ],
             columns: [{
                     data: 'id',

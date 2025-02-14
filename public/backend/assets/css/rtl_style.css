@@ -22337,3 +22337,32 @@ div.table-responsive>div.dataTables_wrapper>div.row>div[class^=col-]:first-child
     background-color: #f9f9f9 !important;
     font-style: italic;
 }
+
+
+#donors-table {
+    table-layout: fixed !important;  /* ✅ Force fixed column widths */
+    width: 100% !important;
+}
+
+#donors-table th,
+#donors-table td {
+    white-space: wrap; /* Prevent text wrapping */
+    overflow: hidden;
+    text-overflow:clip;
+}
+
+/* Set specific column widths */
+#donors-table th:nth-child(1),
+#donors-table td:nth-child(1) { width: 20px !important; }  /* ID */
+#donors-table th:nth-child(2),
+#donors-table td:nth-child(2) { width: 100px !important; } /* Name */
+#donors-table th:nth-child(3),
+#donors-table td:nth-child(3) { width: 100px !important; }  /* Donor type */
+#donors-table th:nth-child(4),
+#donors-table td:nth-child(4) { width: 100px !important; }  /* City */
+#donors-table th:nth-child(5),
+#donors-table td:nth-child(5) { width: 100px !important; }  /* Area */
+#donors-table th:nth-child(6),
+#donors-table td:nth-child(6) { width: 100px !important; }  /* Phones */
+#donors-table th:nth-child(7),
+#donors-table td:nth-child(7) { width: 50px !important; }  /* status */
