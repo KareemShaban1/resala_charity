@@ -71,6 +71,14 @@
                             <label class="form-label">{{ __('End Date') }}</label>
                             <input type="date" id="editEndDate" class="form-control">
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ __('Status') }}</label>
+                            <select id="editStatus" class="form-control" required>
+                                <option value="ongoing">{{ __('Ongoing') }}</option>
+                                <option value="cancelled">{{ __('Cancelled') }}</option>
+                                <option value="done">{{ __('Done') }}</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>

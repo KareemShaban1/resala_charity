@@ -68,7 +68,18 @@
      const language = '{{ App::getLocale() }}';
 
    
-
+     document.addEventListener('keydown', function(event) {
+    if (language === 'en') { // Only apply for Arabic
+        if ((event.ctrlKey || event.metaKey) && (event.key === 'c' || event.key === 'v')) {
+            event.stopPropagation(); // Prevent DataTables from blocking copy action
+        }
+    }
+    if (language === 'ar') { // Only apply for Arabic
+        if ((event.ctrlKey || event.metaKey) && (event.key === 'ؤ' || event.key === 'ر')) {
+            event.stopPropagation(); // Prevent DataTables from blocking copy action
+        }
+    }
+}, true);
 
     
  </script>

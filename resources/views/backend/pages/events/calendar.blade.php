@@ -64,6 +64,15 @@
                             <label for="endDate" class="form-label">End Date</label>
                             <input type="date" class="form-control" id="endDate" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-control" id="status" required>
+                                <option value="ongoing">{{ __('Ongoing') }}</option>
+                                <option value="cancelled">{{ __('Cancelled') }}</option>
+                                <option value="done">{{ __('Done') }}</option>
+
+                            </select>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -103,17 +112,28 @@
                 },
                 events: @json($events).map(event => {
                     let endDate = new Date(event.end_date);
-                    endDate.setDate(endDate.getDate() + 1); // Subtract one day
+                    endDate.setDate(endDate.getDate() + 1); // Adjust end date
                     let formattedEndDate = endDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+                    // Define colors based on event status
+                    let statusColors = {
+                        'done': '#28a745', // Green
+                        'cancelled': '#dc3545', // Red
+                        'ongoing': '#007bff', // Blue
+                    };
 
                     return {
                         id: event.id,
                         title: event.title,
-                        start: event.start_date, // No change needed
-                        end: formattedEndDate, // Adjusted end date
-                        description: event.description
+                        start: event.start_date,
+                        end: formattedEndDate,
+                        description: event.description,
+                        status: event.status,
+                        backgroundColor: statusColors[event.status] || '#6c757d', // Default gray if status not found
+                        borderColor: statusColors[event.status] || '#6c757d', // Match border color
                     };
                 }),
+
 
                 eventClick: function(info) {
                     alert('Event: ' + info.event.title + '\nDescription: ' + info.event.extendedProps.description);
@@ -128,6 +148,7 @@
                 var eventDescription = document.getElementById('eventDescription').value;
                 var startDate = document.getElementById('startDate').value;
                 var endDate = document.getElementById('endDate').value;
+                var status = document.getElementById('status').value;
 
                 if (eventName && startDate && endDate) {
                     $.ajax({
@@ -138,6 +159,7 @@
                             description: eventDescription,
                             start_date: startDate,
                             end_date: endDate,
+                            status: status,
                             _token: "{{ csrf_token() }}"
                         },
                         success: function(response) {
@@ -147,6 +169,7 @@
                                 title: response.title,
                                 start: response.start_date,
                                 end: response.end_date,
+                                status: response.status,
                                 description: response.description
                             });
 

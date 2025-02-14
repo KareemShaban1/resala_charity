@@ -892,14 +892,8 @@ document.addEventListener('keydown', function(event) {
         }
 });
 
-document.addEventListener('keydown', function(event) {
-    if (event.ctrlKey && event.key === 'c') {
-        event.stopPropagation(); // Prevent DataTables from blocking copy action
-    }
-    if (event.ctrlKey && event.key === 'v') {
-        event.stopPropagation(); // Prevent DataTables from blocking copy action
-    }
-}, true);
+
+
 
 </script>
 @endpush
