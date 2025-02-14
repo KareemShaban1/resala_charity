@@ -104,6 +104,7 @@
 
 
             dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
+            lengthMenu: [[10, 25, 50, 100, 500, 1000, 2000], [10, 25, 50, 100, 500, 1000, 2000]], 
             pageLength: 10,
             responsive: true,
             language: languages[language],

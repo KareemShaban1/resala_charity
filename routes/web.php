@@ -210,12 +210,13 @@ Route::group(
 
 
         Route::resource('events', EventController::class);
+        Route::post('/events/{id}', [EventController::class, 'update'])->name('events.update');
+
         Route::get('/events-data', [EventController::class, 'data'])->name('events.data');
         Route::get('/calendar', [EventController::class, 'calendar'])->name('calendar');
         Route::post('/calendar', [EventController::class, 'storeCalendarEvent'])->name('calendar.store');
         Route::get('/calendar-events', [EventController::class, 'calendarEvents'])->name('calendar-events');
         Route::delete('/calendar-events/{id}', [EventController::class, 'destroy'])->name('calendar-events.destroy');
-
     }
 
 );

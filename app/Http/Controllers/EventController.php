@@ -32,8 +32,8 @@ class EventController extends Controller
             ->addColumn('actions', function ($event) {
                 return '
                 <div class="btn-group">
-                    <a href="'.route('events.edit', $event->id).'" class="btn btn-primary btn-sm">Edit</a>
-                    <button class="btn btn-danger btn-sm delete-button" data-id="'. $event->id .'">Delete</button>
+                   <button class="btn btn-primary btn-sm edit-button" data-id="' . $event->id . '">Edit</button>
+                    <button class="btn btn-danger btn-sm delete-button" data-id="' . $event->id . '">Delete</button>
                 </div>';
             })
             ->rawColumns(['actions'])
@@ -68,9 +68,11 @@ class EventController extends Controller
     }
 
     // Show a single event
-    public function show(Event $event)
+    public function show($id)
     {
-        return view('events.show', compact('event'));
+        $event = Event::find($id);
+        return response()->json($event);
+
     }
 
     // Edit an event
@@ -80,8 +82,9 @@ class EventController extends Controller
     }
 
     // Update an event
-    public function update(Request $request, Event $event)
+    public function update(Request $request,  $id)
     {
+        $event  = Event::find($id);
         $request->validate([
             'title' => 'required',
             'start_date' => 'required|date',
@@ -90,13 +93,21 @@ class EventController extends Controller
         ]);
 
         $event->update($request->all());
-        return redirect()->route('events.index')->with('success', 'Event updated successfully.');
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.Event updated successfully')
+        ]);
+
     }
 
     // Delete an event
     public function destroy(Event $event)
     {
         $event->delete();
-        return redirect()->route('events.index')->with('success', 'Event deleted successfully.');
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.Event deleted successfully')
+        ]);
     }
 }
