@@ -25,15 +25,15 @@ class CollectingLineController extends Controller
     {
 
         $representatives = Employee::whereHas('department', function ($q) {
-            $q->where('name', 'موظفين');
+            $q->where('name', 'المناديب');
         })->get();
         $drivers = Employee::whereHas('department', function ($q) {
-            $q->where('name', 'سائقين');
+            $q->where('name', 'السائقين');
         })->get();
         $employees = Employee::whereHas(
             'department',
             function ($q) {
-                $q->whereNotIn('name', ['موظفين', 'سائقين']);
+                $q->whereNotIn('name', ['المناديب', 'السائقين']);
             }
         )->get();
         $areaGroups = AreaGroup::all();
