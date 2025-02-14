@@ -135,6 +135,7 @@
                 $('#editDescription').val(data.description);
                 $('#editStartDate').val(data.start_date);
                 $('#editEndDate').val(data.end_date);
+                $('#editStatus').val(data.status);
                 $('#editEventModal').modal('show');
             });
         });
@@ -152,6 +153,7 @@
                     description: $('#editDescription').val(),
                     start_date: $('#editStartDate').val(),
                     end_date: $('#editEndDate').val(),
+                    status: $('#editStatus').val(),
                 },
                 success: function (response) {
                     if (response.success) {

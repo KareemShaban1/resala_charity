@@ -67,19 +67,26 @@
 
      const language = '{{ App::getLocale() }}';
 
-   
-     document.addEventListener('keydown', function(event) {
-    if (language === 'en') { // Only apply for Arabic
-        if ((event.ctrlKey || event.metaKey) && (event.key === 'c' || event.key === 'v')) {
-            event.stopPropagation(); // Prevent DataTables from blocking copy action
+// Detect system language
+const systemLanguage = navigator.languages ? navigator.languages[0] : navigator.language;
+const isArabic = systemLanguage.startsWith('ar');
+
+
+// Listen for keydown events
+document.addEventListener('keydown', function(event) {
+    if ((event.ctrlKey || event.metaKey)) {
+        if (!isArabic && (event.key === 'c' || event.key === 'v')) {
+            event.stopPropagation(); // Allow copy-paste for English layout
         }
-    }
-    if (language === 'ar') { // Only apply for Arabic
-        if ((event.ctrlKey || event.metaKey) && (event.key === 'ؤ' || event.key === 'ر')) {
-            event.stopPropagation(); // Prevent DataTables from blocking copy action
+        const arabicKeyPattern = /[\u0600-\u06FF]/; // Arabic character Unicode range
+        if (arabicKeyPattern.test(event.key)) {
+            console.log("Arabic keyboard detected!");
+            event.stopPropagation(); // Allow copy-paste for Arabic layout
         }
+        
     }
 }, true);
+
 
     
  </script>

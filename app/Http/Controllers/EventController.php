@@ -59,6 +59,7 @@ class EventController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'nullable|date',
             'description' => 'nullable',
+            'status' => 'required|in:ongoing,cancelled,done',
         ]);
 
         $event = Event::create($request->all());
@@ -90,6 +91,7 @@ class EventController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'nullable|date',
             'description' => 'nullable',
+            'status' => 'required|in:ongoing,cancelled,done',
         ]);
 
         $event->update($request->all());
