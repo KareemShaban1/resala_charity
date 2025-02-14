@@ -301,6 +301,11 @@
                 d.end_date = $('#end-date').val();
             }
         },
+        columnDefs: [
+        { targets: [0], width: "20px" }, // Set width for the first column (ID)
+        { targets: [1], width: "50px" }, // Adjust other columns if needed
+        { targets: [2], width: "50px" }  // Example for another column
+    ],
             columns: [{
                     data: 'id',
                     name: 'donors.id' // Explicitly specify the table name
@@ -358,6 +363,7 @@
                     searchable: false
                 }
             ],
+
             initComplete: function() {
             // Apply column-specific search
             this.api().columns().every(function() {
@@ -403,7 +409,6 @@
                 },
             ],
             dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
-                // ✅ Add "All" option in per-page filter
             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]], 
             pageLength: 10,
             responsive: true,
