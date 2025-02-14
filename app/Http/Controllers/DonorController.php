@@ -197,7 +197,7 @@ class DonorController extends Controller
 
         $childrenDonors = Donor::where('parent_id', $donor->id)->get();
 
-        return response()->json($donor->load(['governorate', 'city', 'area', 'phones','childrenDonors']));
+        return response()->json($donor->load(['department','governorate', 'city', 'area', 'phones','childrenDonors']));
 
     }
 

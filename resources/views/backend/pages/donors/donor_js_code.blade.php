@@ -185,13 +185,13 @@
                 </div>
                   <div class="row">
                     <div class="col-md-4">
-                          <p><strong>{{__('Governorate')}}:</strong> ${data.governorate?.name}</p>
+                          <p><strong>{{__('Governorate')}}:</strong> ${data.governorate?.name ?? ''}</p>
                     </div>
                      <div class="col-md-4">
-                          <p><strong>{{__('City')}}:</strong> ${data.city?.name}</p>
+                          <p><strong>{{__('City')}}:</strong> ${data.city?.name ?? ''}</p>
                     </div>
                      <div class="col-md-4">
-                          <p><strong>{{__('Area')}}:</strong> ${data.area?.name}</p>
+                          <p><strong>{{__('Area')}}:</strong> ${data.area?.name ?? ''}</p>
                     </div>
                 </div>
                 <div class="col-md-12">
