@@ -20,6 +20,7 @@
  <script src="{{asset('backend/assets/js/vendor/buttons.html5.min.js')}} "></script>
  <script src="{{asset('backend/assets/js/vendor/buttons.flash.min.js')}}"></script>
  <script src="{{asset('backend/assets/js/vendor/buttons.print.min.js')}}"></script>
+ 
  <!-- Datatable Init js -->
  <!-- <script src="{{asset('backend/assets/js/pages/demo.datatable-init.js')}}"></script> -->
 
@@ -65,6 +66,15 @@
      };
 
      const language = '{{ App::getLocale() }}';
+
+     document.addEventListener('keydown', function(event) {
+    if (event.ctrlKey && event.key === 'c') {
+        event.stopPropagation(); // Prevent DataTables from blocking copy action
+    }
+    if (event.ctrlKey && event.key === 'v') {
+        event.stopPropagation(); // Prevent DataTables from blocking copy action
+    }
+}, true);
 
 
     
