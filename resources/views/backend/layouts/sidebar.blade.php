@@ -231,7 +231,7 @@
                           </li>
                           @endcan
 
-                          @can('view cancelled monthly forms')
+                          @can('view monthly forms')
                           <li>
                               <a href="{{route('monthly-forms.cancelled')}}">
                                   <span> {{__('Cancelled Monthly Forms')}} </span>
