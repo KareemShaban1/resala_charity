@@ -829,6 +829,15 @@ class DonationController extends Controller
                         "collecting_way" => $validatedData["collecting_way"]
                     ]);
                 }
+                $monthlyForm = MonthlyForm::where('donor_id', $validatedData['donor_id'])->first();
+
+                $monthlyFormDonation = $donation->monthlyForms()->create([
+                    "donation_id" => $donation->id,
+                    "monthly_form_id" => $monthlyForm->id,
+                    "month" => $donateData["month"],
+                    'donation_date' => $donateData["date"]
+
+                ]);
 
                 if (!$donatesAdded) {
                     DB::rollBack();
