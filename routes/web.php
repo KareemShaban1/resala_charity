@@ -22,6 +22,7 @@ use App\Http\Controllers\MonthlyFormCancellationController;
 use App\Http\Controllers\MonthlyFormController;
 use App\Http\Controllers\MonthlyFormDonationController;
 use App\Http\Controllers\MonthlyFormReportController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Artisan;
@@ -137,6 +138,8 @@ Route::group(
         )->name('monthly-forms.details');
         Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
         Route::resource('users', UserController::class);
+        Route::get('/users/{id}/details', [UserController::class, 'userDetails'])
+        ->name('users.details');
         Route::post(
             '/users/change-password',
             [UserController::class, 'changePassword']
@@ -228,3 +231,5 @@ Route::get('/backups/download/{filename}', [BackupController::class, 'download']
     ->where('filename', '.*') // Allow slashes in the filename
     ->name('backup.download');
 Route::get('/export-reports', [DashboardController::class, 'exportMonthlyForms'])->name('dashboard.export_reports');
+
+Route::get('/notifications',[NotificationController::class, 'getNotificationsByDate']);

@@ -82,9 +82,25 @@ class CollectingLineController extends Controller
             $data = CollectingLine::query();
 
             // Apply filters
-            if ($request->has('date') && $request->date != '') {
-                $data->whereDate('collecting_date', '=', $request->date);
+            // if ($request->has('date') && $request->date != '') {
+            //     $data->whereDate('collecting_date', '=', $request->date);
+            // }
+             // Date filter
+        if (request()->has('date_filter')) {
+            $dateFilter = request('date_filter');
+            $startDate = request('start_date');
+            $endDate = request('end_date');
+
+            if ($dateFilter === 'today') {
+                $data->whereDate('created_at', operator: today());
+            } elseif ($dateFilter === 'week') {
+                $data->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+            } elseif ($dateFilter === 'month') {
+                $data->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()]);
+            } elseif ($dateFilter === 'range' && $startDate && $endDate) {
+                $data->whereBetween('created_at', [$startDate, $endDate]);
             }
+        }
             // if ($request->has('end_date') && $request->end_date != '') {
             //     $data->whereDate('created_at', '<=', $request->end_date);
             // }
@@ -703,6 +719,8 @@ class CollectingLineController extends Controller
             'mode' => 'utf-8',
             'format' => 'A4-L',
             'default_font' => 'xbriyaz',
+            'tempDir' => storage_path('app/mpdf') // Set a custom temp directory
+
         ]);
 
         // Write the HTML content to the PDF

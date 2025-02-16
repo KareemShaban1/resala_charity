@@ -37,8 +37,19 @@
                                 <th>{{__('Phones')}}</th>
                                 <th>{{__('Monthly Form Day')}}</th>
                                 <th>{{__('Donates')}}</th>
-                                <!-- <th>{{__('Financial Amount')}}</th> Ensure financial column is here -->
                                 <th>{{__('Actions')}}</th>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <!-- <input type="text" class="form-control form-control-sm column-search" placeholder="{{__('Search By ID')}}"> -->
+                                </th>
+                                <th><input type="text" class="form-control form-control-sm column-search" placeholder="{{__('Search By Donor Name')}}"></th>
+                                <th><input type="text" class="form-control form-control-sm column-search" placeholder="{{__('Search By Area')}}"></th>
+                                <th><input type="text" class="form-control form-control-sm column-search" placeholder="{{__('Search By Phones')}}"></th>
+                                <th><input type="text" class="form-control form-control-sm column-search" placeholder="{{__('Search By Monthly Form Day')}}"></th>
+                                <th>
+                                </th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tfoot>

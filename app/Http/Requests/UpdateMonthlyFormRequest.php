@@ -31,6 +31,8 @@ class UpdateMonthlyFormRequest extends FormRequest
             'status' => 'required|in:ongoing,cancelled',
             'notes' => 'nullable|string',
             'donation_type' => 'required|string|in:financial,inKind,both',
+            'form_date' => 'required|date',
+            'follow_up_department_id' => 'nullable|exists:departments,id',
             'cancellation_reason' => 'nullable|string',
             'cancellation_date' => 'nullable',
             'items' => 'required|array',

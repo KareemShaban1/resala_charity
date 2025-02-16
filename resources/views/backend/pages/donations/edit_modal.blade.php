@@ -68,8 +68,8 @@
                     <div class="mb-3">
                         <label for="edit_donation_category" class="form-label">{{__('Donation Type')}}</label>
                         <select class="form-control" name="donation_category" id="edit_donation_category">
-                        <option value="monthly">{{__('Monthly')}}</option>
-                        <option value="normal">{{__('Normal')}}</option>
+                            <option value="monthly">{{__('Monthly')}}</option>
+                            <option value="normal">{{__('Normal')}}</option>
                             <option value="normal_and_monthly">{{__('Normal and Monthly')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
@@ -133,6 +133,17 @@
                                     <div class="invalid-feedback"></div>
                                 </div>
 
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label">{{__('Donation Item Type')}}</label>
+                                    <select class="form-control" name="donates[0][financial_donation_item_type]">
+                                        <option value="normal">{{__('Normal')}}</option>
+                                        <option value="monthly">{{__('Monthly')}}</option>
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                </div>
                             </div>
 
                         </div>
@@ -200,11 +211,11 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="edit_collecting_way" class="form-label">{{__('Collecting Way')}}</label>
-                       <select name="collecting_way" id="edit_collecting_way" class="form-control">
-                           <option value="representative">{{__('Representative')}}</option>
-                           <option value="location">{{__('Location')}}</option>
-                           <option value="online">{{__('Online')}}</option>
-                       </select>
+                        <select name="collecting_way" id="edit_collecting_way" class="form-control">
+                            <option value="representative">{{__('Representative')}}</option>
+                            <option value="location">{{__('Location')}}</option>
+                            <option value="online">{{__('Online')}}</option>
+                        </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>

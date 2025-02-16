@@ -18,7 +18,9 @@ class MonthlyForm extends Model
         'collecting_donation_way',
         'cancellation_reason',
         'cancellation_date',
-        'donation_type'
+        'donation_type',
+        'form_date',
+        'follow_up_department_id',
         // 'collected_by'
     ];
     protected $casts = [

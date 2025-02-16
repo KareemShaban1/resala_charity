@@ -54,4 +54,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Department::class);
     }
+
+    public function activities()
+    {
+        return $this->hasMany(DonorActivity::class,'created_by');
+    }
 }

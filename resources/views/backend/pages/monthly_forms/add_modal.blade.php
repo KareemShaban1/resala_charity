@@ -66,14 +66,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="notes" class="form-label">{{__('Notes')}}</label>
-                        <textarea name="notes" id="notes" class="form-control"></textarea>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="mb-3">
                         <label for="donation_type" class="form-label">{{__('Donation Type')}}</label>
                         <select class="form-control" name="donation_type" id="donation_type" onchange="toggleDonationType()">
@@ -82,6 +75,32 @@
                             <option value="both">{{__('Both')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="form_date" class="form-label">{{__('Form Date')}}</label>
+                        <input type="date" class="form-control" id="form_date" name="form_date">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="follow_up_department_id" class="form-label">{{__('Follow Up Department')}}</label>
+                        <select class="form-control select2" id="follow_up_department_id" name="follow_up_department_id" required>
+                            <option value="">{{__('Select Department')}}</option>
+                            @foreach($departments as $department)
+                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">{{__('Notes')}}</label>
+                        <textarea name="notes" id="notes" class="form-control"></textarea>
                     </div>
                 </div>
             </div>

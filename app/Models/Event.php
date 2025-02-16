@@ -16,4 +16,9 @@ class Event extends Model
         'description',
         'status',
     ];
+
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
+    }
 }

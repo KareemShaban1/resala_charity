@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -30,6 +31,9 @@ class UserController extends Controller
         $query = User::with('department');
 
         return DataTables::of($query)
+            ->editColumn('name', function ($user) {
+                return '<a href="' . route('users.details', $user->id) . '">' . $user->name . '</a>';
+            })
             ->addColumn('action', function ($user) {
                 return '
                     <button onclick="editUser(' . $user->id . ')" class="btn btn-sm btn-info">
@@ -50,7 +54,7 @@ class UserController extends Controller
             ->addColumn('department', function ($user) {
                 return $user->department ? $user->department->name : '';
             })
-            ->rawColumns(['action', 'roles'])
+            ->rawColumns(['action', 'roles', 'name'])
             ->make(true);
     }
 
@@ -152,7 +156,8 @@ class UserController extends Controller
         ]);
     }
 
-    public function changePassword(Request $request){
+    public function changePassword(Request $request)
+    {
 
         $this->authorize('update', User::class);
 
@@ -167,6 +172,41 @@ class UserController extends Controller
 
 
         return redirect()->route('users.change-password.view')->with('success', __('messages.Password changed successfully'));
-
     }
+
+
+
+    public function userDetails($id)
+    {
+        $user = User::findOrFail($id);
+        $query = $user->activities();
+    
+        // Apply date filtering if start_date and end_date are provided
+        if (request()->has('start_date') && request()->has('end_date')) {
+            $startDate = request()->input('start_date');
+            $endDate = Carbon::parse(request()->input('end_date'))->addDay(); // Add one day
+        
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+        
+    
+        $activities = $query->get();
+        $statuses = ["ReplyAndDonate", "ReplyAndNotDonate", "NoReply", "PhoneNotAvailable"];
+        $statistics = $activities->groupBy('status');
+    
+        // Ensure all status keys exist with an empty collection if missing
+        foreach ($statuses as $status) {
+            $statistics[$status] = $statistics[$status] ?? collect([]);
+        }
+    
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'data' => $user
+            ]);
+        }
+    
+        return view('backend.pages.users.user-details', compact('user','activities', 'statistics'));
+    }
+    
 }

@@ -65,12 +65,11 @@
                             <input type="date" class="form-control" id="endDate" required>
                         </div>
                         <div class="mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <select class="form-control" id="status" required>
+                            <label for="eventStatus" class="form-label">Status</label>
+                            <select class="form-control" id="eventStatus" name="status" required>
                                 <option value="ongoing">{{ __('Ongoing') }}</option>
                                 <option value="cancelled">{{ __('Cancelled') }}</option>
                                 <option value="done">{{ __('Done') }}</option>
-
                             </select>
                         </div>
                     </form>
@@ -87,7 +86,7 @@
 
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 
 
     <script>
@@ -148,7 +147,7 @@
                 var eventDescription = document.getElementById('eventDescription').value;
                 var startDate = document.getElementById('startDate').value;
                 var endDate = document.getElementById('endDate').value;
-                var status = document.getElementById('status').value;
+                var status = document.getElementById('eventStatus').value;
 
                 if (eventName && startDate && endDate) {
                     $.ajax({
@@ -163,14 +162,26 @@
                             _token: "{{ csrf_token() }}"
                         },
                         success: function(response) {
+                            let endDate = new Date(response.end_date);
+                            endDate.setDate(endDate.getDate() + 1); // Adjust end date
+                            let formattedEndDate = endDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+                              // Define colors based on event status
+                                let statusColors = {
+                                    'done': '#28a745', // Green
+                                    'cancelled': '#dc3545', // Red
+                                    'ongoing': '#007bff', // Blue
+                                };
                             // Add event to FullCalendar
                             calendar.addEvent({
                                 id: response.id,
                                 title: response.title,
                                 start: response.start_date,
-                                end: response.end_date,
+                                end: formattedEndDate,
                                 status: response.status,
-                                description: response.description
+                                description: response.description,
+                                backgroundColor: statusColors[response.status] || '#6c757d', // Default gray if status not found
+                                borderColor: statusColors[response.status] || '#6c757d', // Match border color
                             });
 
                             // Close modal and reset form

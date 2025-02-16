@@ -20,7 +20,8 @@
  <script src="{{asset('backend/assets/js/vendor/buttons.html5.min.js')}} "></script>
  <script src="{{asset('backend/assets/js/vendor/buttons.flash.min.js')}}"></script>
  <script src="{{asset('backend/assets/js/vendor/buttons.print.min.js')}}"></script>
- 
+
+
  <!-- Datatable Init js -->
  <!-- <script src="{{asset('backend/assets/js/pages/demo.datatable-init.js')}}"></script> -->
 
@@ -67,28 +68,59 @@
 
      const language = '{{ App::getLocale() }}';
 
-// Detect system language
-const systemLanguage = navigator.languages ? navigator.languages[0] : navigator.language;
-const isArabic = systemLanguage.startsWith('ar');
+     // Detect system language
+     const systemLanguage = navigator.languages ? navigator.languages[0] : navigator.language;
+     const isArabic = systemLanguage.startsWith('ar');
 
 
-// Listen for keydown events
-document.addEventListener('keydown', function(event) {
-    if ((event.ctrlKey || event.metaKey)) {
-        if (!isArabic && (event.key === 'c' || event.key === 'v')) {
-            event.stopPropagation(); // Allow copy-paste for English layout
-        }
-        const arabicKeyPattern = /[\u0600-\u06FF]/; // Arabic character Unicode range
-        if (arabicKeyPattern.test(event.key)) {
-            console.log("Arabic keyboard detected!");
-            event.stopPropagation(); // Allow copy-paste for Arabic layout
-        }
-        
-    }
-}, true);
+     // Listen for keydown events
+     document.addEventListener('keydown', function(event) {
+         if ((event.ctrlKey || event.metaKey)) {
+             if (!isArabic && (event.key === 'c' || event.key === 'v')) {
+                 event.stopPropagation(); // Allow copy-paste for English layout
+             }
+             const arabicKeyPattern = /[\u0600-\u06FF]/; // Arabic character Unicode range
+             if (arabicKeyPattern.test(event.key)) {
+                 console.log("Arabic keyboard detected!");
+                 event.stopPropagation(); // Allow copy-paste for Arabic layout
+             }
+
+         }
+     }, true);
 
 
-    
+     document.addEventListener("DOMContentLoaded", function() {
+         fetchNotifications();
+     });
+
+     function fetchNotifications(date = new Date().toISOString().split('T')[0]) {
+         fetch(`/notifications?date=${date}`)
+             .then(response => response.json())
+             .then(data => {
+                 let notificationList = document.getElementById("notifications-list");
+
+                 notificationList.innerHTML = "";
+
+                 if (data.length === 0) {
+                     notificationList.innerHTML = '<p class="text-center text-muted">No notifications for this date.</p>';
+                     return;
+                 }
+
+                 data.forEach(notification => {
+                     let notificationItem = `
+                    <a href="javascript:void(0);" class="dropdown-item notify-item">
+                        <div class="notify-icon bg-primary">
+                            <i class="mdi mdi-calendar"></i>
+                        </div>
+                        <p class="notify-details">${notification.title}
+                            <small class="text-muted">${notification.message}</small>
+                        </p>
+                    </a>`;
+                     notificationList.innerHTML += notificationItem;
+                 });
+             })
+             .catch(error => console.error("Error fetching notifications:", error));
+     }
  </script>
 
  @stack('scripts')

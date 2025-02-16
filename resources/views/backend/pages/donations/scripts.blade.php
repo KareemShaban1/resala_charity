@@ -1079,7 +1079,7 @@
              <div class="col-md-3">
                 <div class="mb-3">
                     <label class="form-label">{{__('Donation Item Type')}}</label>
-                    <select class="form-control" name="donates[${index}][financial_donation_item_type]">
+                    <select class="form-control" name="donates[${index}][in_kind_donation_item_type]">
                         <option value="normal" ${donationItem.donation_item_type === 'normal' ? 'selected' : ''}>{{__('Normal')}}</option>
                         <option value="monthly" ${donationItem.donation_item_type === 'monthly' ? 'selected' : ''}>{{__('Monthly')}}</option>
                     </select>

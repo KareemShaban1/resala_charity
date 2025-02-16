@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -15,7 +16,7 @@ class EventController extends Controller
     {
         $events = Event::all();
 
-        return view('backend.pages.events.calendar',compact('events'));
+        return view('backend.pages.events.calendar', compact('events'));
     }
 
     // Display all events
@@ -23,10 +24,11 @@ class EventController extends Controller
     public function index()
     {
         $events = Event::all();
-       
+
         return view('backend.pages.events.index', compact('events'));
     }
-    public function data(){
+    public function data()
+    {
         $events = Event::all();
         return DataTables::of($events)
             ->addColumn('actions', function ($event) {
@@ -63,9 +65,15 @@ class EventController extends Controller
         ]);
 
         $event = Event::create($request->all());
-        return response()->json($event);
 
-        // return redirect()->route('events.index')->with('success', 'Event created successfully.');
+        // Create a notification with the event start date
+        $event->notifications()->create([
+            'title' => "New Event: {$event->title}",
+            'message' => "An event '{$event->title}' is scheduled for " . \Carbon\Carbon::parse($event->start_date)->format('d M, Y'),
+            'date' => $event->start_date, // Store event start date in notifications
+            'status' => 'unread',
+        ]);
+        return response()->json($event);
     }
 
     // Show a single event
@@ -73,7 +81,6 @@ class EventController extends Controller
     {
         $event = Event::find($id);
         return response()->json($event);
-
     }
 
     // Edit an event
@@ -100,7 +107,6 @@ class EventController extends Controller
             'success' => true,
             'message' => __('messages.Event updated successfully')
         ]);
-
     }
 
     // Delete an event

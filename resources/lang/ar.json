@@ -380,5 +380,7 @@
     "Donors with Collected Monthly Forms": "المتبرعين أصحاب الأستمارات الشهرية المحصلة",
     "Donors with Not Collected Monthly Forms": "المتبرعين أصحاب الأستمارات الشهرية غير المحصلة",
     "Reports":"تقارير",
-    "Monthly Forms Reports":"تقارير أستمارات الشهرية"
+    "Monthly Forms Reports":"تقارير أستمارات الشهرية",
+    "Done": "منجز",
+    "View Collecting Line": "عرض خط السير"
 }

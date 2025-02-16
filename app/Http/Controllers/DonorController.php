@@ -59,9 +59,6 @@ class DonorController extends Controller
                             $q->where('name', 'like', "%{$searchValue}%");
                         });
                     } elseif ($columnName === 'donors.active') {
-                        // dd(strtolower($searchValue));
-                        // Map user-friendly values to database values
-                        // $activeValue = strtolower($searchValue) === 'active' ? 1 : 0;
                         $query->where('active', strtolower($searchValue));
                     } else {
                         $query->where($columnName, 'like', "%{$searchValue}%");
@@ -72,8 +69,8 @@ class DonorController extends Controller
 
         $query->orderBy('donors.id', 'desc');
 
-         // Date filter
-         if (request()->has('date_filter')) {
+        // Date filter
+        if (request()->has('date_filter')) {
             $dateFilter = request('date_filter');
             $startDate = request('start_date');
             $endDate = request('end_date');
@@ -197,8 +194,7 @@ class DonorController extends Controller
 
         $childrenDonors = Donor::where('parent_id', $donor->id)->get();
 
-        return response()->json($donor->load(['department','governorate', 'city', 'area', 'phones','childrenDonors']));
-
+        return response()->json($donor->load(['department', 'governorate', 'city', 'area', 'phones', 'childrenDonors']));
     }
 
     /**
@@ -349,6 +345,64 @@ class DonorController extends Controller
         }
     }
 
+    // public function search(Request $request)
+    // {
+    //     $query = trim($request->get('query'));
+
+    //     // Return an empty response if no query is provided
+    //     if (empty($query)) {
+    //         return response()->json([], 200);
+    //     }
+
+    //     // Normalize the query for name search
+    //     $query = preg_replace('/\s+/', ' ', $query); // Normalize spaces
+    //     $query = str_replace(['%', '_'], ['\%', '\_'], $query); // Escape special characters
+
+    //     // Normalize the query for phone search
+    //     $normalizedQuery = preg_replace('/\D/', '', $query);
+
+    //     // Build the search query
+    //     $donorsQuery = Donor::with('phones');
+
+    //     if (is_numeric($query)) {
+    //         // Search by phone if the query is numeric
+    //         $donorsQuery->whereHas('phones', function ($q) use ($normalizedQuery) {
+    //             $q->whereRaw('REPLACE(REPLACE(REPLACE(phone_number, "-", ""), "(", ""), ")", "") LIKE ?', ['%' . $normalizedQuery . '%']);
+    //         });
+    //     } else {
+    //         // Search by name if the query is not numeric
+    //         $donorsQuery->where('name', 'like', '%' . $query . '%');
+    //     }
+
+    //     if ($request->has('monthly')) {
+    //         // dd("test");
+    //         $donorsQuery->where('donor_type', 'monthly');
+    //     }
+
+    //     // Get the donors matching the query
+    //     $donors = $donorsQuery->get();
+
+    //     // Filter and normalize matched phones for each donor
+    //     $donors->each(function ($donor) use ($normalizedQuery) {
+    //         $donor->matched_phones = $donor->phones->filter(function ($phone) use ($normalizedQuery) {
+    //             // Normalize the phone number and check if it contains the query
+    //             $normalizedPhone = preg_replace('/\D/', '', $phone->phone_number);
+    //             return strpos($normalizedPhone, $normalizedQuery) !== false;
+    //         })->pluck('phone_number');
+    //     });
+
+    //     // Prepare the response with matched phones
+    //     return response()->json([
+    //         'results' => $donors->map(function ($donor) {
+    //             return [
+    //                 'id' => $donor->id,
+    //                 'text' => $donor->name . ' (' . $donor->matched_phones->implode(', ') . ')',
+    //                 'matched_phones' => $donor->matched_phones,
+    //             ];
+    //         }),
+    //     ], 200);
+    // }
+
     public function search(Request $request)
     {
         $query = trim($request->get('query'));
@@ -369,17 +423,21 @@ class DonorController extends Controller
         $donorsQuery = Donor::with('phones');
 
         if (is_numeric($query)) {
-            // Search by phone if the query is numeric
-            $donorsQuery->whereHas('phones', function ($q) use ($normalizedQuery) {
-                $q->whereRaw('REPLACE(REPLACE(REPLACE(phone_number, "-", ""), "(", ""), ")", "") LIKE ?', ['%' . $normalizedQuery . '%']);
-            });
+            if ((int)$query > 0) {
+                // Search by ID
+                $donorsQuery->where('id', (int)$query);
+            } else {
+                // Search by phone if the query is numeric
+                $donorsQuery->orWhereHas('phones', function ($q) use ($normalizedQuery) {
+                    $q->whereRaw('REPLACE(REPLACE(REPLACE(phone_number, "-", ""), "(", ""), ")", "") LIKE ?', ['%' . $normalizedQuery . '%']);
+                });
+            }
         } else {
             // Search by name if the query is not numeric
             $donorsQuery->where('name', 'like', '%' . $query . '%');
         }
 
         if ($request->has('monthly')) {
-            // dd("test");
             $donorsQuery->where('donor_type', 'monthly');
         }
 

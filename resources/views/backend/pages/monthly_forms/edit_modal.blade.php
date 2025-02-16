@@ -73,23 +73,43 @@
                 </div>
 
                 <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="edit_notes" class="form-label">{{__('Notes')}}</label>
-                        <textarea name="notes" id="edit_notes" class="form-control"></textarea>
+
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="edit_donation_type" class="form-label">{{__('Donation Type')}}</label>
+                            <select class="form-control" name="donation_type" id="edit_donation_type" onchange="toggleEditDonationType()">
+                                <option value="financial">{{__('Financial')}}</option>
+                                <option value="inKind">{{__('In-Kind')}}</option>
+                                <option value="both">{{__('Both')}}</option>
+                            </select>
+                            <div class="invalid-feedback"></div>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-6">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="form_date" class="form-label">{{__('Form Date')}}</label>
+                            <input type="date" class="form-control" id="edit_form_date" name="form_date">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="edit_donation_type" class="form-label">{{__('Donation Type')}}</label>
-                        <select class="form-control" name="donation_type" id="edit_donation_type" onchange="toggleEditDonationType()">
-                            <option value="financial">{{__('Financial')}}</option>
-                            <option value="inKind">{{__('In-Kind')}}</option>
-                            <option value="both">{{__('Both')}}</option>
+                        <label for="follow_up_department_id" class="form-label">{{__('Follow Up Department')}}</label>
+                        <select class="form-control select2" id="edit_follow_up_department_id" name="follow_up_department_id" required>
+                            <option value="">{{__('Select Department')}}</option>
+                            @foreach($departments as $department)
+                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                            @endforeach
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label for="edit_notes" class="form-label">{{__('Notes')}}</label>
+                            <textarea name="notes" id="edit_notes" class="form-control"></textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -97,7 +117,7 @@
             <div class="card d-none" id="edit-financial-donations-section">
                 <div class="card-header">
                     <div class="d-flex align-items-center justify-content-between">
-                    <h4>{{__('Financial Donations')}}</h4>
+                        <h4>{{__('Financial Donations')}}</h4>
 
                         <button type="button" class="btn btn-secondary mt-2 add-row-btn" data-target="#edit-financial-donation-rows-container">{{__('Add Row')}}</button>
                     </div>
@@ -165,7 +185,7 @@
             </div>
 
             <div class="row">
-               
+
 
                 <div class="mb-3" id="edit-reason-container" style="display: none;">
                     <label for="reason" class="form-label">{{__('Reason')}}</label>

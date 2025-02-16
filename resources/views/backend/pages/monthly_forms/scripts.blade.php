@@ -14,20 +14,26 @@
                     d.start_date = $('#start-date').val();
                     d.end_date = $('#end-date').val();
                     d.department = $('#department-filter').val();
+                    d.follow_up_department = $('#follow-up-department-filter').val();
                     d.employee = $('#employee-filter').val();
                 }
             },
             columns: [{
                     data: 'id',
-                    name: 'id'
+                    name: 'id',
+                    
                 },
                 {
                     data: 'name',
-                    name: 'name'
+                    name: 'name',
+                    orderable: false,
+
                 },
                 {
                     data: 'area',
-                    name: 'area'
+                    name: 'area',
+                    orderable: false,
+
                 },
                 {
                     data: 'phones',
@@ -41,12 +47,16 @@
                             .split(', ')
                             .map(phone => `<div>${phone}</div>`)
                             .join('');
-                    }
+                    },
+                    orderable: false,
+
 
                 },
                 {
                     data: 'monthly_donation_day',
-                    name: 'monthly_donation_day'
+                    name: 'monthly_donation_day',
+                    orderable: false,
+
                 },
 
                 {
@@ -62,6 +72,15 @@
                     searchable: false
                 }
             ],
+            initComplete: function() {
+            // Apply column-specific search
+            this.api().columns().every(function() {
+                var column = this;
+                $('input, select', column.header()).on('change keyup', function() {
+                    column.search($(this).val()).draw();
+                });
+            });
+        },
             order: [
                 [0, 'desc']
             ],
@@ -267,11 +286,16 @@
         monthlyFormsTable.ajax.reload();
     });
 
+    $('#follow-up-department-filter').on('change', function () {
+        monthlyFormsTable.ajax.reload();
+    });
+
 
 
     $('#clear-filters').on('click', function() {
         $('#date-filter').val('all').trigger('change');
         $('#department-filter').val('all').trigger('change');
+        $('#follow-up-department-filter').val('all').trigger('change');
         $('#employee-filter').html('<option value="all">All</option>');
         $('#start-date, #end-date').val('');
         monthlyFormsTable.ajax.reload();
@@ -636,6 +660,9 @@
         $('#edit_department_id').val(data.department_id);
         $('#edit_employee_id').val(data.employee_id);
         $('#edit_notes').val(data.notes);
+        $('#edit_form_date').val(data.form_date);
+        $('#edit_follow_up_department_id').val(data.follow_up_department_id);
+
 
         const reasonContainer = document.getElementById('edit-reason-container');
         const dateContainer = document.getElementById('edit-date-container');

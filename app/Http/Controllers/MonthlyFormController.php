@@ -49,38 +49,65 @@ class MonthlyFormController extends Controller
     {
 
         $query = MonthlyForm::query()
-            ->selectRaw('
-        monthly_forms.id,
-        monthly_forms.donor_id,
-        monthly_forms.collecting_donation_way,
-        monthly_forms.created_at,
-        monthly_forms.status,
-        monthly_forms.cancellation_reason,
-        monthly_forms.cancellation_date,
-        donors.name as donor_name,
-        areas.name as area_name,
-        donors.address,
-        GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers,
-        SUM(CASE WHEN monthly_forms_items.donation_type = "financial" THEN monthly_forms_items.amount ELSE 0 END) as financial_amount
-
-    ')
-            ->leftJoin('donors', 'monthly_forms.donor_id', '=', 'donors.id')
-            ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
-            ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
-            ->leftJoin('monthly_forms_items', 'monthly_forms.id', '=', 'monthly_forms_items.monthly_form_id')
-            ->with('donor', 'items')
-            ->groupBy(
-                'monthly_forms.donor_id',
-                'donors.name',
-                'areas.name',
-                'donors.address',
-                'monthly_forms.id',
-                'monthly_forms.created_at',
-                'monthly_forms.collecting_donation_way',
-                'monthly_forms.status',
-                'monthly_forms.cancellation_reason',
-                'monthly_forms.cancellation_date'
-            );
+        ->selectRaw('
+            monthly_forms.id,
+            monthly_forms.donor_id,
+            monthly_forms.collecting_donation_way,
+            monthly_forms.created_at,
+            monthly_forms.status,
+            monthly_forms.cancellation_reason,
+            monthly_forms.cancellation_date,
+            donors.name as donor_name,
+            areas.name as area_name,
+            donors.address,
+            GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers,
+            SUM(CASE WHEN monthly_forms_items.donation_type = "financial" THEN monthly_forms_items.amount ELSE 0 END) as financial_amount
+        ')
+        ->leftJoin('donors', 'monthly_forms.donor_id', '=', 'donors.id')
+        ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
+        ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
+        ->leftJoin('monthly_forms_items', 'monthly_forms.id', '=', 'monthly_forms_items.monthly_form_id')
+        ->with(['donor', 'items'])
+        ->groupBy(
+            'monthly_forms.id',
+            'monthly_forms.donor_id',
+            'monthly_forms.collecting_donation_way',
+            'monthly_forms.created_at',
+            'monthly_forms.status',
+            'monthly_forms.cancellation_reason',
+            'monthly_forms.cancellation_date',
+            'donors.name',
+            'areas.name',
+            'donors.address'
+        );
+    
+    if (request()->has('columns')) {
+        foreach (request()->get('columns') as $column) {
+            $searchValue = $column['search']['value'];
+            $columnName = $column['name'];
+    
+            if ($searchValue) {
+                if ($columnName === 'phones') {
+                    $query->whereHas('donor.phones', function ($q) use ($searchValue) {
+                        $q->where('phone_number', 'like', "%{$searchValue}%");
+                    });
+                } elseif ($columnName === 'name') {
+                    $query->whereHas('donor', function ($q) use ($searchValue) {
+                        $q->where('name', 'like', "%{$searchValue}%");
+                    });
+                } elseif ($columnName === 'area') {
+                    $query->whereHas('donor.area', function ($q) use ($searchValue) {
+                        $q->where('name', 'like', "%{$searchValue}%");
+                    });
+                } elseif ($columnName === 'monthly_donation_way') {
+                    $query->where('monthly_forms.collecting_donation_way', 'like', "%{$searchValue}%");
+                } else {
+                    $query->where($columnName, 'like', "%{$searchValue}%");
+                }
+            }
+        }
+    }
+    
 
         if (request()->has('status')) {
             $status = request('status');
@@ -91,8 +118,8 @@ class MonthlyFormController extends Controller
             }
         }
 
-          // Date filter
-          if (request()->has('date_filter')) {
+        // Date filter
+        if (request()->has('date_filter')) {
             $dateFilter = request('date_filter');
             $startDate = request('start_date');
             $endDate = request('end_date');
@@ -109,14 +136,25 @@ class MonthlyFormController extends Controller
         }
 
         // Donation category filter
-        if (request()->has('department') &&
-        request('department') != null && request('department') !== 'all') {
+        if (
+            request()->has('department') &&
+            request('department') != null && request('department') !== 'all'
+        ) {
             $query->where('monthly_forms.department_id', request('department'));
         }
 
-        if (request()->has('employee') &&
-        request('employee') != null
-        && request('employee') !== 'all') {
+        if (
+            request()->has('follow_up_department') &&
+            request('follow_up_department') != null && request('follow_up_department') !== 'all'
+        ) {
+            $query->where('monthly_forms.follow_up_department_id', request('follow_up_department'));
+        }
+
+        if (
+            request()->has('employee') &&
+            request('employee') != null
+            && request('employee') !== 'all'
+        ) {
             $query->where('monthly_forms.employee_id', request('employee'));
         }
 
@@ -252,6 +290,8 @@ class MonthlyFormController extends Controller
                 'cancellation_reason' => $validatedData['cancellation_reason'],
                 'cancellation_date' => $validatedData['cancellation_date'],
                 'donation_type' => $validatedData['donation_type'],
+                'form_date' => $validatedData['form_date'],
+                'follow_up_department_id' => $validatedData['follow_up_department_id'],
             ]);
 
             $itemsAdded = false; // Flag to check if any items were added
@@ -345,6 +385,8 @@ class MonthlyFormController extends Controller
                 'cancellation_reason' => $validatedData['cancellation_reason'],
                 'cancellation_date' => $validatedData['cancellation_date'],
                 'donation_type' => $validatedData['donation_type'],
+                'form_date' => $validatedData['form_date'],
+                'follow_up_department_id' => $validatedData['follow_up_department_id'],
             ]);
 
             $itemsUpdated = false; // Flag to check if any forms were processed
@@ -461,7 +503,7 @@ class MonthlyFormController extends Controller
 
     public function getMonthlyFormDetails($id)
     {
-        $monthlyForm = MonthlyForm::with('donor', 'items', 'employee','department', 'createdBy')->findOrFail($id);
+        $monthlyForm = MonthlyForm::with('donor', 'items', 'employee', 'department', 'createdBy')->findOrFail($id);
         return response()->json($monthlyForm);
     }
 }

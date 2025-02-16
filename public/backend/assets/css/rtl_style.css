@@ -2283,7 +2283,8 @@ progress {
     background-color: var(--bs-table-bg);
     border-bottom-width: 1px;
     -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
-    box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg)
+    box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    font-weight: 800;
 }
 
 .table>tbody {
@@ -22366,3 +22367,4 @@ div.table-responsive>div.dataTables_wrapper>div.row>div[class^=col-]:first-child
 #donors-table td:nth-child(6) { width: 100px !important; }  /* Phones */
 #donors-table th:nth-child(7),
 #donors-table td:nth-child(7) { width: 50px !important; }  /* status */
+

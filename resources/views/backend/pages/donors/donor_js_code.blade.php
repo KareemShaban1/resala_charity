@@ -39,12 +39,42 @@
             width: '100%'
         });
 
+
         $('#assign_donor_id').select2({
             dropdownParent: $('#assignDonorModal'),
-            placeholder: '{{__('Select Donor')}}',
-            allowClear: true,
-            width: '100%'
+            placeholder: "{{__('Search by ID or Phone')}}",
+            ajax: {
+                url: '{{ route("donors.search") }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        query: params.term, // Search query
+                        monthly: true
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.results.map(function(donor) {
+                            return {
+                                id: donor.id,
+                                text: `${donor.text}`, // Display the name and the exact phone that matched the search term
+                            };
+                        })
+                    };
+                },
+                // cache: true
+            },
+            templateResult: function(donor) {
+                if (donor.loading) return donor.text;
+
+                return $('<span>' + donor.text + '</span>'); // Display donor name and matched phone in the dropdown
+            },
+            templateSelection: function(donor) {
+                return donor.text; // When selected, show name and matched phone
+            }
         });
+
     }
 
     function initializeModalSelect2() {

@@ -29,6 +29,8 @@ class StoreMonthlyFormRequest extends FormRequest
             'collecting_donation_way' => 'required|string|in:location,online,representative',
             'status' => 'required|in:ongoing,cancelled',
             'donation_type' => 'required|string|in:financial,inKind,both',
+            'form_date' => 'required|date',
+            'follow_up_department_id' => 'nullable|exists:departments,id',
             'notes' => 'nullable|string',
             'cancellation_reason' => 'nullable|string',
             'cancellation_date' => 'nullable',

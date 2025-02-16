@@ -333,6 +333,9 @@
                 url: "{{ route('collecting-lines.data') }}",
                 data: function(d) {
                     // d.date = $('#date').val();
+                        d.date_filter = $('#date-filter').val();
+                    d.start_date = $('#start-date').val();
+                    d.end_date = $('#end-date').val();
                     d.area_group = $('#area_group').val();
                 }
             },
@@ -415,6 +418,27 @@
                 $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
             }
         });
+
+
+        $('#date-filter').on('change', function () {
+        if ($(this).val() === 'range') {
+            $('#custom-range, #end-date-container').show();
+        } else {
+            $('#custom-range, #end-date-container').hide();
+            $('#start-date, #end-date').val('');
+        }
+        allCollectingLinesTable.ajax.reload();
+    });
+
+    $('#start-date, #end-date').on('change', function () {
+        allCollectingLinesTable.ajax.reload();
+    });
+
+    $('#clear-filters').on('click', function() {
+        $('#date-filter').val('all').trigger('change');
+        $('#start-date, #end-date').val('');
+        allCollectingLinesTable.ajax.reload();
+    });
 
 
 
@@ -1588,7 +1612,7 @@
               </select>
               <div class="invalid-feedback"></div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
               <label class="form-label">{{__('Amount')}}</label>
               <input type="number" class="form-control" name="donates[${index}][financial_amount]" value="${donation.amount || ''}">
               <div class="invalid-feedback"></div>
@@ -1598,7 +1622,17 @@
               <input type="text" class="form-control" name="donates[${index}][financial_receipt_number]" value="${donation.financial_receipt_number || ''}">
               <div class="invalid-feedback"></div>
           </div>
-          <div class="col-md-3 d-flex align-items-center">
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label">{{__('Donation Item Type')}}</label>
+                    <select class="form-control" name="donates[${index}][financial_donation_item_type]">
+                        <option value="normal" ${donation.donation_item_type === 'normal' ? 'selected' : ''}>{{__('Normal')}}</option>
+                        <option value="monthly" ${donation.donation_item_type === 'monthly' ? 'selected' : ''}>{{__('Monthly')}}</option>
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+          <div class="col-md-1 d-flex align-items-center">
               <button type="button" class="btn btn-danger remove-row-btn-edit">{{__('Remove')}}</button>
           </div>
       </div>`;
@@ -1609,17 +1643,27 @@
       <div class="row donation-row">
           <input type="hidden" name="donates[${index}][inKind_donation_type]" value="inKind">
           <input type="hidden" name="donates[${index}][inKind_donation_id]" value="${donation.id || ''}">
-          <div class="col-md-4">
+          <div class="col-md-3">
               <label class="form-label">{{__('Item Name')}}</label>
               <input type="text" class="form-control" name="donates[${index}][in_kind_item_name]" value="${donation.item_name || ''}">
               <div class="invalid-feedback"></div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
               <label class="form-label">{{__('Quantity')}}</label>
               <input type="number" class="form-control" name="donates[${index}][in_kind_quantity]" value="${donation.amount || ''}">
               <div class="invalid-feedback"></div>
           </div>
-          <div class="col-md-4 d-flex align-items-center">
+          <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label">{{__('Donation Item Type')}}</label>
+                    <select class="form-control" name="donates[${index}][in_kind_donation_item_type]">
+                        <option value="normal" ${donation.donation_item_type === 'normal' ? 'selected' : ''}>{{__('Normal')}}</option>
+                        <option value="monthly" ${donation.donation_item_type === 'monthly' ? 'selected' : ''}>{{__('Monthly')}}</option>
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+          <div class="col-md-3 d-flex align-items-center">
               <button type="button" class="btn btn-danger remove-row-btn-edit">{{__('Remove')}}</button>
           </div>
       </div>`;

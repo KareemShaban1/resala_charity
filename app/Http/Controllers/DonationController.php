@@ -106,9 +106,9 @@ class DonationController extends Controller
                 $query->where('donations.status', 'collected');
             } elseif ($status === 'not_collected') {
                 $query->where('donations.status', 'not_collected');
-            }elseif($status === 'followed_up'){
+            } elseif ($status === 'followed_up') {
                 $query->where('donations.status', 'followed_up');
-            }elseif($status === 'cancelled'){
+            } elseif ($status === 'cancelled') {
                 $query->where('donations.status', 'cancelled');
             }
 
@@ -181,8 +181,8 @@ class DonationController extends Controller
             ->addColumn('name', function ($item) {
                 // return $item->donor->name;
                 return '<a href="' . route('donor-history.show', [$item->donor->id]) . '" class="text-info">'
-                . $item->donor->name .
-                '</a>';
+                    . $item->donor->name .
+                    '</a>';
             })
             ->addColumn('area', function ($item) {
                 return $item->donor->area->name;
@@ -246,7 +246,7 @@ class DonationController extends Controller
                 }
                 return null;
             })
-            ->rawColumns(['name','action', 'donateItems', 'receipt_number', 'donation_status'])
+            ->rawColumns(['name', 'action', 'donateItems', 'receipt_number', 'donation_status'])
             ->make(true);
     }
 
@@ -617,7 +617,7 @@ class DonationController extends Controller
 
             // Update or delete collectingDonation
             if ($donation->status === "collected") {
-                $donation->collectingDonation()->updateOrCreate(
+                $collectingDonation = $donation->collectingDonation()->updateOrCreate(
                     ['donation_id' => $donation->id],
                     [
                         "employee_id" => $validatedData["employee_id"],
@@ -628,27 +628,31 @@ class DonationController extends Controller
                     ]
                 );
                 // Get the latest monthly_form_donations entry
-                $latestMonthlyFormDonation = DB::table('monthly_form_donations')
-                    ->where('donation_id', $donation->id)
-                    ->latest('donation_date')
-                    ->first();
+                // $latestMonthlyFormDonation = DB::table('monthly_form_donations')
+                //     ->where('donation_id', $donation->id)
+                //     ->latest('donation_date')
+                //     ->first();
 
-                    // dd($latestMonthlyFormDonation);
+                // // If an entry exists, update the monthly_donation_day in monthly_forms
+                // if ($latestMonthlyFormDonation) {
+                //     $donationDate = Carbon::parse($latestMonthlyFormDonation->donation_date);
+                //     $monthlyDonationDay = $donationDate->day; // Extract the day
+                //     DB::table('donors')
+                //         ->where('id', $donation->donor_id)
+                //         ->update(['monthly_donation_day' => $monthlyDonationDay]);
+                // }
 
-                    // \Log::info('latestMonthlyFormDonation : ' . $latestMonthlyFormDonation);
+                // Extract the collecting date
+                if ($collectingDonation) {
+                    $collectingDate = Carbon::parse($collectingDonation->collecting_date);
+                    $monthlyDonationDay = $collectingDate->day; // Extract the day from the collecting_date
 
-                // If an entry exists, update the monthly_donation_day in monthly_forms
-                if ($latestMonthlyFormDonation) {
-                    $donationDate = Carbon::parse($latestMonthlyFormDonation->donation_date);
-                    $monthlyDonationDay = $donationDate->day; // Extract the day
-
-                    // \Log::info('monthlyDonationDay : ' . $monthlyDonationDay);
-                    // Update the monthly_forms table
+                    // Update the donors table
                     DB::table('donors')
                         ->where('id', $donation->donor_id)
                         ->update(['monthly_donation_day' => $monthlyDonationDay]);
 
-                        \Log::info('updated monthly_forms');
+                    \Log::info('Updated donor monthly_donation_day to collecting date: ' . $monthlyDonationDay);
                 }
             } else {
                 $donation->collectingDonation()->delete();
