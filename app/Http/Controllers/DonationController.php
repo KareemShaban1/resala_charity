@@ -831,14 +831,14 @@ class DonationController extends Controller
                 }
                 $monthlyForm = MonthlyForm::where('donor_id', $validatedData['donor_id'])->first();
 
-                $monthlyFormDonation = $donation->monthlyForms()->create([
+                DB::table('monthly_form_donations')->insert([
                     "donation_id" => $donation->id,
                     "monthly_form_id" => $monthlyForm->id,
                     // "month" => $donateData["month"],
                     'month' => date('m', strtotime( $donateData["date"])),
                     'donation_date' => $donateData["date"]
-
                 ]);
+                
 
                 if (!$donatesAdded) {
                     DB::rollBack();
