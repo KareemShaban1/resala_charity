@@ -99,6 +99,7 @@
 </script>
 
 @endsection
+@include('backend.pages.collecting-lines.scripts.all_collecting_lines_scripts')
 
 @include('backend.pages.collecting-lines.scripts')
 

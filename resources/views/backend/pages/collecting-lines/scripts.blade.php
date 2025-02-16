@@ -16,7 +16,10 @@
             ajax: {
                 url: "{{ route('collecting-lines.data') }}",
                 data: function(d) {
-                    d.date = $('#date').val();
+                    // d.date = $('#date').val();
+                    d.date_filter = $('#date-filter').val();
+                    d.start_date = $('#start-date').val();
+                    d.end_date = $('#end-date').val();
                     d.area_group = $('#area_group').val();
                 }
             },
@@ -93,13 +96,17 @@
             }
         });
 
-         donationsTable = $('#donations-table').DataTable({
+
+        donationsTable = $('#donations-table').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
                 url: "{{ route('collecting-lines.donations') }}",
                 data: function(d) {
-                    d.date = $('#date').val();
+                    // d.date = $('#date').val();
+                    d.date_filter = $('#date-filter').val();
+                    d.start_date = $('#start-date').val();
+                    d.end_date = $('#end-date').val();
                     d.area_group = $('#area_group').val();
                 }
             },
@@ -207,7 +214,10 @@
             ajax: {
                 url: "{{ route('collecting-lines.monthly-forms') }}",
                 data: function(d) {
-                    d.date = $('#date').val();
+                    // d.date = $('#date').val();
+                    d.date_filter = $('#date-filter').val();
+                    d.start_date = $('#start-date').val();
+                    d.end_date = $('#end-date').val();
                     d.area_group = $('#area_group').val();
 
                 }
@@ -314,110 +324,14 @@
 
 
         function getColorForParent(parentId) {
-    // Use a hash function to generate a unique color
-    const colors = [
-        '#f9f9f9', '#e6f7ff', '#fff7e6', '#e6ffe6', '#ffe6e6', 
-        '#e6e6ff', '#f0e6ff', '#ffe6f0', '#e6fff0', '#fff0e6'
-    ];
-    const index = parentId % colors.length; // Ensure the index is within the array bounds
-    return colors[index];
-}
-
-
-
-          // Initialize DataTables
-          allCollectingLinesTable = $('#all-collecting-lines-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('collecting-lines.data') }}",
-                data: function(d) {
-                    // d.date = $('#date').val();
-                        d.date_filter = $('#date-filter').val();
-                    d.start_date = $('#start-date').val();
-                    d.end_date = $('#end-date').val();
-                    d.area_group = $('#area_group').val();
-                }
-            },
-            columns: [{
-                    data: 'id',
-                    name: 'id'
-                },
-                {
-                    data: 'number',
-                    name: 'number',
-                    render: function(data, type, row) {
-                        return `
-                            <a href="/collecting-lines/${row.id}/show" class="text-info">
-                                ${row.number}
-                            </a>
-                        `;
-                    }
-
-                },
-                {
-                    data: 'areaGroup',
-                    name: 'areaGroup'
-                },
-                {
-                    data: 'representative',
-                    name: 'representative'
-                },
-                {
-                    data: 'driver',
-                    name: 'driver'
-                },
-                {
-                    data: 'employee',
-                    name: 'employee'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                    searchable: false
-                }
-            ],
-            order: [
-                [0, 'desc']
-            ],
-            buttons: [{
-                    extend: 'print',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3]
-                    }
-                },
-                {
-                    extend: 'excel',
-                    text: 'Excel',
-                    title: 'Areas Data',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3]
-                    }
-                },
-                // {
-                //     extend: 'pdf', 
-                //     text: 'PDF', 
-                //     title: 'Areas Data', 
-                //     exportOptions: {
-                //         columns: [0, 1, 2, 3]
-                //     }
-                // },
-                {
-                    extend: 'copy',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3]
-                    }
-                },
-            ],
-            dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
-            pageLength: 10,
-            responsive: true,
-            language: languages[language], // Apply language dynamically
-            "drawCallback": function() {
-                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
-            }
-        });
+            // Use a hash function to generate a unique color
+            const colors = [
+                '#f9f9f9', '#e6f7ff', '#fff7e6', '#e6ffe6', '#ffe6e6', 
+                '#e6e6ff', '#f0e6ff', '#ffe6f0', '#e6fff0', '#fff0e6'
+            ];
+            const index = parentId % colors.length; // Ensure the index is within the array bounds
+            return colors[index];
+        }
 
 
         $('#date-filter').on('change', function () {
@@ -427,20 +341,24 @@
             $('#custom-range, #end-date-container').hide();
             $('#start-date, #end-date').val('');
         }
-        allCollectingLinesTable.ajax.reload();
+        collectingLinesTable.ajax.reload();
+        donationsTable.ajax.reload();
+        monthlyFormstable.ajax.reload();
     });
 
     $('#start-date, #end-date').on('change', function () {
-        allCollectingLinesTable.ajax.reload();
+        collectingLinesTable.ajax.reload();
+        donationsTable.ajax.reload();
+        monthlyFormstable.ajax.reload();
     });
 
     $('#clear-filters').on('click', function() {
         $('#date-filter').val('all').trigger('change');
         $('#start-date, #end-date').val('');
-        allCollectingLinesTable.ajax.reload();
+        collectingLinesTable.ajax.reload();
+        donationsTable.ajax.reload();
+        monthlyFormstable.ajax.reload();
     });
-
-
 
 
         // Apply Filters

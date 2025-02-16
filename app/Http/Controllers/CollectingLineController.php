@@ -85,22 +85,22 @@ class CollectingLineController extends Controller
             // if ($request->has('date') && $request->date != '') {
             //     $data->whereDate('collecting_date', '=', $request->date);
             // }
-             // Date filter
-        if (request()->has('date_filter')) {
-            $dateFilter = request('date_filter');
-            $startDate = request('start_date');
-            $endDate = request('end_date');
+            // Date filter
+            if (request()->has('date_filter')) {
+                $dateFilter = request('date_filter');
+                $startDate = request('start_date');
+                $endDate = request('end_date');
 
-            if ($dateFilter === 'today') {
-                $data->whereDate('created_at', operator: today());
-            } elseif ($dateFilter === 'week') {
-                $data->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
-            } elseif ($dateFilter === 'month') {
-                $data->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()]);
-            } elseif ($dateFilter === 'range' && $startDate && $endDate) {
-                $data->whereBetween('created_at', [$startDate, $endDate]);
+                if ($dateFilter === 'today') {
+                    $data->whereDate('created_at', operator: today());
+                } elseif ($dateFilter === 'week') {
+                    $data->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                } elseif ($dateFilter === 'month') {
+                    $data->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()]);
+                } elseif ($dateFilter === 'range' && $startDate && $endDate) {
+                    $data->whereBetween('created_at', [$startDate, $endDate]);
+                }
             }
-        }
             // if ($request->has('end_date') && $request->end_date != '') {
             //     $data->whereDate('created_at', '<=', $request->end_date);
             // }
@@ -143,8 +143,23 @@ class CollectingLineController extends Controller
     {
 
         $data = CollectingLine::with('areaGroup');
-        if ($request->has('date') && $request->date != '') {
-            $data->whereDate('collecting_date', '=', $request->date);
+        // if ($request->has('date') && $request->date != '') {
+        //     $data->whereDate('collecting_date', '=', $request->date);
+        // }
+        if (request()->has('date_filter')) {
+            $dateFilter = request('date_filter');
+            $startDate = request('start_date');
+            $endDate = request('end_date');
+
+            if ($dateFilter === 'today') {
+                $data->whereDate('collecting_date', operator: today());
+            } elseif ($dateFilter === 'week') {
+                $data->whereBetween('collecting_date', values: [now()->startOfWeek(), now()->endOfWeek()]);
+            } elseif ($dateFilter === 'month') {
+                $data->whereBetween('collecting_date', [now()->startOfMonth(), now()->endOfMonth()]);
+            } elseif ($dateFilter === 'range' && $startDate && $endDate) {
+                $data->whereBetween('collecting_date', [$startDate, $endDate]);
+            }
         }
         if ($request->has('area_group') && $request->area_group != '') {
             $data->where('area_group', $request->area_group);
@@ -222,8 +237,23 @@ class CollectingLineController extends Controller
                 );
 
 
-            if ($request->has('date') && $request->date != '') {
-                $data->whereDate('donations.date',  $request->date);
+            // if ($request->has('date') && $request->date != '') {
+            //     $data->whereDate('donations.date',  $request->date);
+            // }
+            if (request()->has('date_filter')) {
+                $dateFilter = request('date_filter');
+                $startDate = request('start_date');
+                $endDate = request('end_date');
+
+                if ($dateFilter === 'today') {
+                    $data->whereDate('donations.date', operator: today());
+                } elseif ($dateFilter === 'week') {
+                    $data->whereBetween('donations.date', [now()->startOfWeek(), now()->endOfWeek()]);
+                } elseif ($dateFilter === 'month') {
+                    $data->whereBetween('donations.date', [now()->startOfMonth(), now()->endOfMonth()]);
+                } elseif ($dateFilter === 'range' && $startDate && $endDate) {
+                    $data->whereBetween('donations.date', [$startDate, $endDate]);
+                }
             }
 
             if ($request->has('area_group') && $request->area_group != '') {
@@ -382,29 +412,50 @@ class CollectingLineController extends Controller
             );
 
         // Apply filters
-        if ($request->has('date') && $request->date != '') {
-            $day = ltrim(date('d', strtotime($request->date)), '0'); // Remove leading zero
-            $month = date('m', strtotime($request->date));
-            $year = date('Y', strtotime($request->date));
+        // if ($request->has('date') && $request->date != '') {
+        //     $day = ltrim(date('d', strtotime($request->date)), '0'); // Remove leading zero
+        //     $month = date('m', strtotime($request->date));
+        //     $year = date('Y', strtotime($request->date));
 
-            // Filter by the extracted day
-            $query->where('donors.monthly_donation_day', $day);
+        //     // Filter by the extracted day
+        //     $query->where('donors.monthly_donation_day', $day);
 
-            // Filter by the extracted day (only for parent donors)
-            // $query->where(function ($q) use ($day) {
-            //     $q->where('donors.parent_id','<>', null) // Only parent donors
-            //     ->orWhere('donors.monthly_donation_day', $day);
-            // });
+        //     // Filter out monthly_forms that have donations in the same month
+        //     $query->whereDoesntHave('donations', function ($q) use ($month, $year) {
+        //         $q->whereMonth('donations.created_at', $month)
+        //             ->whereYear('donations.created_at', $year);
+        //     });
+        // }
 
-            // dd($query->get());
+        if ($request->has('date_filter')) {
+            $dateFilter = $request->date_filter;
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
 
+            if ($dateFilter === 'today') {
+                $day = now()->format('j'); // Get today's day without leading zeros
+                $query->whereHas('donor', function ($q) use ($day) {
+                    $q->where('donors.monthly_donation_day', $day);
+                });
+            } elseif ($dateFilter === 'week') {
+                $weekDays = collect(range(now()->startOfWeek()->format('j'), now()->endOfWeek()->format('j')))->map(fn($d) => (int) $d);
+                $query->whereHas('donor', function ($q) use ($weekDays) {
+                    $q->whereIn('donors.monthly_donation_day', $weekDays);
+                });
+            } elseif ($dateFilter === 'month') {
+                $monthDays = collect(range(now()->startOfMonth()->format('j'), now()->endOfMonth()->format('j')))->map(fn($d) => (int) $d);
+                $query->whereHas('donor', function ($q) use ($monthDays) {
+                    $q->whereIn('donors.monthly_donation_day', $monthDays);
+                });
+            } elseif ($dateFilter === 'range' && $startDate && $endDate) {
+                $startDay = (int) date('j', strtotime($startDate));
+                $endDay = (int) date('j', strtotime($endDate));
 
-
-            // Filter out monthly_forms that have donations in the same month
-            $query->whereDoesntHave('donations', function ($q) use ($month, $year) {
-                $q->whereMonth('donations.created_at', $month)
-                    ->whereYear('donations.created_at', $year);
-            });
+                $daysInRange = collect(range($startDay, $endDay));
+                $query->whereHas('donor', function ($q) use ($daysInRange) {
+                    $q->whereIn('donors.monthly_donation_day', $daysInRange);
+                });
+            }
         }
 
         if ($request->has('area_group') && $request->area_group != '') {
@@ -700,10 +751,10 @@ class CollectingLineController extends Controller
         $additionalData = [
 
             'collecting_line_name' => $collectingLine->number,
-            'representative'=>$collectingLine->representative->name ?? '',
-            'driver'=>$collectingLine->driver->name ?? '',
-            'employee'=>$collectingLine->employee->name ?? '',
-            'area_group'=>$collectingLine->areaGroup->name ?? '',
+            'representative' => $collectingLine->representative->name ?? '',
+            'driver' => $collectingLine->driver->name ?? '',
+            'employee' => $collectingLine->employee->name ?? '',
+            'area_group' => $collectingLine->areaGroup->name ?? '',
             'collecting_line_date' => Carbon::parse($collectingLine->collecting_date)->format('Y-m-d'),
             'total_donations' => $data->count(),
         ];
