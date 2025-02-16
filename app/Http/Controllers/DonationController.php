@@ -834,7 +834,8 @@ class DonationController extends Controller
                 $monthlyFormDonation = $donation->monthlyForms()->create([
                     "donation_id" => $donation->id,
                     "monthly_form_id" => $monthlyForm->id,
-                    "month" => $donateData["month"],
+                    // "month" => $donateData["month"],
+                    'month' => date('m', strtotime( $donateData["date"])),
                     'donation_date' => $donateData["date"]
 
                 ]);
