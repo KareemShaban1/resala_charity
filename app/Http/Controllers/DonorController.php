@@ -38,19 +38,19 @@ class DonorController extends Controller
     public function data(Request $request)
     {
         $query = Donor::selectRaw('donors.*, 
-            CASE 
-                    WHEN donors.parent_id IS NOT NULL THEN donors.parent_id
-                    ELSE donors.id
-            END as parent_donor_group_id,
-            CASE 
-                WHEN donors.parent_id IS NOT NULL THEN "Child"
-                WHEN EXISTS (SELECT 1 FROM donors d WHERE d.parent_id = donors.id) THEN "Parent"
-                ELSE "Other"
-            END as is_child')
-            ->with(['governorate', 'city', 'area', 'phones'])
-            ->orderBy('parent_donor_group_id', 'asc') // Group children under parents
-            // ->orderBy('donors.id', 'asc'); // Maintain order within each group;
-            ->orderBy('donors.created_at', 'desc'); // Sort by latest donors
+        CASE 
+            WHEN donors.parent_id IS NOT NULL THEN donors.parent_id
+            ELSE donors.id
+        END as parent_donor_group_id,
+        CASE 
+            WHEN donors.parent_id IS NOT NULL THEN 1  -- Child
+            ELSE 0  -- Parent
+        END as is_child_order') // Ensures parents appear first
+    ->with(['governorate', 'city', 'area', 'phones'])
+    ->orderBy('parent_donor_group_id', 'asc') // Group children under parents
+    ->orderBy('is_child_order', 'asc') // Ensure parents appear above their children
+    ->orderBy('donors.created_at', 'desc'); // Sort by latest donors
+
 
 
 
