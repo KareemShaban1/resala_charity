@@ -49,7 +49,9 @@ class DonorController extends Controller
             END as is_child')
             ->with(['governorate', 'city', 'area', 'phones'])
             ->orderBy('parent_donor_group_id', 'asc') // Group children under parents
-            ->orderBy('donors.id', 'asc'); // Maintain order within each group;
+            // ->orderBy('donors.id', 'asc'); // Maintain order within each group;
+            ->orderBy('donors.created_at', 'desc'); // Sort by latest donors
+
 
 
         if ($request->has('columns')) {
