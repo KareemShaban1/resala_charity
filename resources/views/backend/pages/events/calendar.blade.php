@@ -43,29 +43,29 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="eventModalLabel">Add Event</h5>
+                    <h5 class="modal-title" id="eventModalLabel">{{ __('Add Event') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="eventForm">
                         <div class="mb-3">
-                            <label for="eventName" class="form-label">Event Name</label>
+                            <label for="eventName" class="form-label">{{ __('Title') }}</label>
                             <input type="text" class="form-control" id="eventName" required>
                         </div>
                         <div class="mb-3">
-                            <label for="eventDescription" class="form-label">Description</label>
+                            <label for="eventDescription" class="form-label">{{ __('Description') }}</label>
                             <textarea class="form-control" id="eventDescription" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="startDate" class="form-label">Start Date</label>
+                            <label for="startDate" class="form-label">{{ __('Start Date') }}</label>
                             <input type="date" class="form-control" id="startDate" required>
                         </div>
                         <div class="mb-3">
-                            <label for="endDate" class="form-label">End Date</label>
+                            <label for="endDate" class="form-label">{{ __('End Date') }}</label>
                             <input type="date" class="form-control" id="endDate" required>
                         </div>
                         <div class="mb-3">
-                            <label for="eventStatus" class="form-label">Status</label>
+                            <label for="eventStatus" class="form-label">{{ __('Status') }}</label>
                             <select class="form-control" id="eventStatus" name="status" required>
                                 <option value="ongoing">{{ __('Ongoing') }}</option>
                                 <option value="cancelled">{{ __('Cancelled') }}</option>
@@ -75,8 +75,10 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="saveEvent">Save Event</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Close') }}</button>
+                    <button type="button" class="btn btn-danger" id="deleteEvent" style="display: none;">{{ __('Delete') }}</button>
+                    <button type="button" class="btn btn-primary" id="editEvent" style="display: none;">{{ __('Update') }}</button>
+                    <button type="button" class="btn btn-primary" id="saveEvent">{{ __('Save') }}</button>
                 </div>
             </div>
         </div>
@@ -86,10 +88,11 @@
 
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 
 
     <script>
+    
+
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
 
@@ -98,102 +101,176 @@
                 selectable: true,
                 select: function(info) {
                     $('#eventModal').modal('show');
-                    document.getElementById('startDate').value = info.startStr;
-                    // document.getElementById('endDate').value = info.endStr - 1;
-                    // Convert end date to a JavaScript Date object, subtract one day, and format it back
+                    $('#eventModalLabel').text('Add Event'); // Set modal title
+                    $('#saveEvent').show(); // Show Save button
+                    $('#editEvent').hide(); // Hide Edit button
+                    $('#deleteEvent').hide(); // Hide Delete button
+
+                    // Reset form and set start and end dates
+                    $('#eventForm')[0].reset();
+                    $('#startDate').val(info.startStr);
                     let endDate = new Date(info.endStr);
                     endDate.setDate(endDate.getDate() - 1);
-                    let formattedEndDate = endDate.toISOString().split('T')[0];
-
-                    // Set the adjusted end date in the input field
-                    document.getElementById('endDate').value = formattedEndDate;
-                    console.log(info, formattedEndDate);
+                    $('#endDate').val(endDate.toISOString().split('T')[0]);
                 },
                 events: @json($events).map(event => {
                     let endDate = new Date(event.end_date);
                     endDate.setDate(endDate.getDate() + 1); // Adjust end date
-                    let formattedEndDate = endDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
 
-                    // Define colors based on event status
                     let statusColors = {
-                        'done': '#28a745', // Green
-                        'cancelled': '#dc3545', // Red
-                        'ongoing': '#007bff', // Blue
+                        'done': '#28a745',
+                        'cancelled': '#dc3545',
+                        'ongoing': '#007bff',
                     };
 
                     return {
                         id: event.id,
                         title: event.title,
                         start: event.start_date,
-                        end: formattedEndDate,
+                        end: endDate.toISOString().split('T')[0],
                         description: event.description,
                         status: event.status,
-                        backgroundColor: statusColors[event.status] || '#6c757d', // Default gray if status not found
-                        borderColor: statusColors[event.status] || '#6c757d', // Match border color
+                        backgroundColor: statusColors[event.status] || '#6c757d',
+                        borderColor: statusColors[event.status] || '#6c757d',
                     };
                 }),
-
-
                 eventClick: function(info) {
-                    alert('Event: ' + info.event.title + '\nDescription: ' + info.event.extendedProps.description);
+                    let endDate = new Date(info.event.endStr);
+                    endDate.setDate(endDate.getDate() - 1); // Adjust end date
+                    $('#eventModal').modal('show');
+                    $('#eventModalLabel').text('Edit Event'); // Set modal title
+                    $('#saveEvent').hide(); // Hide Save button
+                    $('#editEvent').show(); // Show Edit button
+                    $('#deleteEvent').show(); // Show Delete button
+
+                    console.log(endDate);
+                    // Fill modal with event details
+                    $('#eventName').val(info.event.title);
+                    $('#eventDescription').val(info.event.extendedProps.description);
+                    $('#startDate').val(info.event.startStr);
+                    $('#endDate').val(endDate.toISOString().split('T')[0]);
+                    $('#eventStatus').val(info.event.extendedProps.status);
+                    $('#eventId').val(info.event.id); // Store event ID for updates
+
+                    // Store event reference globally for editing
+                    window.selectedEvent = info.event;
                 }
             });
 
             calendar.render();
 
-            // Handle saving the event via AJAX
-            document.getElementById('saveEvent').addEventListener('click', function() {
-                var eventName = document.getElementById('eventName').value;
-                var eventDescription = document.getElementById('eventDescription').value;
-                var startDate = document.getElementById('startDate').value;
-                var endDate = document.getElementById('endDate').value;
-                var status = document.getElementById('eventStatus').value;
+            // Handle saving a new event
+            $('#saveEvent').click(function() {
+                var eventData = {
+                    title: $('#eventName').val(),
+                    description: $('#eventDescription').val(),
+                    start_date: $('#startDate').val(),
+                    end_date: $('#endDate').val(),
+                    status: $('#eventStatus').val(),
+                    _token: "{{ csrf_token() }}"
+                };
 
-                if (eventName && startDate && endDate) {
+                $.post("{{ route('calendar.store') }}", eventData, function(response) {
+                    let endDate = new Date(response.end_date);
+                    endDate.setDate(endDate.getDate() + 1);
+
+                    let statusColors = {
+                        'done': '#28a745',
+                        'cancelled': '#dc3545',
+                        'ongoing': '#007bff',
+                    };
+
+                    calendar.addEvent({
+                        id: response.id,
+                        title: response.title,
+                        start: response.start_date,
+                        end: endDate.toISOString().split('T')[0],
+                        description: response.description,
+                        status: response.status,
+                        backgroundColor: statusColors[response.status] || '#6c757d',
+                        borderColor: statusColors[response.status] || '#6c757d',
+                    });
+
+                    $('#eventModal').modal('hide');
+                    $('#eventForm')[0].reset();
+                }).fail(function() {
+                    alert('Error saving event');
+                });
+            });
+
+            // Handle updating an event
+            $('#editEvent').click(function() {
+                if (!window.selectedEvent) return;
+
+                var eventData = {
+                    id: window.selectedEvent.id,
+                    title: $('#eventName').val(),
+                    description: $('#eventDescription').val(),
+                    start_date: $('#startDate').val(),
+                    end_date: $('#endDate').val(),
+                    status: $('#eventStatus').val(),
+                    _token: "{{ csrf_token() }}"
+                };
+
+                $.ajax({
+                    url: "{{ route('events.update', '') }}/" + window.selectedEvent.id, // Append ID
+                    type: "PUT",
+                    data: eventData,
+                    success: function(response) {
+                        let endDate = new Date(response.data.end_date);
+                        endDate.setDate(endDate.getDate() + 1);
+
+
+                        let statusColors = {
+                            'done': '#28a745',
+                            'cancelled': '#dc3545',
+                            'ongoing': '#007bff',
+                        };
+
+                        console.log(endDate.toISOString().split('T')[0])
+                       
+                        let updatedEvent = {
+                            id: response.data.id,
+                            title: response.data.title,
+                            start: response.data.start_date,
+                            end: endDate.toISOString().split('T')[0],
+                            description: response.data.description,
+                            status: response.data.status,
+                            backgroundColor: statusColors[response.data.status] || '#6c757d',
+                            borderColor: statusColors[response.data.status] || '#6c757d',
+                        };
+
+                        window.selectedEvent.remove();
+                        calendar.addEvent(updatedEvent);
+
+
+                        $('#eventModal').modal('hide');
+                    },
+                    error: function() {
+                        alert('Error updating event');
+                    }
+                });
+            });
+
+            // Handle deleting an event
+            $('#deleteEvent').click(function() {
+                if (!window.selectedEvent) return;
+
+                if (confirm('Are you sure you want to delete this event?')) {
                     $.ajax({
-                        url: "{{ route('calendar.store') }}", // Update with your actual route
-                        type: "POST",
+                        url: "{{ route('events.destroy', '') }}/" + window.selectedEvent.id, // Append ID
+                        type: "DELETE",
                         data: {
-                            title: eventName,
-                            description: eventDescription,
-                            start_date: startDate,
-                            end_date: endDate,
-                            status: status,
                             _token: "{{ csrf_token() }}"
                         },
-                        success: function(response) {
-                            let endDate = new Date(response.end_date);
-                            endDate.setDate(endDate.getDate() + 1); // Adjust end date
-                            let formattedEndDate = endDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
-
-                              // Define colors based on event status
-                                let statusColors = {
-                                    'done': '#28a745', // Green
-                                    'cancelled': '#dc3545', // Red
-                                    'ongoing': '#007bff', // Blue
-                                };
-                            // Add event to FullCalendar
-                            calendar.addEvent({
-                                id: response.id,
-                                title: response.title,
-                                start: response.start_date,
-                                end: formattedEndDate,
-                                status: response.status,
-                                description: response.description,
-                                backgroundColor: statusColors[response.status] || '#6c757d', // Default gray if status not found
-                                borderColor: statusColors[response.status] || '#6c757d', // Match border color
-                            });
-
-                            // Close modal and reset form
+                        success: function() {
+                            window.selectedEvent.remove();
                             $('#eventModal').modal('hide');
-                            document.getElementById('eventForm').reset();
                         },
-                        error: function(xhr) {
-                            alert('Error saving event');
+                        error: function() {
+                            alert('Error deleting event');
                         }
                     });
-                } else {
-                    alert('Please fill in all required fields.');
                 }
             });
         });

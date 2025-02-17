@@ -105,6 +105,7 @@ class EventController extends Controller
 
         return response()->json([
             'success' => true,
+            'data' => $event,
             'message' => __('messages.Event updated successfully')
         ]);
     }
