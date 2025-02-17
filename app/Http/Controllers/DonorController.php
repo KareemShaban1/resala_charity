@@ -46,10 +46,10 @@ class DonorController extends Controller
             WHEN donors.parent_id IS NOT NULL THEN 1  -- Child
             ELSE 0  -- Parent
         END as is_child_order') // Ensures parents appear first
-    ->with(['governorate', 'city', 'area', 'phones'])
-    ->orderBy('parent_donor_group_id', 'asc') // Group children under parents
-    ->orderBy('is_child_order', 'asc') // Ensure parents appear above their children
-    ->orderBy('donors.created_at', 'desc'); // Sort by latest donors
+            ->with(['governorate', 'city', 'area', 'phones'])
+            ->orderBy('parent_donor_group_id', 'asc') // Group children under parents
+            ->orderBy('is_child_order', 'asc') // Ensure parents appear above their children
+            ->orderBy('donors.created_at', 'desc'); // Sort by latest donors
 
 
 
@@ -108,10 +108,14 @@ class DonorController extends Controller
                 });
             })
             ->addColumn('phones', function ($donor) {
+                // return $donor->phones->isNotEmpty() ?
+                //     $donor->phones->map(function ($phone) {
+                //         return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
+                //     })->implode(', ') : 'N/A';
                 return $donor->phones->isNotEmpty() ?
-                    $donor->phones->map(function ($phone) {
-                        return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
-                    })->implode(', ') : 'N/A';
+                $donor->phones->map(function ($phone) {
+                    return $phone->phone_number;
+                })->implode(', ') : 'N/A';
             })
             ->addColumn('name', function ($donor) {
                 return '<a href="' . route('donor-history.show', [$donor->id]) . '" class="text-info">'

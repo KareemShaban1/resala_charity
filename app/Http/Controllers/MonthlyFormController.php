@@ -205,10 +205,14 @@ class MonthlyFormController extends Controller
                 return $item->donor?->monthly_donation_day ?? 0;
             })
             ->addColumn('phones', function ($item) {
+                // return $item->donor?->phones->isNotEmpty() ?
+                //     $item->donor->phones->map(function ($phone) {
+                //         return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
+                //     })->implode(', ') : 'N/A';
                 return $item->donor?->phones->isNotEmpty() ?
-                    $item->donor->phones->map(function ($phone) {
-                        return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
-                    })->implode(', ') : 'N/A';
+                $item->donor->phones->map(function ($phone) {
+                    return $phone->phone_number;
+                })->implode(', ') : 'N/A';
             })
             ->addColumn('collecting_donation_way', function ($item) {
                 switch ($item->collecting_donation_way) {

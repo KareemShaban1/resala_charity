@@ -203,9 +203,13 @@ class DonationController extends Controller
                 }
             })
             ->addColumn('phones', function ($item) {
+                // return $item->donor?->phones->isNotEmpty() ?
+                //     $item->donor->phones->map(function ($phone) {
+                //         return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
+                //     })->implode(', ') : 'N/A';
                 return $item->donor?->phones->isNotEmpty() ?
                     $item->donor->phones->map(function ($phone) {
-                        return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
+                        return $phone->phone_number;
                     })->implode(', ') : 'N/A';
             })
             ->addColumn('donateItems', function ($item) {
