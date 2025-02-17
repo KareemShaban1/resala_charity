@@ -182,10 +182,10 @@ class DonationController extends Controller
                 // return $item->donor->name;
                 return '<a href="' . route('donor-history.show', [$item->donor->id]) . '" class="text-info">'
                     . $item->donor->name .
-                    '</a>';
+                    '</a>' ?? '';
             })
             ->addColumn('area', function ($item) {
-                return $item->donor->area->name;
+                return $item->donor->area->name ?? '';
             })
             ->addColumn('address', function ($item) {
                 return $item->donor->address;
