@@ -122,6 +122,27 @@
             }
         });
 
+
+
+        $('#edit_governorate_id').on('change', function() {
+            var governorateId = $(this).val();
+            if (governorateId) {
+                loadCities(governorateId, $('#edit_city_id'));
+                $('#edit_area_id').empty().trigger('change');
+            } else {
+                $('#edit_city_id, #edit_area_id').empty().trigger('change');
+            }
+        });
+
+        $('#edit_city_id').on('change', function() {
+            var cityId = $(this).val();
+            if (cityId) {
+                loadAreas(cityId, $('#edit_area_id'));
+            } else {
+                $('#edit_area_id').empty().trigger('change');
+            }
+        });
+
         // Modal events
         $('#editDonorModal').on({
             'show.bs.modal': function() {
