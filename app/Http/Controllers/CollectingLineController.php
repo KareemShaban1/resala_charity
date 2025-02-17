@@ -14,6 +14,7 @@ use App\Models\MonthlyForm;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\View;
@@ -360,35 +361,89 @@ class CollectingLineController extends Controller
 
     public function getMonthlyFormsData(Request $request)
     {
+        // $query = MonthlyForm::query()
+        //     ->selectRaw('
+        //     monthly_forms.id,
+        //     monthly_forms.donor_id,
+        //     monthly_forms.collecting_donation_way,
+        //     monthly_forms.created_at,
+        //     monthly_forms.status,
+        //     monthly_forms.cancellation_reason,
+        //     monthly_forms.cancellation_date,
+        //     donors.name as donor_name,
+        //     donors.monthly_donation_day,
+        //     areas.name as area_name,
+        //     donors.address,
+        //     donors.parent_id,
+        //     GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers,
+        //     (SELECT donation_date 
+        //      FROM monthly_form_donations 
+        //      WHERE monthly_form_donations.monthly_form_id = monthly_forms.id 
+        //      ORDER BY donation_date DESC 
+        //      LIMIT 1) as last_donation_date,
+        //     CASE 
+        //         WHEN donors.parent_id IS NOT NULL THEN donors.parent_id
+        //         ELSE donors.id
+        //     END as parent_donor_group_id,
+        //     CASE 
+        //         WHEN donors.parent_id IS NOT NULL THEN "Child"
+        //         ELSE "Parent"
+        //     END as is_child
+        // ')
+        //     ->leftJoin('donors', 'monthly_forms.donor_id', '=', 'donors.id')
+        //     ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
+        //     ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
+        //     ->leftJoin('monthly_form_donations', 'monthly_forms.id', '=', 'monthly_form_donations.monthly_form_id')
+        //     ->where('monthly_forms.status', 'ongoing')
+        //     ->with('donor', 'items')
+        //     ->groupBy(
+        //         'monthly_forms.donor_id',
+        //         'donors.id',
+        //         'donors.name',
+        //         'areas.name',
+        //         'donors.address',
+        //         'donors.monthly_donation_day',
+        //         'monthly_forms.id',
+        //         'monthly_forms.created_at',
+        //         'monthly_forms.collecting_donation_way',
+        //         'monthly_forms.status',
+        //         'monthly_forms.cancellation_reason',
+        //         'monthly_forms.cancellation_date',
+        //         'donors.parent_id'
+        //     );
+
+        $currentYear = date('Y');
+        $currentMonth = date('m');
+
         $query = MonthlyForm::query()
             ->selectRaw('
-            monthly_forms.id,
-            monthly_forms.donor_id,
-            monthly_forms.collecting_donation_way,
-            monthly_forms.created_at,
-            monthly_forms.status,
-            monthly_forms.cancellation_reason,
-            monthly_forms.cancellation_date,
-            donors.name as donor_name,
-            donors.monthly_donation_day,
-            areas.name as area_name,
-            donors.address,
-            donors.parent_id,
-            GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers,
-            (SELECT donation_date 
-             FROM monthly_form_donations 
-             WHERE monthly_form_donations.monthly_form_id = monthly_forms.id 
-             ORDER BY donation_date DESC 
-             LIMIT 1) as last_donation_date,
-            CASE 
-                WHEN donors.parent_id IS NOT NULL THEN donors.parent_id
-                ELSE donors.id
-            END as parent_donor_group_id,
-            CASE 
-                WHEN donors.parent_id IS NOT NULL THEN "Child"
-                ELSE "Parent"
-            END as is_child
-        ')
+        monthly_forms.id,
+        monthly_forms.donor_id,
+        monthly_forms.collecting_donation_way,
+        monthly_forms.created_at,
+        monthly_forms.status,
+        monthly_forms.cancellation_reason,
+        monthly_forms.cancellation_date,
+        donors.name as donor_name,
+        donors.monthly_donation_day,
+        areas.name as area_name,
+        donors.address,
+        donors.parent_id,
+        GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers,
+        (SELECT donation_date 
+         FROM monthly_form_donations 
+         WHERE monthly_form_donations.monthly_form_id = monthly_forms.id 
+         ORDER BY donation_date DESC 
+         LIMIT 1) as last_donation_date,
+        CASE 
+            WHEN donors.parent_id IS NOT NULL THEN donors.parent_id
+            ELSE donors.id
+        END as parent_donor_group_id,
+        CASE 
+            WHEN donors.parent_id IS NOT NULL THEN "Child"
+            ELSE "Parent"
+        END as is_child
+    ')
             ->leftJoin('donors', 'monthly_forms.donor_id', '=', 'donors.id')
             ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
             ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
@@ -411,6 +466,78 @@ class CollectingLineController extends Controller
                 'donors.parent_id'
             );
 
+        // Apply date filter conditions
+        if ($request->has('date_filter')) {
+            $dateFilter = $request->date_filter;
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+
+            if ($dateFilter === 'today') {
+                $day = now()->format('j'); // Get today's day without leading zeros
+                $month = now()->format('m'); // Get current month as two digits (e.g., '02' for February)
+            
+                $query->whereHas('donor', function ($q) use ($day) {
+                    $q->where('donors.monthly_donation_day', $day);
+                });
+            
+                // Exclude records where a donation exists in the same month
+                $query->whereNotExists(function ($subQuery) use ($month) {
+                    $subQuery->select(DB::raw(1))
+                        ->from('monthly_form_donations')
+                        ->whereColumn('monthly_form_donations.monthly_form_id', 'monthly_forms.id')
+                        ->whereMonth('monthly_form_donations.donation_date', $month);
+                });
+            
+            } elseif ($dateFilter === 'week') {
+                $weekDays = collect(range(now()->startOfWeek()->format('j'), now()->endOfWeek()->format('j')))
+                    ->map(fn($d) => (int) $d);
+                $month = now()->format('m');
+            
+                $query->whereHas('donor', function ($q) use ($weekDays) {
+                    $q->whereIn('donors.monthly_donation_day', $weekDays);
+                });
+            
+                $query->whereNotExists(function ($subQuery) use ($month) {
+                    $subQuery->select(DB::raw(1))
+                        ->from('monthly_form_donations')
+                        ->whereColumn('monthly_form_donations.monthly_form_id', 'monthly_forms.id')
+                        ->whereMonth('monthly_form_donations.donation_date', $month);
+                });
+            
+            } elseif ($dateFilter === 'month') {
+                $month = now()->format('m');
+            
+                $query->whereHas('donor', function ($q) {
+                    $q->whereMonth('donors.monthly_donation_day', now()->month);
+                });
+            
+                $query->whereNotExists(function ($subQuery) use ($month) {
+                    $subQuery->select(DB::raw(1))
+                        ->from('monthly_form_donations')
+                        ->whereColumn('monthly_form_donations.monthly_form_id', 'monthly_forms.id')
+                        ->whereMonth('monthly_form_donations.donation_date', $month);
+                });
+            
+            } elseif ($dateFilter === 'range' && $startDate && $endDate) {
+                $startMonth = date('m', strtotime($startDate));
+                $endMonth = date('m', strtotime($endDate));
+                $daysInRange = collect(range((int)date('j', strtotime($startDate)), (int)date('j', strtotime($endDate))));
+            
+                $query->whereHas('donor', function ($q) use ($daysInRange) {
+                    $q->whereIn('donors.monthly_donation_day', $daysInRange);
+                });
+            
+                $query->whereNotExists(function ($subQuery) use ($startMonth, $endMonth) {
+                    $subQuery->select(DB::raw(1))
+                        ->from('monthly_form_donations')
+                        ->whereColumn('monthly_form_donations.monthly_form_id', 'monthly_forms.id')
+                        ->whereBetween(DB::raw('MONTH(monthly_form_donations.donation_date)'), [$startMonth, $endMonth]);
+                });
+            }
+            
+        }
+
+
         // Apply filters
         // if ($request->has('date') && $request->date != '') {
         //     $day = ltrim(date('d', strtotime($request->date)), '0'); // Remove leading zero
@@ -427,36 +554,36 @@ class CollectingLineController extends Controller
         //     });
         // }
 
-        if ($request->has('date_filter')) {
-            $dateFilter = $request->date_filter;
-            $startDate = $request->start_date;
-            $endDate = $request->end_date;
+        // if ($request->has('date_filter')) {
+        //     $dateFilter = $request->date_filter;
+        //     $startDate = $request->start_date;
+        //     $endDate = $request->end_date;
 
-            if ($dateFilter === 'today') {
-                $day = now()->format('j'); // Get today's day without leading zeros
-                $query->whereHas('donor', function ($q) use ($day) {
-                    $q->where('donors.monthly_donation_day', $day);
-                });
-            } elseif ($dateFilter === 'week') {
-                $weekDays = collect(range(now()->startOfWeek()->format('j'), now()->endOfWeek()->format('j')))->map(fn($d) => (int) $d);
-                $query->whereHas('donor', function ($q) use ($weekDays) {
-                    $q->whereIn('donors.monthly_donation_day', $weekDays);
-                });
-            } elseif ($dateFilter === 'month') {
-                $monthDays = collect(range(now()->startOfMonth()->format('j'), now()->endOfMonth()->format('j')))->map(fn($d) => (int) $d);
-                $query->whereHas('donor', function ($q) use ($monthDays) {
-                    $q->whereIn('donors.monthly_donation_day', $monthDays);
-                });
-            } elseif ($dateFilter === 'range' && $startDate && $endDate) {
-                $startDay = (int) date('j', strtotime($startDate));
-                $endDay = (int) date('j', strtotime($endDate));
+        //     if ($dateFilter === 'today') {
+        //         $day = now()->format('j'); // Get today's day without leading zeros
+        //         $query->whereHas('donor', function ($q) use ($day) {
+        //             $q->where('donors.monthly_donation_day', $day);
+        //         });
+        //     } elseif ($dateFilter === 'week') {
+        //         $weekDays = collect(range(now()->startOfWeek()->format('j'), now()->endOfWeek()->format('j')))->map(fn($d) => (int) $d);
+        //         $query->whereHas('donor', function ($q) use ($weekDays) {
+        //             $q->whereIn('donors.monthly_donation_day', $weekDays);
+        //         });
+        //     } elseif ($dateFilter === 'month') {
+        //         $monthDays = collect(range(now()->startOfMonth()->format('j'), now()->endOfMonth()->format('j')))->map(fn($d) => (int) $d);
+        //         $query->whereHas('donor', function ($q) use ($monthDays) {
+        //             $q->whereIn('donors.monthly_donation_day', $monthDays);
+        //         });
+        //     } elseif ($dateFilter === 'range' && $startDate && $endDate) {
+        //         $startDay = (int) date('j', strtotime($startDate));
+        //         $endDay = (int) date('j', strtotime($endDate));
 
-                $daysInRange = collect(range($startDay, $endDay));
-                $query->whereHas('donor', function ($q) use ($daysInRange) {
-                    $q->whereIn('donors.monthly_donation_day', $daysInRange);
-                });
-            }
-        }
+        //         $daysInRange = collect(range($startDay, $endDay));
+        //         $query->whereHas('donor', function ($q) use ($daysInRange) {
+        //             $q->whereIn('donors.monthly_donation_day', $daysInRange);
+        //         });
+        //     }
+        // }
 
         if ($request->has('area_group') && $request->area_group != '') {
             $query->whereHas('donor.area.areaGroups', function ($q) use ($request) {
@@ -541,8 +668,24 @@ class CollectingLineController extends Controller
                 return $item->cancellation_date;
             })
             ->addColumn('is_child', function ($item) {
-                return $item->donor->parent_id ? 'Child' : 'Parent';
+                // Check if this donor is referenced as a parent by any other donor
+                $isParent = Donor::where('parent_id', $item->id)->exists();
+            
+                // If donor has a parent_id, they are a child
+                if (!is_null($item->parent_id)) {
+                    return 'Child';
+                }
+            
+                // If donor has no parent_id but is referenced as a parent by others, they are a Parent
+                if ($isParent) {
+                    return 'Parent';
+                }
+            
+                // If neither condition is met, return 'Other'
+                return 'Other';
             })
+            
+            
             ->rawColumns(['action', 'items'])
             ->make(true);
     }

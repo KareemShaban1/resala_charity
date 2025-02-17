@@ -7,6 +7,7 @@ use App\Models\Donor;
 use App\Models\MonthlyForm;
 use App\Models\MonthlyFormDonation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class MonthlyFormReportController extends Controller
@@ -91,6 +92,32 @@ class MonthlyFormReportController extends Controller
             });
         })->get();
 
+        $donorsWithForms = Donor::whereHas('monthlyForms')
+            ->with(['phones', 'monthlyForms' => function ($query) use ($fromDate, $toDate, $monthYear) {
+                $query->with(['donations' => function ($donationQuery) use ($fromDate, $toDate, $monthYear) {
+                    $donationQuery->whereHas('collectingDonation'); // Ensures donation is collected
+
+                    // Apply Date Filters on Donations
+                    if ($monthYear) {
+                        $donationQuery->whereYear('date', substr($monthYear, 0, 4))
+                            ->whereMonth('date', substr($monthYear, 5, 2));
+                    }
+                    if ($fromDate && $toDate) {
+                        $donationQuery->whereBetween('date', [$fromDate, $toDate]);
+                    }
+                }]);
+            }])->get();
+
+        // Add a collected_status attribute
+        $donorsWithForms->transform(function ($donor) {
+            $donor->collected_status = $donor->monthlyForms->flatMap->donations->isNotEmpty() ? 'collected' : 'not_collected';
+            return $donor;
+        });
+
+
+
+
+
 
         return view('backend.pages.reports.monthly-forms.index', compact(
             'allMonthlyFormsCount',
@@ -101,6 +128,7 @@ class MonthlyFormReportController extends Controller
             'monthlyFormsNotCollectedAmount',
             'donorsWithCollectedForms',
             'donorsWithNotCollectedForms',
+            'donorsWithForms',
             'donorsCount',
             'fromDate',
             'toDate',
@@ -185,8 +213,8 @@ class MonthlyFormReportController extends Controller
                 }
             });
         })
-        ->with('phones')
-        ->get();
+            ->with('phones')
+            ->get();
 
         // Donors with Not Collected Monthly Forms (Considering Date Filters)
         $donorsWithNotCollectedForms = Donor::whereHas('monthlyForms', function ($query) use ($fromDate, $toDate, $monthYear) {
@@ -203,22 +231,36 @@ class MonthlyFormReportController extends Controller
                 }
             });
         })
-        ->with('phones')
-        ->get();
-        // return view('backend.pages.dashboard.partials.monthly_forms_table', compact(
-        // 'allMonthlyFormsCount',
-        // 'allMonthlyFormsAmount',
-        // 'monthlyFormsCollectedCount',
-        // 'monthlyFormsCollectedAmount',
-        // 'monthlyFormsNotCollectedCount',
-        // 'monthlyFormsNotCollectedAmount',
-        // 'donorsWithCollectedForms',
-        //     'donorsWithNotCollectedForms',
-        //     'donorsCount',
-        //     'fromDate',
-        //     'toDate',
-        //     'monthYear'
-        // ));
+            ->with('phones')
+            ->get();
+
+
+        $donorsWithForms = Donor::whereHas('monthlyForms')
+        ->with(['phones', 'monthlyForms' => function ($query) use ($fromDate, $toDate, $monthYear) {
+            $query->with(['donations' => function ($donationQuery) use ($fromDate, $toDate, $monthYear) {
+                $donationQuery->whereHas('collectingDonation'); // Ensures donation is collected
+
+                // Apply Date Filters on Donations
+                if ($monthYear) {
+                    $donationQuery->whereYear('date', substr($monthYear, 0, 4))
+                        ->whereMonth('date', substr($monthYear, 5, 2));
+                }
+                if ($fromDate && $toDate) {
+                    $donationQuery->whereBetween('date', [$fromDate, $toDate]);
+                }
+            }]);
+        }])->get();
+
+        // Add a collected_status attribute
+        $donorsWithForms->transform(function ($donor) {
+            $donor->collected_status = $donor->monthlyForms->flatMap->donations->isNotEmpty() ? 'collected' : 'not_collected';
+            return $donor;
+        });
+
+
+
+
+
 
         return response()->json([
             'filteredTable' => view(
@@ -233,6 +275,7 @@ class MonthlyFormReportController extends Controller
                     'donorsWithCollectedForms',
                 )
             )->render(),
+            'donorsWithFormsTable' => view('backend.pages.reports.monthly-forms.partials.donors_with_forms_table', compact('donorsWithForms'))->render(),
             'collectedDonorsTable' => view('backend.pages.reports.monthly-forms.partials.donors_collected_table', compact('donorsWithCollectedForms'))->render(),
             'notCollectedDonorsTable' => view('backend.pages.reports.monthly-forms.partials.donors_not_collected_table', compact('donorsWithNotCollectedForms'))->render(),
         ]);

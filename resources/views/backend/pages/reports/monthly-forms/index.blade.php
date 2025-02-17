@@ -52,7 +52,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
+                        <!-- <div class="col-md-6">
                             <h5 class="text-success">{{ __('Donors with Collected Monthly Forms') }}</h5>
                             <div id="collectedDonorsTable">
                                 @include('backend.pages.reports.monthly-forms.partials.donors_collected_table', ['donorsWithCollectedForms' => $donorsWithCollectedForms])
@@ -63,6 +63,13 @@
                             <h5 class="text-danger">{{ __('Donors with Not Collected Monthly Forms') }}</h5>
                             <div id="notCollectedDonorsTable">
                                 @include('backend.pages.reports.monthly-forms.partials.donors_not_collected_table', ['donorsWithNotCollectedForms' => $donorsWithNotCollectedForms])
+                            </div>
+                        </div> -->
+
+                        <div class="col-md-12">
+                            <h5 class="text-info">{{ __('Donors with Monthly Forms') }}</h5>
+                            <div id="donorsWithFormsTable">
+                                @include('backend.pages.reports.monthly-forms.partials.donors_with_forms_table', ['donorsWithForms' => $donorsWithForms])
                             </div>
                         </div>
 
@@ -102,8 +109,10 @@
                 },
                 success: function(response) {
                     $('#filteredData').html(response.filteredTable);
-                    $('#collectedDonorsTable').html(response.collectedDonorsTable);
-                    $('#notCollectedDonorsTable').html(response.notCollectedDonorsTable);
+                    // $('#collectedDonorsTable').html(response.collectedDonorsTable);
+                    // $('#notCollectedDonorsTable').html(response.notCollectedDonorsTable);
+                    $('#donorsWithFormsTable').html(response.donorsWithFormsTable);
+
                 }
             });
         });
