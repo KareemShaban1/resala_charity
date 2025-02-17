@@ -1,4 +1,6 @@
 <script>
+        $(document).ready(function() {
+
       // Initialize DataTables
       allCollectingLinesTable = $('#all-collecting-lines-table').DataTable({
             processing: true,
@@ -113,5 +115,6 @@
         $('#start-date, #end-date').val('');
         allCollectingLinesTable.ajax.reload();
     });
+});
 
 </script>
