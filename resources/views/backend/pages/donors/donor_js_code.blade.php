@@ -126,6 +126,7 @@
 
         $('#edit_governorate_id').on('change', function() {
             var governorateId = $(this).val();
+            console.log(governorateId);
             if (governorateId) {
                 loadCities(governorateId, $('#edit_city_id'));
                 $('#edit_area_id').empty().trigger('change');
@@ -534,57 +535,66 @@
 
     // Load Cities based on Governorate
     function loadCities(governorateId, targetSelect, selectedCityId = null) {
-        targetSelect.prop('disabled', true);
-        $.ajax({
-            url: "{{ route('cities.by-governorate') }}",
-            type: 'GET',
-            data: {
-                governorate_id: governorateId
-            },
-            success: function(response) {
-                if (response.success) {
-                    targetSelect.empty().append('<option value="">Select City</option>');
-                    if (Array.isArray(response.data)) {
-                        response.data.forEach(function(city) {
-                            targetSelect.append(`<option value="${city.id}" ${city.id == selectedCityId ? 'selected' : ''}>${city.name}</option>`);
-                        });
-                    }
-                    targetSelect.prop('disabled', false).trigger('change');
-                }
-            },
-            error: function(xhr) {
-                console.error('Error loading cities:', xhr);
-                targetSelect.prop('disabled', false);
+    targetSelect.prop('disabled', true);
+    
+    $.ajax({
+        url: "{{ route('cities.by-governorate') }}",
+        type: 'GET',
+        data: { governorate_id: governorateId },
+        success: function(response) {
+            targetSelect.empty().append('<option value="">Select City</option>');
+            
+            if (response.success && Array.isArray(response.data)) {
+                response.data.forEach(city => {
+                    targetSelect.append(`<option value="${city.id}" ${city.id == selectedCityId ? 'selected' : ''}>${city.name}</option>`);
+                });
             }
-        });
-    }
+            
+            targetSelect.prop('disabled', false).trigger('change');
+
+            // If city is preselected, trigger area loading
+            if (selectedCityId) {
+                targetSelect.val(selectedCityId).trigger('change');
+            }
+        },
+        error: function(xhr) {
+            console.error('Error loading cities:', xhr);
+            targetSelect.prop('disabled', false);
+        }
+    });
+}
+
 
     // Load Areas based on City
-    function loadAreas(cityId, targetSelect, selectedAreaId = null) {
-        targetSelect.prop('disabled', true);
-        $.ajax({
-            url: "{{ route('areas.by-city') }}",
-            type: 'GET',
-            data: {
-                city_id: cityId
-            },
-            success: function(response) {
-                if (response.success) {
-                    targetSelect.empty().append('<option value="">Select Area</option>');
-                    if (Array.isArray(response.data)) {
-                        response.data.forEach(function(area) {
-                            targetSelect.append(`<option value="${area.id}" ${area.id == selectedAreaId ? 'selected' : ''}>${area.name}</option>`);
-                        });
-                    }
-                    targetSelect.prop('disabled', false).trigger('change');
-                }
-            },
-            error: function(xhr) {
-                console.error('Error loading areas:', xhr);
-                targetSelect.prop('disabled', false);
+   function loadAreas(cityId, targetSelect, selectedAreaId = null) {
+    targetSelect.prop('disabled', true);
+    
+    $.ajax({
+        url: "{{ route('areas.by-city') }}",
+        type: 'GET',
+        data: { city_id: cityId },
+        success: function(response) {
+            targetSelect.empty().append('<option value="">Select Area</option>');
+            
+            if (response.success && Array.isArray(response.data)) {
+                response.data.forEach(area => {
+                    targetSelect.append(`<option value="${area.id}" ${area.id == selectedAreaId ? 'selected' : ''}>${area.name}</option>`);
+                });
             }
-        });
-    }
+            
+            targetSelect.prop('disabled', false).trigger('change');
+
+            // If area is preselected, set it
+            if (selectedAreaId) {
+                targetSelect.val(selectedAreaId).trigger('change');
+            }
+        },
+        error: function(xhr) {
+            console.error('Error loading areas:', xhr);
+            targetSelect.prop('disabled', false);
+        }
+    });
+}
 
     // Add Donor Form Submit
     $('#addDonorForm').on('submit', function(e) {
