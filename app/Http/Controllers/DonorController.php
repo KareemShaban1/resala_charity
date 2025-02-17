@@ -47,7 +47,9 @@ class DonorController extends Controller
                 WHEN EXISTS (SELECT 1 FROM donors d WHERE d.parent_id = donors.id) THEN "Parent"
                 ELSE "Other"
             END as is_child')
-            ->with(['governorate', 'city', 'area', 'phones']);
+            ->with(['governorate', 'city', 'area', 'phones'])
+            ->orderBy('parent_donor_group_id', 'asc') // Group children under parents
+            ->orderBy('donors.id', 'asc'); // Maintain order within each group;
 
 
         if ($request->has('columns')) {
