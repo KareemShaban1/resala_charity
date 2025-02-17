@@ -145,109 +145,58 @@ class DonationController extends Controller
 
 
         return DataTables::of($query)
-            ->filterColumn('name', function ($query, $keyword) {
-                $query->where('donors.name', 'LIKE', "%{$keyword}%");
-            })
-            ->filterColumn('area', function ($query, $keyword) {
-                $query->where('areas.name', 'LIKE', "%{$keyword}%");
-            })
-            ->filterColumn('address', function ($query, $keyword) {
-                $query->where('donors.address', 'LIKE', "%{$keyword}%");
-            })
-            ->filterColumn('phones', function ($query, $keyword) {
-                $query->where('donor_phones.phone_number', 'LIKE', "%{$keyword}%");
-            })
-            ->addColumn('action', function ($item) {
-                return '
-                <div class="d-flex gap-2">
-                 <a href="javascript:void(0);" onclick="donationDetails(' . $item->id . ')"
+        ->filterColumn('name', function ($query, $keyword) {
+            $query->where('donors.name', 'LIKE', "%{$keyword}%");
+        })
+        ->filterColumn('area', function ($query, $keyword) {
+            $query->where('areas.name', 'LIKE', "%{$keyword}%");
+        })
+        ->filterColumn('address', function ($query, $keyword) {
+            $query->where('donors.address', 'LIKE', "%{$keyword}%");
+        })
+        ->filterColumn('phones', function ($query, $keyword) {
+            $query->where('donor_phones.phone_number', 'LIKE', "%{$keyword}%");
+        })
+        ->addColumn('action', function ($item) {
+            return '
+            <div class="d-flex gap-2">
+                <a href="javascript:void(0);" onclick="donationDetails(' . $item->id . ')"
                     class="btn btn-sm btn-light">
-                        <i class="mdi mdi-eye"></i>
-                    </a>
-                    <a href="javascript:void(0);" onclick="editDonation(' . $item->id . ')"
+                    <i class="mdi mdi-eye"></i>
+                </a>
+                <a href="javascript:void(0);" onclick="editDonation(' . $item->id . ')"
                     class="btn btn-sm btn-info">
-                        <i class="mdi mdi-square-edit-outline"></i>
-                    </a>
-                    <a href="javascript:void(0);" onclick="deleteRecord(' . $item->id . ', \'donations\')"
+                    <i class="mdi mdi-square-edit-outline"></i>
+                </a>
+                <a href="javascript:void(0);" onclick="deleteRecord(' . $item->id . ', \'donations\')"
                     class="btn btn-sm btn-danger">
-                        <i class="mdi mdi-delete"></i>
-                    </a>
-                     <a href="javascript:void(0)" onclick="addActivity(' . $item->donor->id . ')" class="btn btn-sm btn-dark">
-                        <i class="uil-outgoing-call"></i>
-                    </a>
-                </div>
-            ';
-            })
-            ->addColumn('name', function ($item) {
-                // return $item->donor->name;
-                return '<a href="' . route('donor-history.show', [$item->donor->id]) . '" class="text-info">'
-                    . $item->donor->name .
-                    '</a>' ?? '';
-            })
-            ->addColumn('area', function ($item) {
-                return $item->donor->area->name ?? '';
-            })
-            ->addColumn('address', function ($item) {
-                return $item->donor->address;
-            })
-            ->addColumn('donation_category', function ($item) {
-                content:
-                if ($item->donation_category === 'normal') {
-                    return __('Normal Donation');
-                } elseif ($item->donation_category === 'monthly') {
-                    return __('Monthly Donation');
-                } elseif ($item->donation_category === 'gathered') {
-                    return __('Gathered Donation');
-                } elseif ($item->donation_category === 'normal_and_monthly') {
-                    return __('Normal and Monthly Donation');
-                }
-            })
-            ->addColumn('phones', function ($item) {
-                return $item->donor?->phones->isNotEmpty() ?
-                    $item->donor->phones->map(function ($phone) {
-                        return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
-                    })->implode(', ') : 'N/A';
-            })
-            ->addColumn('donateItems', function ($item) {
-                return $item->donateItems->map(function ($donate) use ($item) {
-                    if ($item->donation_type === 'financial') {
-                        return '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
-                            ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount;
-                    } elseif ($item->donation_type === 'inKind') {
-                        return '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
-                            ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount;
-                    } elseif ($item->donation_type === 'both') {
-                        if (isset($donate->donation_category_id) && isset($donate->amount)) {
-                            return '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
-                                ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount . '<br>';
-                        }
-                        if (isset($donate->item_name) && isset($donate->amount)) {
-                            return  '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
-                                ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount;
-                        }
-                    }
-                    return '';
-                })->implode('<br>');
-            })
-            ->addColumn('donation_status', function ($item) {
-                if ($item->status === 'collected') {
-                    return ' <span class="text-white badge bg-success">' .  __('Collected') . '</span>';
-                } elseif ($item->status === 'not_collected') {
-                    return ' <span class="text-white badge bg-primary">' .  __('Not Collected') . '</span><br>' . __('') . '';
-                } elseif ($item->status === 'followed_up') {
-                    return ' <span class="text-white badge bg-warning">' .  __('Followed Up') . '</span><br>' . __('') . '';
-                } elseif ($item->status === 'cancelled') {
-                    return ' <span class="text-white badge bg-danger">' .  __('Cancelled Donation') . '</span><br>' . __('') . '';
-                }
-            })
-            ->addColumn('group_key', function ($item) {
-                if ($item->donation_category === 'gathered') {
-                    return $item->donor_id . '-' . $item->created_at;
-                }
-                return null;
-            })
-            ->rawColumns(['name', 'action', 'donateItems', 'receipt_number', 'donation_status'])
-            ->make(true);
+                    <i class="mdi mdi-delete"></i>
+                </a>
+                ' . (!empty($item->donor) ? '<a href="javascript:void(0)" onclick="addActivity(' . $item->donor->id . ')" class="btn btn-sm btn-dark">
+                    <i class="uil-outgoing-call"></i>
+                </a>' : '') . '
+            </div>';
+        })
+        ->addColumn('name', function ($item) {
+            return $item->donor 
+                ? '<a href="' . route('donor-history.show', [$item->donor->id]) . '" class="text-info">'
+                    . $item->donor->name . '</a>'
+                : 'N/A';
+        })
+        ->addColumn('area', function ($item) {
+            return $item->donor?->area?->name ?? 'N/A';
+        })
+        ->addColumn('address', function ($item) {
+            return $item->donor?->address ?? 'N/A';
+        })
+        ->addColumn('phones', function ($item) {
+            return $item->donor?->phones->isNotEmpty()
+                ? $item->donor->phones->map(fn ($phone) => $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')')->implode(', ')
+                : 'N/A';
+        })
+        ->rawColumns(['name', 'action'])
+        ->make(true);
+    
     }
 
 
