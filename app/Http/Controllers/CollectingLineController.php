@@ -106,7 +106,7 @@ class CollectingLineController extends Controller
             //     $data->whereDate('created_at', '<=', $request->end_date);
             // }
             if ($request->has('area_group') && $request->area_group != '') {
-                $data->where('area_group', $request->area_group);
+                $data->where('area_group_id', $request->area_group);
             }
 
             return DataTables::of($data)
@@ -163,7 +163,7 @@ class CollectingLineController extends Controller
             }
         }
         if ($request->has('area_group') && $request->area_group != '') {
-            $data->where('area_group', $request->area_group);
+            $data->where('area_group_id', $request->area_group);
         }
         $data = $data->get();
 
@@ -475,11 +475,11 @@ class CollectingLineController extends Controller
             if ($dateFilter === 'today') {
                 $day = now()->format('j'); // Get today's day without leading zeros
                 $month = now()->format('m'); // Get current month as two digits (e.g., '02' for February)
-            
+
                 $query->whereHas('donor', function ($q) use ($day) {
                     $q->where('donors.monthly_donation_day', $day);
                 });
-            
+
                 // Exclude records where a donation exists in the same month
                 $query->whereNotExists(function ($subQuery) use ($month) {
                     $subQuery->select(DB::raw(1))
@@ -487,46 +487,43 @@ class CollectingLineController extends Controller
                         ->whereColumn('monthly_form_donations.monthly_form_id', 'monthly_forms.id')
                         ->whereMonth('monthly_form_donations.donation_date', $month);
                 });
-            
             } elseif ($dateFilter === 'week') {
                 $weekDays = collect(range(now()->startOfWeek()->format('j'), now()->endOfWeek()->format('j')))
                     ->map(fn($d) => (int) $d);
                 $month = now()->format('m');
-            
+
                 $query->whereHas('donor', function ($q) use ($weekDays) {
                     $q->whereIn('donors.monthly_donation_day', $weekDays);
                 });
-            
+
                 $query->whereNotExists(function ($subQuery) use ($month) {
                     $subQuery->select(DB::raw(1))
                         ->from('monthly_form_donations')
                         ->whereColumn('monthly_form_donations.monthly_form_id', 'monthly_forms.id')
                         ->whereMonth('monthly_form_donations.donation_date', $month);
                 });
-            
             } elseif ($dateFilter === 'month') {
                 $month = now()->format('m');
-            
+
                 $query->whereHas('donor', function ($q) {
                     $q->whereMonth('donors.monthly_donation_day', now()->month);
                 });
-            
+
                 $query->whereNotExists(function ($subQuery) use ($month) {
                     $subQuery->select(DB::raw(1))
                         ->from('monthly_form_donations')
                         ->whereColumn('monthly_form_donations.monthly_form_id', 'monthly_forms.id')
                         ->whereMonth('monthly_form_donations.donation_date', $month);
                 });
-            
             } elseif ($dateFilter === 'range' && $startDate && $endDate) {
                 $startMonth = date('m', strtotime($startDate));
                 $endMonth = date('m', strtotime($endDate));
                 $daysInRange = collect(range((int)date('j', strtotime($startDate)), (int)date('j', strtotime($endDate))));
-            
+
                 $query->whereHas('donor', function ($q) use ($daysInRange) {
                     $q->whereIn('donors.monthly_donation_day', $daysInRange);
                 });
-            
+
                 $query->whereNotExists(function ($subQuery) use ($startMonth, $endMonth) {
                     $subQuery->select(DB::raw(1))
                         ->from('monthly_form_donations')
@@ -534,7 +531,6 @@ class CollectingLineController extends Controller
                         ->whereBetween(DB::raw('MONTH(monthly_form_donations.donation_date)'), [$startMonth, $endMonth]);
                 });
             }
-            
         }
 
 
@@ -670,22 +666,22 @@ class CollectingLineController extends Controller
             ->addColumn('is_child', function ($item) {
                 // Check if this donor is referenced as a parent by any other donor
                 $isParent = Donor::where('parent_id', $item->id)->exists();
-            
+
                 // If donor has a parent_id, they are a child
                 if (!is_null($item->parent_id)) {
                     return 'Child';
                 }
-            
+
                 // If donor has no parent_id but is referenced as a parent by others, they are a Parent
                 if ($isParent) {
                     return 'Parent';
                 }
-            
+
                 // If neither condition is met, return 'Other'
                 return 'Other';
             })
-            
-            
+
+
             ->rawColumns(['action', 'items'])
             ->make(true);
     }
