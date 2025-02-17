@@ -37,8 +37,18 @@ class DonorController extends Controller
      */
     public function data(Request $request)
     {
-        $query = Donor::select('donors.*') // Explicitly select donors columns
+        $query = Donor::selectRaw('donors.*, 
+            CASE 
+                    WHEN donors.parent_id IS NOT NULL THEN donors.parent_id
+                    ELSE donors.id
+            END as parent_donor_group_id,
+            CASE 
+                WHEN donors.parent_id IS NOT NULL THEN "Child"
+                WHEN EXISTS (SELECT 1 FROM donors d WHERE d.parent_id = donors.id) THEN "Parent"
+                ELSE "Other"
+            END as is_child')
             ->with(['governorate', 'city', 'area', 'phones']);
+
 
         if ($request->has('columns')) {
             foreach ($request->get('columns') as $column) {
@@ -140,6 +150,23 @@ class DonorController extends Controller
             })
             ->editColumn('donor_type', function ($donor) {
                 return $donor->donor_type ? $donor->donor_type : '';
+            })
+            ->addColumn('is_child', function ($item) {
+                // Check if this donor is referenced as a parent by any other donor
+                $isParent = Donor::where('parent_id', $item->id)->exists();
+
+                // If donor has a parent_id, they are a child
+                if (!is_null($item->parent_id)) {
+                    return 'Child';
+                }
+
+                // If donor has no parent_id but is referenced as a parent by others, they are a Parent
+                if ($isParent) {
+                    return 'Parent';
+                }
+
+                // If neither condition is met, return 'Other'
+                return 'Other';
             })
             ->rawColumns(['active', 'action', 'name'])
             ->make(true);

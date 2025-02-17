@@ -446,9 +446,39 @@
             language: languages[language],
             "drawCallback": function() {
                 $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data, dataIndex) {
+
+            // Get the parent ID or group ID from the data
+            const parentId = data.parent_donor_group_id;
+
+            // Generate a unique color for this parent
+            const color = getColorForParent(parentId);
+
+            if (data.is_child === 'Parent') {
+                // For child rows, apply the color to all columns
+                $(row).addClass('child-row');
+                $(row).find('td').attr('style', 'background-color: ' + color + ' !important');
+            } else if (data.is_child === 'Child') {
+                // For parent rows, apply the color only to the first column
+                $(row).find('td:first').attr('style', 'background-color: ' + color + ' !important');
+            }
             }
         });
     }
+
+        
+        function getColorForParent(parentId) {
+                // Use a hash function to generate a unique color
+                const colors = [
+                    '#f9f9f9', '#e6f7ff', '#fff7e6', '#e6ffe6', '#ffe6e6', 
+                    '#e6e6ff', '#f0e6ff', '#ffe6f0', '#e6fff0', '#fff0e6'
+                ];
+                const index = parentId % colors.length; // Ensure the index is within the array bounds
+                return colors[index];
+            }
+
+
 
     // Trigger DataTable reload on input change
     $('#phone-search').on('keyup change', function() {

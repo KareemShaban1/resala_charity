@@ -680,8 +680,6 @@ class CollectingLineController extends Controller
                 // If neither condition is met, return 'Other'
                 return 'Other';
             })
-
-
             ->rawColumns(['action', 'items'])
             ->make(true);
     }
