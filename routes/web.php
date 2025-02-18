@@ -235,4 +235,5 @@ Route::get('/export-reports', [DashboardController::class, 'exportMonthlyForms']
 
 Route::get('/notifications',[NotificationController::class, 'getNotificationsByDate']);
 
-Route::post('/change_donors_category',[TestController::class, 'changeDonorsData']);
+Route::post('/change_donors_category',[TestController::class, 'changeDonorsData'])
+->name('changeDonorsData');
