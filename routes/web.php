@@ -24,6 +24,7 @@ use App\Http\Controllers\MonthlyFormDonationController;
 use App\Http\Controllers\MonthlyFormReportController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Artisan;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
@@ -233,3 +234,5 @@ Route::get('/backups/download/{filename}', [BackupController::class, 'download']
 Route::get('/export-reports', [DashboardController::class, 'exportMonthlyForms'])->name('dashboard.export_reports');
 
 Route::get('/notifications',[NotificationController::class, 'getNotificationsByDate']);
+
+Route::get('/change_donors_category',[TestController::class, 'changeDonorsData']);
