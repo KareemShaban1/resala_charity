@@ -159,6 +159,9 @@ class DonorController extends Controller
             ->editColumn('donor_type', function ($donor) {
                 return $donor->donor_type ? $donor->donor_type : '';
             })
+            ->editColumn('donor_category', function ($donor) {
+                return $donor->donor_category ? $donor->donor_category : '';
+            })
             ->addColumn('is_child', function ($item) {
                 // Check if this donor is referenced as a parent by any other donor
                 $isParent = Donor::where('parent_id', $item->id)->exists();

@@ -378,6 +378,14 @@
                     orderable: false,
                 },
                 {
+                    data: 'donor_category',
+                    name: 'donors.donor_category',
+                    render: function(data, type, row) {
+                        return data === 'special' ? 'مميز' : 'عادى';
+                    },
+                    orderable: false,
+                },
+                {
                     data: 'city',
                     name: 'city.name',
                     orderable: false,

@@ -57,6 +57,7 @@
                                     <th>#</th>
                                     <th style="width: 30px;">{{__('Name')}}</th>
                                     <th>{{__('Donor Type')}}</th>
+                                    <th>{{__('Donor Category')}}</th>
                                     <th>{{__('City')}}</th>
                                     <th>{{__('Area')}}</th>
                                     <th>{{__('Phones')}}</th>
@@ -72,6 +73,13 @@
                                         <select class="form-control form-control-sm column-search">
                                             <option value="">{{__('All')}}</option>
                                             <option value="monthly">{{__('Monthly')}}</option>
+                                            <option value="normal">{{__('Normal')}}</option>
+                                        </select>
+                                    </th>
+                                    <th>
+                                        <select class="form-control form-control-sm column-search">
+                                            <option value="">{{__('All')}}</option>
+                                            <option value="special">{{__('Special')}}</option>
                                             <option value="normal">{{__('Normal')}}</option>
                                         </select>
                                     </th>
