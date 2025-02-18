@@ -97,7 +97,7 @@ class DonorsImport implements
                                 'active' => $data['active'] ?? true,
                                 'donor_type' => $data['donor_type'] ?? 'normal',
                                 'monthly_donation_day' => $data['monthly_donation_day'],
-                                'donor_category' => $data['donor_category'],
+                                'donor_category' => $data['donor_category'] ?? 'normal',
                                 'department_id' => $departmentId,
                                 'notes' => $data['notes'],
                             ]
