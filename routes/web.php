@@ -100,7 +100,7 @@ Route::group(
         Route::post('/donors-assign', [DonorController::class, 'assignDonors'])->name('donors.assign');
         Route::post('/donors-children', [DonorController::class, 'donorChildren'])->name('donors.children');
         Route::post('/donors-not-assigned', [DonorController::class, 'notAssignedDonors'])->name('donors.not-assigned');
-        Route::get('/donors-random', [DonorController::class, 'randomDonors'])->name('donors.cancelled');
+        Route::get('/donors-random', [DonorController::class, 'randomDonors'])->name('donors.random');
 
         // Route::post('/activity', [DonorController::class, 'addActivity'])->name('donors.add-activity');
         // Route::post('/update-activity/{id}', [DonorController::class, 'addActivity'])->name('donors.add-activity');
