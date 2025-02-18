@@ -29,7 +29,7 @@ class EmployeeController extends BaseController
         
         return DataTables::of($query)
             ->addColumn('department', function ($item) {
-                return $item->department->name;
+                return $item->department->name ?? '';
             })
             ->addColumn('action', function ($item) {
                 return '
