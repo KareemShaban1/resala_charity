@@ -311,9 +311,9 @@ class CollectingLineController extends Controller
                     //         return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
                     //     })->implode(', ') : 'N/A';
                     return $item->donor?->phones->isNotEmpty() ?
-                    $item->donor->phones->map(function ($phone) {
-                        return $phone->phone_number;
-                    })->implode(', ') : 'N/A';
+                        $item->donor->phones->map(function ($phone) {
+                            return $phone->phone_number;
+                        })->implode(', ') : 'N/A';
                 })
                 ->addColumn('donateItems', function ($item) {
                     return $item->donateItems->map(function ($donate) use ($item) {
@@ -507,10 +507,12 @@ class CollectingLineController extends Controller
                         ->whereMonth('monthly_form_donations.donation_date', $month);
                 });
             } elseif ($dateFilter === 'month') {
+                $monthDays = collect(range(now()->startOfMonth()->format('j'), now()->endOfMonth()->format('j')))->map(fn($d) => (int) $d);
+
                 $month = now()->format('m');
 
-                $query->whereHas('donor', function ($q) {
-                    $q->whereMonth('donors.monthly_donation_day', now()->month);
+                $query->whereHas('donor', function ($q) use ($monthDays) {
+                    $q->whereIn('donors.monthly_donation_day', $monthDays);
                 });
 
                 $query->whereNotExists(function ($subQuery) use ($month) {
