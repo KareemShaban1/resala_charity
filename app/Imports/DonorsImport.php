@@ -95,7 +95,7 @@ class DonorsImport implements
                                 'city_id' => $cityId,
                                 'area_id' => $areaId,
                                 'active' => $data['active'] ?? true,
-                                'donor_type' => $data['donor_type'],
+                                'donor_type' => $data['donor_type'] ?? 'normal',
                                 'monthly_donation_day' => $data['monthly_donation_day'],
                                 'donor_category' => $data['donor_category'],
                                 'department_id' => $departmentId,
