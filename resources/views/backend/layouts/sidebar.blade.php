@@ -210,6 +210,13 @@
                               </a>
                           </li>
                           @endcan
+                          @can('view donors')
+                          <li>
+                              <a href="{{route('donors.random')}}">
+                                  <span> {{__('Random Donors')}} </span>
+                              </a>
+                          </li>
+                          @endcan
 
                       </ul>
                   </div>

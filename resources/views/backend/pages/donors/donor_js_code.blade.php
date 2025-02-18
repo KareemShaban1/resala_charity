@@ -339,6 +339,8 @@
     });
 
     let donorsTable;
+    let randomDonorsTable;
+
 
     // Initialize DataTable
     function initializeDataTable() {
@@ -351,14 +353,16 @@
                 d.date_filter = $('#date-filter').val();
                 d.start_date = $('#start-date').val();
                 d.end_date = $('#end-date').val();
+                d.category = 'normal';
+
             }
         },
         autoWidth:false,
         columnDefs: [
             {width: "20px"  , targets: 0}, // ID column
-    { width: "10p%" ,targets: 1,  }, // Name column
-    {  width: "50px",targets: 2 }, // Donor type column
-    ],
+            { width: "10p%" ,targets: 1,  }, // Name column
+            {  width: "50px",targets: 2 }, // Donor type column
+            ],
             columns: [{
                     data: 'id',
                     name: 'donors.id' // Explicitly specify the table name
@@ -381,7 +385,176 @@
                     data: 'donor_category',
                     name: 'donors.donor_category',
                     render: function(data, type, row) {
-                        return data === 'special' ? 'مميز' : 'عادى';
+                        if(data === 'special'){
+                            return 'مميز';
+                        }else if (data === 'normal'){
+                            return 'عادى';
+                        }else {
+                            return 'عشوائى';
+                        }
+                    },
+                    orderable: false,
+                },
+                {
+                    data: 'city',
+                    name: 'city.name',
+                    orderable: false,
+
+                },
+                {
+                    data: 'area',
+                    name: 'area.name',
+                    orderable: false,
+
+                },
+                {
+                    data: 'phones',
+                    name: 'phones',
+                    orderable: false,
+                    searchable: true,
+                    render: function(data, type, row) {
+                        if (!data) return '<div>N/A</div>';
+                        return data
+                            .split(', ')
+                            .map(phone => `<div>${phone}</div>`)
+                            .join('');
+                    }
+
+                },
+                {
+                    data: 'active',
+                    name: 'donors.active',
+                    orderable: false,
+                    searchable: true
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                }
+            ],
+
+            initComplete: function() {
+            // Apply column-specific search
+            this.api().columns().every(function() {
+                var column = this;
+                $('input, select', column.header()).on('change keyup', function() {
+                    column.search($(this).val()).draw();
+                });
+            });
+        },
+            order: [
+                [0, 'desc']
+            ],
+            search: {
+                regex: true
+            },
+            buttons: [{
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6]
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Donors Data',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3,4,5,6]
+                    }
+                },
+                // {
+                //     extend: 'pdf', 
+                //     text: 'PDF', 
+                //     title: 'Donors Data', 
+                //     exportOptions: {
+                //         columns: [0, 1, 2, 3]
+                //     }
+                // },
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3,4,5,6]
+                    }
+                },
+            ],
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
+            lengthMenu: [[10, 25, 50, 100, 500, 1000, 2000], [10, 25, 50, 100, 500, 1000, 2000]], 
+            pageLength: 10,
+            responsive: true,
+            language: languages[language],
+            "drawCallback": function() {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data, dataIndex) {
+
+            // Get the parent ID or group ID from the data
+            const parentId = data.parent_donor_group_id;
+
+            // Generate a unique color for this parent
+            const color = getColorForParent(parentId);
+
+            if (data.is_child === 'Parent') {
+                // For child rows, apply the color to all columns
+                $(row).addClass('child-row');
+                $(row).find('td').attr('style', 'background-color: ' + color + ' !important');
+            } else if (data.is_child === 'Child') {
+                // For parent rows, apply the color only to the first column
+                $(row).find('td:first').attr('style', 'background-color: ' + color + ' !important');
+            }
+            }
+        });
+
+
+
+        randomDonorsTable = $('#random-donors-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+            url: "{{ route('donors.data') }}",
+            data: function(d) {
+                d.date_filter = $('#date-filter').val();
+                d.start_date = $('#start-date').val();
+                d.end_date = $('#end-date').val();
+                d.category = 'random';
+            }
+        },
+        autoWidth:false,
+        columnDefs: [
+            {width: "20px"  , targets: 0}, // ID column
+            { width: "10p%" ,targets: 1,  }, // Name column
+            {  width: "50px",targets: 2 }, // Donor type column
+            ],
+            columns: [{
+                    data: 'id',
+                    name: 'donors.id' // Explicitly specify the table name
+                },
+                {
+                    data: 'name',
+                    name: 'donors.name',
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: 'donor_type',
+                    name: 'donors.donor_type',
+                    render: function(data, type, row) {
+                        return data === 'monthly' ? 'شهرى' : 'عادى';
+                    },
+                    orderable: false,
+                },
+                {
+                    data: 'donor_category',
+                    name: 'donors.donor_category',
+                    render: function(data, type, row) {
+                        if(data === 'special'){
+                            return 'مميز';
+                        }else if (data === 'normal'){
+                            return 'عادى';
+                        }else {
+                            return 'عشوائى';
+                        }
                     },
                     orderable: false,
                 },

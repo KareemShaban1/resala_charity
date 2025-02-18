@@ -32,6 +32,17 @@ class DonorController extends Controller
         return view('backend.pages.donors.index', compact('donors', 'donationCategories', 'employees'));
     }
 
+    // randomDonors
+
+    public function randomDonors()
+    {
+        $this->authorize('view', Donor::class);
+
+        $donors = Donor::all();
+        $donationCategories = DonationCategory::all();
+        $employees = Employee::all();
+        return view('backend.pages.donors.random_donors', compact('donors', 'donationCategories', 'employees'));
+    }
     /**
      * Get donors data for DataTable.
      */
@@ -97,6 +108,15 @@ class DonorController extends Controller
                 $query->whereBetween('donors.created_at', [now()->startOfMonth(), now()->endOfMonth()]);
             } elseif ($dateFilter === 'range' && $startDate && $endDate) {
                 $query->whereBetween('donors.created_at', [$startDate, $endDate]);
+            }
+        }
+
+        if (request()->has('category')) {
+            $category = request('category');
+            if ($category === 'normal') {
+                $query->whereIn('donors.donor_category', ['normal' , 'special']);
+            } elseif ($category === 'random') {
+                $query->where('donors.donor_category', 'random');
             }
         }
 
