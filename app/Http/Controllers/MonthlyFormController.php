@@ -193,10 +193,10 @@ class MonthlyFormController extends Controller
             ';
             })
             ->addColumn('name', function ($item) {
-                return $item->donor->name;
+                return $item->donor->name ?? '';
             })
             ->addColumn('area', function ($item) {
-                return $item->donor->area->name;
+                return $item->donor->area->name ?? '';
             })
             ->addColumn('address', function ($item) {
                 return $item->donor->address;
