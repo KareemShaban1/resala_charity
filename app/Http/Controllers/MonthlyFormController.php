@@ -125,13 +125,13 @@ class MonthlyFormController extends Controller
             $endDate = request('end_date');
 
             if ($dateFilter === 'today') {
-                $query->whereDate('monthly_forms.created_at', operator: today());
+                $query->whereDate('monthly_forms.form_date', operator: today());
             } elseif ($dateFilter === 'week') {
-                $query->whereBetween('monthly_forms.created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                $query->whereBetween('monthly_forms.form_date', [now()->startOfWeek(), now()->endOfWeek()]);
             } elseif ($dateFilter === 'month') {
-                $query->whereBetween('monthly_forms.created_at', [now()->startOfMonth(), now()->endOfMonth()]);
+                $query->whereBetween('monthly_forms.form_date', [now()->startOfMonth(), now()->endOfMonth()]);
             } elseif ($dateFilter === 'range' && $startDate && $endDate) {
-                $query->whereBetween('monthly_forms.created_at', [$startDate, $endDate]);
+                $query->whereBetween('monthly_forms.form_date', [$startDate, $endDate]);
             }
         }
 
