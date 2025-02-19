@@ -63,7 +63,7 @@ class DonorReportController extends Controller
                     $statistics[$activity->status]++;
                 } else {
                     // Count activities without a status by activity_type
-                    $activityType = $activity->activity_type . ($activity->callType?->name) ?? 'Unknown';
+                    $activityType = $activity->activity_type . '  ( ' . ($activity->callType?->name) .' )' ?? 'Unknown';
                     if (!isset($activityTypes[$activityType])) {
                         $activityTypes[$activityType] = 0;
                     }
