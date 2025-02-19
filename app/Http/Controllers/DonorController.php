@@ -208,7 +208,9 @@ class DonorController extends Controller
                 return 'Other';
             })
             ->addColumn('has_activities', function ($donor) {
-                return $donor->activities_count > 0 ? __('Yes') : __('No');
+                return $donor->activities_count > 0 ?  
+                '<span class="badge bg-success">' . __("Yes") . '</span>'
+                 : '<span class="badge bg-danger">' . __("No") . '</span>';
             })
             ->rawColumns(['active', 'action', 'name'])
             ->make(true);
