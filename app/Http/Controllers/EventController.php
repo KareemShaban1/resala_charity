@@ -103,6 +103,14 @@ class EventController extends Controller
 
         $event->update($request->all());
 
+        // Create a notification with the event start date
+        $event->notifications()->update([
+            'title' => "New Event: {$event->title}",
+            'message' => "An event '{$event->title}' is scheduled for " . \Carbon\Carbon::parse($event->start_date)->format('d M, Y'),
+            'date' => $event->start_date, // Store event start date in notifications
+            'status' => 'unread',
+        ]);
+
         return response()->json([
             'success' => true,
             'data' => $event,
