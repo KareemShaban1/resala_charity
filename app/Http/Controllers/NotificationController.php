@@ -14,7 +14,8 @@ class NotificationController extends Controller
     {
         $notifications = Notification::whereDate('date', '<=', Carbon::today())
         ->whereHasMorph('notifiable', [Event::class], function ($query) {
-            $query->where('status', 'ongoing');
+            $query->where('status', 'ongoing')
+            ->where('created_by', auth()->user()->id);
         })
         ->where('status', 'unread')
         ->orderBy('date', 'desc')

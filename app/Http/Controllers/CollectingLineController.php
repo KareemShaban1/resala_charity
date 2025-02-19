@@ -416,8 +416,6 @@ class CollectingLineController extends Controller
         //         'donors.parent_id'
         //     );
 
-        $currentYear = date('Y');
-        $currentMonth = date('m');
 
         $query = MonthlyForm::query()
             ->selectRaw('
@@ -468,7 +466,9 @@ class CollectingLineController extends Controller
                 'monthly_forms.cancellation_reason',
                 'monthly_forms.cancellation_date',
                 'donors.parent_id'
-            );
+            )
+            ->orderByRaw('parent_donor_group_id ASC, is_child ASC'); // Ensures Parent first, then Child under it
+
 
         // Apply date filter conditions
         if ($request->has('date_filter')) {

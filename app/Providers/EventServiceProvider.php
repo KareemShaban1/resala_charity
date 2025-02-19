@@ -6,6 +6,7 @@ use App\Models\Donation;
 use App\Models\MonthlyForm;
 use App\Models\MonthlyFormCancellation;
 use App\Observers\DonationObserver;
+use App\Observers\EventObserver;
 use App\Observers\MonthlyFormCancellationObserver;
 use App\Observers\MonthlyFormObserver;
 use Illuminate\Auth\Events\Registered;
@@ -34,6 +35,7 @@ class EventServiceProvider extends ServiceProvider
         //
         MonthlyForm::observe(MonthlyFormObserver::class);
         Donation::observe(DonationObserver::class);
+        Event::observe(EventObserver::class);
     }
 
     /**
