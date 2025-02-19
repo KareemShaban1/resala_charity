@@ -22,7 +22,7 @@ class DonorReportController extends Controller
                 }
             }])
             ->get();
-    
+
         if ($request->ajax()) {
             return DataTables::of($users)
                 ->addColumn('department', function ($user) {
@@ -30,41 +30,52 @@ class DonorReportController extends Controller
                 })
                 ->make(true);
         }
-    
+
         return view('backend.pages.reports.donor-activities.index', compact('users'));
     }
-    
+
     public function donorStatistics(Request $request)
-{
-    $users = User::with('activities')->get();
-    $statuses = ["ReplyAndDonate", "ReplyAndNotDonate", "NoReply", "PhoneNotAvailable"];
-    $statistics = [];
-
-    // Initialize all status counts to 0
-    foreach ($statuses as $status) {
-        $statistics[$status] = 0;
-    }
-
-    foreach ($users as $user) {
-        $query = $user->activities();
-
-        if (isset($request->start_date) && isset($request->end_date)) {
-            $startDate = Carbon::parse($request->input('start_date'));
-            $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
-            $query->whereBetween('created_at', [$startDate, $endDate]);
+    {
+        $users = User::with('activities')->get();
+        $statuses = ["ReplyAndDonate", "ReplyAndNotDonate", "NoReply", "PhoneNotAvailable"];
+        $statistics = [];
+        $activityTypes = [];
+    
+        // Initialize all status counts to 0
+        foreach ($statuses as $status) {
+            $statistics[$status] = 0;
         }
-
-        $activities = $query->get();
-
-        foreach ($activities->groupBy('status') as $status => $group) {
-            if (isset($statistics[$status])) {
-                $statistics[$status] += $group->count();
+    
+        foreach ($users as $user) {
+            $query = $user->activities();
+    
+            if (isset($request->start_date) && isset($request->end_date)) {
+                $startDate = Carbon::parse($request->input('start_date'));
+                $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            }
+    
+            $activities = $query->get();
+    
+            foreach ($activities as $activity) {
+                // Count activities by status
+                if (!empty($activity->status) && isset($statistics[$activity->status])) {
+                    $statistics[$activity->status]++;
+                } else {
+                    // Count activities without a status by activity_type
+                    $activityType = $activity->activity_type ?? 'Unknown';
+                    if (!isset($activityTypes[$activityType])) {
+                        $activityTypes[$activityType] = 0;
+                    }
+                    $activityTypes[$activityType]++;
+                }
             }
         }
+    
+        return response()->json([
+            'statistics' => $statistics,
+            'activity_types' => $activityTypes
+        ]);
     }
-
-    return response()->json(['statistics' => $statistics]);
-}
-
     
 }

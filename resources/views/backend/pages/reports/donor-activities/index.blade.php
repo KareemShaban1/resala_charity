@@ -59,6 +59,10 @@
         </div>
     </div>
 
+    <!-- Activity Types Statistics Section -->
+    <div class="row mb-4" id="activityTypesSection">
+        <!-- Activity types will be dynamically inserted here -->
+    </div>
 
     <!-- Users Table -->
     <div class="row">
@@ -104,39 +108,33 @@ $(document).ready(function() {
             { data: 'activities_count', name: 'activities_count' }
         ],
         order: [[0, 'desc']],
-            search: {
-                regex: true
+        search: {
+            regex: true
+        },
+        buttons: [
+            {
+                extend: 'print',
+                exportOptions: { columns: [0, 1, 2, 3, 4] }
             },
-            buttons: [{
-                    extend: 'print',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3, 4]
-                    }
-                },
-                {
-                    extend: 'excel',
-                    text: 'Excel',
-                    title: 'Donors Data',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3,4]
-                    }
-                },
-
-                {
-                    extend: 'copy',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3,4]
-                    }
-                },
-            ],
-            dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
-            lengthMenu: [[10, 25, 50, 100, 500, 1000, 2000], [10, 25, 50, 100, 500, 1000, 2000]], 
-            pageLength: 10,
-            responsive: true,
-            language: languages[language],
-            "drawCallback": function() {
-                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            {
+                extend: 'excel',
+                text: 'Excel',
+                title: 'Donors Data',
+                exportOptions: { columns: [0, 1, 2, 3, 4] }
             },
+            {
+                extend: 'copy',
+                exportOptions: { columns: [0, 1, 2, 3, 4] }
+            },
+        ],
+        dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
+        lengthMenu: [[10, 25, 50, 100, 500, 1000, 2000], [10, 25, 50, 100, 500, 1000, 2000]], 
+        pageLength: 10,
+        responsive: true,
+        language: languages[language],
+        "drawCallback": function() {
+            $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+        },
     });
 
     function fetchStatistics() {
@@ -151,6 +149,24 @@ $(document).ready(function() {
                 $('#replyNotDonateCount').text(response.statistics.ReplyAndNotDonate || 0);
                 $('#noReplyCount').text(response.statistics.NoReply || 0);
                 $('#phoneNotAvailableCount').text(response.statistics.PhoneNotAvailable || 0);
+
+                // Populate activity types dynamically
+                let activityTypesHtml = '';
+                if (response.activity_types) {
+                    Object.keys(response.activity_types).forEach(function(activityType) {
+                        activityTypesHtml += `
+                            <div class="col-md-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h5>${activityType}</h5>
+                                        <h3>${response.activity_types[activityType]}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                $('#activityTypesSection').html(activityTypesHtml);
             }
         });
     }
@@ -163,7 +179,6 @@ $(document).ready(function() {
     // Initial statistics fetch
     fetchStatistics();
 });
-
 </script>
 @endpush
 @endsection
