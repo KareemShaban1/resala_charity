@@ -31,7 +31,7 @@ class StoreDonorRequest extends FormRequest
             'department_id' => 'nullable|exists:departments,id',
             'active' => 'required|boolean',
             'donor_type' => 'required|in:normal,monthly',
-            'donor_category' => 'required|in:normal,special',
+            'donor_category' => 'required|in:normal,special,random',
             'notes'=>'nullable|string',
             'monthly_donation_day' => 'nullable',
             'phones' => 'nullable|array|min:1',

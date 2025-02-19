@@ -80,6 +80,7 @@
                         <select class="form-select" id="donor_category" name="donor_category">
                             <option value="normal">{{__('Normal')}}</option>
                             <option value="special">{{__('Special')}}</option>
+                            <option value="random">{{__('Random')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
