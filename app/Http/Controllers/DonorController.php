@@ -208,7 +208,7 @@ class DonorController extends Controller
                 return 'Other';
             })
             ->addColumn('has_activities', function ($donor) {
-                return $donor->activities_count > 0 ? 'Yes' : 'No';
+                return $donor->activities_count > 0 ? __('Yes') : __('No');
             })
             ->rawColumns(['active', 'action', 'name'])
             ->make(true);
