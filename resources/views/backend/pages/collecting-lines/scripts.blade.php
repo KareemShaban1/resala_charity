@@ -190,22 +190,21 @@
                 $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
             },
             createdRow: function (row, data, dataIndex) {
-                if (data.is_child === 'Parent') {
-                    $(row).addClass('child-row');
 
-                    // Get the parent ID or group ID from the data
-                    const parentId = data.parent_donor_group_id;
+            // Get the parent ID or group ID from the data
+            const parentId = data.parent_donor_group_id;
 
-                    // Generate a unique color for this parent
-                    const color = getColorForParent(parentId);
+            // Generate a unique color for this parent
+            const color = getColorForParent(parentId);
 
-                    // Apply the color to the row
-                    $(row).find('td').attr('style', 'background-color: ' + color + ' !important');
-                } else if (data.is_child === 'Child') {
-                    // For parent rows, apply the color only to the first column
-                    const color = getColorForParent(data.parent_donor_group_id);
-                    $(row).find('td:first').attr('style', 'background-color: ' + color + ' !important');
-                }
+            if (data.is_child === 'Parent') {
+                // For child rows, apply the color to all columns
+                $(row).addClass('child-row');
+                $(row).find('td').attr('style', 'background-color: ' + color + ' !important');
+            } else if (data.is_child === 'Child') {
+                // For parent rows, apply the color only to the first column
+                $(row).find('td:first').attr('style', 'background-color: ' + color + ' !important');
+            }
             }
         });
 

@@ -207,9 +207,9 @@ class CollectingLineController extends Controller
                     ELSE donors.id
                 END as parent_donor_group_id,
                 CASE 
-                    WHEN donors.parent_id IS NOT NULL THEN "Child"
-                    ELSE "Parent"
-                END as is_child,
+                    WHEN donors.parent_id IS NOT NULL THEN 1  -- Child
+                    ELSE 0  -- Parent
+                END as is_child_order,
                 areas.name as area_name,
                 donors.address,
                 GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers
@@ -235,7 +235,9 @@ class CollectingLineController extends Controller
                     'donations.donation_type',
                     'donation_collectings.collecting_date',
                     'donation_collectings.in_kind_receipt_number'
-                );
+                )
+                ->orderBy('parent_donor_group_id', 'asc') // Group children under parents
+                ->orderBy('is_child_order', 'asc'); // Ensure parents appear above their children; // Ensures Parent first, then Child under it
 
 
             // if ($request->has('date') && $request->date != '') {
@@ -355,6 +357,23 @@ class CollectingLineController extends Controller
                     } else {
                         return ' <span class="text-danger">' .  __('Not Collected') . '</span><br>' . __('') . '';
                     }
+                })
+                ->addColumn('is_child', function ($item) {
+                    // Check if this donor is referenced as a parent by any other donor
+                    $isParent = Donor::where('parent_id', $item->donor_id)->exists();
+    
+                    // If donor has a parent_id, they are a child
+                    if (!is_null($item->parent_id)) {
+                        return 'Child';
+                    }
+    
+                    // If donor has no parent_id but is referenced as a parent by others, they are a Parent
+                    if ($isParent) {
+                        return 'Parent';
+                    }
+    
+                    // If neither condition is met, return 'Other'
+                    return 'Other';
                 })
                 ->rawColumns(['action', 'donateItems', 'receipt_number', 'collected'])
                 ->make(true);
