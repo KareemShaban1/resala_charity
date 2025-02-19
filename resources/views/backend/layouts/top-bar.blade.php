@@ -1,7 +1,7 @@
    <!-- Topbar Start -->
    <div class="navbar-custom">
        <ul class="list-unstyled topbar-menu float-end mb-0">
-           <li class="dropdown notification-list d-lg-none">
+           <!-- <li class="dropdown notification-list d-lg-none">
                <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                    <i class="dripicons-search noti-icon"></i>
                </a>
@@ -10,7 +10,7 @@
                        <input type="text" class="form-control" placeholder="Search ..." aria-label="Recipient's username">
                    </form>
                </div>
-           </li>
+           </li> -->
            <li class="dropdown notification-list topbar-dropdown">
                <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                    <!-- <img src="{{asset('backend/assets/images/flags/us.jpg')}}" alt="user-image" class="me-0 me-sm-1" height="12">  -->
@@ -98,23 +98,20 @@
                        <span>My Account</span>
                    </a>
 
-                   <!-- item-->
-                   <a href="javascript:void(0);" class="dropdown-item notify-item">
+                   <!-- <a href="javascript:void(0);" class="dropdown-item notify-item">
                        <i class="mdi mdi-account-edit me-1"></i>
                        <span>Settings</span>
                    </a>
 
-                   <!-- item-->
                    <a href="javascript:void(0);" class="dropdown-item notify-item">
                        <i class="mdi mdi-lifebuoy me-1"></i>
                        <span>Support</span>
                    </a>
 
-                   <!-- item-->
                    <a href="javascript:void(0);" class="dropdown-item notify-item">
                        <i class="mdi mdi-lock-outline me-1"></i>
                        <span>Lock Screen</span>
-                   </a>
+                   </a> -->
 
                    <!-- item-->
                    <a href="" class="dropdown-item notify-item">
