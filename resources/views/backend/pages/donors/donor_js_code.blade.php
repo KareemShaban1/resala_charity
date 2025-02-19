@@ -469,6 +469,12 @@
                     searchable: true
                 },
                 {
+                    data: 'activities_count',
+                    name: 'activities_count',
+                    orderable: false,
+                    searchable: false
+                },
+                {
                     data: 'action',
                     name: 'action',
                     orderable: false,
@@ -630,6 +636,12 @@
                     name: 'donors.active',
                     orderable: false,
                     searchable: true
+                },
+                {
+                    data: 'activities_count',
+                    name: 'activities_count',
+                    orderable: false,
+                    searchable: false
                 },
                 {
                     data: 'action',

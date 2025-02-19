@@ -58,6 +58,7 @@ class DonorController extends Controller
             ELSE 0  -- Parent
         END as is_child_order') // Ensures parents appear first
             ->with(['governorate', 'city', 'area', 'phones'])
+            ->withCount('activities') // Count donor activities
             ->orderBy('parent_donor_group_id', 'asc') // Group children under parents
             ->orderBy('is_child_order', 'asc') // Ensure parents appear above their children
             ->orderBy('donors.created_at', 'desc'); // Sort by latest donors

@@ -62,6 +62,7 @@
                                     <th>{{__('Area')}}</th>
                                     <th>{{__('Phones')}}</th>
                                     <th>{{__('Status')}}</th>
+                                    <th>{{__('Activities Count')}}</th>
                                     <th>{{__('Actions')}}</th>
                                 </tr>
                                 <tr>
@@ -93,6 +94,7 @@
                                             <option value="0">{{__('Inactive')}}</option>
                                         </select>
                                     </th>
+                                    <th></th>
                                     <th></th>
                                 </tr>
                             </thead>
