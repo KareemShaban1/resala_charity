@@ -128,6 +128,13 @@ class DonorController extends Controller
                     $q->where('phone_number', 'like', "%{$keyword}%");
                 });
             })
+            ->filterColumn('has_activities', function ($query, $keyword) {
+                if (strtolower($keyword) === 'yes') {
+                    $query->having('activities_count', '>', 0);
+                } elseif (strtolower($keyword) === 'no') {
+                    $query->having('activities_count', '=', 0);
+                }
+            })            
             ->addColumn('phones', function ($donor) {
                 // return $donor->phones->isNotEmpty() ?
                 //     $donor->phones->map(function ($phone) {
@@ -200,6 +207,9 @@ class DonorController extends Controller
                 // If neither condition is met, return 'Other'
                 return 'Other';
             })
+            ->addColumn('has_activities', function ($donor) {
+                return $donor->activities_count > 0 ? 'Yes' : 'No';
+            })            
             ->rawColumns(['active', 'action', 'name'])
             ->make(true);
     }

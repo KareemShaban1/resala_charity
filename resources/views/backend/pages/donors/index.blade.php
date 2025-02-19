@@ -94,7 +94,12 @@
                                             <option value="0">{{__('Inactive')}}</option>
                                         </select>
                                     </th>
-                                    <th></th>
+                                    <th>
+                                    <select class="form-control form-control-sm column-search">
+                                            <option value="yes">{{__('Yes')}}</option>
+                                            <option value="no">{{__('No')}}</option>
+                                        </select>
+                                    </th>
                                     <th></th>
                                 </tr>
                             </thead>

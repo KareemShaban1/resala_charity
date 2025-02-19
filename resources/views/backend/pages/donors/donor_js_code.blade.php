@@ -469,8 +469,8 @@
                     searchable: true
                 },
                 {
-                    data: 'activities_count',
-                    name: 'activities_count',
+                    data: 'has_activities',
+                    name: 'has_activities',
                     orderable: false,
                     searchable: false
                 },
@@ -638,8 +638,8 @@
                     searchable: true
                 },
                 {
-                    data: 'activities_count',
-                    name: 'activities_count',
+                    data: 'has_activities',
+                    name: 'has_activities',
                     orderable: false,
                     searchable: false
                 },
