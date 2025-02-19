@@ -212,7 +212,7 @@ class DonorController extends Controller
                 '<span class="badge bg-success">' . __("Yes") . '</span>'
                  : '<span class="badge bg-danger">' . __("No") . '</span>';
             })
-            ->rawColumns(['active', 'action', 'name'])
+            ->rawColumns(['active', 'action', 'name', 'has_activities'])
             ->make(true);
     }
 
