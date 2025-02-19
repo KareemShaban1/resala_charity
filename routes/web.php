@@ -16,6 +16,7 @@ use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonorActivityController;
 use App\Http\Controllers\DonorController;
 use App\Http\Controllers\DonorHistoryController;
+use App\Http\Controllers\DonorReportController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\MonthlyFormCancellationController;
@@ -60,6 +61,10 @@ Route::group(
         Route::get('/monthly-forms-report', [MonthlyFormReportController::class, 'index'])->name('monthly-forms-report.index');
         Route::get('/monthly-forms-report/filter', [MonthlyFormReportController::class, 'filter'])->name('monthly-forms-report.filter');
 
+        Route::get('/donor-activities-report', [DonorReportController::class, 'donorActivities'])->name('donor-report.donorActivities');
+        Route::get('/donor-activities/statistics', [DonorReportController::class, 'donorStatistics'])->name('donor-report.statistics');
+
+        // Route::get('/donor-activities-report/filter', [DonorReportController::class, 'filter'])->name('donor-report.filter');
 
         // Departments Routes
         Route::get('/departments/data', [DepartmentController::class, 'data'])->name('departments.data');
@@ -239,3 +244,4 @@ Route::get('/notifications',[NotificationController::class, 'getNotificationsByD
 
 Route::post('/change_donors_category',[TestController::class, 'changeDonorsData'])
 ->name('changeDonorsData');
+

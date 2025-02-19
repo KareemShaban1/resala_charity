@@ -339,6 +339,11 @@
                                   <span> {{__('Monthly Forms Reports')}} </span>
                               </a>
                           </li>
+                          <li>
+                              <a href="{{route('donor-report.donorActivities')}}">
+                                  <span> {{__('Donor Activities Reports')}} </span>
+                              </a>
+                          </li>
                           <!-- @endcan -->
 
                       </ul>
