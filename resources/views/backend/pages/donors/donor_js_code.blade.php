@@ -298,6 +298,47 @@
                             `;
                         })
 
+                        modalContent += `
+                          <h4 class="text-primary mt-3">{{__('Activities')}}</h4>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>{{__('Activity Type')}}</th>
+                                    <th>{{__('Call Type')}}</th>
+                                    <th>{{__('Date Time')}}</th>
+                                    <th>{{__('Status')}}</th>
+                                    <th>{{__('Response')}}</th>
+                                    <th>{{__('Notes')}}</th>
+                                    <th>{{__('Created By')}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.activities
+                                .map(activity => `
+                                    <tr>
+                                        <td>${activity.activity_type}</td>
+                                        <td>${activity.call_type?.name}</td>
+                                        <td>${activity.date_time}</td>
+                                        <td>
+                                           ${activity.status === 'ReplyAndDonate' ? "{{ __('Reply And Donate') }}" :
+                                            activity.status === 'ReplyAndNotDonate' ? "{{ __('Reply And Not Donate') }}" :
+                                            activity.status === 'NoReply' ? "{{ __('No Reply') }}" :
+                                            activity.status === 'PhoneNotAvailable' ? "{{ __('Phone Not Available') }}" :
+                                            ''}
+                                        </td>
+                                        <td>${activity.response}</td>
+                                        <td>${activity.notes}</td>
+                                        <td>${activity.created_by?.name}</td>
+                                    </tr>
+                                `)
+                                .join('')}
+                                
+                            </tbody>
+                        
+                        </table>
+                        
+                        `;
+
               // Add the constructed content to the modal body
               $('#donorDetailsModal .modal-body').html(modalContent);    
         });

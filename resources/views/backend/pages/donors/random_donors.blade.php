@@ -97,7 +97,7 @@
 <!-- Edit Donor Modal -->
 @include('backend.pages.donors.edit_modal')
 
-
+@include('backend.pages.donors.donor_details_modal')
 
 
 @endsection

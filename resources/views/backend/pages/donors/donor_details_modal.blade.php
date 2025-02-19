@@ -1,4 +1,4 @@
-<x-modal id="donorDetailsModal" title="{{__('Donor Details')}}" size="lg">
+<x-modal id="donorDetailsModal" title="{{__('Donor Details')}}" size="xl">
         <div class="modal-body">
 
         </div>
