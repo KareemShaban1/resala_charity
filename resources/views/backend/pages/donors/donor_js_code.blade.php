@@ -472,7 +472,7 @@
                     data: 'has_activities',
                     name: 'has_activities',
                     orderable: false,
-                    searchable: false
+                    searchable: true
                 },
                 {
                     data: 'action',
@@ -641,7 +641,7 @@
                     data: 'has_activities',
                     name: 'has_activities',
                     orderable: false,
-                    searchable: false
+                    searchable: true
                 },
                 {
                     data: 'action',
