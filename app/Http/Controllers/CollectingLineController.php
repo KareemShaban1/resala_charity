@@ -672,7 +672,7 @@ class CollectingLineController extends Controller
             })
             ->addColumn('is_child', function ($item) {
                 // Check if this donor is referenced as a parent by any other donor
-                $isParent = Donor::where('parent_id', $item->id)->exists();
+                $isParent = Donor::where('parent_id', $item->donor_id)->exists();
 
                 // If donor has a parent_id, they are a child
                 if (!is_null($item->parent_id)) {
