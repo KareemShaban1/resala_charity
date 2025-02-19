@@ -14,7 +14,7 @@ class EventController extends Controller
     // Display calendar
     public function calendar()
     {
-        $events = Event::all();
+        $events = Event::where('created_by', auth()->user()->id)->get();
 
         return view('backend.pages.events.calendar', compact('events'));
     }
@@ -23,13 +23,13 @@ class EventController extends Controller
 
     public function index()
     {
-        $events = Event::all();
+        $events = Event::where('created_by', auth()->user()->id)->get();
 
         return view('backend.pages.events.index', compact('events'));
     }
     public function data()
     {
-        $events = Event::all();
+        $events = Event::where('created_by', auth()->user()->id)->get();
         return DataTables::of($events)
             ->addColumn('actions', function ($event) {
                 return '
@@ -43,7 +43,7 @@ class EventController extends Controller
     }
     public function calendarEvents()
     {
-        $events = Event::all();
+        $events = Event::where('created_by', auth()->user()->id)->get();
         return response()->json($events);
     }
 
