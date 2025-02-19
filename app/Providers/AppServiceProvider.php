@@ -32,8 +32,7 @@ class AppServiceProvider extends ServiceProvider
             'App\Models\Donation','App\Models\DonationItem', 'App\Models\DonationCollecting',
             'App\Models\Donor', 'App\Models\DonorPhone','App\Models\DonorActivity',
             'App\Models\CallType','App\Models\CollectingLine',
-            'App\Models\Event','Spatie\Permission\Models\Role','App\Models\User',
-            'App\Models\Backup'
+            'App\Models\Event','Spatie\Permission\Models\Role','App\Models\User'
         ];
         foreach ($models as $model) {
             $model::observe(GenericObserver::class);
