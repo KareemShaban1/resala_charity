@@ -56,9 +56,9 @@ class DonorController extends Controller
         CASE 
             WHEN donors.parent_id IS NOT NULL THEN 1  -- Child
             ELSE 0  -- Parent
-        END as is_child_order') // Ensures parents appear first
+        END as is_child_order,
+        (SELECT COUNT(*) FROM donor_activities WHERE donor_activities.donor_id = donors.id) as activities_count') // Ensures parents appear first
             ->with(['governorate', 'city', 'area', 'phones'])
-            ->withCount('activities') // Count donor activities
             ->orderBy('parent_donor_group_id', 'asc') // Group children under parents
             ->orderBy('is_child_order', 'asc') // Ensure parents appear above their children
             ->orderBy('donors.created_at', 'desc'); // Sort by latest donors
@@ -86,6 +86,13 @@ class DonorController extends Controller
                         });
                     } elseif ($columnName === 'donors.active') {
                         $query->where('active', strtolower($searchValue));
+                    
+                    } elseif ($columnName === 'has_activities') {
+                        if (strtolower($searchValue) === 'yes') {
+                            $query->having('activities_count', '>', 0);
+                        } elseif (strtolower($searchValue) === 'no') {
+                            $query->having('activities_count', '=', 0);
+                        }
                     } else {
                         $query->where($columnName, 'like', "%{$searchValue}%");
                     }
@@ -115,7 +122,7 @@ class DonorController extends Controller
         if (request()->has('category')) {
             $category = request('category');
             if ($category === 'normal') {
-                $query->whereIn('donors.donor_category', ['normal' , 'special']);
+                $query->whereIn('donors.donor_category', ['normal', 'special']);
             } elseif ($category === 'random') {
                 $query->where('donors.donor_category', 'random');
             }
@@ -128,22 +135,15 @@ class DonorController extends Controller
                     $q->where('phone_number', 'like', "%{$keyword}%");
                 });
             })
-            ->filterColumn('has_activities', function ($query, $keyword) {
-                if (strtolower($keyword) === 'yes') {
-                    $query->having('activities_count', '>', 0);
-                } elseif (strtolower($keyword) === 'no') {
-                    $query->having('activities_count', '=', 0);
-                }
-            })            
             ->addColumn('phones', function ($donor) {
                 // return $donor->phones->isNotEmpty() ?
                 //     $donor->phones->map(function ($phone) {
                 //         return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
                 //     })->implode(', ') : 'N/A';
                 return $donor->phones->isNotEmpty() ?
-                $donor->phones->map(function ($phone) {
-                    return $phone->phone_number;
-                })->implode(', ') : 'N/A';
+                    $donor->phones->map(function ($phone) {
+                        return $phone->phone_number;
+                    })->implode(', ') : 'N/A';
             })
             ->addColumn('name', function ($donor) {
                 return '<a href="' . route('donor-history.show', [$donor->id]) . '" class="text-info">'
@@ -209,7 +209,7 @@ class DonorController extends Controller
             })
             ->addColumn('has_activities', function ($donor) {
                 return $donor->activities_count > 0 ? 'Yes' : 'No';
-            })            
+            })
             ->rawColumns(['active', 'action', 'name'])
             ->make(true);
     }
@@ -263,8 +263,15 @@ class DonorController extends Controller
 
         $childrenDonors = Donor::where('parent_id', $donor->id)->get();
 
-        return response()->json($donor->load(['department', 'governorate', 'city', 'area', 'phones', 
-        'childrenDonors','activities']));
+        return response()->json($donor->load([
+            'department',
+            'governorate',
+            'city',
+            'area',
+            'phones',
+            'childrenDonors',
+            'activities'
+        ]));
     }
 
     /**

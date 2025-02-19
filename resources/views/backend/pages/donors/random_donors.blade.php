@@ -53,7 +53,7 @@
                                     <th>{{__('Area')}}</th>
                                     <th>{{__('Phones')}}</th>
                                     <th>{{__('Status')}}</th>
-                                    <th>{{__('Activities Count')}}</th>
+                                    <th>{{__('Has Activities')}}</th>
                                     <th>{{__('Actions')}}</th>
                                 </tr>
                                 <tr>
@@ -83,6 +83,7 @@
                                     </th>
                                     <th>
                                     <select class="form-control form-control-sm column-search">
+                                            <option value="">{{__('All')}}</option>
                                             <option value="yes">{{__('Yes')}}</option>
                                             <option value="no">{{__('No')}}</option>
                                         </select>
