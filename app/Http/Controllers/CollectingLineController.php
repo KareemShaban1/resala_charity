@@ -442,10 +442,10 @@ class CollectingLineController extends Controller
             ELSE donors.id
         END as parent_donor_group_id,
         CASE 
-            WHEN donors.parent_id IS NOT NULL THEN "Child"
-            ELSE "Parent"
-        END as is_child
-    ')
+            WHEN donors.parent_id IS NOT NULL THEN 1  -- Child
+            ELSE 0  -- Parent
+        END as is_child_order
+        ')
             ->leftJoin('donors', 'monthly_forms.donor_id', '=', 'donors.id')
             ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
             ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
@@ -467,7 +467,8 @@ class CollectingLineController extends Controller
                 'monthly_forms.cancellation_date',
                 'donors.parent_id'
             )
-            ->orderByRaw('parent_donor_group_id ASC, is_child ASC'); // Ensures Parent first, then Child under it
+            ->orderBy('parent_donor_group_id', 'asc') // Group children under parents
+            ->orderBy('is_child_order', 'asc'); // Ensure parents appear above their children; // Ensures Parent first, then Child under it
 
 
         // Apply date filter conditions
