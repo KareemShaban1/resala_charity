@@ -222,7 +222,6 @@ class DonorController extends Controller
                     'ReplyAndNotDonate' => __('Reply And Not Donate'),
                     'NoReply' => __('No Reply'),
                     'PhoneNotAvailable' => __('Phone Not Available'),
-                    'NoActivity' => __('No Activity')
                 ];
 
                 return $donor->last_activity_status ? 
