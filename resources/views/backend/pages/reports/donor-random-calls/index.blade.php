@@ -22,7 +22,7 @@
             <select id="user_filter" class="form-control">
                 <option value="">{{ __('All Users') }}</option>
                 @foreach ($users as $user)
-                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                <option value="{{ $user->id }}">{{ $user->name }}</option>
                 @endforeach
             </select>
         </div>
@@ -67,10 +67,6 @@
         </div>
     </div>
 
-    <!-- Activity Types Statistics Section -->
-    <!-- <div class="row mb-4" id="activityTypesSection">
-    </div> -->
-
     <!-- Users Table -->
     <div class="row">
         <div class="col-12">
@@ -79,6 +75,9 @@
                     <table id="users-table" class="table dt-responsive nowrap w-100">
                         <thead>
                             <tr>
+                                <th>
+                                   
+                                </th> <!-- Expand button -->
                                 <th>{{ __('ID') }}</th>
                                 <th>{{ __('Name') }}</th>
                                 <th>{{ __('Email') }}</th>
@@ -95,98 +94,164 @@
 
 @push('scripts')
 <script>
-$(document).ready(function() {
-    let table = $('#users-table').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: '{{ route("donor-report.donor-random-calls") }}',
-            data: function(d) {
-                d.start_date = $('#start_date').val();
-                d.end_date = $('#end_date').val();
-                d.user_id = $('#user_filter').val();
-            }
-        },
-        columns: [
-            { data: 'id', name: 'id' },
-            { data: 'name', name: 'name' },
-            { data: 'email', name: 'email' },
-            { data: 'department', name: 'department' },
-            { data: 'activities_count', name: 'activities_count' }
-        ],
-        order: [[0, 'desc']],
-        search: {
-            regex: true
-        },
-        buttons: [
-            {
-                extend: 'print',
-                exportOptions: { columns: [0, 1, 2, 3, 4] }
+    $(document).ready(function() {
+        let table = $('#users-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '{{ route("donor-report.donor-random-calls") }}',
+                data: function(d) {
+                    d.start_date = $('#start_date').val();
+                    d.end_date = $('#end_date').val();
+                    d.user_id = $('#user_filter').val();
+                }
             },
-            {
-                extend: 'excel',
-                text: 'Excel',
-                title: 'Donors Data',
-                exportOptions: { columns: [0, 1, 2, 3, 4] }
+            columns: [{
+                    className: 'dt-control',
+                    orderable: false,
+                    data: null,
+                    defaultContent: '<i class="mdi mdi-plus"></i> '
+                },
+                {
+                    data: 'id',
+                    name: 'id'
+                },
+                {
+                    data: 'name',
+                    name: 'name'
+                },
+                {
+                    data: 'email',
+                    name: 'email'
+                },
+                {
+                    data: 'department',
+                    name: 'department'
+                },
+                {
+                    data: 'activities_count',
+                    name: 'activities_count'
+                }
+            ],
+            order: [
+                [1, 'desc']
+            ],
+            search: {
+                regex: true
             },
-            {
-                extend: 'copy',
-                exportOptions: { columns: [0, 1, 2, 3, 4] }
+            buttons: [{
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [1, 2, 3, 4, 5]
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Donors Data',
+                    exportOptions: {
+                        columns: [1, 2, 3, 4, 5]
+                    }
+                },
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: [1, 2, 3, 4, 5]
+                    }
+                },
+            ],
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
+            lengthMenu: [
+                [10, 25, 50, 100, 500, 1000, 2000],
+                [10, 25, 50, 100, 500, 1000, 2000]
+            ],
+            pageLength: 10,
+            responsive: true,
+            language: languages[language],
+            "drawCallback": function() {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
             },
-        ],
-        dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
-        lengthMenu: [[10, 25, 50, 100, 500, 1000, 2000], [10, 25, 50, 100, 500, 1000, 2000]], 
-        pageLength: 10,
-        responsive: true,
-        language: languages[language],
-        "drawCallback": function() {
-            $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
-        },
-    });
+        });
 
-    function fetchStatistics() {
-        $.ajax({
-            url: '{{ route("donor-report.random-calls-statistics") }}',
-            data: {
-                start_date: $('#start_date').val(),
-                end_date: $('#end_date').val(),
-                user_id: $('#user_filter').val()
-            },
-            success: function(response) {
-                $('#replyDonateCount').text(response.statistics.ReplyAndDonate || 0);
-                $('#replyNotDonateCount').text(response.statistics.ReplyAndNotDonate || 0);
-                $('#noReplyCount').text(response.statistics.NoReply || 0);
-                $('#phoneNotAvailableCount').text(response.statistics.PhoneNotAvailable || 0);
+        // Add click event for expanding user activities
+        $('#users-table tbody').on('click', 'td.dt-control', function() {
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
 
-                // Populate activity types dynamically
-                // let activityTypesHtml = '';
-                // if (response.activity_types) {
-                //     Object.keys(response.activity_types).forEach(function(activityType) {
-                //         activityTypesHtml += `
-                //             <div class="col-md-3">
-                //                 <div class="card">
-                //                     <div class="card-body text-center">
-                //                         <h5>${activityType}</h5>
-                //                         <h3>${response.activity_types[activityType]}</h3>
-                //                     </div>
-                //                 </div>
-                //             </div>
-                //         `;
-                //     });
-                // }
-                // $('#activityTypesSection').html(activityTypesHtml);
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                let data = row.data();
+
+                // Generate the activities table
+                let activitiesHtml = `<table class="table table-bordered">
+                <thead>
+                <tr>
+                <th>#</th>
+                <th>Donor Name</th>
+                <th>Activity Type</th>
+                <th>Call Type</th>
+                <th>Date Time</th>
+                <th>Status</th>
+                <th>Response</th>
+                <th>Notes</th>
+                </tr>
+                </thead>
+                <tbody>`;
+                if (data.activities.length) {
+                    data.activities.forEach((activity, index) => {
+                        activitiesHtml += `<tr><td>${index + 1}</td>
+                        <td>${activity.donor?.name}</td>
+                        <td>${activity.activity_type}</td>
+                        <td>${activity.call_type?.name}</td>
+                        <td>${activity.date_time}</td>
+                        <td>
+                            ${activity.status === 'ReplyAndDonate' ? 'Reply And Donate' :
+                            activity.status === 'ReplyAndNotDonate' ? 'Reply And Not Donate' :
+                            activity.status === 'NoReply' ? 'No Reply' :
+                            activity.status === 'PhoneNotAvailable' ? 'Phone Not Available' : ''}
+                        </td>
+                        <td>${activity.response}</td>
+                        <td>${activity.notes}</td>
+                        </tr>`;
+                    });
+                } else {
+                    activitiesHtml += '<tr><td colspan="3">No activities found</td></tr>';
+                }
+                activitiesHtml += '</tbody></table>';
+
+                row.child(activitiesHtml).show();
+                tr.addClass('shown');
             }
         });
-    }
 
-    $('#filterBtn').click(function() {
-        table.ajax.reload();
+
+        function fetchStatistics() {
+            $.ajax({
+                url: '{{ route("donor-report.random-calls-statistics") }}',
+                data: {
+                    start_date: $('#start_date').val(),
+                    end_date: $('#end_date').val(),
+                    user_id: $('#user_filter').val()
+                },
+                success: function(response) {
+                    $('#replyDonateCount').text(response.statistics.ReplyAndDonate || 0);
+                    $('#replyNotDonateCount').text(response.statistics.ReplyAndNotDonate || 0);
+                    $('#noReplyCount').text(response.statistics.NoReply || 0);
+                    $('#phoneNotAvailableCount').text(response.statistics.PhoneNotAvailable || 0);
+                }
+            });
+        }
+
+        $('#filterBtn').click(function() {
+            table.ajax.reload();
+            fetchStatistics();
+        });
+
+        // Initial statistics fetch
         fetchStatistics();
     });
-
-    // Initial statistics fetch
-    fetchStatistics();
-});
 </script>
 @endpush
 @endsection

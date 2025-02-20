@@ -149,7 +149,6 @@
                                 {{ __('No Reply') }}
                                 @elseif($activity->status == 'PhoneNotAvailable')
                                 {{ __('Phone Not Available') }}
-                                
                                 @endif
                             </td>
                             <td>
