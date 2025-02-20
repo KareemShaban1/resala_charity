@@ -48,7 +48,8 @@ class DonorController extends Controller
      */
     public function data(Request $request)
     {
-        $query = Donor::selectRaw('donors.*, 
+        $query = Donor::selectRaw(
+            'donors.*, 
         CASE 
             WHEN donors.parent_id IS NOT NULL THEN donors.parent_id
             ELSE donors.id
@@ -57,12 +58,13 @@ class DonorController extends Controller
             WHEN donors.parent_id IS NOT NULL THEN 1  -- Child
             ELSE 0  -- Parent
         END as is_child_order,
-        (SELECT COUNT(*) FROM donor_activities WHERE donor_activities.donor_id = donors.id) as activities_count') // Ensures parents appear first
+        (SELECT COUNT(*) FROM donor_activities WHERE donor_activities.donor_id = donors.id) as activities_count,
+        (SELECT status FROM donor_activities WHERE donor_activities.donor_id = donors.id ORDER BY created_at DESC LIMIT 1) as last_activity_status'
+        )
             ->with(['governorate', 'city', 'area', 'phones'])
-            ->orderBy('parent_donor_group_id', 'asc') // Group children under parents
-            ->orderBy('is_child_order', 'asc') // Ensure parents appear above their children
-            ->orderBy('donors.created_at', 'desc'); // Sort by latest donors
-
+            ->orderBy('parent_donor_group_id', 'asc')
+            ->orderBy('is_child_order', 'asc')
+            ->orderBy('donors.created_at', 'desc');
 
 
 
@@ -86,14 +88,15 @@ class DonorController extends Controller
                         });
                     } elseif ($columnName === 'donors.active') {
                         $query->where('active', strtolower($searchValue));
-                    
                     } elseif ($columnName === 'has_activities') {
                         if (strtolower($searchValue) === 'yes') {
                             $query->having('activities_count', '>', 0);
                         } elseif (strtolower($searchValue) === 'no') {
                             $query->having('activities_count', '=', 0);
                         }
-                    } else {
+                    } elseif ($columnName === 'last_activity_status') {
+                        $query->having('last_activity_status', 'like', "%{$searchValue}%");
+                    }else {
                         $query->where($columnName, 'like', "%{$searchValue}%");
                     }
                 }
@@ -208,11 +211,17 @@ class DonorController extends Controller
                 return 'Other';
             })
             ->addColumn('has_activities', function ($donor) {
-                return $donor->activities_count > 0 ?  
-                '<span class="badge bg-success">' . __("Yes") . '</span>'
-                 : '<span class="badge bg-danger">' . __("No") . '</span>';
+                return $donor->activities_count > 0 ?
+                    '<span class="badge bg-success">' . __("Yes") . '</span>'
+                    : '<span class="badge bg-danger">' . __("No") . '</span>';
             })
-            ->rawColumns(['active', 'action', 'name', 'has_activities'])
+            ->addColumn('last_activity_status', function ($donor) {
+                return $donor->last_activity_status ? 
+                    '<span class="badge bg-primary">' . ucfirst($donor->last_activity_status) . '</span>' :
+                    '<span class="badge bg-secondary">' . __("No Activity") . '</span>';
+            })
+            
+            ->rawColumns(['active', 'action', 'name', 'has_activities','last_activity_status'])
             ->make(true);
     }
 

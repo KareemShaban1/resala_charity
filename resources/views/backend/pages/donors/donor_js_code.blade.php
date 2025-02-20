@@ -644,6 +644,12 @@
                     searchable: true
                 },
                 {
+                    data: 'last_activity_status',
+                    name: 'last_activity_status',
+                    orderable: false,
+                    searchable: true
+                },
+                {
                     data: 'action',
                     name: 'action',
                     orderable: false,
