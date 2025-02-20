@@ -85,17 +85,15 @@ class DonorReportController extends Controller
             'department',
             'activities' => function ($query) use ($request) {
                 $query
-                ->where('call_type_id', 1)
-                ->with('callType','donor');
+                    ->with('callType', 'donor');
             }
         ])
             ->withCount(['activities' => function ($query) use ($request) {
+                $query->where('call_type_id', 1);
                 if (isset($request->start_date) && isset($request->end_date)) {
                     $startDate = Carbon::parse($request->input('start_date'));
                     $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
-                    $query
-                    ->where('call_type_id', 1)
-                    ->whereBetween('created_at', [$startDate, $endDate]);
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
                 }
             }])
             ->get();
@@ -123,9 +121,9 @@ class DonorReportController extends Controller
         // Fetch users with activities
         $usersQuery = User::with([
             'activities' => function ($query) use ($request) {
-            $query
-            ->where('call_type_id', 1);
-        }
+                $query
+                    ->where('call_type_id', 1);
+            }
         ]);
 
         // Filter by user ID if provided
