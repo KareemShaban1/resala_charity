@@ -1120,7 +1120,8 @@ $('#addActivityForm').on('submit', function(e) {
                 if (response.success) {
                     $('#addActivityModal').modal('hide');
                     form[0].reset();
-                    table.ajax.reload();
+                    donorsTable.ajax.reload();
+                    randomDonorsTable.ajax.reload();
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',
@@ -1155,7 +1156,7 @@ $('#addActivityForm').on('submit', function(e) {
                     $('#assignDonorModal').modal('hide');
                     form[0].reset();
                     $('.select2').val('').trigger('change');
-                    table.ajax.reload();
+                    donorsTable.ajax.reload();
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',
