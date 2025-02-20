@@ -81,7 +81,7 @@ class DonorReportController extends Controller
 
     public function donorRandomCalls(Request $request)
     {
-        $users = User::with('department')
+        $users = User::with('department','activities')
             ->withCount(['activities' => function ($query) use ($request) {
                 if (isset($request->start_date) && isset($request->end_date)) {
                     $startDate = Carbon::parse($request->input('start_date'));
