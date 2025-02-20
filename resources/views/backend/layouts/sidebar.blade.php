@@ -344,6 +344,11 @@
                                   <span> {{__('Donor Activities Reports')}} </span>
                               </a>
                           </li>
+                          <li>
+                              <a href="{{route('donor-report.donor-random-calls')}}">
+                                  <span> {{__('Donor Random Calls Reports')}} </span>
+                              </a>
+                          </li>
                           <!-- @endcan -->
 
                       </ul>
