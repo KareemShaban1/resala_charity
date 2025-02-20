@@ -110,6 +110,8 @@
 <!-- Add Donor Modal -->
 @include('backend.pages.donors.add_modal')
 
+@include('backend.pages.donors.add_activity_modal')
+
 <!-- Edit Donor Modal -->
 @include('backend.pages.donors.edit_modal')
 
