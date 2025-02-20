@@ -216,11 +216,17 @@ class DonorController extends Controller
                     : '<span class="badge bg-danger">' . __("No") . '</span>';
             })
             ->addColumn('last_activity_status', function ($donor) {
-                return $donor->last_activity_status ? 
-                    '<span class="badge bg-primary">' . ucfirst($donor->last_activity_status) . '</span>' :
-                    '<span class="badge bg-secondary">' . __("No Activity") . '</span>';
-            })
+                $status = ucfirst($donor->last_activity_status ?? 'NoActivity');
+                $labels = [
+                    'ReplyAndDonate' => __('Reply And Donate'),
+                    'ReplyAndNotDonate' => __('Reply And Not Donate'),
+                    'NoReply' => __('No Reply'),
+                    'PhoneNotAvailable' => __('Phone Not Available'),
+                    'NoActivity' => __('No Activity')
+                ];
             
+                return '<span class="badge bg-primary">' . ($labels[$status] ?? $labels['NoActivity']) . '</span>';
+            })
             ->rawColumns(['active', 'action', 'name', 'has_activities','last_activity_status'])
             ->make(true);
     }
