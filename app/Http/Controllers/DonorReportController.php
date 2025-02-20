@@ -107,23 +107,25 @@ class DonorReportController extends Controller
 
     public function donorRandomCallsStatistics(Request $request)
     {
-        $users = User::with('activities')->get();
         $statuses = ["ReplyAndDonate", "ReplyAndNotDonate", "NoReply", "PhoneNotAvailable"];
-        $statistics = [];
+        $statistics = array_fill_keys($statuses, 0);
         $activityTypes = [];
     
-        // Initialize all status counts to 0
-        foreach ($statuses as $status) {
-            $statistics[$status] = 0;
+        // Fetch users with activities
+        $usersQuery = User::with('activities');
+    
+        // Filter by user ID if provided
+        if ($request->filled('user_id') && $request->user_id !== 'all') {
+            $usersQuery->where('id', $request->user_id);
         }
     
+        $users = $usersQuery->get();
+    
         foreach ($users as $user) {
-            if(isset($request->user_id) && $request->user_id != 'all'){
-                $user = $user->where('id', $request->user_id);
-            }
             $query = $user->activities();
     
-            if (isset($request->start_date) && isset($request->end_date)) {
+            // Apply date filtering if provided
+            if ($request->filled('start_date') && $request->filled('end_date')) {
                 $startDate = Carbon::parse($request->input('start_date'));
                 $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
                 $query->whereBetween('created_at', [$startDate, $endDate]);
@@ -132,16 +134,12 @@ class DonorReportController extends Controller
             $activities = $query->get();
     
             foreach ($activities as $activity) {
-                // Count activities by status
                 if (!empty($activity->status) && isset($statistics[$activity->status])) {
                     $statistics[$activity->status]++;
                 } else {
-                    // Count activities without a status by activity_type
-                    $activityType = $activity->activity_type . '  ( ' . ($activity->callType?->name) .' )' ?? 'Unknown';
-                    if (!isset($activityTypes[$activityType])) {
-                        $activityTypes[$activityType] = 0;
-                    }
-                    $activityTypes[$activityType]++;
+                    // Handle activities without a status
+                    $activityType = trim(($activity->activity_type ?? 'Unknown') . ' ( ' . ($activity->callType->name ?? 'Unknown') . ' )');
+                    $activityTypes[$activityType] = ($activityTypes[$activityType] ?? 0) + 1;
                 }
             }
         }
@@ -151,5 +149,6 @@ class DonorReportController extends Controller
             // 'activity_types' => $activityTypes
         ]);
     }
+    
     
 }
