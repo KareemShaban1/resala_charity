@@ -84,7 +84,9 @@ class DonorReportController extends Controller
         $users = User::with([
             'department',
             'activities' => function ($query) use ($request) {
-                $query->with('callType','donor');
+                $query
+                ->where('call_type_id', 1)
+                ->with('callType','donor');
             }
         ])
             ->withCount(['activities' => function ($query) use ($request) {
@@ -117,7 +119,12 @@ class DonorReportController extends Controller
         $activityTypes = [];
 
         // Fetch users with activities
-        $usersQuery = User::with('activities');
+        $usersQuery = User::with([
+            'activities' => function ($query) use ($request) {
+            $query
+            ->where('call_type_id', 1);
+        }
+        ]);
 
         // Filter by user ID if provided
         if ($request->filled('user_id') && $request->user_id !== 'all') {
