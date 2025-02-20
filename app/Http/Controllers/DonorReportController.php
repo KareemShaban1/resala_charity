@@ -93,7 +93,9 @@ class DonorReportController extends Controller
                 if (isset($request->start_date) && isset($request->end_date)) {
                     $startDate = Carbon::parse($request->input('start_date'));
                     $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
-                    $query->whereBetween('created_at', [$startDate, $endDate]);
+                    $query
+                    ->where('call_type_id', 1)
+                    ->whereBetween('created_at', [$startDate, $endDate]);
                 }
             }])
             ->get();
