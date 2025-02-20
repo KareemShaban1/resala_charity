@@ -224,8 +224,12 @@ class DonorController extends Controller
                     'PhoneNotAvailable' => __('Phone Not Available'),
                     'NoActivity' => __('No Activity')
                 ];
+
+                return $donor->last_activity_status ? 
+                '<span class="badge bg-primary">' . $labels[$status] . '</span>' :
+                '<span class="badge bg-secondary">' . __("No Activity") . '</span>';
             
-                return '<span class="badge bg-primary">' . ($labels[$status] ?? $labels['NoActivity']) . '</span>';
+                // return '<span class="badge bg-primary">' . ($labels[$status] ?? $labels['NoActivity']) . '</span>';
             })
             ->rawColumns(['active', 'action', 'name', 'has_activities','last_activity_status'])
             ->make(true);
