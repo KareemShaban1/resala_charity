@@ -149,7 +149,8 @@ $(document).ready(function() {
             url: '{{ route("donor-report.random-calls-statistics") }}',
             data: {
                 start_date: $('#start_date').val(),
-                end_date: $('#end_date').val()
+                end_date: $('#end_date').val(),
+                user_id: $('#user_filter').val()
             },
             success: function(response) {
                 $('#replyDonateCount').text(response.statistics.ReplyAndDonate || 0);
