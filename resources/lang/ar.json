@@ -393,5 +393,8 @@
     "Donor Activities Reports":"تقارير نشاط المتبرع",
     "Activities Count":"عدد النشاطات",
     "No Activity":"لا يوجد نشاط",
-    "Donor Random Calls Reports":"تقارير الكالمات العشوائية للمتبرع"
+    "Donor Random Calls Reports":"تقارير الكالمات العشوائية للمتبرع",
+    "Import Monthly Forms":"رفع الاستمارات الشهرية",
+    "Import Monthly Form Items":"رفع تبرعات الاستمارات الشهرية"
+
 }
