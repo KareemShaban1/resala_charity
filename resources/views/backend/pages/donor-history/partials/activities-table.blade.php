@@ -24,10 +24,10 @@
             <td>{{ $activity->date_time }}</td>
             <td>{{ $activity->createdBy->name }}</td>
             <td>
-                @if ($activity->created_by === Auth::user()->id)
+                @if ($activity->created_by === Auth::user()->id )
                 <button class="btn btn-warning" onclick="editActivity({{ $activity->id }})">{{ __('Edit') }}</button>
                 @endif
-                @if ($activity->created_by === Auth::user()->id)
+                @if ($activity->created_by === Auth::user()->id && Auth::user()->is_admin)
                 <button class="btn btn-danger" onclick="deleteActivity({{ $activity->id }})">{{ __('Delete') }}</button>
                 @endif
 
