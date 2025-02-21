@@ -85,6 +85,7 @@ class DonorReportController extends Controller
             'department',
             'activities' => function ($query) use ($request) {
                 $query
+                    ->where('call_type_id', 1)
                     ->with('callType', 'donor');
             }
         ])
