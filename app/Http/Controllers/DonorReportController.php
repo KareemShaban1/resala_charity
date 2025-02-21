@@ -6,6 +6,7 @@ use App\Models\DonorActivity;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 
 class DonorReportController extends Controller
@@ -81,37 +82,35 @@ class DonorReportController extends Controller
 
     public function donorRandomCalls(Request $request)
     {
-        $users = User::with([
+        $query = User::with([
             'department',
-            'activities' => function ($query) use ($request) {
-                $query
-                    ->where('call_type_id', 1)
-                    ->with('callType', 'donor');
+            'activities' => function ($q) use ($request) {
+                $q->where('call_type_id', 1)->with('callType', 'donor');
             }
-        ])
-            ->withCount(['activities' => function ($query) use ($request) {
-                $query->where('call_type_id', 1);
-                if (isset($request->start_date) && isset($request->end_date)) {
-                    $startDate = Carbon::parse($request->input('start_date'));
-                    $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
-                    $query->whereBetween('created_at', [$startDate, $endDate]);
-                }
-            }])
-            ->get();
-        if (isset($request->user_id) && $request->user_id != 'all') {
-            $users = $users->where('id', $request->user_id);
+        ])->withCount(['activities' => function ($q) use ($request) {
+            $q->where('call_type_id', 1);
+            if ($request->start_date && $request->end_date) {
+                $q->whereBetween('created_at', [
+                    Carbon::parse($request->start_date),
+                    Carbon::parse($request->end_date)->endOfDay()
+                ]);
+            }
+        }]);
+
+        if (!Auth::user()->is_admin) {
+            $query->where('id', Auth::id());
         }
 
-        if ($request->ajax()) {
-            return DataTables::of($users)
-                ->addColumn('department', function ($user) {
-                    return $user->department ? $user->department->name : 'N/A';
-                })
-                ->make(true);
+        if ($request->user_id && $request->user_id != 'all') {
+            $query->where('id', $request->user_id);
         }
 
-        return view('backend.pages.reports.donor-random-calls.index', compact('users'));
+        $users = $query->get();
+
+        return $request->ajax() ? DataTables::of($users)->addColumn('department', fn($user) => $user->department->name ?? 'N/A')->make(true)
+            : view('backend.pages.reports.donor-random-calls.index', compact('users'));
     }
+
 
     public function donorRandomCallsStatistics(Request $request)
     {

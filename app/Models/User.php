@@ -50,6 +50,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = ['is_admin'];
+
+
     public function department()
     {
         return $this->belongsTo(Department::class);
@@ -59,4 +62,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(DonorActivity::class,'created_by');
     }
+
+    public function getIsAdminAttribute()
+{
+    return $this->hasRole('admin');
+}
+
 }

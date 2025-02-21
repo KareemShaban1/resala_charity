@@ -18,6 +18,7 @@
         <div class="col-md-3">
             <input type="date" id="end_date" class="form-control" placeholder="{{ __('End Date') }}">
         </div>
+        @if (Auth::user()->is_admin)
         <div class="col-md-3">
             <select id="user_filter" class="form-control">
                 <option value="">{{ __('All Users') }}</option>
@@ -26,6 +27,8 @@
                 @endforeach
             </select>
         </div>
+        @endif
+       
         <div class="col-md-3">
             <button id="filterBtn" class="btn btn-primary">{{ __('Filter') }}</button>
         </div>
