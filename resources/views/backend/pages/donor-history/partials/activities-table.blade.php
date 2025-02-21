@@ -27,7 +27,7 @@
                 @if ($activity->created_by === Auth::user()->id )
                 <button class="btn btn-warning" onclick="editActivity({{ $activity->id }})">{{ __('Edit') }}</button>
                 @endif
-                @if ($activity->created_by === Auth::user()->id && Auth::user()->is_admin)
+                @if ($activity->created_by === Auth::user()->id || Auth::user()->is_admin)
                 <button class="btn btn-danger" onclick="deleteActivity({{ $activity->id }})">{{ __('Delete') }}</button>
                 @endif
 
