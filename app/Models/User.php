@@ -50,7 +50,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    protected $appends = ['is_admin'];
+    protected $appends = ['is_admin', 'is_super_admin'];
 
 
     public function department()
@@ -60,12 +60,16 @@ class User extends Authenticatable
 
     public function activities()
     {
-        return $this->hasMany(DonorActivity::class,'created_by');
+        return $this->hasMany(DonorActivity::class, 'created_by');
+    }
+
+    public function getIsSuperAdminAttribute()
+    {
+        return $this->hasRole('super_admin');
     }
 
     public function getIsAdminAttribute()
-{
-    return $this->hasRole('admin');
-}
-
+    {
+        return $this->hasRole('admin');
+    }
 }
