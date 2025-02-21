@@ -126,6 +126,10 @@ class DonorReportController extends Controller
             }
         ]);
 
+        if (!Auth::user()->is_admin) {
+            $usersQuery->where('id', Auth::id());
+        }
+
         // Filter by user ID if provided
         if ($request->filled('user_id') && $request->user_id !== 'all') {
             $usersQuery->where('id', $request->user_id);
