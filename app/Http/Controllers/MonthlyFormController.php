@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\MonthlyForm;
 use App\Http\Requests\StoreMonthlyFormRequest;
 use App\Http\Requests\UpdateMonthlyFormRequest;
+use App\Imports\MonthlyFormsImport;
+use App\Imports\MonthlyFormsItemsImport;
 use App\Models\Department;
 use App\Models\DonationCategory;
 use App\Models\Donor;
@@ -12,6 +14,7 @@ use App\Models\Employee;
 use App\Models\MonthlyFormItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class MonthlyFormController extends Controller
@@ -49,7 +52,7 @@ class MonthlyFormController extends Controller
     {
 
         $query = MonthlyForm::query()
-        ->selectRaw('
+            ->selectRaw('
             monthly_forms.id,
             monthly_forms.donor_id,
             monthly_forms.collecting_donation_way,
@@ -63,51 +66,51 @@ class MonthlyFormController extends Controller
             GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers,
             SUM(CASE WHEN monthly_forms_items.donation_type = "financial" THEN monthly_forms_items.amount ELSE 0 END) as financial_amount
         ')
-        ->leftJoin('donors', 'monthly_forms.donor_id', '=', 'donors.id')
-        ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
-        ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
-        ->leftJoin('monthly_forms_items', 'monthly_forms.id', '=', 'monthly_forms_items.monthly_form_id')
-        ->with(['donor', 'items'])
-        ->groupBy(
-            'monthly_forms.id',
-            'monthly_forms.donor_id',
-            'monthly_forms.collecting_donation_way',
-            'monthly_forms.created_at',
-            'monthly_forms.status',
-            'monthly_forms.cancellation_reason',
-            'monthly_forms.cancellation_date',
-            'donors.name',
-            'areas.name',
-            'donors.address'
-        );
-    
-    if (request()->has('columns')) {
-        foreach (request()->get('columns') as $column) {
-            $searchValue = $column['search']['value'];
-            $columnName = $column['name'];
-    
-            if ($searchValue) {
-                if ($columnName === 'phones') {
-                    $query->whereHas('donor.phones', function ($q) use ($searchValue) {
-                        $q->where('phone_number', 'like', "%{$searchValue}%");
-                    });
-                } elseif ($columnName === 'name') {
-                    $query->whereHas('donor', function ($q) use ($searchValue) {
-                        $q->where('name', 'like', "%{$searchValue}%");
-                    });
-                } elseif ($columnName === 'area') {
-                    $query->whereHas('donor.area', function ($q) use ($searchValue) {
-                        $q->where('name', 'like', "%{$searchValue}%");
-                    });
-                } elseif ($columnName === 'monthly_donation_way') {
-                    $query->where('monthly_forms.collecting_donation_way', 'like', "%{$searchValue}%");
-                } else {
-                    $query->where($columnName, 'like', "%{$searchValue}%");
+            ->leftJoin('donors', 'monthly_forms.donor_id', '=', 'donors.id')
+            ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
+            ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
+            ->leftJoin('monthly_forms_items', 'monthly_forms.id', '=', 'monthly_forms_items.monthly_form_id')
+            ->with(['donor', 'items'])
+            ->groupBy(
+                'monthly_forms.id',
+                'monthly_forms.donor_id',
+                'monthly_forms.collecting_donation_way',
+                'monthly_forms.created_at',
+                'monthly_forms.status',
+                'monthly_forms.cancellation_reason',
+                'monthly_forms.cancellation_date',
+                'donors.name',
+                'areas.name',
+                'donors.address'
+            );
+
+        if (request()->has('columns')) {
+            foreach (request()->get('columns') as $column) {
+                $searchValue = $column['search']['value'];
+                $columnName = $column['name'];
+
+                if ($searchValue) {
+                    if ($columnName === 'phones') {
+                        $query->whereHas('donor.phones', function ($q) use ($searchValue) {
+                            $q->where('phone_number', 'like', "%{$searchValue}%");
+                        });
+                    } elseif ($columnName === 'name') {
+                        $query->whereHas('donor', function ($q) use ($searchValue) {
+                            $q->where('name', 'like', "%{$searchValue}%");
+                        });
+                    } elseif ($columnName === 'area') {
+                        $query->whereHas('donor.area', function ($q) use ($searchValue) {
+                            $q->where('name', 'like', "%{$searchValue}%");
+                        });
+                    } elseif ($columnName === 'monthly_donation_way') {
+                        $query->where('monthly_forms.collecting_donation_way', 'like', "%{$searchValue}%");
+                    } else {
+                        $query->where($columnName, 'like', "%{$searchValue}%");
+                    }
                 }
             }
         }
-    }
-    
+
 
         if (request()->has('status')) {
             $status = request('status');
@@ -210,9 +213,9 @@ class MonthlyFormController extends Controller
                 //         return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
                 //     })->implode(', ') : 'N/A';
                 return $item->donor?->phones->isNotEmpty() ?
-                $item->donor->phones->map(function ($phone) {
-                    return $phone->phone_number;
-                })->implode(', ') : 'N/A';
+                    $item->donor->phones->map(function ($phone) {
+                        return $phone->phone_number;
+                    })->implode(', ') : 'N/A';
             })
             ->addColumn('collecting_donation_way', function ($item) {
                 switch ($item->collecting_donation_way) {
@@ -509,5 +512,54 @@ class MonthlyFormController extends Controller
     {
         $monthlyForm = MonthlyForm::with('donor', 'items', 'employee', 'department', 'createdBy')->findOrFail($id);
         return response()->json($monthlyForm);
+    }
+
+    public function importMonthlyForms(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv|max:2048',
+        ]);
+    
+        try {
+            $import = new MonthlyFormsImport();
+            Excel::import($import, $request->file('file'));
+    
+            $failures = $import->failures(); // Use built-in failures() method
+    
+            return response()->json([
+                'success' => count($failures) === 0,
+                'message' => count($failures) === 0 ? 'Monthly Forms imported successfully.' : 'Some records were skipped due to validation errors.',
+                'errors' => $failures, // Return validation errors
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred during import.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+    
+
+    public function importMonthlyFormItems(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv|max:2048',
+        ]);
+
+        try {
+            Excel::import(new MonthlyFormsItemsImport, $request->file('file'));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Monthly Forms Items imported successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred during import.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

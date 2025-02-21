@@ -235,8 +235,6 @@
 
 
 
-
-
         $('#department-filter').on('change', function() {
         let departmentId = $(this).val();
 
@@ -432,9 +430,6 @@
         });
 
 
-
-
-
         // Add Monthly Form Form Submit
         $('#addMonthlyFormForm').on('submit', function(e) {
             e.preventDefault();
@@ -563,6 +558,163 @@
             form.find('.is-invalid').removeClass('is-invalid');
             form.find('.invalid-feedback').text('');
         });
+
+
+
+        $('#importMonthlyFormForm').on('submit', function(e) {
+    e.preventDefault();
+
+    let formData = new FormData(this);
+
+    // Clear previous messages
+    $('#feedbackMessage').hide().removeClass('alert-success alert-danger').text('');
+
+    $.ajax({
+        url: "{{ route('monthly-forms.import-forms') }}",
+        method: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        beforeSend: function() {
+            $('#importMonthlyFormForm button[type="submit"]').prop('disabled', true);
+        },
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Import Successful',
+                    text: response.message,
+                });
+
+                if (response.errors && response.errors.length > 0) {
+                    let errorDetails = response.errors.map(error =>
+                        `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
+
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Some Records Skipped',
+                        html: `<pre>${errorDetails}</pre>`,
+                        customClass: {
+                            popup: 'text-start',
+                        }
+                    });
+                }
+
+                setTimeout(() => {
+                    $('#importMonthlyFormModal').modal('hide');
+                    $('#importMonthlyFormForm')[0].reset();
+                }, 2000);
+
+                monthlyFormsTable.ajax.reload();
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Import Failed',
+                    text: response.message || 'An error occurred.',
+                });
+            }
+        },
+        error: function(xhr) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Unexpected Error',
+                text: xhr.responseJSON?.error || 'An unexpected error occurred. Please try again later.',
+            });
+        },
+        complete: function() {
+            $('#importMonthlyFormForm button[type="submit"]').prop('disabled', false);
+        }
+    });
+});
+
+
+    $('#importMonthlyFormItemForm').on('submit', function(e) {
+        e.preventDefault(); // Prevent the default form submission
+
+        let formData = new FormData(this);
+
+        // Clear previous messages
+        $('#feedbackMessage').hide().removeClass('alert-success alert-danger').text('');
+
+        // AJAX request
+        $.ajax({
+            url: "{{ route('monthly-forms.import-items') }}",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function() {
+                $('#importMonthlyFormItemForm button[type="submit"]').prop('disabled', true);
+            },
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Import Successful',
+                        text: response.message,
+                    });
+
+                    if (response.errors && response.errors.length > 0) {
+                        let errorDetails = response.errors.map(error =>
+                            `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
+
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Some Records Skipped',
+                            html: `<pre>${errorDetails}</pre>`,
+                            customClass: {
+                                popup: 'text-start',
+                            }
+                        });
+                    }
+
+                    // Close modal and reset form
+                    setTimeout(() => {
+                        $('#importMonthlyFormItemModal').modal('hide');
+                        $('#importMonthlyFormItemForm')[0].reset();
+                    }, 2000);
+
+                    monthlyFormsTable.ajax.reload();
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    // Validation error
+                    let response = xhr.responseJSON;
+                    let errors = response.errors || [];
+                    let errorDetails = '';
+
+                    if (Array.isArray(errors)) {
+                        // Handle row-specific errors
+                        errorDetails = errors.map(error =>
+                            `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
+                    } else {
+                        // Handle general file validation error
+                        errorDetails = errors.file ? errors.file[0] : 'Something went wrong.';
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        html: `<pre style="direction: ltr;">${errorDetails}</pre>`,
+                        customClass: {
+                            popup: 'text-start',
+                        }
+                    });
+                } else {
+                    // General error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Unexpected Error',
+                        text: 'An unexpected error occurred. Please try again later.',
+                    });
+                }
+            },
+            complete: function() {
+                $('#importMonthlyFormItemForm button[type="submit"]').prop('disabled', false);
+            }
+        });
+    });
 
     });
 
@@ -1019,7 +1171,6 @@
     }
 
 
-
     // Helper function to format date in YYYY-MM-DD
     function formatDate(dateString) {
         const date = new Date(dateString);
@@ -1053,7 +1204,7 @@
         }
 });
 
-document.addEventListener('keydown', function(event) {
+    document.addEventListener('keydown', function(event) {
     if (event.ctrlKey && event.key === 'c') {
         event.stopPropagation(); // Prevent DataTables from blocking copy action
     }
@@ -1061,5 +1212,162 @@ document.addEventListener('keydown', function(event) {
         event.stopPropagation(); // Prevent DataTables from blocking copy action
     }
 }, true);
+
+
+    $('#importMonthlyFormForm').on('submit', function(e) {
+    e.preventDefault();
+
+    let formData = new FormData(this);
+
+    // Clear previous messages
+    $('#feedbackMessage').hide().removeClass('alert-success alert-danger').text('');
+
+    $.ajax({
+        url: "{{ route('monthly-forms.import-forms') }}",
+        method: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        beforeSend: function() {
+            $('#importMonthlyFormForm button[type="submit"]').prop('disabled', true);
+        },
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Import Successful',
+                    text: response.message,
+                });
+
+                if (response.errors && response.errors.length > 0) {
+                    let errorDetails = response.errors.map(error =>
+                        `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
+
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Some Records Skipped',
+                        html: `<pre>${errorDetails}</pre>`,
+                        customClass: {
+                            popup: 'text-start',
+                        }
+                    });
+                }
+
+                setTimeout(() => {
+                    $('#importMonthlyFormModal').modal('hide');
+                    $('#importMonthlyFormForm')[0].reset();
+                }, 2000);
+
+                monthlyFormsTable.ajax.reload();
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Import Failed',
+                    text: response.message || 'An error occurred.',
+                });
+            }
+        },
+        error: function(xhr) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Unexpected Error',
+                text: xhr.responseJSON?.error || 'An unexpected error occurred. Please try again later.',
+            });
+        },
+        complete: function() {
+            $('#importMonthlyFormForm button[type="submit"]').prop('disabled', false);
+        }
+    });
+});
+
+
+    $('#importMonthlyFormItemForm').on('submit', function(e) {
+        e.preventDefault(); // Prevent the default form submission
+
+        let formData = new FormData(this);
+
+        // Clear previous messages
+        $('#feedbackMessage').hide().removeClass('alert-success alert-danger').text('');
+
+        // AJAX request
+        $.ajax({
+            url: "{{ route('monthly-forms.import-items') }}",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function() {
+                $('#importMonthlyFormItemForm button[type="submit"]').prop('disabled', true);
+            },
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Import Successful',
+                        text: response.message,
+                    });
+
+                    if (response.errors && response.errors.length > 0) {
+                        let errorDetails = response.errors.map(error =>
+                            `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
+
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Some Records Skipped',
+                            html: `<pre>${errorDetails}</pre>`,
+                            customClass: {
+                                popup: 'text-start',
+                            }
+                        });
+                    }
+
+                    // Close modal and reset form
+                    setTimeout(() => {
+                        $('#importMonthlyFormItemModal').modal('hide');
+                        $('#importMonthlyFormItemForm')[0].reset();
+                    }, 2000);
+
+                    monthlyFormsTable.ajax.reload();
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    // Validation error
+                    let response = xhr.responseJSON;
+                    let errors = response.errors || [];
+                    let errorDetails = '';
+
+                    if (Array.isArray(errors)) {
+                        // Handle row-specific errors
+                        errorDetails = errors.map(error =>
+                            `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
+                    } else {
+                        // Handle general file validation error
+                        errorDetails = errors.file ? errors.file[0] : 'Something went wrong.';
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        html: `<pre style="direction: ltr;">${errorDetails}</pre>`,
+                        customClass: {
+                            popup: 'text-start',
+                        }
+                    });
+                } else {
+                    // General error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Unexpected Error',
+                        text: 'An unexpected error occurred. Please try again later.',
+                    });
+                }
+            },
+            complete: function() {
+                $('#importMonthlyFormItemForm button[type="submit"]').prop('disabled', false);
+            }
+        });
+    });
+
 </script>
 @endpush

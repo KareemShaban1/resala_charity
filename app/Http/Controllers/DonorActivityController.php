@@ -82,14 +82,14 @@ class DonorActivityController extends Controller
         try {
             // Find the donor activity
             $donorActivity = DonorActivity::find($id);
-            
+
             if (!$donorActivity) {
                 return response()->json([
                     'success' => false,
                     'message' => __('messages.Donor activity not found'),
                 ], 404);
             }
-    
+
             // Validate the request data
             $validatedData = $request->validate([
                 'donor_id' => 'required|exists:donors,id',
@@ -100,13 +100,13 @@ class DonorActivityController extends Controller
                 'date_time' => 'required|date',
                 'response' => 'nullable|string',
             ]);
-    
+
             // Convert `date_time` to proper format
             $validatedData['date_time'] = Carbon::parse($validatedData['date_time'])->format('Y-m-d H:i:s');
-    
+
             // Update the donor activity
             $updated = $donorActivity->update($validatedData);
-    
+
             // Check if update was successful
             if (!$updated) {
                 return response()->json([
@@ -114,7 +114,7 @@ class DonorActivityController extends Controller
                     'message' => __('messages.Donor activity update failed'),
                 ], 500);
             }
-    
+
             return response()->json([
                 'success' => true,
                 'message' => __('messages.Donor activity updated successfully'),
@@ -127,12 +127,27 @@ class DonorActivityController extends Controller
             ], 500);
         }
     }
-    
+
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DonorActivity $donorActivity)
+    public function destroy($id)
     {
         //
+        try {
+            $donorActivity = DonorActivity::findOrFail($id);
+            $donorActivity->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => __('messages.Donor activity deleted successfully'),
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.Donor activity deleted failed'),
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

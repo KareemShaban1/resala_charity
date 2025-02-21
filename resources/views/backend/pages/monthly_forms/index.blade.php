@@ -14,6 +14,12 @@
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMonthlyFormModal">
                         <i class="mdi mdi-plus"></i> {{__('Add Monthly Form')}}
                     </button>
+                    <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#importMonthlyFormModal">
+                        <i class="mdi mdi-upload"></i> {{__('Import Monthly Forms')}}
+                    </button>
+                    <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#importMonthlyFormItemModal">
+                        <i class="mdi mdi-upload"></i> {{__('Import Monthly Form Items')}}
+                    </button>
                 </div>
                 <h4 class="page-title">{{__('Monthly Forms')}}</h4>
 
@@ -79,6 +85,12 @@
 
 <!-- View Donations Modal -->
 @include('backend.pages.monthly_forms.details_modal')
+
+<!-- Import Form Modal -->
+@include('backend.pages.monthly_forms.import_forms_modal')
+
+<!-- Import Items Modal -->
+@include('backend.pages.monthly_forms.import_items_modal')
 
 <script>
     var donationCategories = @json($donationCategories);

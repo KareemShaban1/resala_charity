@@ -25,7 +25,10 @@
             <td>{{ $activity->createdBy->name }}</td>
             <td>
                 @if ($activity->created_by === Auth::user()->id)
-                <button class="btn btn-danger" onclick="editActivity({{ $activity->id }})">{{ __('Edit') }}</button>
+                <button class="btn btn-warning" onclick="editActivity({{ $activity->id }})">{{ __('Edit') }}</button>
+                @endif
+                @if ($activity->created_by === Auth::user()->id)
+                <button class="btn btn-danger" onclick="deleteActivity({{ $activity->id }})">{{ __('Delete') }}</button>
                 @endif
 
                 <button class="btn btn-primary" onclick="showActivityDetails({{ $activity->id }})">
@@ -104,13 +107,59 @@
             })
     };
 
+    function deleteActivity(id) {
+        Swal.fire({
+            title: "{{ __('Are you sure?') }}",
+            text: "{{ __('You won\'t be able to revert this!') }}",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "{{ __('Yes, delete it!') }}"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `{{ url('activities') }}/${id}`, // Laravel route for deletion
+                    type: 'DELETE',
+                    data: {
+                        _token: "{{ csrf_token() }}" // CSRF protection
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "{{ __('Deleted!') }}",
+                                text: response.message
+                            });
+                            location.reload(); // Refresh the page to update the table
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "{{ __('Error!') }}",
+                                text: response.message
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "{{ __('Error!') }}",
+                            text: "{{ __('Failed to delete activity. Please try again.') }}"
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+
     $(document).ready(function() {
         $('#editActivityForm').on('submit', function(e) {
             e.preventDefault();
             var form = $(this);
             var url = form.attr('action');
             var id = form.find('[name="id"]').val();
-            
+
 
             $.ajax({
                 url: `{{ url('activities') }}/${id}`,

@@ -147,6 +147,10 @@ Route::group(
             '/monthly-forms/{id}/details',
             [MonthlyFormController::class, 'getMonthlyFormDetails']
         )->name('monthly-forms.details');
+        Route::post('/monthly-forms/import-forms', [MonthlyFormController::class, 'importMonthlyForms'])->name('monthly-forms.import-forms');
+        Route::post('/monthly-forms/import-items', [MonthlyFormController::class, 'importMonthlyFormItems'])->name('monthly-forms.import-items');
+
+
         Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
         Route::resource('users', UserController::class);
         Route::get('/users/{id}/details', [UserController::class, 'userDetails'])
