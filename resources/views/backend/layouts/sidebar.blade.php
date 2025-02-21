@@ -333,7 +333,6 @@
                   </a>
                   <div class="collapse" id="sidebarMonthlyFormsReport">
                       <ul class="side-nav-second-level">
-                          <!-- @can('view collecting lines') -->
                           <li>
                               <a href="{{route('monthly-forms-report.index')}}">
                                   <span> {{__('Monthly Forms Reports')}} </span>
@@ -349,7 +348,6 @@
                                   <span> {{__('Donor Random Calls Reports')}} </span>
                               </a>
                           </li>
-                          <!-- @endcan -->
 
                       </ul>
                   </div>
