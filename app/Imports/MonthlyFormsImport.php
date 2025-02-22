@@ -36,7 +36,10 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
         $followUpDepartment = Department::where('name', $row['follow_up_department_name'])->first();
 
         return MonthlyForm::updateOrCreate(
-            ['donor_id' => optional($donor)->id], // Unique constraint
+            [
+                'donor_id' => optional($donor)->id,
+                'form_date' => $row['form_date'], // Ensuring uniqueness
+            ], // Unique constraint
             [
                 'collecting_donation_way' => $row['collecting_donation_way'],
                 'status' => $row['status'],
