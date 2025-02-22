@@ -57,6 +57,30 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5>{{__('Not In Service')}}</h5>
+                    <h3 id="notInServiceCount">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5>{{__('Cancell')}}</h5>
+                    <h3 id="cancellCount">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5>{{__('Follow Up')}}</h5>
+                    <h3 id="followUpCount">0</h3>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Activity Types Statistics Section -->
@@ -149,6 +173,9 @@ $(document).ready(function() {
                 $('#replyNotDonateCount').text(response.statistics.ReplyAndNotDonate || 0);
                 $('#noReplyCount').text(response.statistics.NoReply || 0);
                 $('#phoneNotAvailableCount').text(response.statistics.PhoneNotAvailable || 0);
+                $('#notInServiceCount').text(response.statistics.NotInService || 0);
+                $('#cancellCount').text(response.statistics.Cancell || 0);
+                $('#followUpCount').text(response.statistics.FollowUp || 0);
 
                 // Populate activity types dynamically
                 let activityTypesHtml = '';

@@ -38,7 +38,7 @@ class DonorReportController extends Controller
     public function donorStatistics(Request $request)
     {
         $users = User::with('activities')->get();
-        $statuses = ["ReplyAndDonate", "ReplyAndNotDonate", "NoReply", "PhoneNotAvailable"];
+        $statuses = ["ReplyAndDonate", "ReplyAndNotDonate", "NoReply", "PhoneNotAvailable", "NotInService", "Cancell", "FollowUp"];
         $statistics = [];
         $activityTypes = [];
 
@@ -114,7 +114,7 @@ class DonorReportController extends Controller
 
     public function donorRandomCallsStatistics(Request $request)
     {
-        $statuses = ["ReplyAndDonate", "ReplyAndNotDonate", "NoReply", "PhoneNotAvailable"];
+        $statuses = ["ReplyAndDonate", "ReplyAndNotDonate", "NoReply", "PhoneNotAvailable", "NotInService", "Cancell", "FollowUp"];
         $statistics = array_fill_keys($statuses, 0);
         $activityTypes = [];
 

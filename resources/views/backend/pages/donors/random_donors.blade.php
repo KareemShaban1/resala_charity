@@ -95,6 +95,9 @@
                                             <option value="ReplyAndNotDonate">{{__('Reply And Not Donate')}}</option>
                                             <option value="NoReply">{{__('No Reply')}}</option>
                                             <option value="PhoneNotAvailable">{{__('Phone Not Available')}}</option>
+                                            <option value="NotInService">{{__('Not In Service')}}</option>
+                                            <option value="Cancell">{{__('Cancell')}}</option>
+                                            <option value="FollowUp">{{__('Follow Up')}}</option>
                                         </select></th>
                                     <th></th>
                                 </tr>

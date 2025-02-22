@@ -68,6 +68,30 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5>{{__('Not In Service')}}</h5>
+                    <h3 id="notInServiceCount">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5>{{__('Cancell')}}</h5>
+                    <h3 id="cancellCount">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5>{{__('Follow Up')}}</h5>
+                    <h3 id="followUpCount">0</h3>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Users Table -->
@@ -213,7 +237,10 @@
                             ${activity.status === 'ReplyAndDonate' ? 'Reply And Donate' :
                             activity.status === 'ReplyAndNotDonate' ? 'Reply And Not Donate' :
                             activity.status === 'NoReply' ? 'No Reply' :
-                            activity.status === 'PhoneNotAvailable' ? 'Phone Not Available' : ''}
+                            activity.status === 'PhoneNotAvailable' ? 'Phone Not Available' :
+                            activity.status === 'NotInService' ? 'Not In Service' :
+                            activity.status === 'Cancell' ? 'Cancell' :
+                            activity.status === 'FollowUp' ? 'Follow Up' : ''}
                         </td>
                         <td>${activity.response}</td>
                         <td>${activity.notes}</td>
@@ -243,6 +270,9 @@
                     $('#replyNotDonateCount').text(response.statistics.ReplyAndNotDonate || 0);
                     $('#noReplyCount').text(response.statistics.NoReply || 0);
                     $('#phoneNotAvailableCount').text(response.statistics.PhoneNotAvailable || 0);
+                    $('#notInServiceCount').text(response.statistics.NotInService || 0);
+                    $('#cancellCount').text(response.statistics.Cancell || 0);
+                    $('#followUpCount').text(response.statistics.FollowUp || 0);
                 }
             });
         }

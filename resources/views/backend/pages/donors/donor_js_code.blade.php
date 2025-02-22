@@ -324,6 +324,9 @@
                                             activity.status === 'ReplyAndNotDonate' ? "{{ __('Reply And Not Donate') }}" :
                                             activity.status === 'NoReply' ? "{{ __('No Reply') }}" :
                                             activity.status === 'PhoneNotAvailable' ? "{{ __('Phone Not Available') }}" :
+                                            activity.status === 'NotInService' ? "{{ __('Not In Service') }}" :
+                                            activity.status === 'Cancell' ? "{{ __('Cancell') }}" :
+                                            activity.status === 'FollowUp' ? "{{ __('Follow Up') }}" :
                                             ''}
                                         </td>
                                         <td>${activity.response}</td>

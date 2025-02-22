@@ -191,7 +191,7 @@ class UserController extends Controller
         
     
         $activities = $query->get();
-        $statuses = ["ReplyAndDonate", "ReplyAndNotDonate", "NoReply", "PhoneNotAvailable"];
+        $statuses = ["ReplyAndDonate", "ReplyAndNotDonate", "NoReply", "PhoneNotAvailable", "NotInService", "Cancell", "FollowUp"];
         $statistics = $activities->groupBy('status');
     
         // Ensure all status keys exist with an empty collection if missing

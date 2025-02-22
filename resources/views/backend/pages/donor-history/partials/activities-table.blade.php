@@ -56,7 +56,12 @@
             ${data.status === "ReplyAndDonate" ? '{{__("Reply And Donate")}}' :
              data.status === "ReplyAndNotDonate" ? '{{__("Reply And Not Donate")}}' : 
              data.status === "NoReply" ? '{{__("No Reply")}}' :
-             data.status === "PhoneNotAvailable" ? '{{__("Phone Not Available")}}' : ''}
+             data.status === "PhoneNotAvailable" ? '{{__("Phone Not Available")}}' : 
+             data.status === "NotInService" ? '{{__("Not In Service")}}' : 
+             data.status === "Cancell" ? '{{__("Cancell")}}' : 
+             data.status === "FollowUp" ? '{{__("Follow Up")}}' : ''
+             }
+             
             </p>
             <p><strong>{{ __('Date Time') }}:</strong> ${data.date_time }</p>
             <p><strong>{{ __('Created By') }}:</strong> ${data.created_by?.name ?? 'N/A' }</p>
