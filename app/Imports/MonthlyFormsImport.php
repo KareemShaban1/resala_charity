@@ -36,7 +36,7 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
     $followUpDepartment = Department::where('name', $row['follow_up_department_name'])->first();
 
     // Skip if the donor already has a record for the same form_date
-    if ($donor && MonthlyForm::where('donor_id', $donor->id)->where('form_date', $row['form_date'])->exists()) {
+    if ($donor && MonthlyForm::where('donor_id', $donor->id)->exists()) {
         return null; // Skip this row
     }
 
