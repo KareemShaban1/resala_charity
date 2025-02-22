@@ -12,11 +12,22 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Validators\Failure;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 
-class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFailure
+class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFailure,  WithBatchInserts, WithChunkReading
 {
     use SkipsFailures; // This trait already handles failures
 
+    public function batchSize(): int
+    {
+        return 200; // Insert 100 records at a time
+    }
+
+    public function chunkSize(): int
+    {
+        return 200; // Read 100 records at a time
+    }
     public function model(array $row)
     {
         $donor = Donor::where('name', $row['donor_name'])->first();
