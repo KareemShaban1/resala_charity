@@ -29,31 +29,31 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
         return 200; // Read 100 records at a time
     }
     public function model(array $row)
-    {
-        $donor = Donor::where('name', $row['donor_name'])->first();
-        $department = Department::where('name', $row['department_name'])->first();
-        $employee = Employee::where('name', $row['employee_name'])->first();
-        $followUpDepartment = Department::where('name', $row['follow_up_department_name'])->first();
+{
+    $donor = Donor::where('name', $row['donor_name'])->first();
+    $department = Department::where('name', $row['department_name'])->first();
+    $employee = Employee::where('name', $row['employee_name'])->first();
+    $followUpDepartment = Department::where('name', $row['follow_up_department_name'])->first();
 
-        return MonthlyForm::updateOrCreate(
-            [
-                'donor_id' => optional($donor)->id,
-                'form_date' => $row['form_date'], // Ensuring uniqueness
-            ], // Unique constraint
-            [
-                'collecting_donation_way' => $row['collecting_donation_way'],
-                'status' => $row['status'],
-                'notes' => $row['notes'] ?? null,
-                'department_id' => optional($department)->id,
-                'employee_id' => optional($employee)->id,
-                'cancellation_reason' => $row['cancellation_reason'] ?? null,
-                'cancellation_date' => $row['cancellation_date'] ?? null,
-                'donation_type' => $row['donation_type'],
-                'form_date' => $row['form_date'],
-                'follow_up_department_id' => optional($followUpDepartment)->id,
-            ]
-        );
+    // Skip if the donor already has a record for the same form_date
+    if ($donor && MonthlyForm::where('donor_id', $donor->id)->where('form_date', $row['form_date'])->exists()) {
+        return null; // Skip this row
     }
+
+    return new MonthlyForm([
+        'donor_id' => optional($donor)->id,
+        'collecting_donation_way' => $row['collecting_donation_way'],
+        'status' => $row['status'],
+        'notes' => $row['notes'] ?? null,
+        'department_id' => optional($department)->id,
+        'employee_id' => optional($employee)->id,
+        'cancellation_reason' => $row['cancellation_reason'] ?? null,
+        'cancellation_date' => $row['cancellation_date'] ?? null,
+        'donation_type' => $row['donation_type'],
+        'form_date' => $row['form_date'],
+        'follow_up_department_id' => optional($followUpDepartment)->id,
+    ]);
+}
 
     /**
      * Define validation rules for each row.
