@@ -52,10 +52,16 @@
             <label for="permissions" class="form-label">{{__('Permissions')}}</label>
             <div id="permissions" class="form-group">
                 <div class="row">
+                    <div class="form-check" style="margin: 10px;">
+                        <input class="form-check-input" type="checkbox" id="select_all_permissions">
+                        <label class="form-check-label" for="select_all_permissions">
+                            {{__('Select All')}}
+                        </label>
+                    </div>
                     @foreach($permissions as $index => $permission)
                     <div class="col-md-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="permissions[]" value="{{ $permission->name }}" id="permission_{{ $permission->id }}">
+                            <input class="form-check-input permission-checkbox" type="checkbox" name="permissions[]" value="{{ $permission->name }}" id="permission_{{ $permission->id }}">
                             <label class="form-check-label" for="permission_{{ $permission->id }}">
                                 {{ __($permission->name) }}
                             </label>
@@ -94,18 +100,24 @@
                 <label for="permissions" class="form-label">{{__('Permissions')}}</label>
                 <div id="permissions" class="form-group">
                     <div class="row">
+                    <div class="form-check" style="margin: 10px;">
+                        <input class="form-check-input" type="checkbox" id="edit_select_all_permissions">
+                        <label class="form-check-label" for="edit_select_all_permissions">
+                            {{__('Select All')}}
+                        </label>
+                    </div>
                         @foreach($permissions as $index => $permission)
                         <div class="col-md-3">
                             <div class="form-check">
                                 <input
-                                    class="form-check-input"
+                                    class="form-check-input permission-checkbox"
                                     type="checkbox"
                                     name="permissions[]"
                                     value="{{ $permission->name }}"
                                     id="permission_{{ $permission->id }}"
                                     @if(isset($role) && $role->permissions->contains($permission->id)) checked @endif>
                                 <label class="form-check-label" for="permission_{{ $permission->id }}">
-                                {{ __($permission->name) }}
+                                    {{ __($permission->name) }}
                                 </label>
                             </div>
                         </div>
@@ -131,6 +143,8 @@
 
 @push('scripts')
 <script>
+
+
     $(function() {
         // Initialize DataTable
         var table = $('#roles-table').DataTable({
@@ -312,5 +326,32 @@
 
         $('#editRoleModal').modal('show');
     }
+
+
+ // Select All Checkbox for Add Role Modal
+ $('#select_all_permissions').on('change', function() {
+        $('.permission-checkbox').prop('checked', this.checked);
+    });
+
+    // Update Select All Checkbox State When Individual Checkbox is Clicked
+    $('.permission-checkbox').on('change', function() {
+        let allChecked = $('.permission-checkbox:checked').length === $('.permission-checkbox').length;
+        $('#select_all_permissions').prop('checked', allChecked);
+    });
+
+    $('#edit_select_all_permissions').on('change', function() {
+        $('.permission-checkbox').prop('checked', this.checked);
+    });
+    // Select All Checkbox for Edit Role Modal
+    $('#editRoleModal').on('shown.bs.modal', function() {
+        let allChecked = $('.permission-checkbox:checked').length === $('.permission-checkbox').length;
+        $('#edit_select_all_permissions').prop('checked', allChecked);
+    });
+
+    // Update Select All Checkbox State When Individual Checkbox is Clicked
+    $('.permission-checkbox').on('change', function() {
+        let allChecked = $('.permission-checkbox:checked').length === $('.permission-checkbox').length;
+        $('#edit_select_all_permissions').prop('checked', allChecked);
+    });
 </script>
 @endpush

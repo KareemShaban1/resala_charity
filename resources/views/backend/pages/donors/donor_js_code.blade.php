@@ -268,8 +268,8 @@
                 <div class="col-md-4">
                             <p><strong>{{__('Donor Category')}}:</strong> ${
                             
-                            data.donor_category === 'normal' ? " {{__('Normal') }}" 
-                            : "{{__('Special')}}" ?? ''}</p>
+                            data.donor_category === 'normal' ? " {{__('Normal') }}" :
+                            data.donor_category === 'random' ? " {{__('Random') }}"  : "{{__('Special')}}" ?? ''}</p>
                 </div>
 
                  <div class="col-md-4">
