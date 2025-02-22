@@ -52,6 +52,7 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
         'donation_type' => $row['donation_type'],
         'form_date' => $row['form_date'],
         'follow_up_department_id' => optional($followUpDepartment)->id,
+        'created_by' => auth()->user()->id,
     ]);
 }
 
