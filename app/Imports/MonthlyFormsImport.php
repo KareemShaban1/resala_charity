@@ -99,11 +99,13 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
             Log::warning('Import aborted due to validation errors');
             return;
         }
-
+    
         if (!empty($this->rows)) {
-            DB::transaction(function () {
+            DB::beginTransaction(); // Start transaction explicitly
+    
+            try {
                 DB::statement("ALTER TABLE monthly_forms AUTO_INCREMENT = 221");
-
+    
                 DB::table('monthly_forms')->upsert($this->rows, ['donor_id'], [
                     'collecting_donation_way',
                     'status',
@@ -117,9 +119,16 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
                     'follow_up_department_id',
                     'updated_at'
                 ]);
-            });
+    
+                DB::commit(); // Commit transaction
+            } catch (\Exception $e) {
+                DB::rollBack(); // Rollback on error
+                Log::error('Import failed', ['error' => $e->getMessage()]);
+                throw $e; // Re-throw to handle it in your controller
+            }
         }
     }
+    
 
 
     public function rules(): array
