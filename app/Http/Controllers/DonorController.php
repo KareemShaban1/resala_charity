@@ -406,9 +406,6 @@ class DonorController extends Controller
 
             Excel::queueImport($import, $request->file('file'));
 
-            // $path = $request->file('file')->store('imports');
-
-            // ImportDonorsJob::dispatch(storage_path("app/{$path}"));
 
             $skippedRows = $import->getSkippedRows(); // Retrieve skipped rows for feedback
 

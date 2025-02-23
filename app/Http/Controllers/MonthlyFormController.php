@@ -519,13 +519,16 @@ class MonthlyFormController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,csv|max:2048',
         ]);
-    
+
         try {
             $import = new MonthlyFormsImport();
             Excel::import($import, $request->file('file'));
-    
+
             $failures = $import->failures(); // Use built-in failures() method
-    
+
+            // Call afterImport manually after processing
+            $import->afterImport();
+
             return response()->json([
                 'success' => count($failures) === 0,
                 'message' => count($failures) === 0 ? 'Monthly Forms imported successfully.' : 'Some records were skipped due to validation errors.',
@@ -539,7 +542,7 @@ class MonthlyFormController extends Controller
             ], 500);
         }
     }
-    
+
 
     public function importMonthlyFormItems(Request $request)
     {
