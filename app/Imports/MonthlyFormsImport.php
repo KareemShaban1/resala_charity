@@ -54,8 +54,10 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
         }
 
         if (MonthlyForm::where('donor_id', $donor->id)->exists()) {
+            Log::info("Skipping donor_id {$donor->id} - Already Exists.");
             return null;
         }
+        
         
 
         $this->rows[] = [
@@ -100,8 +102,13 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
 
         if (!empty($this->rows)) {
             DB::transaction(function () {
-                DB::table('monthly_forms')->insert($this->rows);
-            });
+                DB::table('monthly_forms')->upsert($this->rows, ['donor_id'], [
+                    'collecting_donation_way', 'status', 'notes', 'department_id', 
+                    'employee_id', 'cancellation_reason', 'cancellation_date', 
+                    'donation_type', 'form_date', 'follow_up_department_id', 
+                    'updated_at'
+                ]);
+                            });
         }
     }
 
