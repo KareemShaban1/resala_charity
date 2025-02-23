@@ -38,14 +38,17 @@
                   </a>
               </li>
 
+              @can('backups.index')
               <li class="side-nav-item">
                   <a href="{{route('backups.index')}}" class="side-nav-link">
                       <i class="uil-home-alt"></i>
+
                       <span>
                           {{__('Backups')}}
                       </span>
                   </a>
               </li>
+              @endcan
 
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarEventsReport" aria-expanded="false" aria-controls="sidebarEventsReport" class="side-nav-link">
@@ -55,23 +58,26 @@
                   </a>
                   <div class="collapse" id="sidebarEventsReport">
                       <ul class="side-nav-second-level">
-                          <!-- @can('view collecting lines') -->
+                          @can('view events')
                           <li>
                               <a href="{{route('events.index')}}">
                                   <span> {{__('Events')}} </span>
                               </a>
                           </li>
+                          @endcan
+                          @can('view calendar')
                           <li>
                               <a href="{{route('calendar')}}">
                                   <span> {{__('Calendar')}} </span>
                               </a>
                           </li>
-                          <!-- @endcan -->
+                          @endcan
 
                       </ul>
                   </div>
               </li>
 
+              @can('view users' || 'view roles' || 'view activity logs')
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarUsers" aria-expanded="false" aria-controls="sidebarUsers" class="side-nav-link">
                       <i class="uil-users-alt"></i>
@@ -106,7 +112,9 @@
                       </ul>
                   </div>
               </li>
+              @endcan
 
+              @can('view departments' || 'view employees')
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarEmployees" aria-expanded="false" aria-controls="sidebarEmployees" class="side-nav-link">
                       <i class="uil-users-alt"></i>
@@ -133,8 +141,10 @@
                       </ul>
                   </div>
               </li>
+              @endcan
 
 
+              @can('view governorates' || 'view cities' || 'view areas' || 'view areas groups')
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarLocation" aria-expanded="false" aria-controls="sidebarLocation" class="side-nav-link">
                       <i class="uil-map-marker"></i>
@@ -186,6 +196,7 @@
                       </ul>
                   </div>
               </li>
+              @endcan
 
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarDonors" aria-expanded="false" aria-controls="sidebarDonors" class="side-nav-link">

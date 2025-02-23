@@ -6,7 +6,6 @@ use App\Models\MonthlyForm;
 use App\Models\Donor;
 use App\Models\Department;
 use App\Models\Employee;
-use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
@@ -15,20 +14,26 @@ use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Validators\Failure;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
-class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFailure,  WithBatchInserts, WithChunkReading
+class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFailure, WithBatchInserts, WithChunkReading
 {
-    use SkipsFailures; // This trait already handles failures
+    use SkipsFailures;
+
+    protected $rows = [];
+    protected $hasErrors = false;
 
     public function batchSize(): int
     {
-        return 200; // Insert 100 records at a time
+        return 200;
     }
 
     public function chunkSize(): int
     {
-        return 200; // Read 100 records at a time
+        return 200;
     }
+
     public function model(array $row)
     {
         $donor = Donor::where('name', $row['donor_name'])->first();
@@ -36,30 +41,62 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
         $employee = Employee::where('name', $row['employee_name'])->first();
         $followUpDepartment = Department::where('name', $row['follow_up_department_name'])->first();
 
-        // Skip if the donor already has a record for the same form_date
-        if ($donor && MonthlyForm::where('donor_id', $donor->id)->exists()) {
-            return null; // Skip this row
+        if (!$donor || !$department || !$employee) {
+            $this->hasErrors = true;
+            return null;
         }
 
-        return new MonthlyForm([
-            'donor_id' => optional($donor)->id,
+        if (MonthlyForm::where('donor_id', $donor->id)->where('form_date', $row['form_date'])->exists()) {
+            return null;
+        }
+
+        $this->rows[] = [
+            'donor_id' => $donor->id,
             'collecting_donation_way' => $row['collecting_donation_way'],
             'status' => $row['status'],
             'notes' => $row['notes'] ?? null,
-            'department_id' => optional($department)->id,
-            'employee_id' => optional($employee)->id,
+            'department_id' => $department->id,
+            'employee_id' => $employee->id,
             'cancellation_reason' => $row['cancellation_reason'] ?? null,
             'cancellation_date' => $row['cancellation_date'] ?? null,
             'donation_type' => $row['donation_type'],
             'form_date' => $row['form_date'],
             'follow_up_department_id' => optional($followUpDepartment)->id,
             'created_by' => auth()->user()->id,
-        ]);
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+
+        return null;
     }
 
-    /**
-     * Define validation rules for each row.
-     */
+    public function onFailure(Failure ...$failures)
+    {
+        $this->hasErrors = true;
+        foreach ($failures as $failure) {
+            Log::error('Import Validation Failed', [
+                'row' => $failure->row(),
+                'attribute' => $failure->attribute(),
+                'errors' => $failure->errors(),
+                'values' => $failure->values(),
+            ]);
+        }
+    }
+
+    public function afterImport()
+    {
+        if ($this->hasErrors) {
+            Log::warning('Import aborted due to validation errors');
+            return;
+        }
+
+        if (!empty($this->rows)) {
+            DB::transaction(function () {
+                DB::table('monthly_forms')->insert($this->rows);
+            });
+        }
+    }
+
     public function rules(): array
     {
         return [
@@ -76,16 +113,4 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
             'cancellation_date' => 'nullable|date',
         ];
     }
-
-    public function onFailure(Failure ...$failures)
-{
-    foreach ($failures as $failure) {
-        Log::error('Import Validation Failed', [
-            'row' => $failure->row(), // Row number
-            'attribute' => $failure->attribute(), // Column name
-            'errors' => $failure->errors(), // Array of errors
-            'values' => $failure->values(), // Data in that row
-        ]);
-    }
-}
 }
