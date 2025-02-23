@@ -13,7 +13,7 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="edit_governorate_id" class="form-label">{{__('Governorate')}}</label>
-                        <select class="form-control select2" id="edit_governorate_id" name="governorate_id">
+                        <select class="form-control select2 edit_governorate_id" id="edit_governorate_id" name="governorate_id">
                             <option value="">{{__('Select Governorate')}}</option>
                             @foreach(\App\Models\Governorate::all() as $governorate)
                             <option value="{{ $governorate->id }}">{{ $governorate->name }}</option>
@@ -25,7 +25,7 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="edit_city_id" class="form-label">{{__('City')}}</label>
-                        <select class="form-control select2" id="edit_city_id" name="city_id">
+                        <select class="form-control select2 edit_city_id" id="edit_city_id" name="city_id">
                             <option value="">{{__('Select City')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
@@ -34,7 +34,7 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="edit_area_id" class="form-label">{{__('Area')}}</label>
-                        <select class="form-control select2" id="edit_area_id" name="area_id">
+                        <select class="form-control select2 edit_area_id" id="edit_area_id" name="area_id">
                             <option value="">{{__('Select Area')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
