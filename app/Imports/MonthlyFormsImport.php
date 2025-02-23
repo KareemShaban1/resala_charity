@@ -19,13 +19,13 @@ use Illuminate\Support\Facades\Log;
 
 class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFailure, WithBatchInserts, WithChunkReading
 {
-    
+
     use SkipsFailures;
 
     public function __construct()
-{
-    ini_set('max_execution_time', 300); // Set to 5 minutes
-}
+    {
+        ini_set('max_execution_time', 300); // Set to 5 minutes
+    }
 
 
     protected $rows = [];
@@ -57,8 +57,8 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
             Log::info("Skipping donor_id {$donor->id} - Already Exists.");
             return null;
         }
-        
-        
+
+
 
         $this->rows[] = [
             'donor_id' => $donor->id,
@@ -102,15 +102,25 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
 
         if (!empty($this->rows)) {
             DB::transaction(function () {
+                DB::statement("ALTER TABLE monthly_forms AUTO_INCREMENT = 221");
+
                 DB::table('monthly_forms')->upsert($this->rows, ['donor_id'], [
-                    'collecting_donation_way', 'status', 'notes', 'department_id', 
-                    'employee_id', 'cancellation_reason', 'cancellation_date', 
-                    'donation_type', 'form_date', 'follow_up_department_id', 
+                    'collecting_donation_way',
+                    'status',
+                    'notes',
+                    'department_id',
+                    'employee_id',
+                    'cancellation_reason',
+                    'cancellation_date',
+                    'donation_type',
+                    'form_date',
+                    'follow_up_department_id',
                     'updated_at'
                 ]);
-                            });
+            });
         }
     }
+
 
     public function rules(): array
     {
