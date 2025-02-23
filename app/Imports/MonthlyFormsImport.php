@@ -94,40 +94,41 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
     }
 
     public function afterImport()
-    {
-        if ($this->hasErrors) {
-            Log::warning('Import aborted due to validation errors');
-            return;
-        }
-    
-        if (!empty($this->rows)) {
-            DB::beginTransaction(); // Start transaction explicitly
-    
-            try {
-                DB::statement("ALTER TABLE monthly_forms AUTO_INCREMENT = 221");
-    
-                DB::table('monthly_forms')->upsert($this->rows, ['donor_id'], [
-                    'collecting_donation_way',
-                    'status',
-                    'notes',
-                    'department_id',
-                    'employee_id',
-                    'cancellation_reason',
-                    'cancellation_date',
-                    'donation_type',
-                    'form_date',
-                    'follow_up_department_id',
-                    'updated_at'
-                ]);
-    
-                DB::commit(); // Commit transaction
-            } catch (\Exception $e) {
-                DB::rollBack(); // Rollback on error
-                Log::error('Import failed', ['error' => $e->getMessage()]);
-                throw $e; // Re-throw to handle it in your controller
-            }
+{
+    if ($this->hasErrors) {
+        Log::warning('Import aborted due to validation errors');
+        return;
+    }
+
+    if (!empty($this->rows)) {
+        DB::beginTransaction(); // Start transaction explicitly
+
+        try {
+            // REMOVE this line: DB::statement("ALTER TABLE monthly_forms AUTO_INCREMENT = 221");
+
+            DB::table('monthly_forms')->upsert($this->rows, ['donor_id'], [
+                'collecting_donation_way',
+                'status',
+                'notes',
+                'department_id',
+                'employee_id',
+                'cancellation_reason',
+                'cancellation_date',
+                'donation_type',
+                'form_date',
+                'follow_up_department_id',
+                'updated_at'
+            ]);
+
+            DB::commit(); // Commit transaction
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback on error
+            Log::error('Import failed', ['error' => $e->getMessage()]);
+            throw $e; // Re-throw to handle it in your controller
         }
     }
+}
+
     
 
 
