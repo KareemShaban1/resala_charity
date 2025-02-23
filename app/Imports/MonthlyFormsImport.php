@@ -19,7 +19,14 @@ use Illuminate\Support\Facades\Log;
 
 class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFailure, WithBatchInserts, WithChunkReading
 {
+    
     use SkipsFailures;
+
+    public function __construct()
+{
+    ini_set('max_execution_time', 300); // Set to 5 minutes
+}
+
 
     protected $rows = [];
     protected $hasErrors = false;
