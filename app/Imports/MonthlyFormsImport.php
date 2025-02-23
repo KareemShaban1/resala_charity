@@ -53,9 +53,10 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
             return null;
         }
 
-        if (MonthlyForm::where('donor_id', $donor->id)->where('form_date', $row['form_date'])->exists()) {
+        if (MonthlyForm::where('donor_id', $donor->id)->exists()) {
             return null;
         }
+        
 
         $this->rows[] = [
             'donor_id' => $donor->id,
