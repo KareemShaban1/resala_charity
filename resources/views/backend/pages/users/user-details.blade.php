@@ -46,96 +46,6 @@
                 </div> <!-- end card-body-->
             </div> <!-- end card-->
         </div> <!-- end col-->
-
-        <div class="col-lg-4">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="float-end">
-                    <i class="mdi mdi-pulse widget-icon"></i>
-                    </div>
-                    <h5 class="text-muted fw-normal mt-0" title="Reply and Donate">{{__('Reply And Donate')}}</h5>
-                    <h3 class="mt-3 mb-3">
-                        <h3 class="mt-3 mb-3">{{$statistics["ReplyAndDonate"]->count()}}</h3>
-                    </h3>
-
-                </div> <!-- end card-body-->
-            </div> <!-- end card-->
-        </div> <!-- end col-->
-        <div class="col-lg-4">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="float-end">
-                    <i class="mdi mdi-pulse widget-icon"></i>
-                    </div>
-                    <h5 class="text-muted fw-normal mt-0" title="Reply and Not Donate">{{__('Reply And Not Donate')}}</h5>
-                    <h3 class="mt-3 mb-3">{{$statistics["ReplyAndNotDonate"]->count()}}</h3>
-
-                </div> <!-- end card-body-->
-            </div> <!-- end card-->
-        </div> <!-- end col-->
-
-        <div class="col-lg-4">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="float-end">
-                        <i class="mdi mdi-pulse widget-icon"></i>
-                    </div>
-                    <h5 class="text-muted fw-normal mt-0" title="No Reply">{{__('No Reply')}}</h5>
-                    <h3 class="mt-3 mb-3">{{$statistics["NoReply"]->count()}}</h3>
-
-                </div> <!-- end card-body-->
-            </div> <!-- end card-->
-        </div> <!-- end col-->
-
-        <div class="col-lg-4">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="float-end">
-                        <i class="mdi mdi-pulse widget-icon"></i>
-                    </div>
-                    <h5 class="text-muted fw-normal mt-0" title="Phone Not Available">{{__('Phone Not Available')}}</h5>
-                    <h3 class="mt-3 mb-3">{{$statistics["PhoneNotAvailable"]->count()}}</h3>
-
-                </div> <!-- end card-body-->
-            </div> <!-- end card-->
-        </div> <!-- end col-->
-        <div class="col-lg-4">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="float-end">
-                        <i class="mdi mdi-pulse widget-icon"></i>
-                    </div>
-                    <h5 class="text-muted fw-normal mt-0" title="Not In Service">{{__('Not In Service')}}</h5>
-                    <h3 class="mt-3 mb-3">{{$statistics["NotInService"]->count()}}</h3>
-
-                </div> <!-- end card-body-->
-            </div> <!-- end card-->
-        </div> <!-- end col-->
-        <div class="col-lg-4">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="float-end">
-                        <i class="mdi mdi-pulse widget-icon"></i>
-                    </div>
-                    <h5 class="text-muted fw-normal mt-0" title="Cancell">{{__('Cancell')}}</h5>
-                    <h3 class="mt-3 mb-3">{{$statistics["Cancell"]->count()}}</h3>
-
-                </div> <!-- end card-body-->
-            </div> <!-- end card-->
-        </div> <!-- end col-->
-        <div class="col-lg-4">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="float-end">
-                        <i class="mdi mdi-pulse widget-icon"></i>
-                    </div>
-                    <h5 class="text-muted fw-normal mt-0" title="Follow Up">{{__('Follow Up')}}</h5>
-                    <h3 class="mt-3 mb-3">{{$statistics["FollowUp"]->count()}}</h3> 
-
-                </div> <!-- end card-body-->
-            </div> <!-- end card-->
-        </div> <!-- end col-->
-
     </div>
 
 
@@ -177,15 +87,7 @@
                                 {{ $activity->date_time }}
                             </td>
                             <td>
-                                @if ($activity->status == 'ReplyAndDonate')
-                                {{ __('Reply And Donate') }}
-                                @elseif($activity->status == 'ReplyAndNotDonate')
-                                {{ __('Reply And Not Donate') }}
-                                @elseif($activity->status == 'NoReply')
-                                {{ __('No Reply') }}
-                                @elseif($activity->status == 'PhoneNotAvailable')
-                                {{ __('Phone Not Available') }}
-                                @endif
+                                {{ $activity->activity_status->name ?? '' }}
                             </td>
                             <td>
                                 {{ $activity->response }}

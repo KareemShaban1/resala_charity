@@ -23,64 +23,10 @@
         </div>
     </div>
 
-    <!-- Statistics Section -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>{{__('Reply And Donate')}}</h5>
-                    <h3 id="replyDonateCount">0</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>{{__('Reply And Not Donate')}}</h5>
-                    <h3 id="replyNotDonateCount">0</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>{{__('No Reply')}}</h5>
-                    <h3 id="noReplyCount">0</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>{{__('Phone Not Available')}}</h5>
-                    <h3 id="phoneNotAvailableCount">0</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>{{__('Not In Service')}}</h5>
-                    <h3 id="notInServiceCount">0</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>{{__('Cancell')}}</h5>
-                    <h3 id="cancellCount">0</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>{{__('Follow Up')}}</h5>
-                    <h3 id="followUpCount">0</h3>
-                </div>
-            </div>
-        </div>
+
+    <!-- Activity Types Statistics Section -->
+    <div class="row mb-4" id="activityStatusesSection">
+        <!-- Activity types will be dynamically inserted here -->
     </div>
 
     <!-- Activity Types Statistics Section -->
@@ -112,76 +58,93 @@
 
 @push('scripts')
 <script>
-$(document).ready(function() {
-    let table = $('#users-table').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: '{{ route("donor-report.donorActivities") }}',
-            data: function(d) {
-                d.start_date = $('#start_date').val();
-                d.end_date = $('#end_date').val();
-                d.user_id = $('#user_filter').val();
-            }
-        },
-        columns: [
-            { data: 'id', name: 'id' },
-            { data: 'name', name: 'name' },
-            { data: 'email', name: 'email' },
-            { data: 'department', name: 'department' },
-            { data: 'activities_count', name: 'activities_count' }
-        ],
-        order: [[0, 'desc']],
-        search: {
-            regex: true
-        },
-        buttons: [
-            {
-                extend: 'print',
-                exportOptions: { columns: [0, 1, 2, 3, 4] }
+    $(document).ready(function() {
+        let table = $('#users-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '{{ route("donor-report.donorActivities") }}',
+                data: function(d) {
+                    d.start_date = $('#start_date').val();
+                    d.end_date = $('#end_date').val();
+                    d.user_id = $('#user_filter').val();
+                }
             },
-            {
-                extend: 'excel',
-                text: 'Excel',
-                title: 'Donors Data',
-                exportOptions: { columns: [0, 1, 2, 3, 4] }
+            columns: [{
+                    data: 'id',
+                    name: 'id'
+                },
+                {
+                    data: 'name',
+                    name: 'name'
+                },
+                {
+                    data: 'email',
+                    name: 'email'
+                },
+                {
+                    data: 'department',
+                    name: 'department'
+                },
+                {
+                    data: 'activities_count',
+                    name: 'activities_count'
+                }
+            ],
+            order: [
+                [0, 'desc']
+            ],
+            search: {
+                regex: true
             },
-            {
-                extend: 'copy',
-                exportOptions: { columns: [0, 1, 2, 3, 4] }
+            buttons: [{
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4]
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Donors Data',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4]
+                    }
+                },
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4]
+                    }
+                },
+            ],
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
+            lengthMenu: [
+                [10, 25, 50, 100, 500, 1000, 2000],
+                [10, 25, 50, 100, 500, 1000, 2000]
+            ],
+            pageLength: 10,
+            responsive: true,
+            language: languages[language],
+            "drawCallback": function() {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
             },
-        ],
-        dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
-        lengthMenu: [[10, 25, 50, 100, 500, 1000, 2000], [10, 25, 50, 100, 500, 1000, 2000]], 
-        pageLength: 10,
-        responsive: true,
-        language: languages[language],
-        "drawCallback": function() {
-            $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
-        },
-    });
+        });
 
-    function fetchStatistics() {
-        $.ajax({
-            url: '{{ route("donor-report.statistics") }}',
-            data: {
-                start_date: $('#start_date').val(),
-                end_date: $('#end_date').val()
-            },
-            success: function(response) {
-                $('#replyDonateCount').text(response.statistics.ReplyAndDonate || 0);
-                $('#replyNotDonateCount').text(response.statistics.ReplyAndNotDonate || 0);
-                $('#noReplyCount').text(response.statistics.NoReply || 0);
-                $('#phoneNotAvailableCount').text(response.statistics.PhoneNotAvailable || 0);
-                $('#notInServiceCount').text(response.statistics.NotInService || 0);
-                $('#cancellCount').text(response.statistics.Cancell || 0);
-                $('#followUpCount').text(response.statistics.FollowUp || 0);
+        function fetchStatistics() {
+            $.ajax({
+                url: '{{ route("donor-report.statistics") }}',
+                data: {
+                    start_date: $('#start_date').val(),
+                    end_date: $('#end_date').val()
+                },
+                success: function(response) {
 
-                // Populate activity types dynamically
-                let activityTypesHtml = '';
-                if (response.activity_types) {
-                    Object.keys(response.activity_types).forEach(function(activityType) {
-                        activityTypesHtml += `
+                    // Populate activity types dynamically
+                    let activityTypesHtml = '';
+                    if (response.activity_types) {
+                        Object.keys(response.activity_types).forEach(function(activityType) {
+                            activityTypesHtml += `
                             <div class="col-md-3">
                                 <div class="card">
                                     <div class="card-body text-center">
@@ -191,21 +154,38 @@ $(document).ready(function() {
                                 </div>
                             </div>
                         `;
-                    });
-                }
-                $('#activityTypesSection').html(activityTypesHtml);
-            }
-        });
-    }
+                        });
+                    }
+                    let activityStatusesHtml = '';
+                    if (response.statistics) {
+                        Object.keys(response.statistics).forEach(function(status) {
+                            activityStatusesHtml += `
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5>${status}</h5>
+                        <h3>${response.statistics[status]}</h3>
+                    </div>
+                </div>
+            </div>
+        `;
+                        });
+                    }
+                    $('#activityStatusesSection').html(activityStatusesHtml);
 
-    $('#filterBtn').click(function() {
-        table.ajax.reload();
+
+                }
+            });
+        }
+
+        $('#filterBtn').click(function() {
+            table.ajax.reload();
+            fetchStatistics();
+        });
+
+        // Initial statistics fetch
         fetchStatistics();
     });
-
-    // Initial statistics fetch
-    fetchStatistics();
-});
 </script>
 @endpush
 @endsection

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\ActivityStatusController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GovernorateController;
 use App\Http\Controllers\CityController;
@@ -154,7 +155,7 @@ Route::group(
         Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
         Route::resource('users', UserController::class);
         Route::get('/users/{id}/details', [UserController::class, 'userDetails'])
-        ->name('users.details');
+            ->name('users.details');
         Route::post(
             '/users/change-password',
             [UserController::class, 'changePassword']
@@ -180,10 +181,11 @@ Route::group(
 
         Route::get('donor-history/activity/{id}', [DonorHistoryController::class, 'showActivity'])->name('donor-history.showActivity');
 
-
-        // Governorates Routes
         Route::get('/call-types/data', [CallTypeController::class, 'data'])->name('call-types.data');
         Route::resource('call-types', CallTypeController::class);
+
+        Route::get('/activity-statuses/data', [ActivityStatusController::class, 'data'])->name('activity-statuses.data');
+        Route::resource('activity-statuses', ActivityStatusController::class);
 
         // Collecting Lines Routes
         // Route::resource('collecting-lines', CollectingLineController::class);
@@ -247,8 +249,7 @@ Route::get('/backups/download/{filename}', [BackupController::class, 'download']
     ->name('backup.download');
 Route::get('/export-reports', [DashboardController::class, 'exportMonthlyForms'])->name('dashboard.export_reports');
 
-Route::get('/notifications',[NotificationController::class, 'getNotificationsByDate']);
+Route::get('/notifications', [NotificationController::class, 'getNotificationsByDate']);
 
-Route::post('/change_donors_category',[TestController::class, 'changeDonorsData'])
-->name('changeDonorsData');
-
+Route::post('/change_donors_category', [TestController::class, 'changeDonorsData'])
+    ->name('changeDonorsData');

@@ -34,7 +34,7 @@ class DonorActivityController extends Controller
             'call_type_id' => 'required|exists:call_types,id',
             'activity_type' => 'required|in:call,whatsapp_chat',
             'notes' => 'nullable|string',
-            'status' => 'nullable|string',
+            'activity_status_id' => 'required|exists:activity_statuses,id',
             'date_time' => 'required|date',
             'response' => 'nullable|string',
         ]);
@@ -46,7 +46,7 @@ class DonorActivityController extends Controller
             'call_type_id' => $request->call_type_id,
             'activity_type' => $request->activity_type,
             'notes' => $request->notes,
-            'status' => $request->status,
+            'activity_status_id' => $request->activity_status_id,
             'response' => $request->response,
             'date_time' => $validatedData['date_time'],
             'created_by' => auth()->user()->id
@@ -96,7 +96,7 @@ class DonorActivityController extends Controller
                 'call_type_id' => 'required|exists:call_types,id',
                 'activity_type' => 'required|in:call,whatsapp_chat',
                 'notes' => 'nullable|string',
-                'status' => 'nullable|string',
+                'activity_status_id' => 'required|exists:activity_statuses,id',
                 'date_time' => 'required|date',
                 'response' => 'nullable|string',
             ]);

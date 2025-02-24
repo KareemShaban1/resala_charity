@@ -28,71 +28,17 @@
             </select>
         </div>
         @endif
-       
+
         <div class="col-md-3">
             <button id="filterBtn" class="btn btn-primary">{{ __('Filter') }}</button>
         </div>
     </div>
 
     <!-- Statistics Section -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>{{__('Reply And Donate')}}</h5>
-                    <h3 id="replyDonateCount">0</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>{{__('Reply And Not Donate')}}</h5>
-                    <h3 id="replyNotDonateCount">0</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>{{__('No Reply')}}</h5>
-                    <h3 id="noReplyCount">0</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>{{__('Phone Not Available')}}</h5>
-                    <h3 id="phoneNotAvailableCount">0</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>{{__('Not In Service')}}</h5>
-                    <h3 id="notInServiceCount">0</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>{{__('Cancell')}}</h5>
-                    <h3 id="cancellCount">0</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>{{__('Follow Up')}}</h5>
-                    <h3 id="followUpCount">0</h3>
-                </div>
-            </div>
-        </div>
+    <div class="row mb-4" id="activityStatusesSection">
+        <!-- Activity types will be dynamically inserted here -->
     </div>
+
 
     <!-- Users Table -->
     <div class="row">
@@ -103,7 +49,7 @@
                         <thead>
                             <tr>
                                 <th>
-                                   
+
                                 </th> <!-- Expand button -->
                                 <th>{{ __('ID') }}</th>
                                 <th>{{ __('Name') }}</th>
@@ -234,13 +180,7 @@
                         <td>${activity.call_type?.name}</td>
                         <td>${activity.date_time}</td>
                         <td>
-                            ${activity.status === 'ReplyAndDonate' ? 'Reply And Donate' :
-                            activity.status === 'ReplyAndNotDonate' ? 'Reply And Not Donate' :
-                            activity.status === 'NoReply' ? 'No Reply' :
-                            activity.status === 'PhoneNotAvailable' ? 'Phone Not Available' :
-                            activity.status === 'NotInService' ? 'Not In Service' :
-                            activity.status === 'Cancell' ? 'Cancell' :
-                            activity.status === 'FollowUp' ? 'Follow Up' : ''}
+                            ${activity.activity_status?.name ?? ''}
                         </td>
                         <td>${activity.response}</td>
                         <td>${activity.notes}</td>
@@ -266,13 +206,23 @@
                     user_id: $('#user_filter').val()
                 },
                 success: function(response) {
-                    $('#replyDonateCount').text(response.statistics.ReplyAndDonate || 0);
-                    $('#replyNotDonateCount').text(response.statistics.ReplyAndNotDonate || 0);
-                    $('#noReplyCount').text(response.statistics.NoReply || 0);
-                    $('#phoneNotAvailableCount').text(response.statistics.PhoneNotAvailable || 0);
-                    $('#notInServiceCount').text(response.statistics.NotInService || 0);
-                    $('#cancellCount').text(response.statistics.Cancell || 0);
-                    $('#followUpCount').text(response.statistics.FollowUp || 0);
+
+                    let activityStatusesHtml = '';
+                    if (response.statistics) {
+                        Object.keys(response.statistics).forEach(function(status) {
+                            activityStatusesHtml += `
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5>${status}</h5>
+                        <h3>${response.statistics[status]}</h3>
+                    </div>
+                </div>
+            </div>
+        `;
+                        });
+                    }
+                    $('#activityStatusesSection').html(activityStatusesHtml);
                 }
             });
         }

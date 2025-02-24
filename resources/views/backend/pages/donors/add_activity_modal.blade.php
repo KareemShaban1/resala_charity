@@ -38,18 +38,14 @@
                     </div>
                 </div>
 
-                <div class="col-md-6" id="status-container" style="display: none;">
+                <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="activity_status" class="form-label">{{__('Status')}}</label>
-                        <select name="status" id="activity_status" class="form-control">
+                        <label for="activity_status_id" class="form-label">{{__('Status')}}</label>
+                        <select name="activity_status_id" id="activity_status_id" class="form-control">
                             <option value="" selected>{{__('Select Status')}}</option>
-                            <option value="ReplyAndDonate">{{__('Reply And Donate')}}</option>
-                            <option value="ReplyAndNotDonate">{{__('Reply And Not Donate')}}</option>
-                            <option value="NoReply">{{__('No Reply')}}</option>
-                            <option value="PhoneNotAvailable">{{__('Phone Not Available')}}</option>
-                            <option value="NotInService">{{__('Not In Service')}}</option>
-                            <option value="Cancell">{{__('Cancell')}}</option>
-                            <option value="FollowUp">{{__('Follow Up')}}</option>
+                            @foreach(\App\Models\ActivityStatus::all() as $status)
+                            <option value="{{$status->id}}">{{$status->name}}</option>
+                            @endforeach
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityStatus;
 use App\Models\DonorActivity;
 use App\Models\User;
 use Carbon\Carbon;
@@ -38,7 +39,7 @@ class DonorReportController extends Controller
     public function donorStatistics(Request $request)
     {
         $users = User::with('activities')->get();
-        $statuses = ["ReplyAndDonate", "ReplyAndNotDonate", "NoReply", "PhoneNotAvailable", "NotInService", "Cancell", "FollowUp"];
+        $statuses = ActivityStatus::pluck('name');
         $statistics = [];
         $activityTypes = [];
 
@@ -48,7 +49,8 @@ class DonorReportController extends Controller
         }
 
         foreach ($users as $user) {
-            $query = $user->activities();
+            $query = $user->activities()
+            ->with('donor', 'callType', 'activityStatus');
 
             if (isset($request->start_date) && isset($request->end_date)) {
                 $startDate = Carbon::parse($request->input('start_date'));
@@ -60,8 +62,8 @@ class DonorReportController extends Controller
 
             foreach ($activities as $activity) {
                 // Count activities by status
-                if (!empty($activity->status) && isset($statistics[$activity->status])) {
-                    $statistics[$activity->status]++;
+                if (!empty($activity->activityStatus->name) && isset($statistics[$activity->activityStatus->name])) {
+                    $statistics[$activity->activityStatus->name]++;
                 } else {
                     // Count activities without a status by activity_type
                     $activityType = $activity->activity_type . '  ( ' . ($activity->callType?->name) . ' )' ?? 'Unknown';
@@ -84,11 +86,8 @@ class DonorReportController extends Controller
     {
         $query = User::with([
             'department',
-            'activities' => function ($q) use ($request) {
-                $q->where('call_type_id', 1)->with('callType', 'donor');
-            }
+            'activities'
         ])->withCount(['activities' => function ($q) use ($request) {
-            $q->where('call_type_id', 1);
             if ($request->start_date && $request->end_date) {
                 $q->whereBetween('created_at', [
                     Carbon::parse($request->start_date),
@@ -114,16 +113,13 @@ class DonorReportController extends Controller
 
     public function donorRandomCallsStatistics(Request $request)
     {
-        $statuses = ["ReplyAndDonate", "ReplyAndNotDonate", "NoReply", "PhoneNotAvailable", "NotInService", "Cancell", "FollowUp"];
+        $statuses = ActivityStatus::pluck('name')->toArray();
         $statistics = array_fill_keys($statuses, 0);
         $activityTypes = [];
 
         // Fetch users with activities
         $usersQuery = User::with([
-            'activities' => function ($query) use ($request) {
-                $query
-                    ->where('call_type_id', 1);
-            }
+            'activities'
         ]);
 
         if (!Auth::user()->is_admin) {
@@ -138,7 +134,8 @@ class DonorReportController extends Controller
         $users = $usersQuery->get();
 
         foreach ($users as $user) {
-            $query = $user->activities();
+            $query = $user->activities()
+            ->with('donor', 'callType', 'activityStatus');
 
             // Apply date filtering if provided
             if ($request->filled('start_date') && $request->filled('end_date')) {
@@ -150,8 +147,8 @@ class DonorReportController extends Controller
             $activities = $query->get();
 
             foreach ($activities as $activity) {
-                if (!empty($activity->status) && isset($statistics[$activity->status])) {
-                    $statistics[$activity->status]++;
+                if (!empty($activity->activityStatus->name) && isset($statistics[$activity->activityStatus->name])) {
+                    $statistics[$activity->activityStatus->name]++;
                 } else {
                     // Handle activities without a status
                     $activityType = trim(($activity->activity_type ?? 'Unknown') . ' ( ' . ($activity->callType->name ?? 'Unknown') . ' )');

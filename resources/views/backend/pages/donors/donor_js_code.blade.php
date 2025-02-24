@@ -322,17 +322,10 @@
                                         <td>${activity.call_type?.name}</td>
                                         <td>${activity.date_time}</td>
                                         <td>
-                                           ${activity.status === 'ReplyAndDonate' ? "{{ __('Reply And Donate') }}" :
-                                            activity.status === 'ReplyAndNotDonate' ? "{{ __('Reply And Not Donate') }}" :
-                                            activity.status === 'NoReply' ? "{{ __('No Reply') }}" :
-                                            activity.status === 'PhoneNotAvailable' ? "{{ __('Phone Not Available') }}" :
-                                            activity.status === 'NotInService' ? "{{ __('Not In Service') }}" :
-                                            activity.status === 'Cancell' ? "{{ __('Cancell') }}" :
-                                            activity.status === 'FollowUp' ? "{{ __('Follow Up') }}" :
-                                            ''}
+                                           ${activity.activity_status.name ?? '' }
                                         </td>
-                                        <td>${activity.response}</td>
-                                        <td>${activity.notes}</td>
+                                        <td>${activity.response ?? ''}</td>
+                                        <td>${activity.notes ?? ''}</td>
                                         <td>${activity.created_by?.name}</td>
                                     </tr>
                                 `)
@@ -1213,27 +1206,6 @@ $('#addActivityForm').on('submit', function(e) {
             }
         });
     });
-
-
-    $('#call_type_id').on('change', function () {
-    const callTypeSelect = document.getElementById('call_type_id');
-    const statusContainer = document.getElementById('status-container');
-
-    // Ensure there are at least two options
-    if (callTypeSelect.options.length > 1) {
-        const secondOptionValue = callTypeSelect.options[1].value; // Get the second option's value
-
-        // Debugging: Check selected value and second option value
-        console.log(callTypeSelect.value, secondOptionValue);
-
-        // Ensure the status container visibility changes based on the selected value
-        if (callTypeSelect.value === secondOptionValue) {
-            statusContainer.style.display = 'block';
-        } else {
-            statusContainer.style.display = 'none';
-        }
-    }
-});
 
 
 document.addEventListener('keydown', function(event) {

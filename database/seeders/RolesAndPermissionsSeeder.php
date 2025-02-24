@@ -15,6 +15,11 @@ class RolesAndPermissionsSeeder extends Seeder
             ['name' => 'update activity log','guard_name' => 'web'],
             ['name' => 'delete activity log','guard_name' => 'web'],
 
+            ['name' => 'view activity statuses','guard_name' => 'web'],
+            ['name' => 'create activity status','guard_name' => 'web'],
+            ['name' => 'update activity status','guard_name' => 'web'],
+            ['name' => 'delete activity status','guard_name' => 'web'],
+
             ['name' => 'view users','guard_name' => 'web'],
             ['name' => 'create user','guard_name' => 'web'],
             ['name' => 'update user','guard_name' => 'web'],

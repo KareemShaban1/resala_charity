@@ -77,7 +77,7 @@
                   </div>
               </li>
 
-              @can('view users' || 'view roles' || 'view activity logs')
+              @if(Gate::any(['view users', 'view roles', 'view activity logs']))
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarUsers" aria-expanded="false" aria-controls="sidebarUsers" class="side-nav-link">
                       <i class="uil-users-alt"></i>
@@ -114,7 +114,7 @@
               </li>
               @endcan
 
-              @can('view departments' || 'view employees')
+              @if(Gate::any(['view departments' , 'view employees']))
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarEmployees" aria-expanded="false" aria-controls="sidebarEmployees" class="side-nav-link">
                       <i class="uil-users-alt"></i>
@@ -144,7 +144,7 @@
               @endcan
 
 
-              @can('view governorates' || 'view cities' || 'view areas' || 'view areas groups')
+              @if(Gate::any(['view governorates','view cities','view areas','view areas groups']))
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarLocation" aria-expanded="false" aria-controls="sidebarLocation" class="side-nav-link">
                       <i class="uil-map-marker"></i>
@@ -213,6 +213,12 @@
                               </a>
                           </li>
                           @endcan
+
+                          <li>
+                              <a href="{{route('activity-statuses.index')}}">
+                                  <span> {{__('Activity Statuses')}} </span>
+                              </a>
+                          </li>
 
                           @can('view donors')
                           <li>

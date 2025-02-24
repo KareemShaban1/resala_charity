@@ -48,23 +48,24 @@ class DonorController extends Controller
      */
     public function data(Request $request)
     {
-        $query = Donor::selectRaw(
-            'donors.*, 
-        CASE 
-            WHEN donors.parent_id IS NOT NULL THEN donors.parent_id
-            ELSE donors.id
-        END as parent_donor_group_id,
-        CASE 
-            WHEN donors.parent_id IS NOT NULL THEN 1  -- Child
-            ELSE 0  -- Parent
-        END as is_child_order,
-        (SELECT COUNT(*) FROM donor_activities WHERE donor_activities.donor_id = donors.id) as activities_count,
-        (SELECT status FROM donor_activities WHERE donor_activities.donor_id = donors.id ORDER BY created_at DESC LIMIT 1) as last_activity_status'
+        $query = Donor::with([
+            'governorate',
+            'city',
+            'area',
+            'phones',
+            'activities' => function ($query) {
+                $query->with('activityStatus')->latest();
+            }
+        ])
+        ->selectRaw('donors.*, 
+            CASE WHEN donors.parent_id IS NOT NULL THEN donors.parent_id ELSE donors.id END as parent_donor_group_id,
+            CASE WHEN donors.parent_id IS NOT NULL THEN 1 ELSE 0 END as is_child_order,
+            (SELECT COUNT(*) FROM donor_activities WHERE donor_activities.donor_id = donors.id) as activities_count'
         )
-            ->with(['governorate', 'city', 'area', 'phones'])
-            ->orderBy('parent_donor_group_id', 'asc')
-            ->orderBy('is_child_order', 'asc')
-            ->orderBy('donors.created_at', 'desc');
+        ->orderBy('parent_donor_group_id', 'asc')
+        ->orderBy('is_child_order', 'asc')
+        ->orderBy('donors.created_at', 'desc');
+        
 
 
 
@@ -94,9 +95,7 @@ class DonorController extends Controller
                         } elseif (strtolower($searchValue) === 'no') {
                             $query->having('activities_count', '=', 0);
                         }
-                    } elseif ($columnName === 'last_activity_status') {
-                        $query->having('last_activity_status', 'like', "%{$searchValue}%");
-                    }else {
+                    } else {
                         $query->where($columnName, 'like', "%{$searchValue}%");
                     }
                 }
@@ -117,6 +116,13 @@ class DonorController extends Controller
                 $query->whereBetween('donors.created_at', [now()->startOfWeek(), now()->endOfWeek()]);
             } elseif ($dateFilter === 'month') {
                 $query->whereBetween('donors.created_at', [now()->startOfMonth(), now()->endOfMonth()]);
+            }elseif ($columnName === 'last_activity_status') {
+                // Filter based on the donor's last activity status name
+                $query->whereHas('activities', function ($q) use ($searchValue) {
+                    $q->whereHas('activityStatus', function ($q2) use ($searchValue) {
+                        $q2->where('name', 'like', "%{$searchValue}%");
+                    });
+                });
             } elseif ($dateFilter === 'range' && $startDate && $endDate) {
                 $query->whereBetween('donors.created_at', [$startDate, $endDate]);
             }
@@ -216,24 +222,12 @@ class DonorController extends Controller
                     : '<span class="badge bg-danger">' . __("No") . '</span>';
             })
             ->addColumn('last_activity_status', function ($donor) {
-                $status = ucfirst($donor->last_activity_status ?? 'NoActivity');
-                $labels = [
-                    'ReplyAndDonate' => __('Reply And Donate'),
-                    'ReplyAndNotDonate' => __('Reply And Not Donate'),
-                    'NoReply' => __('No Reply'),
-                    'PhoneNotAvailable' => __('Phone Not Available'),
-                    'NotInService' => __('Not In Service'),
-                    'Cancell' => __('Cancell'),
-                    'FollowUp' => __('Follow Up'),
-                ];
-
-                return $donor->last_activity_status ? 
-                '<span class="badge bg-primary">' . $labels[$status] . '</span>' :
-                '<span class="badge bg-secondary">' . __("No Activity") . '</span>';
+                $lastActivity = $donor->activities->first(); // Get the most recent activity
+                $status = $lastActivity ? $lastActivity->activityStatus->name : 'No Activity';
             
-                // return '<span class="badge bg-primary">' . ($labels[$status] ?? $labels['NoActivity']) . '</span>';
-            })
-            ->rawColumns(['active', 'action', 'name', 'has_activities','last_activity_status'])
+                return '<span class="badge bg-secondary">' . ucfirst($status) . '</span>';
+            })            
+            ->rawColumns(['active', 'action', 'name', 'has_activities', 'last_activity_status'])
             ->make(true);
     }
 

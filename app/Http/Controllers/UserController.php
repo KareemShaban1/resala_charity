@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityStatus;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -180,33 +181,32 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $query = $user->activities();
-    
+
         // Apply date filtering if start_date and end_date are provided
         if (request()->has('start_date') && request()->has('end_date')) {
             $startDate = request()->input('start_date');
             $endDate = Carbon::parse(request()->input('end_date'))->addDay(); // Add one day
-        
+
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
-        
-    
+
+
         $activities = $query->get();
-        $statuses = ["ReplyAndDonate", "ReplyAndNotDonate", "NoReply", "PhoneNotAvailable", "NotInService", "Cancell", "FollowUp"];
-        $statistics = $activities->groupBy('status');
-    
+        $statuses = ActivityStatus::pluck('name')->toArray();
+        $statistics = $activities->groupBy('activity_status_id');
+
         // Ensure all status keys exist with an empty collection if missing
         foreach ($statuses as $status) {
             $statistics[$status] = $statistics[$status] ?? collect([]);
         }
-    
+
         if (request()->ajax()) {
             return response()->json([
                 'success' => true,
                 'data' => $user
             ]);
         }
-    
-        return view('backend.pages.users.user-details', compact('user','activities', 'statistics'));
+
+        return view('backend.pages.users.user-details', compact('user', 'activities', 'statistics'));
     }
-    
 }

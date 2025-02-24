@@ -60,7 +60,8 @@ class User extends Authenticatable
 
     public function activities()
     {
-        return $this->hasMany(DonorActivity::class, 'created_by');
+        return $this->hasMany(DonorActivity::class, 'created_by')
+        ->with('donor', 'callType', 'activityStatus');
     }
 
     public function getIsSuperAdminAttribute()

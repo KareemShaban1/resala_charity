@@ -12,7 +12,7 @@ class DonorActivity extends Model
         'donor_id',
         'call_type_id',
         'date_time',
-        'status',
+        'activity_status_id',
         'response',
         'notes',
         'activity_type',
@@ -27,5 +27,8 @@ class DonorActivity extends Model
     }
     public function createdBy(){
         return $this->belongsTo(User::class,'created_by');
+    }
+    public function activityStatus(){
+        return $this->belongsTo(ActivityStatus::class);
     }
 }
