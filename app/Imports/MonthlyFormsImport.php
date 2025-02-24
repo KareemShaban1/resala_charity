@@ -127,7 +127,6 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
 
                 DB::commit(); // ✅ Commit transaction before resetting auto-increment
 
-                $this->resetAutoIncrement(); // ✅ Reset after successful commit
             } catch (\Exception $e) {
                 DB::rollBack(); // Rollback if an error occurs
                 Log::error('Import failed', ['error' => $e->getMessage()]);
