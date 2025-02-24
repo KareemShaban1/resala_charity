@@ -502,35 +502,61 @@
             search: {
                 regex: true
             },
-            buttons: [{
-                    extend: 'print',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6,7,8]
+            buttons: [
+    {
+        extend: 'excel',
+        text: 'Excel',
+        title: 'Donors Data',
+        exportOptions: {
+            columns: ':visible', // Ensures all visible columns are exported
+            header: true,
+            format: {
+                header: function (data, columnIdx) {
+                    // Select the first row of <thead> and exclude the second row (filters)
+                    if ($('#donors-table thead tr:first-child th').eq(columnIdx).length) {
+                        return $('#donors-table thead tr:first-child th').eq(columnIdx).text();
                     }
-                },
-                {
-                    extend: 'excel',
-                    text: 'Excel',
-                    title: 'Donors Data',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6,7,8]
+                    return '';
+                }
+            }
+        }
+    },
+    {
+        extend: 'print',
+        text: 'Print',
+        exportOptions: {
+            columns: ':visible',
+            header: true,
+            format: {
+                header: function (data, columnIdx) {
+                    if ($('#donors-table thead tr:first-child th').eq(columnIdx).length) {
+                        return $('#donors-table thead tr:first-child th').eq(columnIdx).text();
                     }
-                },
-                // {
-                //     extend: 'pdf', 
-                //     text: 'PDF', 
-                //     title: 'Donors Data', 
-                //     exportOptions: {
-                //         columns: [0, 1, 2, 3]
-                //     }
-                // },
-                {
-                    extend: 'copy',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3,4,5,6,7,8]
+                    return '';
+                }
+            }
+        }
+    },
+    {
+        extend: 'copy',
+        text: 'Copy',
+        exportOptions: {
+            columns: ':visible',
+            header: true,
+            format: {
+                header: function (data, columnIdx) {
+                    if ($('#donors-table thead tr:first-child th').eq(columnIdx).length) {
+                        return $('#donors-table thead tr:first-child th').eq(columnIdx).text();
                     }
-                },
-            ],
+                    return '';
+                }
+            }
+        }
+    }
+],
+
+
+
             dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
             lengthMenu: [[10, 25, 50, 100, 500, 1000, 2000], [10, 25, 50, 100, 500, 1000, 2000]], 
             pageLength: 10,
