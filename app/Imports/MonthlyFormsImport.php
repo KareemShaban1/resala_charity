@@ -105,6 +105,9 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
 
             try {
                 // REMOVE this line: DB::statement("ALTER TABLE monthly_forms AUTO_INCREMENT = 221");
+                
+                 // ✅ Reset AUTO_INCREMENT to prevent ID jumps
+                 $this->resetAutoIncrement();
 
                 DB::table('monthly_forms')->upsert($this->rows, ['donor_id'], [
                     'collecting_donation_way',
