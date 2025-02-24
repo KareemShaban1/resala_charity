@@ -14,6 +14,7 @@ use App\Models\Employee;
 use App\Models\MonthlyFormItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -282,6 +283,8 @@ class MonthlyFormController extends Controller
 
         // Validate the incoming request data
         $validatedData = $request->validated();
+
+        $this->resetAutoIncrement(); // ✅ Reset after successful commit
 
         DB::beginTransaction(); // Start a transaction
 
@@ -563,6 +566,15 @@ class MonthlyFormController extends Controller
                 'message' => 'An error occurred during import.',
                 'error' => $e->getMessage(),
             ], 500);
+        }
+    }
+
+    private function resetAutoIncrement()
+    {
+        $maxId = DB::table('monthly_forms')->max('id');
+        if ($maxId) {
+            DB::statement("ALTER TABLE monthly_forms AUTO_INCREMENT = " . ($maxId + 1));
+            Log::info("AUTO_INCREMENT reset to " . ($maxId + 1));
         }
     }
 }
