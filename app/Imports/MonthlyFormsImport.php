@@ -93,6 +93,11 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
         }
     }
 
+    public function beforeImport()
+    {
+        $this->resetAutoIncrement(); // Reset before import starts
+    }
+
     public function afterImport()
     {
         if ($this->hasErrors) {
@@ -101,13 +106,8 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
         }
 
         if (!empty($this->rows)) {
-            DB::beginTransaction(); // Start transaction explicitly
-
             try {
-                // REMOVE this line: DB::statement("ALTER TABLE monthly_forms AUTO_INCREMENT = 221");
-                
-                 // ✅ Reset AUTO_INCREMENT to prevent ID jumps
-                 $this->resetAutoIncrement();
+                DB::beginTransaction(); // ✅ Start transaction first
 
                 DB::table('monthly_forms')->upsert($this->rows, ['donor_id'], [
                     'collecting_donation_way',
@@ -123,17 +123,18 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
                     'updated_at'
                 ]);
 
-                DB::commit(); // Commit transaction
+                DB::commit(); // ✅ Commit transaction before resetting auto-increment
 
-                // ✅ Reset AUTO_INCREMENT to prevent ID jumps
-                $this->resetAutoIncrement();
+                $this->resetAutoIncrement(); // ✅ Reset after successful commit
             } catch (\Exception $e) {
-                DB::rollBack(); // Rollback on error
+                DB::rollBack(); // Rollback if an error occurs
                 Log::error('Import failed', ['error' => $e->getMessage()]);
-                throw $e; // Re-throw to handle it in your controller
+                throw $e; // Re-throw to handle in the controller
             }
         }
     }
+
+
 
 
 
@@ -158,7 +159,6 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
     private function resetAutoIncrement()
     {
         $maxId = DB::table('monthly_forms')->max('id');
-
         if ($maxId) {
             DB::statement("ALTER TABLE monthly_forms AUTO_INCREMENT = " . ($maxId + 1));
             Log::info("AUTO_INCREMENT reset to " . ($maxId + 1));
