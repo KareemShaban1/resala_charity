@@ -94,42 +94,45 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
     }
 
     public function afterImport()
-{
-    if ($this->hasErrors) {
-        Log::warning('Import aborted due to validation errors');
-        return;
-    }
+    {
+        if ($this->hasErrors) {
+            Log::warning('Import aborted due to validation errors');
+            return;
+        }
 
-    if (!empty($this->rows)) {
-        DB::beginTransaction(); // Start transaction explicitly
+        if (!empty($this->rows)) {
+            DB::beginTransaction(); // Start transaction explicitly
 
-        try {
-            // REMOVE this line: DB::statement("ALTER TABLE monthly_forms AUTO_INCREMENT = 221");
+            try {
+                // REMOVE this line: DB::statement("ALTER TABLE monthly_forms AUTO_INCREMENT = 221");
 
-            DB::table('monthly_forms')->upsert($this->rows, ['donor_id'], [
-                'collecting_donation_way',
-                'status',
-                'notes',
-                'department_id',
-                'employee_id',
-                'cancellation_reason',
-                'cancellation_date',
-                'donation_type',
-                'form_date',
-                'follow_up_department_id',
-                'updated_at'
-            ]);
+                DB::table('monthly_forms')->upsert($this->rows, ['donor_id'], [
+                    'collecting_donation_way',
+                    'status',
+                    'notes',
+                    'department_id',
+                    'employee_id',
+                    'cancellation_reason',
+                    'cancellation_date',
+                    'donation_type',
+                    'form_date',
+                    'follow_up_department_id',
+                    'updated_at'
+                ]);
 
-            DB::commit(); // Commit transaction
-        } catch (\Exception $e) {
-            DB::rollBack(); // Rollback on error
-            Log::error('Import failed', ['error' => $e->getMessage()]);
-            throw $e; // Re-throw to handle it in your controller
+                DB::commit(); // Commit transaction
+
+                // ✅ Reset AUTO_INCREMENT to prevent ID jumps
+                $this->resetAutoIncrement();
+            } catch (\Exception $e) {
+                DB::rollBack(); // Rollback on error
+                Log::error('Import failed', ['error' => $e->getMessage()]);
+                throw $e; // Re-throw to handle it in your controller
+            }
         }
     }
-}
 
-    
+
 
 
     public function rules(): array
@@ -147,5 +150,15 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
             'cancellation_reason' => 'nullable|string',
             'cancellation_date' => 'nullable|date',
         ];
+    }
+
+    private function resetAutoIncrement()
+    {
+        $maxId = DB::table('monthly_forms')->max('id');
+
+        if ($maxId) {
+            DB::statement("ALTER TABLE monthly_forms AUTO_INCREMENT = " . ($maxId + 1));
+            Log::info("AUTO_INCREMENT reset to " . ($maxId + 1));
+        }
     }
 }
