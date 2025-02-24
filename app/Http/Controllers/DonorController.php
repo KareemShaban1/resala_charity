@@ -95,6 +95,12 @@ class DonorController extends Controller
                         } elseif (strtolower($searchValue) === 'no') {
                             $query->having('activities_count', '=', 0);
                         }
+                    } elseif ($columnName === 'last_activity_status') {
+                        $query->whereHas('activities', function ($q) use ($searchValue) {
+                            $q->whereHas('activityStatus', function ($q2) use ($searchValue) {
+                                $q2->where('name', 'like', "%{$searchValue}%");
+                            });
+                        });
                     } else {
                         $query->where($columnName, 'like', "%{$searchValue}%");
                     }
