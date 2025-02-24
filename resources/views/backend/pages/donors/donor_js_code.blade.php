@@ -505,7 +505,7 @@
             buttons: [{
                     extend: 'print',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6]
+                        columns: [0, 1, 2, 3, 4, 5, 6,7,8]
                     }
                 },
                 {
@@ -513,7 +513,7 @@
                     text: 'Excel',
                     title: 'Donors Data',
                     exportOptions: {
-                        columns: [0, 1, 2, 3,4,5,6]
+                        columns: [0, 1, 2, 3, 4, 5, 6,7,8]
                     }
                 },
                 // {
@@ -527,7 +527,7 @@
                 {
                     extend: 'copy',
                     exportOptions: {
-                        columns: [0, 1, 2, 3,4,5,6]
+                        columns: [0, 1, 2, 3,4,5,6,7,8]
                     }
                 },
             ],
