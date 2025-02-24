@@ -229,9 +229,10 @@ class DonorController extends Controller
             })
             ->addColumn('last_activity_status', function ($donor) {
                 $lastActivity = $donor->activities->first(); // Get the most recent activity
-                $status = $lastActivity ? $lastActivity->activityStatus->name : 'No Activity';
+                $status = $lastActivity->activityStatus->name;
             
-                return '<span class="badge bg-secondary">' . ucfirst($status) . '</span>';
+                return $status ? '<span class="badge bg-primary">' . ucfirst($status) . '</span>'
+                : '<span class="badge bg-secondary">' . __("No Activity") . '</span>';
             })            
             ->rawColumns(['active', 'action', 'name', 'has_activities', 'last_activity_status'])
             ->make(true);
