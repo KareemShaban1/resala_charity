@@ -109,6 +109,8 @@ class MonthlyFormsImport implements ToModel, WithHeadingRow, WithValidation, Ski
             try {
                 DB::beginTransaction(); // ✅ Start transaction first
 
+                $this->resetAutoIncrement(); // ✅ Reset after successful commit
+
                 DB::table('monthly_forms')->upsert($this->rows, ['donor_id'], [
                     'collecting_donation_way',
                     'status',
