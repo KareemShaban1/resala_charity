@@ -92,7 +92,7 @@
                                    <th> <select class="form-control form-control-sm column-search">
                                             <option value="">{{__('All')}}</option>
                                             @foreach(\App\Models\ActivityStatus::all() as $status)
-                                            <option value="{{$status->id}}">{{$status->name}}</option>
+                                            <option value="{{$status->name}}">{{$status->name}}</option>
                                             @endforeach
                                         </select></th>
                                     <th></th>
