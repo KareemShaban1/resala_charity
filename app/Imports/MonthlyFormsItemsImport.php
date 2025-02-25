@@ -50,6 +50,7 @@ class MonthlyFormsItemsImport implements ToModel, WithHeadingRow
                     'monthly_form_id' => $row['form_id'],
                     'donation_category_id' => optional($donationCategory)->id,
                     'donation_type' => 'financial',
+                    'amount' => $row['financial_amount'],
                 ])->first();
 
                 if ($existingFinancial) {
@@ -70,6 +71,7 @@ class MonthlyFormsItemsImport implements ToModel, WithHeadingRow
                     'monthly_form_id' => $row['form_id'],
                     'item_name' => $row['in_kind_item_name'],
                     'donation_type' => 'inKind',
+                    'amount' => $row['in_kind_quantity'],
                 ])->first();
 
                 if ($existingInKind) {
