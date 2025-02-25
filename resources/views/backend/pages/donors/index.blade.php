@@ -62,7 +62,7 @@
                                     <th>{{__('Area')}}</th>
                                     <th>{{__('Phones')}}</th>
                                     <th>{{__('Status')}}</th>
-                                    <th>{{__('Has Activities')}}</th>
+                                    <!-- <th>{{__('Has Activities')}}</th> -->
                                     <th>{{__('Actions')}}</th>
                                 </tr>
                                 <tr>
@@ -94,13 +94,13 @@
                                             <option value="0">{{__('Inactive')}}</option>
                                         </select>
                                     </th>
-                                    <th>
+                                    <!-- <th>
                                     <select class="form-control form-control-sm column-search">
                                             <option value="">{{__('All')}}</option>
                                             <option value="yes">{{__('Yes')}}</option>
                                             <option value="no">{{__('No')}}</option>
                                         </select>
-                                    </th>
+                                    </th> -->
                                     <th></th>
                                 </tr>
                             </thead>

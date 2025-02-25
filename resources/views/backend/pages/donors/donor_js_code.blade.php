@@ -466,12 +466,12 @@
                     orderable: false,
                     searchable: true
                 },
-                {
-                    data: 'has_activities',
-                    name: 'has_activities',
-                    orderable: false,
-                    searchable: true
-                },
+                // {
+                //     data: 'has_activities',
+                //     name: 'has_activities',
+                //     orderable: false,
+                //     searchable: true
+                // },
                 {
                     data: 'action',
                     name: 'action',
@@ -699,7 +699,7 @@
             buttons: [{
                     extend: 'print',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6]
+                        columns: [0, 1, 4, 5, 6]
                     }
                 },
                 {
@@ -707,7 +707,7 @@
                     text: 'Excel',
                     title: 'Donors Data',
                     exportOptions: {
-                        columns: [0, 1, 2, 3,4,5,6]
+                        columns: [0, 1,4,5,6]
                     }
                 },
                 // {
@@ -721,7 +721,7 @@
                 {
                     extend: 'copy',
                     exportOptions: {
-                        columns: [0, 1, 2, 3,4,5,6]
+                        columns: [0, 1,4,5,6]
                     }
                 },
             ],

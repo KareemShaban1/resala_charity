@@ -22364,7 +22364,25 @@ div.table-responsive>div.dataTables_wrapper>div.row>div[class^=col-]:first-child
 #donors-table th:nth-child(5),
 #donors-table td:nth-child(5) { width: 100px !important; }  /* Area */
 #donors-table th:nth-child(6),
-#donors-table td:nth-child(6) { width: 100px !important; }  /* Phones */
+#donors-table td:nth-child(6) { width: 50px !important; }  /* Phones */
 #donors-table th:nth-child(7),
-#donors-table td:nth-child(7) { width: 50px !important; }  /* status */
+#donors-table td:nth-child(7) { width: 100px !important; }  /* status */
+#donors-table th:nth-child(8),
+#donors-table td:nth-child(8) { width: 50px !important; }  /* status */
 
+#random-donors-table th:nth-child(1),
+#random-donors-table td:nth-child(1) { width: 20px !important; }  /* ID */
+#random-donors-table th:nth-child(2),
+#random-donors-table td:nth-child(2) { width: 100px !important; } /* Name */
+#random-donors-table th:nth-child(3),
+#random-donors-table td:nth-child(3) { width: 100px !important; }  /* Donor type */
+#random-donors-table th:nth-child(4),
+#random-donors-table td:nth-child(4) { width: 100px !important; }  /* City */
+#random-donors-table th:nth-child(5),
+#random-donors-table td:nth-child(5) { width: 100px !important; }  /* Area */
+#random-donors-table th:nth-child(6),
+#random-donors-table td:nth-child(6) { width: 50px !important; }  /* Phones */
+#random-donors-table th:nth-child(7),
+#random-donors-table td:nth-child(7) { width: 100px !important; }  /* status */
+#random-donors-table th:nth-child(8),
+#random-donors-table td:nth-child(8) { width: 50px !important; }  /* status */
