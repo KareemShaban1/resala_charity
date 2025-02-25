@@ -44,6 +44,7 @@ class MonthlyFormsItemsImport implements ToModel, WithHeadingRow
         }
 
         return DB::transaction(function () use ($row, $donationCategory) {
+            \Log::info('rows',[ $row]);
             // **Update or create financial donation**
             if ($donationCategory && !empty($row['financial_amount'])) {
                 $existingFinancial = MonthlyFormItem::where([
