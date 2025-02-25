@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\DonationCategory;
 use App\Models\MonthlyFormItem;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -39,12 +40,14 @@ class MonthlyFormsItemsImport implements ToModel, WithHeadingRow
             'in_kind_quantity' => 'nullable|integer|min:1',
         ]);
 
+        Log::info('rows',[ $row]);
+
+
         if ($validator->fails()) {
             return null; // Skip invalid rows
         }
 
         return DB::transaction(function () use ($row, $donationCategory) {
-            \Log::info('rows',[ $row]);
             // **Update or create financial donation**
             if ($donationCategory && !empty($row['financial_amount'])) {
                 $existingFinancial = MonthlyFormItem::where([
