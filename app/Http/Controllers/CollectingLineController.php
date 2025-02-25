@@ -34,7 +34,7 @@ class CollectingLineController extends Controller
         $employees = Employee::whereHas(
             'department',
             function ($q) {
-                $q->whereNotIn('name', ['المناديب', 'السائقين']);
+                $q->where('name', 'استمارات وعناوين	');
             }
         )->get();
         $areaGroups = AreaGroup::all();
