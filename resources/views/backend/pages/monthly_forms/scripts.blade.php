@@ -562,68 +562,68 @@
 
 
         $('#importMonthlyFormForm').on('submit', function(e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    let formData = new FormData(this);
+        let formData = new FormData(this);
 
-    // Clear previous messages
-    $('#feedbackMessage').hide().removeClass('alert-success alert-danger').text('');
+        // Clear previous messages
+        $('#feedbackMessage').hide().removeClass('alert-success alert-danger').text('');
 
-    $.ajax({
-        url: "{{ route('monthly-forms.import-forms') }}",
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        beforeSend: function() {
-            $('#importMonthlyFormForm button[type="submit"]').prop('disabled', true);
-        },
-        success: function(response) {
-            if (response.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Import Successful',
-                    text: response.message,
-                });
-
-                if (response.errors && response.errors.length > 0) {
-                    let errorDetails = response.errors.map(error =>
-                        `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
-
+        $.ajax({
+            url: "{{ route('monthly-forms.import-forms') }}",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function() {
+                $('#importMonthlyFormForm button[type="submit"]').prop('disabled', true);
+            },
+            success: function(response) {
+                if (response.success) {
                     Swal.fire({
-                        icon: 'info',
-                        title: 'Some Records Skipped',
-                        html: `<pre>${errorDetails}</pre>`,
-                        customClass: {
-                            popup: 'text-start',
-                        }
+                        icon: 'success',
+                        title: 'Import Successful',
+                        text: response.message,
+                    });
+
+                    if (response.errors && response.errors.length > 0) {
+                        let errorDetails = response.errors.map(error =>
+                            `Row ${error.row}: ${error.errors.join(', ')}`).join('\n');
+
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Some Records Skipped',
+                            html: `<pre>${errorDetails}</pre>`,
+                            customClass: {
+                                popup: 'text-start',
+                            }
+                        });
+                    }
+
+                    setTimeout(() => {
+                        $('#importMonthlyFormModal').modal('hide');
+                        $('#importMonthlyFormForm')[0].reset();
+                    }, 2000);
+
+                    monthlyFormsTable.ajax.reload();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Import Failed',
+                        text: response.message || 'An error occurred.',
                     });
                 }
-
-                setTimeout(() => {
-                    $('#importMonthlyFormModal').modal('hide');
-                    $('#importMonthlyFormForm')[0].reset();
-                }, 2000);
-
-                monthlyFormsTable.ajax.reload();
-            } else {
+            },
+            error: function(xhr) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Import Failed',
-                    text: response.message || 'An error occurred.',
+                    title: 'Unexpected Error',
+                    text: xhr.responseJSON?.error || 'An unexpected error occurred. Please try again later.',
                 });
+            },
+            complete: function() {
+                $('#importMonthlyFormForm button[type="submit"]').prop('disabled', false);
             }
-        },
-        error: function(xhr) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Unexpected Error',
-                text: xhr.responseJSON?.error || 'An unexpected error occurred. Please try again later.',
-            });
-        },
-        complete: function() {
-            $('#importMonthlyFormForm button[type="submit"]').prop('disabled', false);
-        }
     });
 });
 
