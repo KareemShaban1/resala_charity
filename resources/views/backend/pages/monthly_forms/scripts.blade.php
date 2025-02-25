@@ -628,8 +628,8 @@
 });
 
 
-    $('#importMonthlyFormItemForm').on('submit', function(e) {
-        e.preventDefault(); // Prevent the default form submission
+$('#importMonthlyFormItemForm').off('submit').on('submit', function(e) {
+    e.preventDefault(); // Prevent the default form submission
 
         let formData = new FormData(this);
 
