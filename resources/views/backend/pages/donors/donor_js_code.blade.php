@@ -1142,6 +1142,10 @@ function loadAreas(cityId, targetSelect, selectedAreaId = null) {
                         <td>${donor.id}</td>
                         <td>${donor.name}</td>
                         <td>${donor.address}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary" 
+                            onclick="reAssignDonor(${donor.id}, ${donor.parent_id})">{{__('Re-Assign')}}</button>
+                        </td>
                     </tr>
                 `);
             });
@@ -1150,6 +1154,35 @@ function loadAreas(cityId, targetSelect, selectedAreaId = null) {
             console.error("Error fetching children donors:", xhr.responseText);
         }
     });
+}
+
+function reAssignDonor(donorId , parentDonorId) {
+    console.log(donorId , parentDonorId);
+    const payload = {
+        donor_id: donorId,
+        parent_donor_id: parentDonorId,
+        _token: $('meta[name="csrf-token"]').attr('content') // Include CSRF token
+    };
+    $.ajax({
+        url: '/donors-re-assign',  // New endpoint for non-assigned children
+        method: 'POST',
+        data: payload,
+        success: function(response) {
+            if (response.success) {
+                    $('#assignDonorModal').modal('hide');
+                    donorsTable.ajax.reload();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message
+                    });
+                }
+        },
+        error: function(xhr) {
+            console.error("Error fetching non-assigned children donors:", xhr.responseText);
+        }
+    });
+
 }
 
 function addActivity(donorId) {

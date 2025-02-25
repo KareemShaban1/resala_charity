@@ -107,6 +107,7 @@ Route::group(
         Route::post('/donors/import', [DonorController::class, 'importDonors'])->name('donors.import');
         Route::resource('donors', DonorController::class); // Resource route last
         Route::post('/donors-assign', [DonorController::class, 'assignDonors'])->name('donors.assign');
+        Route::post('/donors-re-assign', [DonorController::class, 'reAssignDonors'])->name('donors.reAassign');
         Route::post('/donors-children', [DonorController::class, 'donorChildren'])->name('donors.children');
         Route::post('/donors-not-assigned', [DonorController::class, 'notAssignedDonors'])->name('donors.not-assigned');
         Route::get('/donors-random', [DonorController::class, 'randomDonors'])->name('donors.random');

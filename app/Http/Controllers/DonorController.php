@@ -583,6 +583,27 @@ class DonorController extends Controller
         ]);
     }
 
+    public function reAssignDonors(Request $request)
+    {
+        $request->validate([
+            'parent_donor_id' => 'required|exists:donors,id',
+            'donor_id' => 'required|exists:donors,id',
+        ]);
+        $parentDonor = Donor::where('id', $request->parent_donor_id)->first();
+        $chirdernDonor = Donor::where('id', $request->donor_id)->first();
+
+        if ($parentDonor) {
+            $chirdernDonor->parent_id = null;
+            $chirdernDonor->save();
+        }
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.Donor re assigned successfully.'),
+        ]);
+    }
+
+    
+
     public function donorChildren(Request $request)
     {
         $parentDonor = Donor::where('id', $request->parent_donor_id)->first();

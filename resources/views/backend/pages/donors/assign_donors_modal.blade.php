@@ -22,6 +22,7 @@
                             <th>{{__('ID')}}</th>
                             <th>{{__('Name')}}</th>
                             <th>{{__('Address')}}</th>
+                            <th>{{__('Action')}}</th>
                         </tr>
                     </thead>
                     <tbody id="childrenDonorTableBody">
