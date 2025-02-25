@@ -46,30 +46,42 @@ class MonthlyFormsItemsImport implements ToModel, WithHeadingRow
         return DB::transaction(function () use ($row, $donationCategory) {
             // **Update or create financial donation**
             if ($donationCategory && !empty($row['financial_amount'])) {
-                MonthlyFormItem::updateOrCreate(
-                    [
+                $existingFinancial = MonthlyFormItem::where([
+                    'monthly_form_id' => $row['form_id'],
+                    'donation_category_id' => optional($donationCategory)->id,
+                    'donation_type' => 'financial',
+                ])->first();
+
+                if ($existingFinancial) {
+                    $existingFinancial->update(['amount' => $row['financial_amount']]);
+                } else {
+                    MonthlyFormItem::create([
                         'monthly_form_id' => $row['form_id'],
-                        'donation_category_id' => $donationCategory->id, // Unique check
+                        'donation_category_id' => optional($donationCategory)->id,
                         'donation_type' => 'financial',
-                    ],
-                    [
                         'amount' => $row['financial_amount'],
-                    ]
-                );
+                    ]);
+                }
             }
 
             // **Update or create in-kind donation**
             if (!empty($row['in_kind_item_name']) && !empty($row['in_kind_quantity'])) {
-                MonthlyFormItem::updateOrCreate(
-                    [
+                $existingInKind = MonthlyFormItem::where([
+                    'monthly_form_id' => $row['form_id'],
+                    'item_name' => $row['in_kind_item_name'],
+                    'donation_type' => 'inKind',
+                ])->first();
+
+                if ($existingInKind) {
+                    $existingInKind->update(['amount' => $row['in_kind_quantity']]);
+                } else {
+                    MonthlyFormItem::create([
                         'monthly_form_id' => $row['form_id'],
-                        'item_name' => $row['in_kind_item_name'], // Unique check
+                        'item_name' => $row['in_kind_item_name'],
                         'donation_type' => 'inKind',
-                    ],
-                    [
                         'amount' => $row['in_kind_quantity'],
-                    ]
-                );
+                    ]);
+                }
             }
 
             return null;
