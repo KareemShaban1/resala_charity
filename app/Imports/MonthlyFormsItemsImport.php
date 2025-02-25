@@ -40,54 +40,40 @@ class MonthlyFormsItemsImport implements ToModel, WithHeadingRow
             'in_kind_quantity' => 'nullable|integer|min:1',
         ]);
 
-        Log::info('rows',[ $row]);
-
+        Log::info('Processing row', $row);
 
         if ($validator->fails()) {
+            Log::error('Validation failed', $validator->errors()->toArray());
             return null; // Skip invalid rows
         }
 
         return DB::transaction(function () use ($row, $donationCategory) {
             // **Update or create financial donation**
             if ($donationCategory && !empty($row['financial_amount'])) {
-                $existingFinancial = MonthlyFormItem::where([
-                    'monthly_form_id' => $row['form_id'],
-                    'donation_category_id' => optional($donationCategory)->id,
-                    'donation_type' => 'financial',
-                    'amount' => $row['financial_amount'],
-                ])->first();
-
-                if ($existingFinancial) {
-                    $existingFinancial->update(['amount' => $row['financial_amount']]);
-                } else {
-                    MonthlyFormItem::create([
+                MonthlyFormItem::updateOrCreate(
+                    [
                         'monthly_form_id' => $row['form_id'],
                         'donation_category_id' => optional($donationCategory)->id,
                         'donation_type' => 'financial',
+                    ],
+                    [
                         'amount' => $row['financial_amount'],
-                    ]);
-                }
+                    ]
+                );
             }
 
             // **Update or create in-kind donation**
             if (!empty($row['in_kind_item_name']) && !empty($row['in_kind_quantity'])) {
-                $existingInKind = MonthlyFormItem::where([
-                    'monthly_form_id' => $row['form_id'],
-                    'item_name' => $row['in_kind_item_name'],
-                    'donation_type' => 'inKind',
-                    'amount' => $row['in_kind_quantity'],
-                ])->first();
-
-                if ($existingInKind) {
-                    $existingInKind->update(['amount' => $row['in_kind_quantity']]);
-                } else {
-                    MonthlyFormItem::create([
+                MonthlyFormItem::updateOrCreate(
+                    [
                         'monthly_form_id' => $row['form_id'],
                         'item_name' => $row['in_kind_item_name'],
                         'donation_type' => 'inKind',
+                    ],
+                    [
                         'amount' => $row['in_kind_quantity'],
-                    ]);
-                }
+                    ]
+                );
             }
 
             return null;
