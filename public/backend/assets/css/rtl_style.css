@@ -22386,3 +22386,7 @@ div.table-responsive>div.dataTables_wrapper>div.row>div[class^=col-]:first-child
 #random-donors-table td:nth-child(7) { width: 100px !important; }  /* status */
 #random-donors-table th:nth-child(8),
 #random-donors-table td:nth-child(8) { width: 50px !important; }  /* status */
+#random-donors-table th:nth-child(9),
+#random-donors-table td:nth-child(9) { width: 50px !important; }  /* status */
+#random-donors-table th:nth-child(10),
+#random-donors-table td:nth-child(10) { width: 100px !important; }  /* status */
