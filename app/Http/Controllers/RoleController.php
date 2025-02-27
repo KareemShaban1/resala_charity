@@ -19,7 +19,8 @@ class RoleController extends Controller
     }
     public function data()
 {
-    $roles = Role::with('permissions')->get(); // Include permissions in the query
+    $roles = Role::with('permissions')
+    ->where('name','!=','Super Admin')->get(); // Include permissions in the query
     return DataTables::of($roles)
         ->addColumn('actions', function ($role) {
             $permissions = $role->permissions->pluck('id')->toArray(); // Extract permission IDs
