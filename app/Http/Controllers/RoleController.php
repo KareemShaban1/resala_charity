@@ -26,17 +26,18 @@ class RoleController extends Controller
             $permissionsJson = htmlspecialchars(json_encode($permissions), ENT_QUOTES, 'UTF-8');
             
             $btn = '<div class="d-flex gap-2">';
-            if (auth()->user()->can('update role')) {
+            if (auth()->user()->can('update role' || auth()->user()->isSuperAdmin())) {
                 $btn .= '<a href="javascript:void(0)" onclick="editRole(' . $role->id . ', \'' . $role->name . '\', ' . $permissionsJson . ')" class="btn btn-sm btn-info">
                         <i class="mdi mdi-pencil"></i>
                     </a>';
             }
-            if (auth()->user()->can('delete role')) {
+            if (auth()->user()->can('delete role') || auth()->user()->isSuperAdmin()) {
                 $btn .= '<a href="javascript:void(0)" onclick="deleteRole(' . $role->id . ')" class="btn btn-sm btn-danger">
                         <i class="mdi mdi-trash-can"></i>
                     </a>';
             }
             $btn .= '</div>';
+
         })
         ->addColumn('permissions_count', function ($role) {
             return $role->permissions->count();
