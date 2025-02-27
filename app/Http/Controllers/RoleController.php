@@ -25,18 +25,18 @@ class RoleController extends Controller
             $permissions = $role->permissions->pluck('id')->toArray(); // Extract permission IDs
             $permissionsJson = htmlspecialchars(json_encode($permissions), ENT_QUOTES, 'UTF-8');
             
-            $btn = '<div class="d-flex gap-2">';
-            if (auth()->user()->can('update role' || auth()->user()->isSuperAdmin())) {
-                $btn .= '<a href="javascript:void(0)" onclick="editRole(' . $role->id . ', \'' . $role->name . '\', ' . $permissionsJson . ')" class="btn btn-sm btn-info">
-                        <i class="mdi mdi-pencil"></i>
-                    </a>';
+            $btn = '';
+            if (auth()->user()->can('update role') || auth()->user()->isSuperAdmin()) {
+                $btn .= ' <a href="javascript:void(0)" onclick="editRole(' . $role->id . ', \'' . $role->name . '\', ' . $permissionsJson . ')" class="btn btn-sm btn-info">
+                <i class="mdi mdi-pencil"></i>
+            </a>';
             }
             if (auth()->user()->can('delete role') || auth()->user()->isSuperAdmin()) {
-                $btn .= '<a href="javascript:void(0)" onclick="deleteRole(' . $role->id . ')" class="btn btn-sm btn-danger">
-                        <i class="mdi mdi-trash-can"></i>
-                    </a>';
+                $btn .= ' <a href="javascript:void(0)" onclick="deleteRole(' . $role->id . ')" class="btn btn-sm btn-danger">
+                <i class="mdi mdi-trash-can"></i>
+            </a>';
             }
-            $btn .= '</div>';
+            return $btn;
 
         })
         ->addColumn('permissions_count', function ($role) {
