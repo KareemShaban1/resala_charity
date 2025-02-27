@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CollectingLine;
 use App\Http\Requests\StoreCollectingLineRequest;
 use App\Http\Requests\UpdateCollectingLineRequest;
+use App\Models\Area;
 use App\Models\AreaGroup;
 use App\Models\Donation;
 use App\Models\DonationCategory;
@@ -38,12 +39,13 @@ class CollectingLineController extends Controller
             }
         )->get();
         $areaGroups = AreaGroup::all();
+        $areas = Area::all();
         $donationCategories = DonationCategory::all();
         $donors = Donor::all();
 
         return view(
             'backend.pages.collecting-lines.allCollectingLines',
-            compact('representatives', 'drivers', 'donors', 'employees', 'areaGroups', 'donationCategories')
+            compact('representatives', 'drivers', 'donors', 'employees','areas', 'areaGroups', 'donationCategories')
         );
     }
     /**
@@ -65,12 +67,13 @@ class CollectingLineController extends Controller
             }
         )->get();
         $areaGroups = AreaGroup::all();
+        $areas = Area::all();
         $donationCategories = DonationCategory::all();
         $donors = Donor::all();
 
         return view(
             'backend.pages.collecting-lines.addCollectingLines',
-            compact('representatives', 'drivers', 'donors', 'employees', 'areaGroups', 'donationCategories')
+            compact('representatives', 'drivers', 'donors', 'employees', 'areaGroups', 'areas', 'donationCategories')
         );
     }
 
@@ -262,6 +265,11 @@ class CollectingLineController extends Controller
             if ($request->has('area_group') && $request->area_group != '') {
                 $data->whereHas('donor.area.areaGroups', function ($q) use ($request) {
                     $q->where('area_groups.id', $request->area_group);
+                });
+            }
+            if ($request->has('area') && $request->area != '') {
+                $data->whereHas('donor.area', function ($q) use ($request) {
+                    $q->where('area.id', $request->area);
                 });
             }
 
@@ -610,6 +618,12 @@ class CollectingLineController extends Controller
         if ($request->has('area_group') && $request->area_group != '') {
             $query->whereHas('donor.area.areaGroups', function ($q) use ($request) {
                 $q->where('area_groups.id', $request->area_group);
+            });
+        }
+
+        if ($request->has('area') && $request->area != '') {
+            $query->whereHas('donor.area', function ($q) use ($request) {
+                $q->where('area.id', $request->area);
             });
         }
 

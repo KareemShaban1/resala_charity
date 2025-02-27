@@ -40,8 +40,8 @@
         <div class="col-md-3">
             <label for="area_group" class="form-label">{{__('Area Group')}}</label>
             <select id="area_group" class="form-control">
+            <option value="" readonly>{{__('Select Area Group')}}</option>
                 @foreach($areaGroups as $group)
-                <option value="" readonly>{{__('Select Area Group')}}</option>
                 <option value="{{ $group->id }}">{{ $group->name }}</option>
                 @endforeach
             </select>
