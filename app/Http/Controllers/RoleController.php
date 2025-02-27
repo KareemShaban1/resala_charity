@@ -13,7 +13,7 @@ class RoleController extends Controller
     {
         $this->authorize('view', Role::class);
 
-        $roles = Role::all();
+        $roles = Role::where('name','!=','Super Admin')->get();
         $permissions = Permission::all();
         return view('backend.pages.roles.index', compact('roles', 'permissions'));
     }
@@ -26,12 +26,12 @@ class RoleController extends Controller
             $permissionsJson = htmlspecialchars(json_encode($permissions), ENT_QUOTES, 'UTF-8');
             
             $btn = '';
-            if (auth()->user()->can('update role') || auth()->user()->isSuperAdmin()) {
+            if (auth()->user()->can('update role')) {
                 $btn .= ' <a href="javascript:void(0)" onclick="editRole(' . $role->id . ', \'' . $role->name . '\', ' . $permissionsJson . ')" class="btn btn-sm btn-info">
                 <i class="mdi mdi-pencil"></i>
             </a>';
             }
-            if (auth()->user()->can('delete role') || auth()->user()->isSuperAdmin()) {
+            if (auth()->user()->can('delete role')) {
                 $btn .= ' <a href="javascript:void(0)" onclick="deleteRole(' . $role->id . ')" class="btn btn-sm btn-danger">
                 <i class="mdi mdi-trash-can"></i>
             </a>';
