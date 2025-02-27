@@ -69,13 +69,14 @@ class ActivityLogController extends Controller
                     'App\Models\Notification' => __('Notification'),
                     'App\Models\ActivityLog' => __('Activity Log'),
                     'App\Models\MonthlyFormDonation' => __('Monthly Form Donation'),
-                    'App\Models\ActivityStatus' => __('Activity Status'),
-                    'App\Models\Governorate' => __('Governorate'),
-                    'App\Models\City' => __('City'),
-                    'App\Models\Area' => __('Area'),
+                    'App\Models\ActivityStatus' => __('Activity Statuses'),
+                    'App\Models\Governorate' => __('Governorates'),
+                    'App\Models\City' => __('Cities'),
+                    'App\Models\Area' => __('Areas'),
                     'App\Models\AreaGroup' => __('Area Group'),
                     'App\Models\MonthlyFormItem' => __('Monthly Form Item'),
                     'App\Models\DonationCollecting' => __('Donation Collecting'),
+                    'Spatie\Permission\Models\Role' => __('Roles'),
                     default => $item->model, // Fallback for unexpected values
                 };
             })
