@@ -61,7 +61,7 @@ class User extends Authenticatable
     public function activities()
     {
         return $this->hasMany(DonorActivity::class, 'created_by')
-        ->with('donor', 'callType', 'activityStatus');
+            ->with('donor', 'callType', 'activityStatus');
     }
 
     public function getIsSuperAdminAttribute()
@@ -72,5 +72,10 @@ class User extends Authenticatable
     public function getIsAdminAttribute()
     {
         return $this->hasRole('admin');
+    }
+
+    public function isSuperAdmin()
+    {
+        return $this->roles()->where('name', 'Super Admin')->exists();
     }
 }
