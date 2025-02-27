@@ -32,19 +32,23 @@ class EmployeeController extends BaseController
                 return $item->department->name ?? '';
             })
             ->addColumn('action', function ($item) {
-                return '
-                    <div class="d-flex gap-2">
-                        <a href="javascript:void(0);"  onclick="editEmployee('.$item->id.', \''.$item->name.'\', 
+
+                $btn = '<div class="d-flex gap-2">';
+
+                if(auth()->user()->can('update employee')) {
+                    $btn .= '<a href="javascript:void(0);"  onclick="editEmployee('.$item->id.', \''.$item->name.'\', 
                         '.$item->department_id.',  \''.$item->job_title.'\' )"
                         class="btn btn-sm btn-info">
                             <i class="mdi mdi-square-edit-outline"></i>
-                        </a>
-                        <a href="javascript:void(0);"  onclick="deleteRecord('.$item->id.', \'employees\')"
-                        class="btn btn-sm btn-danger">
+                        </a>';
+                }
+                if(auth()->user()->can('delete employee')) {
+                    $btn .= '<a href="javascript:void(0);"  onclick="deleteRecord('.$item->id.', \'employees\'
+                        )" class="btn btn-sm btn-danger">
                             <i class="mdi mdi-delete"></i>
-                        </a>
-                    </div>
-                ';
+                        </a>';
+                }
+                return $btn . '</div>';
             })
             ->editColumn('created_at', function($item) {
                 return $item->created_at->format('Y-m-d H:i:s');

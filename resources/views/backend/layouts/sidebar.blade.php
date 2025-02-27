@@ -28,6 +28,7 @@
 
               <!-- <li class="side-nav-title side-nav-item">Navigation</li> -->
 
+              @can('view dashboard')
               <li class="side-nav-item">
                   <a href="{{route('dashboard.index')}}" class="side-nav-link">
                       <i class="uil-home-alt"></i>
@@ -37,6 +38,7 @@
                       </span>
                   </a>
               </li>
+              @endcan
 
               @can('backups.index')
               <li class="side-nav-item">
@@ -49,6 +51,9 @@
                   </a>
               </li>
               @endcan
+
+
+              @if(Gate::any(['view events', 'view calendar']))
 
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarEventsReport" aria-expanded="false" aria-controls="sidebarEventsReport" class="side-nav-link">
@@ -76,6 +81,7 @@
                       </ul>
                   </div>
               </li>
+              @endcan
 
               @if(Gate::any(['view users', 'view roles', 'view activity logs']))
               <li class="side-nav-item">
@@ -198,6 +204,7 @@
               </li>
               @endcan
 
+              @if(Gate::any(['view call types','view activity statuses','view donors','view random donors']))
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarDonors" aria-expanded="false" aria-controls="sidebarDonors" class="side-nav-link">
                       <i class="uil-users-alt"></i>
@@ -214,11 +221,13 @@
                           </li>
                           @endcan
 
+                          @can('view activity statuses')
                           <li>
                               <a href="{{route('activity-statuses.index')}}">
                                   <span> {{__('Activity Statuses')}} </span>
                               </a>
                           </li>
+                          @endcan
 
                           @can('view donors')
                           <li>
@@ -227,7 +236,7 @@
                               </a>
                           </li>
                           @endcan
-                          @can('view donors')
+                          @can('view random donors')
                           <li>
                               <a href="{{route('donors.random')}}">
                                   <span> {{__('Random Donors')}} </span>
@@ -238,7 +247,9 @@
                       </ul>
                   </div>
               </li>
+              @endcan
 
+              @if(Gate::any(['view monthly forms','view cancelled monthly forms']))
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarMonthlyForms" aria-expanded="false" aria-controls="sidebarMonthlyForms" class="side-nav-link">
                       <i class="uil-money-withdraw"></i>
@@ -255,7 +266,7 @@
                           </li>
                           @endcan
 
-                          @can('view monthly forms')
+                          @can('view cancelled monthly forms')
                           <li>
                               <a href="{{route('monthly-forms.cancelled')}}">
                                   <span> {{__('Cancelled Monthly Forms')}} </span>
@@ -266,6 +277,9 @@
                       </ul>
                   </div>
               </li>
+              @endcan
+
+              @if(Gate::any(['view donation categories','view donations' ,'view monthly donations','view gathered donations']))
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarDonations" aria-expanded="false" aria-controls="sidebarDonations" class="side-nav-link">
                       <i class="uil-money-withdraw"></i>
@@ -292,7 +306,7 @@
                           </li>
                           @endcan
 
-                          @can('view donations')
+                          @can('view monthly donations')
                           <li>
                               <a href="{{route('donations.monthly-donations')}}">
                                   <span> {{__('Monthly Donations')}} </span>
@@ -300,7 +314,7 @@
                           </li>
                           @endcan
 
-                          @can('view donations')
+                          @can('view gathered donations')
                           <li>
                               <a href="{{route('donations.gathered-donations')}}">
                                   <span> {{__('Gathered Donations')}} </span>
@@ -308,13 +322,12 @@
                           </li>
                           @endcan
 
-
-
-
                       </ul>
                   </div>
               </li>
+              @endcan
 
+              @if(Gate::any(['view add collecting lines','view collecting lines']))
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarCollectingLines" aria-expanded="false" aria-controls="sidebarCollectingLines" class="side-nav-link">
                       <i class="uil-money-withdraw"></i>
@@ -323,7 +336,7 @@
                   </a>
                   <div class="collapse" id="sidebarCollectingLines">
                       <ul class="side-nav-second-level">
-                          @can('view collecting lines')
+                          @can('view add collecting lines')
                           <li>
                               <a href="{{route('collecting-lines.addCollectingLines')}}">
                                   <span> {{__('Add Collecting Lines')}} </span>
@@ -340,8 +353,11 @@
                       </ul>
                   </div>
               </li>
+              @endcan
 
 
+
+              @if(Gate::any(['view monthly forms reports','view donor activities reports','view donor random calls reports']))
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarMonthlyFormsReport" aria-expanded="false" aria-controls="sidebarMonthlyFormsReport" class="side-nav-link">
                       <i class="uil-money-withdraw"></i>
@@ -350,25 +366,32 @@
                   </a>
                   <div class="collapse" id="sidebarMonthlyFormsReport">
                       <ul class="side-nav-second-level">
+                          @can('view monthly forms reports')
                           <li>
                               <a href="{{route('monthly-forms-report.index')}}">
                                   <span> {{__('Monthly Forms Reports')}} </span>
                               </a>
                           </li>
+                          @endcan
+                          @can('view donor activities reports')
                           <li>
                               <a href="{{route('donor-report.donorActivities')}}">
                                   <span> {{__('Donor Activities Reports')}} </span>
                               </a>
                           </li>
+                          @endcan
+                          @can('view donor random calls reports')
                           <li>
                               <a href="{{route('donor-report.donor-random-calls')}}">
                                   <span> {{__('Donor Random Calls Reports')}} </span>
                               </a>
                           </li>
+                          @endcan
 
                       </ul>
                   </div>
               </li>
+              @endcan
 
           </ul>
 

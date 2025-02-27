@@ -68,6 +68,10 @@ class RolesAndPermissionsSeeder extends Seeder
             ['name'=> 'update donor','guard_name' => 'web'],
             ['name'=> 'delete donor','guard_name' => 'web'],
             ['name'=> 'assign donor','guard_name' => 'web'],
+            ['name'=> 'view random donors','guard_name' => 'web'],
+            ['name'=> 'create random donor','guard_name' => 'web'],
+            ['name'=> 'update random donor','guard_name' => 'web'],
+            ['name'=> 'delete random donor','guard_name' => 'web'],
 
             ['name'=> 'view donation categories','guard_name' => 'web'],
             ['name'=> 'create donation category','guard_name' => 'web'],
@@ -79,7 +83,7 @@ class RolesAndPermissionsSeeder extends Seeder
             ['name'=> 'update monthly form','guard_name' => 'web'],
             ['name'=> 'delete monthly form','guard_name' => 'web'],
 
-            ['name'=> 'view monthly forms','guard_name' => 'web'],
+            ['name'=> 'view cancelled monthly forms','guard_name' => 'web'],
             ['name'=> 'create cancelled monthly form','guard_name' => 'web'],
             ['name'=> 'update cancelled monthly form','guard_name' => 'web'],
             ['name'=> 'delete cancelled monthly form','guard_name' => 'web'],
@@ -99,6 +103,11 @@ class RolesAndPermissionsSeeder extends Seeder
             ['name'=> 'update gathered donation','guard_name' => 'web'],
             ['name'=> 'delete gathered donation','guard_name' => 'web'],
             
+            ['name'=> 'view add collecting lines','guard_name' => 'web'],
+            ['name'=> 'create add collecting line','guard_name' => 'web'],
+            ['name'=> 'update add collecting line','guard_name' => 'web'],
+            ['name'=> 'delete add collecting line','guard_name' => 'web'],
+
             ['name'=> 'view collecting lines','guard_name' => 'web'],
             ['name'=> 'create collecting line','guard_name' => 'web'],
             ['name'=> 'update collecting line','guard_name' => 'web'],
@@ -119,6 +128,11 @@ class RolesAndPermissionsSeeder extends Seeder
             ['name'=> 'update activity type','guard_name' => 'web'],
             ['name'=> 'delete activity type','guard_name' => 'web'],
 
+            ['name'=> 'view activity statuses','guard_name' => 'web'],
+            ['name'=> 'create activity status','guard_name' => 'web'],
+            ['name'=> 'update activity status','guard_name' => 'web'],
+            ['name'=> 'delete activity status','guard_name' => 'web'],
+
             ['name'=> 'view activity-logs','guard_name' => 'web'],
             ['name'=> 'create activity-log','guard_name' => 'web'],
             ['name'=> 'update activity-log','guard_name' => 'web'],
@@ -138,6 +152,7 @@ class RolesAndPermissionsSeeder extends Seeder
             ['name'=> 'view monthly forms reports','guard_name' => 'web'],
             ['name'=> 'view donor activities reports','guard_name' => 'web'],
             ['name'=> 'view random calls reports','guard_name' => 'web'],
+            ['name'=> 'view dashboard','guard_name' => 'web'],
 
         ];
         // Create permissions

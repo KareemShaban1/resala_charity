@@ -28,18 +28,29 @@ class DonationCategoryController extends BaseController
         return DataTables::of($query)
             ->addColumn('action', function ($item) {
                 $itemJson = htmlspecialchars(json_encode($item), ENT_QUOTES, 'UTF-8');
-                return '
-                    <div class="d-flex gap-2">
+                
+                $editButton = '';
+                $deleteButton = '';
+                if (auth()->user()->can('update donation category')) {
+                    $editButton = '
                         <a href="javascript:void(0);" onclick="editDonationCategory(' . $itemJson . ')"
                         class="btn btn-sm btn-info">
                             <i class="mdi mdi-square-edit-outline"></i>
                         </a>
+                    ';
+                    
+                }
+
+                if (auth()->user()->can('delete donation category')) {
+                    $deleteButton = '
                         <a href="javascript:void(0);" onclick="deleteDonationCategory(' . $item->id . ', \'donation_categories\')"
                         class="btn btn-sm btn-danger">
                             <i class="mdi mdi-delete"></i>
                         </a>
-                    </div>
-                ';
+                    ';
+                }
+
+                return '<div class="d-flex gap-2">' . $editButton . $deleteButton . '</div>';
             })
             ->editColumn('created_at', function($item) {
                 return $item->created_at->format('Y-m-d H:i:s');

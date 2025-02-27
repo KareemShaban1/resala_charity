@@ -57,15 +57,16 @@ class DonorController extends Controller
                 $query->with('activityStatus')->latest();
             }
         ])
-        ->selectRaw('donors.*, 
+            ->selectRaw(
+                'donors.*, 
             CASE WHEN donors.parent_id IS NOT NULL THEN donors.parent_id ELSE donors.id END as parent_donor_group_id,
             CASE WHEN donors.parent_id IS NOT NULL THEN 1 ELSE 0 END as is_child_order,
             (SELECT COUNT(*) FROM donor_activities WHERE donor_activities.donor_id = donors.id) as activities_count'
-        )
-        ->orderBy('parent_donor_group_id', 'asc')
-        ->orderBy('is_child_order', 'asc')
-        ->orderBy('donors.created_at', 'desc');
-        
+            )
+            ->orderBy('parent_donor_group_id', 'asc')
+            ->orderBy('is_child_order', 'asc')
+            ->orderBy('donors.created_at', 'desc');
+
 
 
 
@@ -122,7 +123,7 @@ class DonorController extends Controller
                 $query->whereBetween('donors.created_at', [now()->startOfWeek(), now()->endOfWeek()]);
             } elseif ($dateFilter === 'month') {
                 $query->whereBetween('donors.created_at', [now()->startOfMonth(), now()->endOfMonth()]);
-            }elseif ($columnName === 'last_activity_status') {
+            } elseif ($columnName === 'last_activity_status') {
                 // Filter based on the donor's last activity status name
                 $query->whereHas('activities', function ($q) use ($searchValue) {
                     $q->whereHas('activityStatus', function ($q2) use ($searchValue) {
@@ -166,24 +167,52 @@ class DonorController extends Controller
                     '</a>';
             })
             ->addColumn('action', function ($donor) {
-                return '
-                    <a href="javascript:void(0)" onclick="donorDetails(' . $donor->id . ')" class="btn btn-sm btn-light">
-                        <i class="mdi mdi-eye"></i>
-                    </a>
-                    <a href="javascript:void(0)" onclick="editDonor(' . $donor->id . ')" class="btn btn-sm btn-info">
-                        <i class="mdi mdi-pencil"></i>
-                    </a>
-                    <a href="javascript:void(0)" onclick="deleteDonor(' . $donor->id . ')" class="btn btn-sm btn-danger">
-                        <i class="mdi mdi-trash-can"></i>
-                    </a>'
-                    . ($donor->donor_type === 'monthly' ? '
-                    <a href="javascript:void(0)" onclick="assignDonor(' . $donor->id . ')" class="btn btn-sm btn-success">
-                        <i class="mdi mdi-account-plus"></i>
-                    </a>' : '') . '
-                    <a href="javascript:void(0)" onclick="addActivity(' . $donor->id . ')" class="btn btn-sm btn-dark">
-                        <i class="uil-outgoing-call"></i>
-                    </a>';
+                $btn = '<div class="d-flex gap-2">';
+
+                // View Donor Button (assuming all users can view details)
+                if (auth()->user()->can('view donors')) {
+                    $btn .= '<a href="javascript:void(0)" onclick="donorDetails(' . $donor->id . ')" 
+                         class="btn btn-sm btn-light">
+                            <i class="mdi mdi-eye"></i>
+                        </a>';
+                }
+
+                // Edit Donor Button (only for users with 'update donor' permission)
+                if (auth()->user()->can('update donor')) {
+                    $btn .= '<a href="javascript:void(0)" onclick="editDonor(' . $donor->id . ')" 
+                             class="btn btn-sm btn-info">
+                                <i class="mdi mdi-pencil"></i>
+                            </a>';
+                }
+
+                // Delete Donor Button (only for users with 'delete donor' permission)
+                if (auth()->user()->can('delete donor')) {
+                    $btn .= '<a href="javascript:void(0)" onclick="deleteDonor(' . $donor->id . ')" 
+                             class="btn btn-sm btn-danger">
+                                <i class="mdi mdi-trash-can"></i>
+                            </a>';
+                }
+
+                // Assign Donor Button (only for 'monthly' donors & if user has 'assign donor' permission)
+                if ($donor->donor_type === 'monthly' && auth()->user()->can('assign donor')) {
+                    $btn .= '<a href="javascript:void(0)" onclick="assignDonor(' . $donor->id . ')" 
+                             class="btn btn-sm btn-success">
+                                <i class="mdi mdi-account-plus"></i>
+                            </a>';
+                }
+
+                // Add Activity Button (only if user has 'add activity' permission)
+                if (auth()->user()->can('create activity')) {
+                    $btn .= '<a href="javascript:void(0)" onclick="addActivity(' . $donor->id . ')" 
+                             class="btn btn-sm btn-dark">
+                                <i class="uil-outgoing-call"></i>
+                            </a>';
+                }
+
+                $btn .= '</div>';
+                return $btn;
             })
+
 
             ->editColumn('active', function ($donor) {
                 return $donor->active ?
@@ -230,10 +259,10 @@ class DonorController extends Controller
             ->addColumn('last_activity_status', function ($donor) {
                 $lastActivity = $donor->activities->first(); // Get the most recent activity
                 $status = $lastActivity?->activityStatus->name;
-            
+
                 return $status ? '<span class="badge bg-primary">' . ucfirst($status) . '</span>'
-                : '<span class="badge bg-secondary">' . __("No Activity") . '</span>';
-            })            
+                    : '<span class="badge bg-secondary">' . __("No Activity") . '</span>';
+            })
             ->rawColumns(['active', 'action', 'name', 'has_activities', 'last_activity_status'])
             ->make(true);
     }
@@ -602,7 +631,7 @@ class DonorController extends Controller
         ]);
     }
 
-    
+
 
     public function donorChildren(Request $request)
     {

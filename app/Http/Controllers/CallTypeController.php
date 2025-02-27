@@ -25,18 +25,24 @@ class CallTypeController extends BaseController
         
         return DataTables::of($query)
             ->addColumn('action', function ($item) {
-                return '
-                    <div class="d-flex gap-2">
-                        <a href="javascript:void(0);" onclick="editCallType('.$item->id.', \''.$item->name.'\')"
-                        class="btn btn-sm btn-info">
-                            <i class="mdi mdi-square-edit-outline"></i>
-                        </a>
-                        <a href="javascript:void(0);" onclick="deleteRecord('.$item->id.', \'call-types\')"
-                        class="btn btn-sm btn-danger">
-                            <i class="mdi mdi-delete"></i>
-                        </a>
-                    </div>
-                ';
+                $editButton = '';
+                $deleteButton = '';
+
+                if (auth()->user()->can('update call type')) {
+                    $editButton = '<a href="javascript:void(0);" onclick="editCallType('.$item->id.', \''.$item->name.'\')"
+                                    class="btn btn-sm btn-info">
+                                    <i class="mdi mdi-square-edit-outline"></i>
+                                </a>';
+                }
+
+                if (auth()->user()->can('delete call type')) {
+                    $deleteButton = '<a href="javascript:void(0);" onclick="deleteRecord('.$item->id.', \'call-types\')"
+                                    class="btn btn-sm btn-danger">
+                                    <i class="mdi mdi-delete"></i>
+                                </a>';
+                }
+
+                return '<div class="d-flex gap-2">' . $editButton . $deleteButton . '</div>';
             })
             ->editColumn('created_at', function($item) {
                 return $item->created_at->format('Y-m-d H:i:s');

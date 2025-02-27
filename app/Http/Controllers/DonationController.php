@@ -158,26 +158,43 @@ class DonationController extends Controller
                 $query->where('donor_phones.phone_number', 'LIKE', "%{$keyword}%");
             })
             ->addColumn('action', function ($item) {
-                return '
-                <div class="d-flex gap-2">
-                 <a href="javascript:void(0);" onclick="donationDetails(' . $item->id . ')"
-                    class="btn btn-sm btn-light">
-                        <i class="mdi mdi-eye"></i>
-                    </a>
-                    <a href="javascript:void(0);" onclick="editDonation(' . $item->id . ')"
-                    class="btn btn-sm btn-info">
-                        <i class="mdi mdi-square-edit-outline"></i>
-                    </a>
-                    <a href="javascript:void(0);" onclick="deleteRecord(' . $item->id . ', \'donations\')"
-                    class="btn btn-sm btn-danger">
-                        <i class="mdi mdi-delete"></i>
-                    </a>
-                   ' . (!empty($item->donor) ? '<a href="javascript:void(0)" onclick="addActivity(' . $item->donor->id . ')" class="btn btn-sm btn-dark">
-                <i class="uil-outgoing-call"></i>
-            </a>' : '') . '
-                </div>
-            ';
+                $btn = '<div class="d-flex gap-2">';
+            
+                if (auth()->user()->can('view donations')) {
+                $btn .= '<a href="javascript:void(0);" onclick="donationDetails(' . $item->id . ')" 
+                         class="btn btn-sm btn-light">
+                            <i class="mdi mdi-eye"></i>
+                        </a>';
+                }        
+            
+                // Edit Donation Button (only for users with 'update donation' permission)
+                if (auth()->user()->can('update donation')) {
+                    $btn .= '<a href="javascript:void(0);" onclick="editDonation(' . $item->id . ')" 
+                             class="btn btn-sm btn-info">
+                                <i class="mdi mdi-square-edit-outline"></i>
+                            </a>';
+                }
+            
+                // Delete Donation Button (only for users with 'delete donation' permission)
+                if (auth()->user()->can('delete donation')) {
+                    $btn .= '<a href="javascript:void(0);" onclick="deleteRecord(' . $item->id . ', \'donations\')" 
+                             class="btn btn-sm btn-danger">
+                                <i class="mdi mdi-delete"></i>
+                            </a>';
+                }
+            
+                // Add Activity Button (only if donor exists & user has 'add activity' permission)
+                if (!empty($item->donor) && auth()->user()->can('create activity')) {
+                    $btn .= '<a href="javascript:void(0);" onclick="addActivity(' . $item->donor->id . ')" 
+                             class="btn btn-sm btn-dark">
+                                <i class="uil-outgoing-call"></i>
+                            </a>';
+                }
+            
+                $btn .= '</div>';
+                return $btn;
             })
+            
             ->addColumn('name', function ($item) {
                 return $item->donor 
                 ? '<a href="' . route('donor-history.show', [$item->donor->id]) . '" class="text-info">'

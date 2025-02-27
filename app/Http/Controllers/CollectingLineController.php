@@ -126,18 +126,37 @@ class CollectingLineController extends Controller
                     return $row->employee->name;
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<button class="edit-btn btn btn-sm btn-primary" 
-                    data-id="' . $row->id .
-                        '" data-area-group-id="' . $row->area_group_id .
-                        '" data-representative-id="' . $row->representative_id .
-                        '" data-driver-id="' . $row->driver_id .
-                        '" data-employee-id="' . $row->employee_id .
-                        '" data-collecting-date="' . $row->collecting_date . '">' . __('Edit') . '</button>';
-                    $btn .= ' <button class="delete-btn btn btn-sm btn-danger" data-id="' . $row->id . '">' . __('Delete') . '</button>';
-                    $btn .= '<button class="btn btn-sm btn-info view-donations-btn" data-id="' . $row->id . '">' . __('View Donations') . '</button>';
-                    $btn .= ' <a href="' . route('collecting-lines.export-pdf', ['collecting_line_id' => $row->id]) . '" class="btn btn-sm btn-info">' . __('View Collecting Line') . '</a>';
+                    $btn = '';
+                
+                    // Edit Button (only for users with 'update collecting line' permission)
+                    if (auth()->user()->can('update collecting line')) {
+                        $btn .= '<button class="edit-btn btn btn-sm btn-primary" 
+                                 data-id="' . $row->id . '"
+                                 data-area-group-id="' . $row->area_group_id . '"
+                                 data-representative-id="' . $row->representative_id . '"
+                                 data-driver-id="' . $row->driver_id . '"
+                                 data-employee-id="' . $row->employee_id . '"
+                                 data-collecting-date="' . $row->collecting_date . '">' . __('Edit') . '</button>';
+                    }
+                
+                    // Delete Button (only for users with 'delete collecting line' permission)
+                    if (auth()->user()->can('delete collecting line')) {
+                        $btn .= ' <button class="delete-btn btn btn-sm btn-danger" data-id="' . $row->id . '">' . __('Delete') . '</button>';
+                    }
+                
+                    // View Donations Button (only for users with 'view donations' permission)
+                    if (auth()->user()->can('view donations')) {
+                        $btn .= ' <button class="btn btn-sm btn-info view-donations-btn" data-id="' . $row->id . '">' . __('View Donations') . '</button>';
+                    }
+                
+                    // View Collecting Line Button (only for users with 'view collecting line' permission)
+                    if (auth()->user()->can('view collecting lines')) {
+                        $btn .= ' <a href="' . route('collecting-lines.export-pdf', ['collecting_line_id' => $row->id]) . '" 
+                                  class="btn btn-sm btn-info">' . __('View Collecting Line') . '</a>';
+                    }
+                
                     return $btn;
-                })
+                })                
                 ->rawColumns(['action'])
                 ->make(true);
         }

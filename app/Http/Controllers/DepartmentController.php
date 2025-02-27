@@ -29,18 +29,29 @@ class DepartmentController extends BaseController
         
         return DataTables::of($query)
             ->addColumn('action', function ($item) {
-                return '
-                    <div class="d-flex gap-2">
+                $editButton = '';
+                $deleteButton = '';
+
+                if (auth()->user()->can('update department')) {
+                    $editButton = '
                         <a href="javascript:void(0);" onclick="editDepartment('.$item->id.', \''.$item->name.'\')"
                         class="btn btn-sm btn-info">
                             <i class="mdi mdi-square-edit-outline"></i>
                         </a>
+                    ';
+                }
+
+                if (auth()->user()->can('delete department')) {
+                    $deleteButton = '
                         <a href="javascript:void(0);" onclick="deleteRecord('.$item->id.', \'departments\')"
                         class="btn btn-sm btn-danger">
                             <i class="mdi mdi-delete"></i>
                         </a>
-                    </div>
-                ';
+                    ';
+                }
+
+                return '<div class="d-flex gap-2">' . $editButton . $deleteButton . '</div>';
+
             })
             ->editColumn('created_at', function($item) {
                 return $item->created_at->format('Y-m-d H:i:s');

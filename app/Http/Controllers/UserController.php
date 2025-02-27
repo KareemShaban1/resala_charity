@@ -36,13 +36,22 @@ class UserController extends Controller
                 return '<a href="' . route('users.details', $user->id) . '">' . $user->name . '</a>';
             })
             ->addColumn('action', function ($user) {
-                return '
-                    <button onclick="editUser(' . $user->id . ')" class="btn btn-sm btn-info">
+                $btn = '<div class="d-flex gap-2">';
+                if (auth()->user()->can('update user')) {
+                    $btn .= '<button onclick="editUser(' . $user->id . ')" class="btn btn-sm btn-info">
                         <i class="mdi mdi-pencil"></i>
-                    </button>
-                    <button onclick="deleteUser(' . $user->id . ')" class="btn btn-sm btn-danger">
+                    </button>';
+                }
+
+                if (auth()->user()->can('delete user')) {
+                    $btn .= '<button onclick="deleteUser(' . $user->id . ')" class="btn btn-sm btn-danger">
                         <i class="mdi mdi-trash-can"></i>
                     </button>';
+                }
+
+                $btn .= '</div>';
+
+                return $btn;
             })
             ->addColumn('roles', function ($user) {
                 $roles = $user->roles->pluck('name'); // Get roles as an array

@@ -23,18 +23,24 @@ class GovernorateController extends BaseController
         
         return DataTables::of($query)
             ->addColumn('action', function ($item) {
-                return '
-                    <div class="d-flex gap-2">
-                        <a href="javascript:void(0);" onclick="editGovernorate('.$item->id.', \''.$item->name.'\')"
-                        class="btn btn-sm btn-info">
-                            <i class="mdi mdi-square-edit-outline"></i>
-                        </a>
-                        <a href="javascript:void(0);" onclick="deleteRecord('.$item->id.', \'governorates\')"
-                        class="btn btn-sm btn-danger">
-                            <i class="mdi mdi-delete"></i>
-                        </a>
-                    </div>
-                ';
+
+                $btn = '<div class="d-flex gap-2">';
+
+                if (auth()->user()->can('update governorate')) {
+                    $btn .= '<a href="javascript:void(0);" onclick="editGovernorate('.$item->id.', \''.$item->name.'\')"
+                            class="btn btn-sm btn-info">
+                                <i class="mdi mdi-square-edit-outline"></i>
+                            </a>';
+                }
+
+                if (auth()->user()->can('delete governorate')) {
+                    $btn .= '<a href="javascript:void(0);" onclick="deleteRecord('.$item->id.', \'governorates\')"
+                            class="btn btn-sm btn-danger">
+                                <i class="mdi mdi-delete"></i>
+                            </a>';
+                }
+
+               return $btn . '</div>';
             })
             ->editColumn('created_at', function($item) {
                 return $item->created_at->format('Y-m-d H:i:s');

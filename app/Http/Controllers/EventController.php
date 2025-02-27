@@ -32,11 +32,22 @@ class EventController extends Controller
         $events = Event::where('created_by', auth()->user()->id)->get();
         return DataTables::of($events)
             ->addColumn('actions', function ($event) {
-                return '
-                <div class="btn-group">
-                   <button class="btn btn-primary btn-sm edit-button" data-id="' . $event->id . '">Edit</button>
-                    <button class="btn btn-danger btn-sm delete-button" data-id="' . $event->id . '">Delete</button>
-                </div>';
+
+                $btn = '<div class="d-flex gap-2">';
+                if(auth()->user()->can('update event')) {
+                    $btn .= '<a href="javascript:void(0);"  onclick="editEvent('.$event->id.', \''.$event->name.'\')"
+                                class="btn btn-sm btn-info">
+                                <i class="mdi mdi-square-edit-outline"></i>
+                            </a>';
+                    
+                }
+                if(auth()->user()->can('delete event')) {
+                    $btn .= '<a href="javascript:void(0);"  onclick="deleteRecord('.$event->id.', \'events\')"
+                                class="btn btn-sm btn-danger">
+                                <i class="mdi mdi-delete"></i>
+                            </a>';
+                }
+                return $btn . '</div>';
             })
             ->rawColumns(['actions'])
             ->make(true);

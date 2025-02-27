@@ -28,18 +28,25 @@ class AreaGroupController extends Controller
                 return implode(', ', $item->areas->pluck('name')->toArray());
             })
             ->addColumn('action', function ($item) {
-                return '
-                    <div class="d-flex gap-2">
-                        <a href="javascript:void(0);" onclick="editAreaGroup(' . $item->id . ', \'' . $item->name . '\', ' . $item->city_id . ')"
-                        class="btn btn-sm btn-info">
-                            <i class="mdi mdi-square-edit-outline"></i>
-                        </a>
-                        <a href="javascript:void(0);" onclick="deleteRecord(' . $item->id . ', \'areas\')"
-                        class="btn btn-sm btn-danger">
-                            <i class="mdi mdi-delete"></i>
-                        </a>
-                    </div>
-                ';
+                $editButton = '';
+                $deleteButton = '';
+
+                if (auth()->user()->can('update areas group')) {
+                    $editButton = '<a href="javascript:void(0);" onclick="editAreaGroup(' . $item->id . ', \'' . $item->name . '\', ' . $item->city_id . ')" 
+                                   class="btn btn-sm btn-info">
+                                   <i class="mdi mdi-square-edit-outline"></i>
+                               </a>';
+                }
+
+                if (auth()->user()->can('delete areas group')) {
+                    $deleteButton = '<a href="javascript:void(0);" onclick="deleteRecord(' . $item->id . ', \'area-groups\')"
+                                   class="btn btn-sm btn-danger">
+                                   <i class="mdi mdi-delete"></i>
+                               </a>';
+                }
+
+
+                return '<div class="d-flex gap-2">' . $editButton . $deleteButton . '</div>';
             })
             ->rawColumns(['action'])
             ->make(true);

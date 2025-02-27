@@ -179,22 +179,30 @@ class MonthlyFormController extends Controller
                 $query->where('donor_phones.phone_number', 'LIKE', "%{$keyword}%");
             })
             ->addColumn('action', function ($item) {
-                return '
-                <div class="d-flex gap-2">
-                 <a href="javascript:void(0);" onclick="monthlyFormDetails(' . $item->id . ')"
+                $btn = '<div class="d-flex gap-2">';
+
+                if (auth()->user()->can('view monthly forms')) {
+                    $btn .= '<a href="javascript:void(0);" onclick="monthlyFormDetails(' . $item->id . ')"
                     class="btn btn-sm btn-light">
                         <i class="mdi mdi-eye"></i>
-                    </a>
-                    <a href="javascript:void(0);" onclick="editMonthlyForm(' . $item->id . ')"
+                    </a>';
+                }
+
+                if (auth()->user()->can('update monthly form')) {
+                    $btn .= '<a href="javascript:void(0);" onclick="editMonthlyForm(' . $item->id . ')"
                     class="btn btn-sm btn-info">
                         <i class="mdi mdi-square-edit-outline"></i>
-                    </a>
-                    <a href="javascript:void(0);" onclick="deleteRecord(' . $item->id . ', \'monthly-forms\')"
+                    </a>';
+                }
+
+                if (auth()->user()->can('delete monthly form')) {
+                    $btn .= '<a href="javascript:void(0);" onclick="deleteRecord(' . $item->id . ', \'monthly-forms\')"
                     class="btn btn-sm btn-danger">
                         <i class="mdi mdi-delete"></i>
-                    </a>
-                </div>
-            ';
+                    </a>';
+                }
+
+                return $btn . '</div>';
             })
             ->addColumn('name', function ($item) {
                 return $item->donor->name ?? '';

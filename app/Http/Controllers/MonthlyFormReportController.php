@@ -115,10 +115,6 @@ class MonthlyFormReportController extends Controller
         });
 
 
-
-
-
-
         return view('backend.pages.reports.monthly-forms.index', compact(
             'allMonthlyFormsCount',
             'allMonthlyFormsAmount',
