@@ -36,7 +36,3 @@
     </tbody>
 </table>
 
-<!-- Pagination Links -->
-<div class="d-flex justify-content-center mt-3">
-    {{ $donorsWithForms->links() }}
-</div>
