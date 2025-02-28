@@ -55,5 +55,8 @@ class MonthlyForm extends Model
         ->withPivot('donation_date', 'month')
         ->withTimestamps();
     }
+    public function followUpDepartment(){
+        return $this->belongsTo(Department::class, 'follow_up_department_id');
+    }
 }
 

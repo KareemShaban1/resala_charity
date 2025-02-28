@@ -67,6 +67,7 @@ class Donor extends Model
     public function department(){
         return $this->belongsTo(Department::class);
     }
+
     public function childrenDonors(){
         return $this->hasMany(Donor::class,'parent_id');
     }

@@ -94,7 +94,7 @@ class MonthlyFormReportController extends Controller
 
         $donorsWithForms = Donor::whereHas('monthlyForms')
             ->with(['phones', 'monthlyForms' => function ($query) use ($fromDate, $toDate, $monthYear) {
-                $query->with(['donations' => function ($donationQuery) use ($fromDate, $toDate, $monthYear) {
+                $query->with(['followUpDepartment','donations' => function ($donationQuery) use ($fromDate, $toDate, $monthYear) {
                     $donationQuery->whereHas('collectingDonation'); // Ensures donation is collected
 
                     // Apply Date Filters on Donations
@@ -107,6 +107,7 @@ class MonthlyFormReportController extends Controller
                     }
                 }]);
             }])->get();
+
 
         // Add a collected_status attribute
         $donorsWithForms->transform(function ($donor) {

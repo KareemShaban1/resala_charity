@@ -670,13 +670,13 @@ class CollectingLineController extends Controller
         ';
             })
             ->addColumn('name', function ($item) {
-                return $item->donor->name;
+                return $item->donor->name ?? '';
             })
             ->addColumn('area', function ($item) {
-                return $item->donor->area->name;
+                return $item->donor->area->name ?? '';
             })
             ->addColumn('address', function ($item) {
-                return $item->donor->address;
+                return $item->donor->address ?? '';
             })
             ->addColumn('monthly_donation_day', function ($item) {
                 return $item->donor?->monthly_donation_day ?? 0;
@@ -684,7 +684,7 @@ class CollectingLineController extends Controller
             ->addColumn('phones', function ($item) {
                 return $item->donor?->phones->isNotEmpty() ?
                     $item->donor->phones->map(function ($phone) {
-                        return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
+                        return $phone->phone_number;
                     })->implode(', ') : 'N/A';
             })
             ->addColumn('collecting_donation_way', function ($item) {
