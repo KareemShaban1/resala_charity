@@ -106,7 +106,8 @@ class MonthlyFormReportController extends Controller
                         $donationQuery->whereBetween('date', [$fromDate, $toDate]);
                     }
                 }]);
-            }])->get();
+            }])->paginate(10); // Paginate with 10 records per page
+            ;
 
 
         // Add a collected_status attribute

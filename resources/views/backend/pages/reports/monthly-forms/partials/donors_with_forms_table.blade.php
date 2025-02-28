@@ -21,7 +21,7 @@
             </td>
             <td>
                 @foreach ($donor->phones as $phone)
-                {{ $phone->phone_number }}
+                {{ $phone->phone_number }}  ---
                 @endforeach
             </td>
             <td>
@@ -35,3 +35,8 @@
         @endforeach
     </tbody>
 </table>
+
+<!-- Pagination Links -->
+<div class="d-flex justify-content-center mt-3">
+    {{ $donorsWithForms->links() }}
+</div>
