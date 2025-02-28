@@ -13,7 +13,7 @@
 
         <tr>
             <td>{{ $donor->name }}</td>
-            <td>{{ $donor->area->name }}</td>
+            <td>{{ $donor->area?->name }}</td>
             <td>
                 @foreach ($donor->monthlyForms as $monthlyForm)
                 {{ $monthlyForm->followUpDepartment?->name ?? '' }}
