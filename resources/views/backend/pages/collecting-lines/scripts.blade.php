@@ -108,6 +108,8 @@
                     d.start_date = $('#start-date').val();
                     d.end_date = $('#end-date').val();
                     d.area_group = $('#area_group').val();
+                    d.area = $('#area').val();
+
                 }
             },
             columns: [{
@@ -218,6 +220,7 @@
                     d.start_date = $('#start-date').val();
                     d.end_date = $('#end-date').val();
                     d.area_group = $('#area_group').val();
+                    d.area = $('#area').val();
 
                 }
             },
