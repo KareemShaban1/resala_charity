@@ -587,53 +587,6 @@ class CollectingLineController extends Controller
         }
 
 
-        // Apply filters
-        // if ($request->has('date') && $request->date != '') {
-        //     $day = ltrim(date('d', strtotime($request->date)), '0'); // Remove leading zero
-        //     $month = date('m', strtotime($request->date));
-        //     $year = date('Y', strtotime($request->date));
-
-        //     // Filter by the extracted day
-        //     $query->where('donors.monthly_donation_day', $day);
-
-        //     // Filter out monthly_forms that have donations in the same month
-        //     $query->whereDoesntHave('donations', function ($q) use ($month, $year) {
-        //         $q->whereMonth('donations.created_at', $month)
-        //             ->whereYear('donations.created_at', $year);
-        //     });
-        // }
-
-        // if ($request->has('date_filter')) {
-        //     $dateFilter = $request->date_filter;
-        //     $startDate = $request->start_date;
-        //     $endDate = $request->end_date;
-
-        //     if ($dateFilter === 'today') {
-        //         $day = now()->format('j'); // Get today's day without leading zeros
-        //         $query->whereHas('donor', function ($q) use ($day) {
-        //             $q->where('donors.monthly_donation_day', $day);
-        //         });
-        //     } elseif ($dateFilter === 'week') {
-        //         $weekDays = collect(range(now()->startOfWeek()->format('j'), now()->endOfWeek()->format('j')))->map(fn($d) => (int) $d);
-        //         $query->whereHas('donor', function ($q) use ($weekDays) {
-        //             $q->whereIn('donors.monthly_donation_day', $weekDays);
-        //         });
-        //     } elseif ($dateFilter === 'month') {
-        //         $monthDays = collect(range(now()->startOfMonth()->format('j'), now()->endOfMonth()->format('j')))->map(fn($d) => (int) $d);
-        //         $query->whereHas('donor', function ($q) use ($monthDays) {
-        //             $q->whereIn('donors.monthly_donation_day', $monthDays);
-        //         });
-        //     } elseif ($dateFilter === 'range' && $startDate && $endDate) {
-        //         $startDay = (int) date('j', strtotime($startDate));
-        //         $endDay = (int) date('j', strtotime($endDate));
-
-        //         $daysInRange = collect(range($startDay, $endDay));
-        //         $query->whereHas('donor', function ($q) use ($daysInRange) {
-        //             $q->whereIn('donors.monthly_donation_day', $daysInRange);
-        //         });
-        //     }
-        // }
-
         if ($request->has('area_group') && $request->area_group != '') {
             $query->whereHas('donor.area.areaGroups', function ($q) use ($request) {
                 $q->where('area_groups.id', $request->area_group);
