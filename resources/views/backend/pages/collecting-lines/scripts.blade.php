@@ -686,7 +686,7 @@
                 $('#add_collecting_date').val(formatDate(data.collecting_donation?.collecting_date));
                 $('#add_in_kind_receipt_number').val(data.collecting_donation?.in_kind_receipt_number || '');
                 $('#add_employee_id').val(data.collecting_donation?.employee_id).trigger('change');
-                $('#add_notes').val(data.notes || '');
+                $('#add_notes').val(data.donor.notes || '');
                 $('#add_collecting_time').val(data.collecting_time || '');
                 $('#add_collecting_way').val(data.collecting_way || '');
 
