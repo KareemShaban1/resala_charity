@@ -252,6 +252,10 @@
 
                 },
                 {
+                    data: 'notes',
+                    nmae: 'notes'
+                },
+                {
                     data: 'collecting_donation_way',
                     name: 'collecting_donation_way'
                 },
@@ -611,14 +615,6 @@
                                 columns: [0, 1, 2, 3]
                             }
                         },
-                        // {
-                        //     extend: 'pdf', 
-                        //     text: 'PDF', 
-                        //     title: 'Areas Data', 
-                        //     exportOptions: {
-                        //         columns: [0, 1, 2, 3]
-                        //     }
-                        // },
                         {
                             extend: 'copy',
                             exportOptions: {
@@ -837,10 +833,6 @@
             </div>
         </div>`;
         }
-
-
-
-
 
 
     // Function to render a financial row

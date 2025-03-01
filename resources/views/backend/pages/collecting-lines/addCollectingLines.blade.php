@@ -128,6 +128,7 @@
                         <th>{{__('Donor Name')}}</th>
                         <th>{{__('Area')}}</th>
                         <th>{{__('Phones')}}</th>
+                        <th>{{ __('Notes') }}</th>
                         <th>{{__('Collecting Donation Way')}}</th>
                         <th>{{__('Monthly Form Day')}}</th>
                         <th>{{__('Donates')}}</th>

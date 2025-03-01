@@ -601,6 +601,9 @@ class CollectingLineController extends Controller
                         return 'N/A';
                 }
             })
+            ->addColumn('notes',function($item){
+                    return $item->donor?->notes;
+            })
             ->addColumn('items', function ($item) {
                 return $item->items->map(function ($donate) {
                     if ($donate->donation_type === 'financial') {
