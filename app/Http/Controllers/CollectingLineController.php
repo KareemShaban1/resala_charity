@@ -288,7 +288,7 @@ class CollectingLineController extends Controller
             }
             if ($request->has('area') && $request->area != '') {
                 $data->whereHas('donor.area', function ($q) use ($request) {
-                    $q->where('area.id', $request->area);
+                    $q->where('areas.id', $request->area);
                 });
             }
 
@@ -411,57 +411,6 @@ class CollectingLineController extends Controller
 
     public function getMonthlyFormsData(Request $request)
     {
-        // $query = MonthlyForm::query()
-        //     ->selectRaw('
-        //     monthly_forms.id,
-        //     monthly_forms.donor_id,
-        //     monthly_forms.collecting_donation_way,
-        //     monthly_forms.created_at,
-        //     monthly_forms.status,
-        //     monthly_forms.cancellation_reason,
-        //     monthly_forms.cancellation_date,
-        //     donors.name as donor_name,
-        //     donors.monthly_donation_day,
-        //     areas.name as area_name,
-        //     donors.address,
-        //     donors.parent_id,
-        //     GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers,
-        //     (SELECT donation_date 
-        //      FROM monthly_form_donations 
-        //      WHERE monthly_form_donations.monthly_form_id = monthly_forms.id 
-        //      ORDER BY donation_date DESC 
-        //      LIMIT 1) as last_donation_date,
-        //     CASE 
-        //         WHEN donors.parent_id IS NOT NULL THEN donors.parent_id
-        //         ELSE donors.id
-        //     END as parent_donor_group_id,
-        //     CASE 
-        //         WHEN donors.parent_id IS NOT NULL THEN "Child"
-        //         ELSE "Parent"
-        //     END as is_child
-        // ')
-        //     ->leftJoin('donors', 'monthly_forms.donor_id', '=', 'donors.id')
-        //     ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
-        //     ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
-        //     ->leftJoin('monthly_form_donations', 'monthly_forms.id', '=', 'monthly_form_donations.monthly_form_id')
-        //     ->where('monthly_forms.status', 'ongoing')
-        //     ->with('donor', 'items')
-        //     ->groupBy(
-        //         'monthly_forms.donor_id',
-        //         'donors.id',
-        //         'donors.name',
-        //         'areas.name',
-        //         'donors.address',
-        //         'donors.monthly_donation_day',
-        //         'monthly_forms.id',
-        //         'monthly_forms.created_at',
-        //         'monthly_forms.collecting_donation_way',
-        //         'monthly_forms.status',
-        //         'monthly_forms.cancellation_reason',
-        //         'monthly_forms.cancellation_date',
-        //         'donors.parent_id'
-        //     );
-
 
         $query = MonthlyForm::query()
             ->selectRaw('
@@ -595,7 +544,7 @@ class CollectingLineController extends Controller
 
         if ($request->has('area') && $request->area != '') {
             $query->whereHas('donor.area', function ($q) use ($request) {
-                $q->where('area.id', $request->area);
+                $q->where('areas.id', $request->area);
             });
         }
 
