@@ -964,8 +964,37 @@
                     text: response.message
                 });
             },
-            error: function() {
-                alert('Failed to update donation. Please try again.');
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                  // Validation error
+                  let response = xhr.responseJSON;
+                  let errors = response.errors || {};
+                  let errorDetails = '';
+
+                  // Loop through each field and its errors
+                  for (let field in errors) {
+                      if (errors.hasOwnProperty(field)) {
+                          let fieldErrors = errors[field].join(', ');
+                          errorDetails += `<p>${fieldErrors}</p>`;
+                      }
+                  }
+
+                  Swal.fire({
+                      icon: 'error',
+                      title: '{{ __('validation.Validation Error ') }}', // Ensure this is rendered as a string by Blade
+                      html: `<div style="direction: rtl; text-align: center;">${errorDetails}</div>`,
+                      customClass: {
+                          popup: 'text-start',
+                      }
+                  });
+
+              } else {
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Error',
+                      text: xhr.responseJSON.message || 'Something went wrong!'
+                  });
+              }
             }
         });
     });
