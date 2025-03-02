@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
+use Illuminate\Validation\Rule;
 
 class StoreDonorRequest extends FormRequest
 {
@@ -32,14 +34,37 @@ class StoreDonorRequest extends FormRequest
             'active' => 'required|boolean',
             'donor_type' => 'required|in:normal,monthly',
             'donor_category' => 'required|in:normal,special,random',
-            'notes'=>'nullable|string',
+            'notes' => 'nullable|string',
             'monthly_donation_day' => 'nullable',
             'phones' => 'nullable|array|min:1',
-            'phones.*.number' => 'nullable|string|regex:/^\d{11}$/|distinct|unique:donor_phones,phone_number',
-            'phones.*.type' => 'nullable|string|in:mobile,home,work,other',
-
+            'phones.*.number' => ['required', 'distinct', 'unique:donor_phones,phone_number'],
+            'phones.*.type' => 'required|string|in:mobile,home,work,other',
         ];
     }
+
+    public function withValidator(Validator $validator)
+{
+    $validator->after(function ($validator) {
+        $phones = $this->input('phones', []);
+
+        foreach ($phones as $index => $phone) {
+            if (!isset($phone['number'], $phone['type'])) {
+                continue;
+            }
+
+            $type = $phone['type'];
+            $number = $phone['number'];
+
+            if ($type === 'home' && !preg_match('/^\d{7}$/', $number)) {
+                $validator->errors()->add("phones.$index.number", 'رقم الهاتف المنزلي يجب أن يتكون من 7 أرقام.');
+            }
+
+            if ($type !== 'home' && !preg_match('/^\d{11}$/', $number)) {
+                $validator->errors()->add("phones.$index.number", 'رقم الهاتف يجب أن يتكون من 11 رقمًا.');
+            }
+        }
+    });
+}
 
     public function messages(): array
     {
