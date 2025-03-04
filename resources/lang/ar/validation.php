@@ -42,5 +42,6 @@ return [
     "unique_receipt_number_financial"=>"تم استخدام رقم الاستلام مسبقاً فى التبرعات المادية.",
     "unique_receipt_number_in_kind"=>"تم استخدام رقم الاستلام مسبقاً فى التبرعات العينية .",
     "Validation Error" => "خطأ في التحقق",
-    "duplicate_receipt_number_in_request"=> "تم استخدام رقم الاستلام مسبقاً فى الطلب"
+    "duplicate_receipt_number_in_request"=> "تم استخدام رقم الاستلام مسبقاً فى الطلب",
+    "donation_already_exists_for_month" => "تم اضافة تبرع الاستماره مسبقاً في هذا الشهر",
 ];

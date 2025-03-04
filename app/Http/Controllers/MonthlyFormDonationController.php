@@ -12,9 +12,28 @@ use Illuminate\Support\Facades\DB;
 
 class MonthlyFormDonationController extends Controller
 {
-    public function storeMonthlyFormDonation(Request $request, $monthly_form_id)
+    public function storeMonthlyFormDonation(Request $request)
     {
         $this->authorize('create', Donation::class);
+
+        // Extract the donation date from the request
+        $donationDate = $request->input('date');
+        $donationMonth = date('m', strtotime($donationDate));
+        $donationYear = date('Y', strtotime($donationDate));
+
+        // Check if a donation already exists for this monthly form in the same month
+        $existingDonation = DB::table('monthly_form_donations')
+            ->where('monthly_form_id', $request->monthly_form_id)
+            ->whereMonth('donation_date', $donationMonth)
+            ->whereYear('donation_date', $donationYear)
+            ->exists();
+
+        if ($existingDonation) {
+            return response()->json([
+                'success' => false,
+                'message' => __('validation.donation_already_exists_for_month'),
+            ], 400);
+        }
 
         // Validate the incoming request data
         $validatedData = $request->validate([
