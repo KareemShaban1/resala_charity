@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Governorate extends Model
 {
-    use SoftDeletes;
+    // use SoftDeletes;
 
     protected $table = 'governorates';
     protected $fillable = ['name'];

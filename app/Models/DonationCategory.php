@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DonationCategory extends Model
 {
-    use SoftDeletes;
+    // use SoftDeletes;
     use HasFactory;
     protected $fillable = [
         "name",

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Donor extends Model
 {
-    use SoftDeletes;
+    // use SoftDeletes;
     use HasFactory;
 
     protected $fillable = [
