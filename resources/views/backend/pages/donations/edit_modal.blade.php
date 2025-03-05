@@ -193,7 +193,7 @@
                         </div>
 
                     </div> -->
-                <div class="col-md-4 d-none" id="edit-in-kind-receipt-container">
+                <div class="col-md-4" id="edit-in-kind-receipt-container">
                     <div class="mb-3">
                         <label for="receipt_number" class="form-label">{{__('In Kind Receipt Number')}}</label>
                         <input type="text" class="form-control" id="edit_in_kind_receipt_number" name="in_kind_receipt_number">
