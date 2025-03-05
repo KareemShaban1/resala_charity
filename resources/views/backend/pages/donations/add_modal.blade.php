@@ -196,15 +196,7 @@
             </div>
 
             <div class="row d-none" id="collecting-section">
-                <!-- <div class="col-md-6 d-none" id="financial-receipt-container">
-                    <div class="mb-3">
-                        <label for="receipt_number" class="form-label">{{__('Financial Receipt Number')}}</label>
-                        <input type="text" class="form-control" id="financial_receipt_number" name="financial_receipt_number">
-                        <div class="invalid-feedback"></div>
-                    </div>
-
-                </div> -->
-                <div class="col-md-6 d-none" id="in-kind-receipt-container">
+                <div class="col-md-4" id="in-kind-receipt-container">
                     <div class="mb-3">
                         <label for="receipt_number" class="form-label">{{__('In Kind Receipt Number')}}</label>
                         <input type="text" class="form-control" id="in_kind_receipt_number" name="in_kind_receipt_number">

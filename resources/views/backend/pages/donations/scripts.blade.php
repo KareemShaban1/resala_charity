@@ -790,17 +790,6 @@
             CollectingSection.classList.add('d-none');
         }
 
-        // if (donationType === 'financial') {
-        //     financialReceiptConatiner.classList.remove('d-none');
-        //     inKindReceiptConatiner.classList.add('d-none');
-        // } else if (donationType === 'inKind') {
-        //     financialReceiptConatiner.classList.add('d-none');
-        //     inKindReceiptConatiner.classList.remove('d-none');
-        // } else {
-        //     financialReceiptConatiner.classList.remove('d-none');
-        //     inKindReceiptConatiner.classList.remove('d-none');
-        // }
-
     }
 
 
