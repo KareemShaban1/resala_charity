@@ -379,7 +379,7 @@ class MonthlyFormController extends Controller
     {
         $this->authorize('update', MonthlyForm::class);
 
-        return response()->json($monthlyForm->load(['items','donor']));
+        return response()->json($monthlyForm->load(['items', 'donor']));
     }
     public function update(UpdateMonthlyFormRequest $request, MonthlyForm $monthlyForm)
     {

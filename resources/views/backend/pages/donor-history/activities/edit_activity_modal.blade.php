@@ -40,10 +40,10 @@
                     </div>
                 </div>
 
-                <div class="col-md-6" id="status-container" style="display: none;">
+                <div class="col-md-6">
                     <div class="mb-3">
                         <label for="activity_status" class="form-label">{{__('Status')}}</label>
-                        <select name="status" id="edit_activity_status" class="form-control">
+                        <select name="activity_status_id" id="edit_activity_status" class="form-control">
                             <option value="" selected>{{__('Select Status')}}</option>
                             @foreach(\App\Models\ActivityStatus::all() as $status)
                             <option value="{{$status->id}}">{{$status->name}}</option>

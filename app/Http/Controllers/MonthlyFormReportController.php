@@ -45,55 +45,43 @@ class MonthlyFormReportController extends Controller
         $donorsCount = $donorQuery->count();
 
 
-        $monthlyFormsQuery = MonthlyForm::query();
+        $monthlyFormsQuery = MonthlyForm::whereHas('items', function ($query) {
+            $query->where('donation_type', 'financial');
+        });
         if ($departmentId) {
             $monthlyFormsQuery->where('department_id', $departmentId);
         }
 
         // Total Forms
         $allMonthlyFormsCount = $monthlyFormsQuery->count();
-
-        // Total Amount for all Monthly Forms
-        $allMonthlyFormsAmount = $monthlyFormsQuery->whereHas('items', function ($query) {
-            $query->where('donation_type', 'financial');
-        })->withSum(['items as total_amount' => function ($query) {
+        $allMonthlyFormsAmount = $monthlyFormsQuery->withSum(['items as total_amount' => function ($query) {
             $query->where('donation_type', 'financial');
         }], 'amount')->get()->sum('total_amount');
 
+
+        $cancelledMonthlyFormsCount = MonthlyForm::where('status', 'cancelled')
+            ->count();
+        $cancelledMonthlyFormsAmount = MonthlyForm::where('status', 'cancelled')
+            ->whereHas('items', function ($query) {
+                $query->where('donation_type', 'financial');
+            })->withSum(['items as total_amount' => function ($query) {
+                $query->where('donation_type', 'financial');
+            }], 'amount')->get()->sum('total_amount');
+
         // Collected and Not Collected Forms Count
         $monthlyFormsNotCollectedCount = $monthlyFormsQuery->whereNotIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))->count();
-        $monthlyFormsCollectedCount = $monthlyFormsQuery->whereIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))->count();
-
-        // Collected and Not Collected Amount
         $monthlyFormsNotCollectedAmount = $monthlyFormsQuery->whereNotIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))
-            ->whereHas('items', function ($query) {
-                $query->where('donation_type', 'financial');
-            })
             ->withSum(['items as total_amount' => function ($query) {
                 $query->where('donation_type', 'financial');
             }], 'amount')->get()->sum('total_amount');
 
+
+        $monthlyFormsCollectedCount = $monthlyFormsQuery->whereIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))->count();
         $monthlyFormsCollectedAmount = $monthlyFormsQuery->whereIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))
-            ->whereHas('items', function ($query) {
-                $query->where('donation_type', 'financial');
-            })
             ->withSum(['items as total_amount' => function ($query) {
                 $query->where('donation_type', 'financial');
             }], 'amount')->get()->sum('total_amount');
 
-        // Get Donors with Collected Monthly Forms
-        $donorsWithCollectedForms = Donor::whereHas('monthlyForms', function ($query) {
-            $query->whereHas('donations', function ($donationQuery) {
-                $donationQuery->whereHas('collectingDonation');
-            });
-        })->get();
-
-        // Get Donors with Not Collected Monthly Forms
-        $donorsWithNotCollectedForms = Donor::whereHas('monthlyForms', function ($query) {
-            $query->whereDoesntHave('donations', function ($donationQuery) {
-                $donationQuery->whereHas('collectingDonation');
-            });
-        })->get();
 
         $donorsWithForms = Donor::whereHas('monthlyForms')
             ->with(['phones', 'monthlyForms' => function ($query) use ($monthYear) {
@@ -107,7 +95,6 @@ class MonthlyFormReportController extends Controller
                     }
                 }]);
             }])->paginate(10); // Paginate with 10 records per page
-        ;
 
 
         // Add a collected_status attribute
@@ -120,24 +107,20 @@ class MonthlyFormReportController extends Controller
         return view('backend.pages.reports.monthly-forms.index', compact(
             'allMonthlyFormsCount',
             'allMonthlyFormsAmount',
+            'cancelledMonthlyFormsCount',
+            'cancelledMonthlyFormsAmount',
             'monthlyFormsCollectedCount',
             'monthlyFormsCollectedAmount',
             'monthlyFormsNotCollectedCount',
             'monthlyFormsNotCollectedAmount',
-            'donorsWithCollectedForms',
-            'donorsWithNotCollectedForms',
             'donorsWithForms',
             'donorsCount',
-            // 'fromDate',
-            // 'toDate',
             'monthYear'
         ));
     }
 
     public function filter(Request $request)
     {
-        // $fromDate = $request->input('from_date');
-        // $toDate = $request->input('to_date');
         $monthYear = $request->input('month_year');
         $departmentId = $request->input('department_id');
 
@@ -176,70 +159,58 @@ class MonthlyFormReportController extends Controller
 
         // Total Forms
         $allMonthlyFormsCount = $monthlyFormsQuery->count();
-
-        // Total Amount for all Monthly Forms
         $allMonthlyFormsAmount = $monthlyFormsQuery->withSum(['items as total_amount' => function ($query) {
             $query->where('donation_type', 'financial');
         }], 'amount')->get()->sum('total_amount');
 
+        $cancelledMonthlyFormsCount = MonthlyForm::where('status', 'cancelled')
+            ->count();
+        $cancelledMonthlyFormsAmount = MonthlyForm::where('status', 'cancelled')
+            ->whereHas('items', function ($query) {
+                $query->where('donation_type', 'financial');
+            })->withSum(['items as total_amount' => function ($query) {
+                $query->where('donation_type', 'financial');
+            }], 'amount')->get()->sum('total_amount');
+
         // Collected and Not Collected Forms Count
         $monthlyFormsNotCollectedCount = $monthlyFormsQuery->whereNotIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))->count();
-        $monthlyFormsCollectedCount = $monthlyFormsQuery->whereIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))->count();
-
-        // Collected and Not Collected Amount
         $monthlyFormsNotCollectedAmount = $monthlyFormsQuery->whereNotIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))
-            ->get()->sum('total_amount');
-            dd($monthlyFormsQuery);
+            ->withSum(['items as total_amount' => function ($query) {
+                $query->where('donation_type', 'financial');
+            }], 'amount')->get()->sum('total_amount');
 
 
+        $monthlyFormsCollectedCount = $monthlyFormsQuery->whereIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))->count();
         $monthlyFormsCollectedAmount = $monthlyFormsQuery->whereIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))
             ->withSum(['items as total_amount' => function ($query) {
                 $query->where('donation_type', 'financial');
             }], 'amount')->get()->sum('total_amount');
 
-        // Donors with Collected Monthly Forms (Considering Date Filters)
-        $donorsWithCollectedForms = Donor::whereHas('monthlyForms', function ($query) use ($monthYear) {
-            $query->whereHas('donations', function ($donationQuery) use ($monthYear) {
-                $donationQuery->whereHas('collectingDonation');
 
-                // Apply Date Filters on Monthly Forms
-                if ($monthYear) {
-                    $donationQuery->whereYear('date', substr($monthYear, 0, 4))
-                        ->whereMonth('date', substr($monthYear, 5, 2));
-                }
-            });
+        $donorsWithForms = Donor::whereHas('monthlyForms', function ($query) use ($departmentId) {
+            if ($departmentId) {
+                $query->where('department_id', $departmentId);
+            }
         })
-            ->with('phones')
-            ->get();
-
-        // Donors with Not Collected Monthly Forms (Considering Date Filters)
-        $donorsWithNotCollectedForms = Donor::whereHas('monthlyForms', function ($query) use ($monthYear) {
-            $query->whereDoesntHave('donations', function ($donationQuery)  use ($monthYear) {
-                $donationQuery->whereHas('collectingDonation');
-
-                // Apply Date Filters on Monthly Forms
-                if ($monthYear) {
-                    $donationQuery->whereYear('date', substr($monthYear, 0, 4))
-                        ->whereMonth('date', substr($monthYear, 5, 2));
-                }
-            });
-        })
-            ->with('phones')
-            ->get();
-
-
-        $donorsWithForms = Donor::whereHas('monthlyForms')
-            ->with(['phones', 'monthlyForms' => function ($query) use ($monthYear) {
-                $query->with(['donations' => function ($donationQuery) use ($monthYear) {
-                    $donationQuery->whereHas('collectingDonation'); // Ensures donation is collected
-
-                    // Apply Date Filters on Donations
-                    if ($monthYear) {
-                        $donationQuery->whereYear('date', substr($monthYear, 0, 4))
-                            ->whereMonth('date', substr($monthYear, 5, 2));
+            ->with([
+                'phones',
+                'monthlyForms' => function ($query) use ($monthYear, $departmentId) {
+                    if ($departmentId) {
+                        $query->where('department_id', $departmentId);
                     }
-                }]);
-            }])->get();
+                    $query->with([
+                        'donations' => function ($donationQuery) use ($monthYear) {
+                            $donationQuery->whereHas('collectingDonation'); // Ensure donation is collected
+                            // Apply Date Filters on Donations
+                            if ($monthYear) {
+                                $donationQuery->whereYear('date', substr($monthYear, 0, 4))
+                                    ->whereMonth('date', substr($monthYear, 5, 2));
+                            }
+                        }
+                    ]);
+                }
+            ])->get();
+
 
         // Add a collected_status attribute
         $donorsWithForms->transform(function ($donor) {
@@ -254,16 +225,15 @@ class MonthlyFormReportController extends Controller
                 compact(
                     'allMonthlyFormsCount',
                     'allMonthlyFormsAmount',
+                    'cancelledMonthlyFormsCount',
+                    'cancelledMonthlyFormsAmount',
                     'monthlyFormsCollectedCount',
                     'monthlyFormsCollectedAmount',
                     'monthlyFormsNotCollectedCount',
                     'monthlyFormsNotCollectedAmount',
-                    'donorsWithCollectedForms',
                 )
             )->render(),
-            'donorsWithFormsTable' => view('backend.pages.reports.monthly-forms.partials.donors_with_forms_table', compact('donorsWithForms'))->render(),
-            'collectedDonorsTable' => view('backend.pages.reports.monthly-forms.partials.donors_collected_table', compact('donorsWithCollectedForms'))->render(),
-            'notCollectedDonorsTable' => view('backend.pages.reports.monthly-forms.partials.donors_not_collected_table', compact('donorsWithNotCollectedForms'))->render(),
+            'donorsWithFormsTable' => view('backend.pages.reports.monthly-forms.partials.donors_with_forms_table', compact('donorsWithForms'))->render()
         ]);
     }
 

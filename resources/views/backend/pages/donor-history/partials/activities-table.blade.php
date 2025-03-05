@@ -81,21 +81,7 @@
                 $('#editActivityModal [name="donor_id"]').val(data.donor_id);
                 $('#editActivityModal [name="activity_type"]').val(data.activity_type);
                 $('#editActivityModal [name="call_type_id"]').val(data.call_type_id).trigger('change');
-                // Get the select element and second option's value
-                const callTypeSelect = document.getElementById('edit_call_type_id');
-                const statusContainer = document.getElementById('status-container');
-
-                if (callTypeSelect.options.length > 1) {
-                    const secondOptionValue = callTypeSelect.options[1].value; // Second option's value
-
-                    // Show status container if call_type_id matches the second option
-                    if (data.call_type_id == secondOptionValue) {
-                        statusContainer.style.display = 'block';
-                    } else {
-                        statusContainer.style.display = 'none';
-                    }
-                }
-                $('#editActivityModal [name="status"]').val(data.status).trigger('change');
+                $('#editActivityModal [name="activity_status_id"]').val(data.call_type_id).trigger('change');
                 $('#editActivityModal [name="date_time"]').val(data.date_time);
                 $('#editActivityModal [name="notes"]').val(data.notes);
                 $('#editActivityModal [name="response"]').val(data.response);

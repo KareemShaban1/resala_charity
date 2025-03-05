@@ -37,8 +37,8 @@ class StoreDonorRequest extends FormRequest
             'notes' => 'nullable|string',
             'monthly_donation_day' => 'nullable',
             'phones' => 'nullable|array|min:1',
-            'phones.*.number' => ['required', 'distinct', 'unique:donor_phones,phone_number'],
-            'phones.*.type' => 'required|string|in:mobile,home,work,other',
+            'phones.*.number' => ['nullable', 'distinct', 'unique:donor_phones,phone_number'],
+            'phones.*.type' => 'nullable|string|in:mobile,home,work,other',
         ];
     }
 

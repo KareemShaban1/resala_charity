@@ -70,7 +70,7 @@ class DonorHistoryController extends Controller
     {
         $activity = DonorActivity::findOrFail($id);
 
-        $activity->load('donor', 'callType', 'createdBy');
+        $activity->load('donor', 'callType', 'createdBy','activityStatus');
         return response()->json($activity);
     }
 }
