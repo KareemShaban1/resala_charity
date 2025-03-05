@@ -798,7 +798,7 @@
         const editFinancialContainer = document.getElementById('edit-financial-donations-section');
         const editInKindContainer = document.getElementById('edit-in-kind-donations-section');
         const financialReceiptConatiner = document.getElementById('edit-financial-receipt-container');
-        const inKindReceiptConatiner = document.getElementById('edit-in-kind-receipt-container');
+        // const inKindReceiptConatiner = document.getElementById('edit-in-kind-receipt-container');
 
         if (donationType === 'financial') {
             editFinancialContainer.classList.remove('d-none');
