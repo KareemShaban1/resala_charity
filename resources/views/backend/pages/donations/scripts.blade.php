@@ -629,8 +629,6 @@
         });
 
 
-
-
         $('.modal').on('hidden.bs.modal', function() {
             var form = $(this).find('form');
             form.find('.is-invalid').removeClass('is-invalid');
@@ -677,8 +675,6 @@
                 return donor.text; // When selected, show name and matched phone
             }
         });
-
-
 
         $('#edit_donor_id').select2({
             dropdownParent: $('#editDonationModal'),
@@ -794,16 +790,16 @@
             CollectingSection.classList.add('d-none');
         }
 
-        if (donationType === 'financial') {
-            financialReceiptConatiner.classList.remove('d-none');
-            inKindReceiptConatiner.classList.add('d-none');
-        } else if (donationType === 'inKind') {
-            financialReceiptConatiner.classList.add('d-none');
-            inKindReceiptConatiner.classList.remove('d-none');
-        } else {
-            financialReceiptConatiner.classList.remove('d-none');
-            inKindReceiptConatiner.classList.remove('d-none');
-        }
+        // if (donationType === 'financial') {
+        //     financialReceiptConatiner.classList.remove('d-none');
+        //     inKindReceiptConatiner.classList.add('d-none');
+        // } else if (donationType === 'inKind') {
+        //     financialReceiptConatiner.classList.add('d-none');
+        //     inKindReceiptConatiner.classList.remove('d-none');
+        // } else {
+        //     financialReceiptConatiner.classList.remove('d-none');
+        //     inKindReceiptConatiner.classList.remove('d-none');
+        // }
 
     }
 

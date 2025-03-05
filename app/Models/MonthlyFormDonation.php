@@ -12,4 +12,8 @@ class MonthlyFormDonation extends Model
     public function donation(){
         return $this->belongsTo(Donation::class);
     }
+
+    public function monthlyForm(){
+        return $this->belongsTo(MonthlyForm::class);
+    }
 }

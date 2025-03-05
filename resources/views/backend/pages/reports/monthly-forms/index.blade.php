@@ -21,13 +21,22 @@
                         <input type="month" name="month_year" id="month_year" class="form-control">
                     </div>
                     <div class="col-md-3">
+                        <label for="department_id">{{ __('Department') }}</label>
+                        <select name="department_id" id="department_id" class="form-control">
+                            <option value="">{{ __('All Departments') }}</option>
+                            @foreach (App\Models\Department::all() as $department)
+                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <!-- <div class="col-md-3">
                         <label for="from_date">{{ __('From Date') }}</label>
                         <input type="date" name="from_date" id="from_date" class="form-control">
                     </div>
                     <div class="col-md-3">
                         <label for="to_date">{{ __('To Date') }}</label>
                         <input type="date" name="to_date" id="to_date" class="form-control">
-                    </div>
+                    </div> -->
                     <div class="col-md-3 d-flex align-items-end">
                         <button class="btn btn-primary w-100" id="filterButton">{{ __('Filter') }}</button>
                     </div>
@@ -102,16 +111,18 @@
         $('#month_year').val(currentMonthYear);
         $('#filterButton').on('click', function() {
             let month_year = $('#month_year').val();
-            let from_date = $('#from_date').val();
-            let to_date = $('#to_date').val();
+            // let from_date = $('#from_date').val();
+            // let to_date = $('#to_date').val();
+            let department_id = $('#department_id').val();
 
             $.ajax({
                 url: "{{ route('monthly-forms-report.filter') }}",
                 method: "GET",
                 data: {
                     month_year: month_year,
-                    from_date: from_date,
-                    to_date: to_date
+                    // from_date: from_date,
+                    // to_date: to_date,
+                    department_id: department_id
                 },
                 success: function(response) {
                     $('#filteredData').html(response.filteredTable);
