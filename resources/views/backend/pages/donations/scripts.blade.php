@@ -802,19 +802,19 @@
 
         if (donationType === 'financial') {
             editFinancialContainer.classList.remove('d-none');
-            editInKindContainer.classList.add('d-none');
-            // financialReceiptConatiner.classList.remove('d-none');
-            inKindReceiptConatiner.classList.add('d-none');
+            // editInKindContainer.classList.add('d-none');
+            financialReceiptConatiner.classList.remove('d-none');
+            // inKindReceiptConatiner.classList.add('d-none');
         } else if (donationType === 'inKind') {
             editFinancialContainer.classList.add('d-none');
-            editInKindContainer.classList.remove('d-none');
-            // financialReceiptConatiner.classList.add('d-none');
-            inKindReceiptConatiner.classList.remove('d-none');
+            // editInKindContainer.classList.remove('d-none');
+            financialReceiptConatiner.classList.add('d-none');
+            // inKindReceiptConatiner.classList.remove('d-none');
         } else {
             editFinancialContainer.classList.remove('d-none');
             editInKindContainer.classList.remove('d-none');
             // financialReceiptConatiner.classList.remove('d-none');
-            inKindReceiptConatiner.classList.remove('d-none');
+            // inKindReceiptConatiner.classList.remove('d-none');
         }
     }
 
