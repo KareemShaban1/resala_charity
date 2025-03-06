@@ -66,8 +66,8 @@ Route::group(
         Route::get('/donor-activities-report', [DonorReportController::class, 'donorActivities'])->name('donor-report.donorActivities');
         Route::get('/donor-activities/statistics', [DonorReportController::class, 'donorStatistics'])->name('donor-report.statistics');
 
-        Route::get('/donor-random-calls-report', [DonorReportController::class, 'donorRandomCalls'])->name('donor-report.donor-random-calls');
-        Route::get('/donor-random-calls/statistics', [DonorReportController::class, 'donorRandomCallsStatistics'])->name('donor-report.random-calls-statistics');
+        Route::get('/donor-calls-report', [DonorReportController::class, 'donorCalls'])->name('donor-report.donor-calls');
+        Route::get('/donor-calls/statistics', [DonorReportController::class, 'donorCallsStatistics'])->name('donor-report.calls-statistics');
 
         // Route::get('/donor-activities-report/filter', [DonorReportController::class, 'filter'])->name('donor-report.filter');
 

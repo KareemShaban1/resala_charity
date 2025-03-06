@@ -84,7 +84,7 @@ class DonorReportController extends Controller
     }
 
 
-    public function donorRandomCalls(Request $request)
+    public function donorCalls(Request $request)
     {
         $query = User::with([
             'department',
@@ -119,12 +119,12 @@ class DonorReportController extends Controller
         $departments = Department::all();
         $callTypes = CallType::all();
         return $request->ajax() ? DataTables::of($users)->addColumn('department', fn($user) => $user->department->name ?? 'N/A')->make(true)
-            : view('backend.pages.reports.donor-random-calls.index', 
+            : view('backend.pages.reports.donor-calls.index', 
             compact('users', 'departments', 'callTypes'));
     }
 
 
-    public function donorRandomCallsStatistics(Request $request)
+    public function donorCallsStatistics(Request $request)
     {
         $statuses = ActivityStatus::pluck('name')->toArray();
         $statistics = array_fill_keys($statuses, 0);

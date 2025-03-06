@@ -29,7 +29,7 @@
         </div>
         <div class="col-md-2">
             <select id="department_filter" class="form-control">
-                <option value="">{{ __('All Department') }}</option>
+                <option value="">{{ __('All Departments') }}</option>
                 @foreach ($departments as $department)
                 <option value="{{ $department->id }}">{{ $department->name }}</option>
                 @endforeach
@@ -89,7 +89,7 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: '{{ route("donor-report.donor-random-calls") }}',
+                url: '{{ route("donor-report.donor-calls") }}',
                 data: function(d) {
                     d.start_date = $('#start_date').val();
                     d.end_date = $('#end_date').val();
@@ -218,7 +218,7 @@
 
         function fetchStatistics() {
             $.ajax({
-                url: '{{ route("donor-report.random-calls-statistics") }}',
+                url: '{{ route("donor-report.calls-statistics") }}',
                 data: {
                     start_date: $('#start_date').val(),
                     end_date: $('#end_date').val(),
