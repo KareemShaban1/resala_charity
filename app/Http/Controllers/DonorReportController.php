@@ -96,9 +96,9 @@ class DonorReportController extends Controller
             }
         }]);
 
-        // if (!Auth::user()->is_super_admin) {
-        //     $query->where('id', Auth::id());
-        // }
+        if (!Auth::user()->is_super_admin) {
+            $query->where('id', Auth::id());
+        }
 
         if ($request->user_id && $request->user_id != 'all') {
             $query->where('id', $request->user_id);
@@ -121,10 +121,11 @@ class DonorReportController extends Controller
         $usersQuery = User::with([
             'activities'
         ]);
+        dd(Auth::user()->is_super_admin);
 
-        // if (!Auth::user()->is_super_admin) {
-        //     $usersQuery->where('id', Auth::id());
-        // }
+        if (!Auth::user()->is_super_admin) {
+            $usersQuery->where('id', Auth::id());
+        }
 
         // Filter by user ID if provided
         if ($request->filled('user_id') && $request->user_id !== 'all') {
