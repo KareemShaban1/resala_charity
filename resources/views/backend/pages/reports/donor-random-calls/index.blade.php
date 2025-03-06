@@ -95,6 +95,7 @@
                     d.end_date = $('#end_date').val();
                     d.user_id = $('#user_filter').val();
                     d.department_id = $('#department_filter').val();
+                    d.call_type_id = $('#call_type_filter').val();
                 }
             },
             columns: [{
@@ -223,6 +224,7 @@
                     end_date: $('#end_date').val(),
                     user_id: $('#user_filter').val(),
                     department_id: $('#department_filter').val(),
+                    call_type_id: $('#call_type_filter').val(),
 
                 },
                 success: function(response) {
