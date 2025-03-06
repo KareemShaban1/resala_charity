@@ -14,6 +14,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DonationCategoryController;
 use App\Http\Controllers\DonationController;
+use App\Http\Controllers\DonationReportController;
 use App\Http\Controllers\DonorActivityController;
 use App\Http\Controllers\DonorController;
 use App\Http\Controllers\DonorHistoryController;
@@ -126,9 +127,7 @@ Route::group(
         Route::get('/donations/data', [DonationController::class, 'data'])->name('donations.data');
         Route::get('/monthly-donations', [DonationController::class, 'monthlyDonations'])->name('donations.monthly-donations');
         Route::get('/gathered-donations', [DonationController::class, 'gatheredDonations'])->name('donations.gathered-donations');
-
         Route::resource('donations', DonationController::class);
-
         Route::post('/donations/store-gathered-donation', [DonationController::class, 'storeGatheredDonation'])
             ->name('donations.store-gathered-donation');
         Route::delete('/donations/delete-donatation-item/{id}', [DonationController::class, 'deleteDonatationItem'])
@@ -138,6 +137,8 @@ Route::group(
             [DonationController::class, 'getDonationDetails']
         )->name('donations.details');
 
+        Route::get('/donations-reports', [DonationReportController::class, 'index'])
+            ->name('donations-report.index');
 
 
         // Donation Requests Routes
@@ -228,7 +229,6 @@ Route::group(
         Route::get('/backups', [BackupController::class, 'index'])->name('backups.index');
 
         Route::get('/backups/data', [BackupController::class, 'data'])->name('backups.data');
-
 
         Route::resource('events', EventController::class);
         Route::post('/events/{id}', [EventController::class, 'update'])->name('events.update');

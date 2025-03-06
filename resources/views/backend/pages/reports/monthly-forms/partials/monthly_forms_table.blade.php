@@ -1,9 +1,9 @@
 <div class="col-xl-6 col-lg-6 order-lg-2 order-xl-1">
     <div class="card">
         <div class="card-body">
-        <a href="dashboard.export_reports" class="btn btn-sm btn-link float-end">Export
-                                            <i class="mdi mdi-download ms-1"></i>
-                                        </a>
+            <a href="dashboard.export_reports" class="btn btn-sm btn-link float-end">Export
+                <i class="mdi mdi-download ms-1"></i>
+            </a>
             <h4 class="header-title mt-2 mb-3">{{__('Monthly Forms Report')}}</h4>
             <div class="table-responsive">
                 <table class="table table-centered table-nowrap table-hover mb-0">
@@ -57,9 +57,9 @@
 <div class="col-xl-6 col-lg-6 order-lg-2 order-xl-1">
     <div class="card">
         <div class="card-body">
-        <a href="dashboard.export_reports" class="btn btn-sm btn-link float-end">Export
-                                            <i class="mdi mdi-download ms-1"></i>
-                                        </a>
+            <a href="dashboard.export_reports" class="btn btn-sm btn-link float-end">Export
+                <i class="mdi mdi-download ms-1"></i>
+            </a>
             <h4 class="header-title mt-2 mb-3">{{__('Monthly Forms Report')}}</h4>
             <div class="table-responsive">
                 <table class="table table-centered table-nowrap table-hover mb-0">
@@ -77,7 +77,7 @@
                                 <span class="text-muted font-13">{{__('Total')}}</span>
                             </td>
                         </tr>
-                        
+
                     </tbody>
                 </table>
             </div>

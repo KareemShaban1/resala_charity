@@ -373,6 +373,13 @@
                               </a>
                           </li>
                           @endcan
+
+                          <li>
+                              <a href="{{route('donations-report.index')}}">
+                                  <span> {{__('Donations Reports')}} </span>
+                              </a>
+                          </li>
+
                           @can('view donor activities reports')
                           <li>
                               <a href="{{route('donor-report.donorActivities')}}">
