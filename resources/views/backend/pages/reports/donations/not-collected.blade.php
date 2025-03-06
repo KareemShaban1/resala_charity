@@ -65,23 +65,7 @@
                                                 <span class="text-muted font-13">{{__('Total')}}</span>
                                             </td>
                                         </tr>
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-6 col-lg-6 order-lg-2 order-xl-1">
-                    <div class="card">
-                        <div class="card-body">
-                            
-                            <h4 class="header-title mt-2 mb-3">{{__('Not Collected Donations Report')}}</h4>
-                            <div class="table-responsive">
-                                <table class="table table-centered table-nowrap table-hover mb-0">
-                                    <tbody>
-                                        <tr class="text-info">
+                                        <tr class="text-warning">
                                             <td>
                                                 <h5 class="font-14 my-1 fw-normal">{{__('Total Not Collected Donations')}}</h5>
                                             </td>
@@ -96,7 +80,7 @@
                                         </tr>
                                         <tr class="text-success">
                                             <td>
-                                                <h5 class="font-14 my-1 fw-normal">{{__('Financial Collected Donations')}}</h5>
+                                                <h5 class="font-14 my-1 fw-normal">{{__('Financial Donations')}}</h5>
                                             </td>
                                             <td>
                                                 <h5 class="font-14 my-1 fw-normal" id="financialNotCollectedDonationsCount"></h5>
@@ -109,23 +93,23 @@
                                         </tr>
                                         <tr class="text-danger">
                                             <td>
-                                                <h5 class="font-14 my-1 fw-normal">{{__('In Kind Collected Donations')}}</h5>
+                                                <h5 class="font-14 my-1 fw-normal">{{__('In Kind Donations')}}</h5>
                                             </td>
                                             <td>
                                                 <h5 class="font-14 my-1 fw-normal" id="inKindNotCollectedDonationsCount"></h5>
                                                 <span class="text-muted font-13">{{__('Count')}}</span>
                                             </td>
-                                            <!-- <td>
-                                                <h5 class="font-14 my-1 fw-normal" id="inKindNotCollectedDonationsAmount">$</h5>
-                                                <span class="text-muted font-13">{{__('Total')}}</span>
-                                            </td> -->
+                                           
                                         </tr>
+
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
+
+             
 
             </div>
 
