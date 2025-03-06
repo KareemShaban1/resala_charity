@@ -1782,6 +1782,21 @@ $('#addActivityForm').on('submit', function(e) {
     });
 
 
+    document.addEventListener('keydown', function(event) {
+    // Check if Ctrl (or Cmd on Mac) is pressed
+        if (event.ctrlKey || event.metaKey) {
+            // Prevent the default behavior (if needed)
+            event.preventDefault();
+
+        }
+        if (event.key === 'F2') {
+            // Check if the "Add Monthly Form" modal is open
+            if ($('#addMonthlyFormDonationModal').is(':visible')) {
+                $('#addMonthlyFormDonationForm').submit(); // Submit the "Add" form
+            }
+
+        }
+});
 
 
     
