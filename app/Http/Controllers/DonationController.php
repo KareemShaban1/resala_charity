@@ -672,8 +672,6 @@ class DonationController extends Controller
                     DB::table('donors')
                         ->where('id', $donation->donor_id)
                         ->update(['monthly_donation_day' => $monthlyDonationDay]);
-
-                    \Log::info('Updated donor monthly_donation_day to collecting date: ' . $monthlyDonationDay);
                 }
             } else {
                 $donation->collectingDonation()->delete();

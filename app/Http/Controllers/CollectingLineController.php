@@ -211,6 +211,7 @@ class CollectingLineController extends Controller
 
     public function getDonationsData(Request $request)
     {
+       
         if ($request->ajax()) {
             $data = Donation::query()
                 ->selectRaw('
@@ -235,12 +236,14 @@ class CollectingLineController extends Controller
                 END as is_child_order,
                 areas.name as area_name,
                 donors.address,
-                GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers
+                GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers,
+                MAX(monthly_form_donations.donation_date) as last_donation_date
             ')
                 ->leftJoin('donors', 'donations.donor_id', '=', 'donors.id')
                 ->leftJoin('donation_collectings', 'donations.id', '=', 'donation_collectings.donation_id')
                 ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
                 ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
+                ->leftJoin('monthly_form_donations', 'donations.id', '=', 'monthly_form_donations.donation_id')
                 ->with('donor', 'donateItems')
                 ->whereDoesntHave('collectingLines') // Exclude donations already assigned to a collecting line
                 ->where('donations.status', 'not_collected')

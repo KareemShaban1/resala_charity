@@ -134,6 +134,10 @@
                     data:'notes',
                     name:'notes'
                 },
+                {
+                    data:'last_donation_date',
+                    name:'last_donation_date'
+                },
                 // {
                 //     data: 'donateItems',
                 //     name: 'donateItems',
