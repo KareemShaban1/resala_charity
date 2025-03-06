@@ -212,8 +212,8 @@
                 data: {
                     start_date: $('#start_date').val(),
                     end_date: $('#end_date').val(),
-                    user_id: $('#user_filter').val()
-                    d.department_id = $('#department_filter').val();
+                    user_id: $('#user_filter').val(),
+                    department_id: $('#department_filter').val(),
 
                 },
                 success: function(response) {
