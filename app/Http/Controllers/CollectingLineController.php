@@ -237,7 +237,10 @@ class CollectingLineController extends Controller
                 areas.name as area_name,
                 donors.address,
                 GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers,
-                MAX(monthly_form_donations.donation_date) as last_donation_date
+                (SELECT MAX(d2.created_at) 
+                FROM donations d2 
+                WHERE d2.donor_id = donations.donor_id
+                ) as last_donation_date
             ')
                 ->leftJoin('donors', 'donations.donor_id', '=', 'donors.id')
                 ->leftJoin('donation_collectings', 'donations.id', '=', 'donation_collectings.donation_id')
@@ -407,6 +410,9 @@ class CollectingLineController extends Controller
                     // If neither condition is met, return 'Other'
                     return 'Other';
                 })
+                ->addColumn('last_donation_date', function ($item) {
+                    return $item->last_donation_date ? Carbon::parse($item->last_donation_date)->format('Y-m-d') : null;
+                })                
                 ->rawColumns(['action', 'donateItems', 'receipt_number', 'collected'])
                 ->make(true);
         }
