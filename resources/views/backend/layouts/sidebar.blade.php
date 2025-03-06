@@ -380,17 +380,10 @@
                               </a>
                           </li>
 
-                          @can('view donor activities reports')
+                          @can('view donor calls reports')
                           <li>
-                              <a href="{{route('donor-report.donorActivities')}}">
-                                  <span> {{__('Donor Activities Reports')}} </span>
-                              </a>
-                          </li>
-                          @endcan
-                          @can('view donor random calls reports')
-                          <li>
-                              <a href="{{route('donor-report.donor-random-calls')}}">
-                                  <span> {{__('Donor Random Calls Reports')}} </span>
+                              <a href="{{route('donor-report.donor-calls')}}">
+                                  <span> {{__('Donor Calls Reports')}} </span>
                               </a>
                           </li>
                           @endcan

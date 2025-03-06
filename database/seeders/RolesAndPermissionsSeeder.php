@@ -151,7 +151,7 @@ class RolesAndPermissionsSeeder extends Seeder
             ['name'=> 'view calendar','guard_name' => 'web'],
             ['name'=> 'view monthly forms reports','guard_name' => 'web'],
             ['name'=> 'view donor activities reports','guard_name' => 'web'],
-            ['name'=> 'view random calls reports','guard_name' => 'web'],
+            ['name'=> 'view calls reports','guard_name' => 'web'],
             ['name'=> 'view dashboard','guard_name' => 'web'],
 
         ];
