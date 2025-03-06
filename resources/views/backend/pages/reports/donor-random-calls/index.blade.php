@@ -39,6 +39,7 @@
 
         <div class="col-md-3">
             <button id="filterBtn" class="btn btn-primary">{{ __('Filter') }}</button>
+            <button id="clearBtn" class="btn btn-secondary">{{ __('Clear') }}</button>
         </div>
     </div>
 
@@ -239,6 +240,14 @@
         }
 
         $('#filterBtn').click(function() {
+            table.ajax.reload();
+            fetchStatistics();
+        });
+        $('#clearBtn').click(function() {
+            $('#start_date').val('');
+            $('#end_date').val('');
+            $('#user_filter').val('');
+            $('#department_filter').val('');
             table.ajax.reload();
             fetchStatistics();
         });
