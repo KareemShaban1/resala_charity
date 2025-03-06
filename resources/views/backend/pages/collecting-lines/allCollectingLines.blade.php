@@ -94,6 +94,8 @@
 @include('backend.pages.collecting-lines.deleteCollectingLineModal')
 
 
+<!-- View Donations Modal -->
+@include('backend.pages.collecting-lines.viewDonationsModal')
 <script>
     var donationCategories = @json($donationCategories);
 </script>

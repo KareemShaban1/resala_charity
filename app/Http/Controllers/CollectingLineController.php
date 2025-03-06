@@ -45,7 +45,7 @@ class CollectingLineController extends Controller
 
         return view(
             'backend.pages.collecting-lines.allCollectingLines',
-            compact('representatives', 'drivers', 'donors', 'employees','areas', 'areaGroups', 'donationCategories')
+            compact('representatives', 'drivers', 'donors', 'employees', 'areas', 'areaGroups', 'donationCategories')
         );
     }
     /**
@@ -127,7 +127,7 @@ class CollectingLineController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     $btn = '';
-                
+
                     // Edit Button (only for users with 'update collecting line' permission)
                     if (auth()->user()->can('update collecting line')) {
                         $btn .= '<button class="edit-btn btn btn-sm btn-primary" 
@@ -138,25 +138,25 @@ class CollectingLineController extends Controller
                                  data-employee-id="' . $row->employee_id . '"
                                  data-collecting-date="' . $row->collecting_date . '">' . __('Edit') . '</button>';
                     }
-                
+
                     // Delete Button (only for users with 'delete collecting line' permission)
                     if (auth()->user()->can('delete collecting line')) {
                         $btn .= ' <button class="delete-btn btn btn-sm btn-danger" data-id="' . $row->id . '">' . __('Delete') . '</button>';
                     }
-                
+
                     // View Donations Button (only for users with 'view donations' permission)
                     if (auth()->user()->can('view donations')) {
                         $btn .= ' <button class="btn btn-sm btn-info view-donations-btn" data-id="' . $row->id . '">' . __('View Donations') . '</button>';
                     }
-                
+
                     // View Collecting Line Button (only for users with 'view collecting line' permission)
                     if (auth()->user()->can('view collecting lines')) {
                         $btn .= ' <a href="' . route('collecting-lines.export-pdf', ['collecting_line_id' => $row->id]) . '" 
                                   class="btn btn-sm btn-info">' . __('View Collecting Line') . '</a>';
                     }
-                
+
                     return $btn;
-                })                
+                })
                 ->rawColumns(['action'])
                 ->make(true);
         }
@@ -388,17 +388,17 @@ class CollectingLineController extends Controller
                 ->addColumn('is_child', function ($item) {
                     // Check if this donor is referenced as a parent by any other donor
                     $isParent = Donor::where('parent_id', $item->donor_id)->exists();
-    
+
                     // If donor has a parent_id, they are a child
                     if (!is_null($item->parent_id)) {
                         return 'Child';
                     }
-    
+
                     // If donor has no parent_id but is referenced as a parent by others, they are a Parent
                     if ($isParent) {
                         return 'Parent';
                     }
-    
+
                     // If neither condition is met, return 'Other'
                     return 'Other';
                 })
@@ -601,8 +601,8 @@ class CollectingLineController extends Controller
                         return 'N/A';
                 }
             })
-            ->addColumn('notes',function($item){
-                    return $item->donor?->notes;
+            ->addColumn('notes', function ($item) {
+                return $item->donor?->notes;
             })
             ->addColumn('items', function ($item) {
                 return $item->items->map(function ($donate) {
