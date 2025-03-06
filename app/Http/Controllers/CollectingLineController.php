@@ -237,8 +237,9 @@ class CollectingLineController extends Controller
                 areas.name as area_name,
                 donors.address,
                 GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers,
-                (SELECT MAX(d2.created_at) 
-                FROM donations d2 
+                (SELECT MAX(dc.collecting_date) 
+                FROM donation_collectings dc 
+                INNER JOIN donations d2 ON d2.id = dc.donation_id 
                 WHERE d2.donor_id = donations.donor_id
                 ) as last_donation_date
             ')
