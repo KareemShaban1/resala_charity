@@ -96,7 +96,7 @@ class DonorReportController extends Controller
             }
         }]);
 
-        if (!Auth::user()->isSuperAdmin) {
+        if (!Auth::user()->isSuperAdmin()) {
             $query->where('id', Auth::id());
         }
 
@@ -122,7 +122,7 @@ class DonorReportController extends Controller
             'activities'
         ]);
 
-        if (!Auth::user()->isSuperAdmin) {
+        if (!Auth::user()->isSuperAdmin()) {
             $usersQuery->where('id', Auth::id());
         }
 
