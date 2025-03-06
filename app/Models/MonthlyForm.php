@@ -44,7 +44,7 @@ class MonthlyForm extends Model
     }
     public function donor()
     {
-        return $this->belongsTo(Donor::class, 'donor_id')->withTrashed();;
+        return $this->belongsTo(Donor::class, 'donor_id');
     }
     public function items(){
         return $this->hasMany(MonthlyFormItem::class,'monthly_form_id')
