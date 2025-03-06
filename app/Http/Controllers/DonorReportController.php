@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivityStatus;
+use App\Models\CallType;
 use App\Models\Department;
 use App\Models\DonorActivity;
 use App\Models\User;
@@ -95,6 +96,9 @@ class DonorReportController extends Controller
                     Carbon::parse($request->end_date)->endOfDay()
                 ]);
             }
+            if ($request->call_type_id && $request->call_type_id != 'all') {
+                $q->where('call_type_id', $request->call_type_id);
+            }
         }]);
 
 
@@ -113,8 +117,10 @@ class DonorReportController extends Controller
         $users = $query->get();
 
         $departments = Department::all();
+        $callTypes = CallType::all();
         return $request->ajax() ? DataTables::of($users)->addColumn('department', fn($user) => $user->department->name ?? 'N/A')->make(true)
-            : view('backend.pages.reports.donor-random-calls.index', compact('users', 'departments'));
+            : view('backend.pages.reports.donor-random-calls.index', 
+            compact('users', 'departments', 'callTypes'));
     }
 
 
@@ -154,6 +160,10 @@ class DonorReportController extends Controller
                 $startDate = Carbon::parse($request->input('start_date'));
                 $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
                 $query->whereBetween('created_at', [$startDate, $endDate]);
+            }
+
+            if ($request->call_type_id && $request->call_type_id != 'all') {
+                $query->where('call_type_id', $request->call_type_id);
             }
 
             $activities = $query->get();
