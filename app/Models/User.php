@@ -64,15 +64,15 @@ class User extends Authenticatable
             ->with('donor', 'callType', 'activityStatus');
     }
 
-    // public function getIsSuperAdminAttribute()
-    // {
-    //     return $this->hasRole('Super Admin');
-    // }
+    public function getIsSuperAdminAttribute()
+    {
+        return $this->hasRole('Super Admin');
+    }
 
-    // public function getIsAdminAttribute()
-    // {
-    //     return $this->hasRole('admin');
-    // }
+    public function getIsAdminAttribute()
+    {
+        return $this->hasRole('admin');
+    }
 
 
     public function isSuperAdmin()
