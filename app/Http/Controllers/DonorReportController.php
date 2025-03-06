@@ -121,7 +121,7 @@ class DonorReportController extends Controller
         $usersQuery = User::with([
             'activities'
         ]);
-        dd(Auth::user()->roles->pluck('name'));
+        dd(Auth::user()->roles->pluck('name'),Auth::user()->is_super_admin);
 
         if (!Auth::user()->is_super_admin) {
             $usersQuery->where('id', Auth::id());
