@@ -258,6 +258,7 @@
             $('#end_date').val('');
             $('#user_filter').val('');
             $('#department_filter').val('');
+            $('#call_type_filter').val('');
             table.ajax.reload();
             fetchStatistics();
         });
