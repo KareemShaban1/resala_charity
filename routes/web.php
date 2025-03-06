@@ -137,8 +137,10 @@ Route::group(
             [DonationController::class, 'getDonationDetails']
         )->name('donations.details');
 
-        Route::get('/donations-reports', [DonationReportController::class, 'index'])
-            ->name('donations-report.index');
+        Route::get('/collected-donations-reports', [DonationReportController::class, 'collectedDonations'])
+            ->name('donations-report.collected');
+            Route::get('/not-collected-donations-reports', [DonationReportController::class, 'notCollectedDonations'])
+            ->name('donations-report.not-collected');
 
 
         // Donation Requests Routes

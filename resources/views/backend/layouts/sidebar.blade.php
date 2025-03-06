@@ -375,8 +375,14 @@
                           @endcan
 
                           <li>
-                              <a href="{{route('donations-report.index')}}">
-                                  <span> {{__('Donations Reports')}} </span>
+                              <a href="{{route('donations-report.collected')}}">
+                                  <span> {{__('Collected Donations Reports')}} </span>
+                              </a>
+                          </li>
+
+                          <li>
+                              <a href="{{route('donations-report.not-collected')}}">
+                                  <span> {{__('Not Collected Donations Reports')}} </span>
                               </a>
                           </li>
 

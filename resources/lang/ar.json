@@ -468,5 +468,15 @@
     "Total Cancelled Monthly Forms":"اجمالى الأستمارات الشهرية الملغية",
     "All Users":"جميع المستخدمين",
     "All Departments":"جميع الأقسام",
-    "All Call Types":"جميع أنواع الكالمات"
+    "All Call Types":"جميع أنواع الكالمات",
+    "In Kind Donations": "تبرعات عينية",
+    "Count":"العدد",
+    "Donations Report": "تقارير التبرعات",
+    "Collected Donations Report":"تقرير تبرعات المحصلة",
+    "Not Collected Donations Report":"تقرير تبرعات غير المحصلة",
+    "Total Collected Donations": "اجمالى تبرعات المحصلة",
+    "Total Donations": "اجمالى تبرعات",
+    "Collected Donations Reports": "تقارير التبرعات المحصلة",
+    "Not Collected Donations Reports": "تقارير التبرعات غير المحصلة",
+    "Donor Calls Reports": "تقارير الكالمات للمتبرع"
 }

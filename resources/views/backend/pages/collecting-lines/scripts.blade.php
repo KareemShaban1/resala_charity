@@ -131,12 +131,8 @@
                     searchable: true
                 },
                 {
-                    data: 'monthly_donation_day',
-                    name: 'monthly_donation_day'
-                },
-                {
-                    data: 'collected',
-                    name: 'collected'
+                    data:'notes',
+                    name:'notes'
                 },
                 // {
                 //     data: 'donateItems',

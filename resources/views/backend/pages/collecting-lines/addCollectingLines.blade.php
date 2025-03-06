@@ -102,9 +102,10 @@
                         <th>{{__('Donor Name')}}</th>
                         <th>{{__('Area')}}</th>
                         <th>{{__('Phones')}}</th>
-                        <th>{{__('Monthly Form Day')}}</th>
-                        <th>{{__('Collected')}}</th>
+                        <!-- <th>{{__('Monthly Form Day')}}</th>
+                        <th>{{__('Collected')}}</th> -->
                         <!-- <th>{{__('Donates')}}</th> -->
+                        <th>{{ __('Notes') }}</th>
                         <th>{{__('Actions')}}</th>
                     </tr>
                 </thead>
