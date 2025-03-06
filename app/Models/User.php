@@ -66,7 +66,7 @@ class User extends Authenticatable
 
     public function getIsSuperAdminAttribute()
     {
-        return $this->hasRole('super_admin');
+        return $this->hasRole('Super Admin');
     }
 
     public function getIsAdminAttribute()
@@ -79,8 +79,8 @@ class User extends Authenticatable
     //     return $this->roles()->where('name', 'Super Admin')->exists();
     // }
 
-    public function isSuperAdmin()
-    {
-        return $this->hasRole('Super Admin'); // Checks if user has the Super Admin role
-    }
+    // public function isSuperAdmin()
+    // {
+    //     return $this->hasRole('Super Admin'); // Checks if user has the Super Admin role
+    // }
 }
