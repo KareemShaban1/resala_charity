@@ -18,12 +18,20 @@
         <div class="col-md-3">
             <input type="date" id="end_date" class="form-control" placeholder="{{ __('End Date') }}">
         </div>
-        @if (Auth::user()->is_admin)
+        @if (Auth::user()->is_super_admin)
         <div class="col-md-3">
             <select id="user_filter" class="form-control">
                 <option value="">{{ __('All Users') }}</option>
                 @foreach ($users as $user)
                 <option value="{{ $user->id }}">{{ $user->name }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select id="department_filter" class="form-control">
+                <option value="">{{ __('All Department') }}</option>
+                @foreach ($departments as $department)
+                <option value="{{ $department->id }}">{{ $department->name }}</option>
                 @endforeach
             </select>
         </div>
@@ -77,6 +85,7 @@
                     d.start_date = $('#start_date').val();
                     d.end_date = $('#end_date').val();
                     d.user_id = $('#user_filter').val();
+                    d.department_id = $('#department_filter').val();
                 }
             },
             columns: [{

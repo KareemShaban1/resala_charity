@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivityStatus;
+use App\Models\Department;
 use App\Models\DonorActivity;
 use App\Models\User;
 use Carbon\Carbon;
@@ -50,7 +51,7 @@ class DonorReportController extends Controller
 
         foreach ($users as $user) {
             $query = $user->activities()
-            ->with('donor', 'callType', 'activityStatus');
+                ->with('donor', 'callType', 'activityStatus');
 
             if (isset($request->start_date) && isset($request->end_date)) {
                 $startDate = Carbon::parse($request->input('start_date'));
@@ -96,6 +97,7 @@ class DonorReportController extends Controller
             }
         }]);
 
+
         if (!Auth::user()->is_super_admin) {
             $query->where('id', Auth::id());
         }
@@ -104,10 +106,15 @@ class DonorReportController extends Controller
             $query->where('id', $request->user_id);
         }
 
+        if ($request->department_id && $request->department_id != 'all') {
+            $query->where('department_id', $request->department_id);
+        }
+
         $users = $query->get();
 
+        $departments = Department::all();
         return $request->ajax() ? DataTables::of($users)->addColumn('department', fn($user) => $user->department->name ?? 'N/A')->make(true)
-            : view('backend.pages.reports.donor-random-calls.index', compact('users'));
+            : view('backend.pages.reports.donor-random-calls.index', compact('users', 'departments'));
     }
 
 
@@ -131,11 +138,16 @@ class DonorReportController extends Controller
             $usersQuery->where('id', $request->user_id);
         }
 
+        if ($request->department_id && $request->department_id != 'all') {
+            $usersQuery->where('department_id', $request->department_id);
+        }
+
+
         $users = $usersQuery->get();
 
         foreach ($users as $user) {
             $query = $user->activities()
-            ->with('donor', 'callType', 'activityStatus');
+                ->with('donor', 'callType', 'activityStatus');
 
             // Apply date filtering if provided
             if ($request->filled('start_date') && $request->filled('end_date')) {
