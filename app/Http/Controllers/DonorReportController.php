@@ -96,7 +96,7 @@ class DonorReportController extends Controller
             }
         }]);
 
-        if (!Auth::user()->is_admin) {
+        if (!Auth::user()->is_super_admin) {
             $query->where('id', Auth::id());
         }
 
