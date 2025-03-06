@@ -64,23 +64,19 @@ class User extends Authenticatable
             ->with('donor', 'callType', 'activityStatus');
     }
 
-    public function getIsSuperAdminAttribute()
-    {
-        return $this->hasRole('Super Admin');
-    }
-
-    public function getIsAdminAttribute()
-    {
-        return $this->hasRole('admin');
-    }
-
-    // public function isSuperAdmin()
+    // public function getIsSuperAdminAttribute()
     // {
-    //     return $this->roles()->where('name', 'Super Admin')->exists();
+    //     return $this->hasRole('Super Admin');
     // }
 
-    // public function isSuperAdmin()
+    // public function getIsAdminAttribute()
     // {
-    //     return $this->hasRole('Super Admin'); // Checks if user has the Super Admin role
+    //     return $this->hasRole('admin');
     // }
+
+
+    public function isSuperAdmin()
+    {
+        return $this->hasRole('Super Admin'); // Checks if user has the Super Admin role
+    }
 }
