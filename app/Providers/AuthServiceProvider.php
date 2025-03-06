@@ -58,7 +58,7 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::before(function ($user, $ability) {
-            if ($user->isSuperAdmin()) {
+            if ($user->is_super_admin) {
                 return true; // Super Admin bypasses all checks
             }
         });
