@@ -386,7 +386,7 @@
                               </a>
                           </li>
 
-                          @can('view donor calls reports')
+                          @can('view calls reports')
                           <li>
                               <a href="{{route('donor-report.donor-calls')}}">
                                   <span> {{__('Donor Calls Reports')}} </span>
