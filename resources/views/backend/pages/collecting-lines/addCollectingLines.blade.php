@@ -9,7 +9,7 @@
             <div class="page-title-box">
                 <!-- Add Collecting Line Button -->
                 <div class="page-title-right">
-                   
+
                 </div>
                 <h4 class="page-title">{{__('Collecting Lines and Donations')}}</h4>
             </div>
@@ -19,7 +19,7 @@
 
     <!-- Filters -->
     <div class="row mb-3">
-    <div class="col-md-3">
+        <div class="col-md-3">
             <label for="date-filter" class="form-label">{{__('Date')}}</label>
             <select id="date-filter" class="form-control">
                 <!-- <option value="all">{{__('All Dates')}}</option> -->
@@ -40,7 +40,7 @@
         <div class="col-md-3">
             <label for="area_group" class="form-label">{{__('Area Group')}}</label>
             <select id="area_group" class="form-control">
-            <option value="" readonly>{{__('Select Area Group')}}</option>
+                <option value="" readonly>{{__('Select Area Group')}}</option>
                 @foreach($areaGroups as $group)
                 <option value="{{ $group->id }}">{{ $group->name }}</option>
                 @endforeach
@@ -49,7 +49,7 @@
         <div class="col-md-3">
             <label for="area" class="form-label">{{__('Area')}}</label>
             <select id="area" class="form-control">
-            <option value="" readonly>{{__('Select Area')}}</option>
+                <option value="" readonly>{{__('Select Area')}}</option>
                 @foreach($areas as $area)
                 <option value="{{ $area->id }}">{{ $area->name }}</option>
                 @endforeach
@@ -66,8 +66,8 @@
         <div class="card-header d-flex justify-content-between">
             <h3>{{__('Collecting Lines')}}</h3>
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCollectingLineModal">
-                        <i class="mdi mdi-plus"></i> {{__('Add Collecting Line')}}
-                    </button>
+                <i class="mdi mdi-plus"></i> {{__('Add Collecting Line')}}
+            </button>
         </div>
         <div class="card-body">
             <table id="collecting-lines-table" class="table table-bordered">
@@ -95,25 +95,24 @@
             <h3>{{__('Donations')}}</h3>
         </div>
         <div class="card-body">
-            <table id="donations-table" class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>{{__('ID')}}</th>
-                        <th>{{__('Donor Name')}}</th>
-                        <th>{{__('Area')}}</th>
-                        <th>{{__('Phones')}}</th>
-                        <!-- <th>{{__('Monthly Form Day')}}</th>
-                        <th>{{__('Collected')}}</th> -->
-                        <!-- <th>{{__('Donates')}}</th> -->
-                        <th>{{ __('Notes') }}</th>
-                        <th>{{__('Last Donation Date')}}</th>
-                        <th>{{__('Actions')}}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Data will be populated via DataTables -->
-                </tbody>
-            </table>
+            <div style="width: 100%; overflow-x: auto;">
+                <table id="donations-table" class="table dt-responsive nowrap w-100">
+                    <thead>
+                        <tr>
+                            <th>{{__('ID')}}</th>
+                            <th>{{__('Donor Name')}}</th>
+                            <th>{{__('Area')}}</th>
+                            <th>{{__('Phones')}}</th>
+                            <th>{{ __('Notes') }}</th>
+                            <th>{{__('Last Donation Date')}}</th>
+                            <th>{{__('Actions')}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be populated via DataTables -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
