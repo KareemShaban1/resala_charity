@@ -122,7 +122,8 @@
             <h3>{{__('Monthly Forms')}}</h3>
         </div>
         <div class="card-body">
-            <table id="monthly-forms-table" class="table dt-responsive nowrap w-100">
+        <div style="width: 100%; overflow-x: auto;">
+        <table id="monthly-forms-table" class="table dt-responsive nowrap w-100">
                 <thead>
                     <tr>
                         <th>{{__('ID')}}</th>
@@ -137,6 +138,7 @@
                     </tr>
                 </thead>
             </table>
+            </div>
         </div>
     </div>
 </div>
