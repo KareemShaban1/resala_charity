@@ -13,14 +13,16 @@
     <!-- Filters Section -->
     <div class="row mb-3">
         <div class="col-md-3">
+            <label for="start_date"  class="form-label">{{ __('Start Date') }}</label>
             <input type="date" id="start_date" class="form-control" placeholder="{{ __('Start Date') }}">
         </div>
         <div class="col-md-3">
+            <label for="end_date"  class="form-label">{{ __('End Date') }}</label>
             <input type="date" id="end_date" class="form-control" placeholder="{{ __('End Date') }}">
         </div>
         @if (Auth::user()->is_super_admin)
         <div class="col-md-2">
-            <label for="user_filter" class="form-label">{{ __('User') }}</label>
+            <label for="user_filter" class="form-label">{{ __('Users') }}</label>
             <select id="user_filter" class="form-control">
                 <option value="">{{ __('All Users') }}</option>
                 @foreach ($users as $user)
@@ -29,7 +31,7 @@
             </select>
         </div>
         <div class="col-md-2">
-            <label for="department_filter" class="form-label">{{ __('Department') }}</label>
+            <label for="department_filter" class="form-label">{{ __('Departments') }}</label>
             <select id="department_filter" class="form-control">
                 <option value="">{{ __('All Departments') }}</option>
                 @foreach ($departments as $department)
@@ -38,7 +40,7 @@
             </select>
         </div>
         <div class="col-md-2">
-            <label for="call_type_filter" class="form-label">{{ __('Call Type') }}</label>
+            <label for="call_type_filter" class="form-label">{{ __('Call Types') }}</label>
             <select id="call_type_filter" class="form-control">
                 <option value="">{{ __('All Call Types') }}</option>
                 @foreach ($callTypes as $callType)
