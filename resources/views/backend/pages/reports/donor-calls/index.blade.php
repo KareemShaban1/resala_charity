@@ -121,8 +121,8 @@
                     name: 'department'
                 },
                 {
-                    data: 'activities_count',
-                    name: 'activities_count'
+                    data: 'filtered_activities_count',
+                    name: 'filtered_activities_count'
                 }
             ],
             order: [

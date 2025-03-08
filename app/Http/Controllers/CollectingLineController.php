@@ -439,11 +439,13 @@ class CollectingLineController extends Controller
         donors.address,
         donors.parent_id,
         GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers,
-        (SELECT donation_date 
-         FROM monthly_form_donations 
-         WHERE monthly_form_donations.monthly_form_id = monthly_forms.id 
-         ORDER BY donation_date DESC 
-         LIMIT 1) as last_donation_date,
+        (SELECT donation_collectings.collecting_date 
+        FROM monthly_form_donations
+        JOIN donations ON donations.id = monthly_form_donations.donation_id
+        JOIN donation_collectings ON donation_collectings.donation_id = donations.id
+        WHERE monthly_form_donations.monthly_form_id = monthly_forms.id
+        ORDER BY donation_collectings.collecting_date DESC
+        LIMIT 1) as last_donation_date,
         CASE 
             WHEN donors.parent_id IS NOT NULL THEN donors.parent_id
             ELSE donors.id

@@ -88,8 +88,18 @@ class DonorReportController extends Controller
     {
         $query = User::with([
             'department',
-            'activities'
-        ])->withCount(['activities' => function ($q) use ($request) {
+            'activities' => function ($q) use ($request) {
+                if ($request->start_date && $request->end_date) {
+                    $q->whereBetween('created_at', [
+                        Carbon::parse($request->start_date),
+                        Carbon::parse($request->end_date)->endOfDay()
+                    ]);
+                }
+                if ($request->call_type_id && $request->call_type_id != 'all') {
+                    $q->where('call_type_id', $request->call_type_id);
+                }
+            }
+        ])->withCount(['activities as filtered_activities_count' => function ($q) use ($request) {
             if ($request->start_date && $request->end_date) {
                 $q->whereBetween('created_at', [
                     Carbon::parse($request->start_date),
@@ -118,9 +128,14 @@ class DonorReportController extends Controller
 
         $departments = Department::all();
         $callTypes = CallType::all();
-        return $request->ajax() ? DataTables::of($users)->addColumn('department', fn($user) => $user->department->name ?? 'N/A')->make(true)
-            : view('backend.pages.reports.donor-calls.index', 
-            compact('users', 'departments', 'callTypes'));
+        return $request->ajax() ? DataTables::of($users)
+        ->addColumn('department', fn($user) => $user->department->name ?? 'N/A')
+        ->addColumn('filtered_activities_count', fn($user) => $user->filtered_activities_count) // Show the count
+        ->make(true)
+            : view(
+                'backend.pages.reports.donor-calls.index',
+                compact('users', 'departments', 'callTypes')
+            );
     }
 
 

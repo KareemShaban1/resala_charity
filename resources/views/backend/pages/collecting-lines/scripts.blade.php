@@ -134,10 +134,10 @@
                     data:'notes',
                     name:'notes'
                 },
-                {
-                    data:'last_donation_date',
-                    name:'last_donation_date'
-                },
+                // {
+                //     data:'last_donation_date',
+                //     name:'last_donation_date'
+                // },
                 // {
                 //     data: 'donateItems',
                 //     name: 'donateItems',
@@ -262,6 +262,10 @@
                 {
                     data: 'monthly_donation_day',
                     name: 'monthly_donation_day'
+                },
+                {
+                    data: 'last_donation_date',
+                    name: 'last_donation_date'
                 },
 
                 {
