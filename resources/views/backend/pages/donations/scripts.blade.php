@@ -1005,61 +1005,74 @@
     let existingInKindIndices = new Set();
 
     function editDonation(id) {
-        var form = $('#editDonationForm');
-        form.trigger('reset');
-        form.find('.is-invalid').removeClass('is-invalid');
-        form.find('.invalid-feedback').text('');
-        form.attr('action', `{{ route('donations.update', '') }}/${id}`);
-        $('#editDonationModal').modal('show');
+    var form = $('#editDonationForm');
 
-        $.get(`{{ url('donations') }}/${id}/edit`)
-            .done(function(data) {
-                // Reset existing indices
-                existingFinancialIndices = new Set();
-                existingInKindIndices = new Set();
+    // Reset the form fields
+    form.trigger('reset');
+    form.find('.is-invalid').removeClass('is-invalid');
+    form.find('.invalid-feedback').text('');
 
-                // Populate basic fields
-                $('#edit_donor_id').val(data.donor_id).trigger('change');
-                $('#edit_date').val(data.date);
-                $('#edit_donation_status').val(data.status).trigger('change');
-                $('#edit_donation_type').val(data.donation_type).trigger('change');
-                $('#edit_donation_category').val(data.donation_category).trigger('change');
-                $('#edit_reporting_way').val(data.reporting_way).trigger('change');
-                $('#edit_collecting_date').val(formatDate(data.collecting_donation?.collecting_date));
-                $('#edit_in_kind_receipt_number').val(data.collecting_donation?.in_kind_receipt_number);
-                $('#edit_employee_id').val(data.collecting_donation?.employee_id).trigger('change');
-                $('#edit_notes').val(data.notes);
-                $('#edit_collecting_time').val(data.collecting_time);
-                $('#edit_collecting_way').val(data.collecting_donation?.collecting_way).trigger('change');
+    // Reset dropdowns and reinitialize Select2 if used
+    form.find('select').val(null).trigger('change');
 
-                // Populate financial donations
-                const financialContainer = $('#edit-financial-donation-rows-container');
-                financialContainer.empty();
-                data.donate_items
-                    .filter(item => item.donation_type === 'financial')
-                    .forEach((donationItem, index) => {
-                        existingFinancialIndices.add(index); // Track existing indices
-                        financialContainer.append(renderFinancialRow(donationItem, index, donationCategories));
-                    });
+    // Clear dynamically added donation rows
+    $('#edit-financial-donation-rows-container').empty();
+    $('#edit-in-kind-donation-rows-container').empty();
 
-                // Populate in-kind donations
-                const inKindContainer = $('#edit-in-kind-donation-rows-container');
-                inKindContainer.empty();
-                data.donate_items
-                    .filter(item => item.donation_type === 'inKind')
-                    .forEach((donationItem, index) => {
-                        existingInKindIndices.add(index); // Track existing indices
-                        inKindContainer.append(renderInKindRow(donationItem, index));
-                    });
+    // Reset indices tracking
+    existingFinancialIndices = new Set();
+    existingInKindIndices = new Set();
 
-                // Toggle sections based on donation type
-                toggleEditDonationType();
-                toggleEditDonationStatus();
-            })
-            .fail(function() {
-                alert('{{ __("Failed to load donation details. Please try again.") }}');
-            });
-    }
+    // Set the form action
+    form.attr('action', `{{ route('donations.update', '') }}/${id}`);
+    
+    // Show modal
+    $('#editDonationModal').modal('show');
+
+    // Fetch donation data
+    $.get(`{{ url('donations') }}/${id}/edit`)
+        .done(function(data) {
+            // Populate basic fields
+            $('#edit_donor_id').val(data.donor_id).trigger('change');
+            $('#edit_date').val(data.date);
+            $('#edit_donation_status').val(data.status).trigger('change');
+            $('#edit_donation_type').val(data.donation_type).trigger('change');
+            $('#edit_donation_category').val(data.donation_category).trigger('change');
+            $('#edit_reporting_way').val(data.reporting_way).trigger('change');
+            $('#edit_collecting_date').val(formatDate(data.collecting_donation?.collecting_date));
+            $('#edit_in_kind_receipt_number').val(data.collecting_donation?.in_kind_receipt_number);
+            $('#edit_employee_id').val(data.collecting_donation?.employee_id).trigger('change');
+            $('#edit_notes').val(data.notes);
+            $('#edit_collecting_time').val(data.collecting_time);
+            $('#edit_collecting_way').val(data.collecting_donation?.collecting_way).trigger('change');
+
+            // Populate financial donations
+            const financialContainer = $('#edit-financial-donation-rows-container');
+            data.donate_items
+                .filter(item => item.donation_type === 'financial')
+                .forEach((donationItem, index) => {
+                    existingFinancialIndices.add(index);
+                    financialContainer.append(renderFinancialRow(donationItem, index, donationCategories));
+                });
+
+            // Populate in-kind donations
+            const inKindContainer = $('#edit-in-kind-donation-rows-container');
+            data.donate_items
+                .filter(item => item.donation_type === 'inKind')
+                .forEach((donationItem, index) => {
+                    existingInKindIndices.add(index);
+                    inKindContainer.append(renderInKindRow(donationItem, index));
+                });
+
+            // Toggle sections based on donation type
+            toggleEditDonationType();
+            toggleEditDonationStatus();
+        })
+        .fail(function() {
+            alert('{{ __("Failed to load donation details. Please try again.") }}');
+        });
+}
+
 
 
     function renderFinancialRow(donationItem, index, categories) {
