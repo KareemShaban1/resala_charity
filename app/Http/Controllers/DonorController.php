@@ -354,22 +354,20 @@ class DonorController extends Controller
 
                 foreach ($request->phones as $phone) {
                     if (!empty($phone['number'])) {
-                        $normalizedPhone = preg_replace('/\D/', '', $phone['number']); // Normalize phone number
+                        // Normalize and convert Arabic numerals to Western numerals
+                        $normalizedPhone = $this->normalizePhoneNumber($phone['number']);
 
-                        \Log::info('Phone number: ' . $normalizedPhone);
-                        \Log::info('Existing phones: ' . $existingPhones->toJson());
-                        \Log::info($existingPhones->has($normalizedPhone));
                         if ($existingPhones->has($normalizedPhone)) {
                             // Update existing phone
                             $donor->phones()->where('id', $existingPhones[$normalizedPhone])->update([
-                                'phone_number' => $phone['number'],
+                                'phone_number' => $normalizedPhone,
                                 'phone_type' => $phone['type'],
                                 'is_primary' => $phone['is_primary'] ?? false,
                             ]);
                         } else {
                             // Create new phone
                             $donor->phones()->create([
-                                'phone_number' => $phone['number'],
+                                'phone_number' => $normalizedPhone,
                                 'phone_type' => $phone['type'],
                                 'is_primary' => $phone['is_primary'] ?? false,
                             ]);
@@ -380,7 +378,7 @@ class DonorController extends Controller
                 // Handle primary phone: ensure only one phone is marked as primary
                 $donor->phones()->update(['is_primary' => false]); // Reset all to non-primary
                 if ($primaryPhone = collect($request->phones)->firstWhere('is_primary', true)) {
-                    $donor->phones()->where('phone_number', $primaryPhone['number'])->update(['is_primary' => true]);
+                    $donor->phones()->where('phone_number', $this->normalizePhoneNumber($primaryPhone['number']))->update(['is_primary' => true]);
                 }
             }
 
@@ -392,13 +390,26 @@ class DonorController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Update donor failed: ',[$e,$e->getMessage()]);
+            \Log::error('Update donor failed: ', [$e, $e->getMessage()]);
             return response()->json([
                 'success' => false,
-                'message' => __('messages.Donor updated failed'),
+                'message' => __('messages.Donor update failed'),
             ], 500);
         }
     }
+
+    /**
+     * Normalize phone numbers by converting Arabic numerals to Western numerals.
+     */
+    private function normalizePhoneNumber($phone)
+    {
+        $arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+        $westernNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+        // Remove non-digit characters and replace Arabic numbers with Western numbers
+        return str_replace($arabicNumbers, $westernNumbers, preg_replace('/\D/', '', $phone));
+    }
+
 
 
 
