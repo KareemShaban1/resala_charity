@@ -1029,6 +1029,10 @@
     // Show modal
     $('#editDonationModal').modal('show');
 
+    // **Show Loading Spinner & Disable Form Inputs**
+    $('#editDonationLoader').removeClass('d-none');  // Show loading spinner
+    form.find('input, select, textarea, button').prop('disabled', true); // Disable inputs
+
     $.ajax({
     url: `{{ url('donations') }}/${id}/edit`,
     method: 'GET',
@@ -1077,11 +1081,14 @@
     error: function (xhr) {
         console.error(xhr.responseText);
         alert('{{ __("Failed to load donation details. Please try again.") }}');
-    }
+    },
+    complete: function () {
+            // **Hide Loading Spinner & Enable Form Inputs**
+            $('#editDonationLoader').addClass('d-none'); // Hide loading spinner
+            form.find('input, select, textarea, button').prop('disabled', false); // Enable inputs
+        }
 });
 
-
-    // Fetch donation data
     
 }
 
