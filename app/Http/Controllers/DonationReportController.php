@@ -203,6 +203,36 @@ class DonationReportController extends Controller
 
             $allDonationsAmount = (clone $donationQuery)->withSum('donateItems', 'amount')->get()->sum('donate_items_sum_amount');
 
+
+            // Fetch all available donation categories
+            $allCategories = \App\Models\DonationCategory::pluck('name')->toArray();
+
+            // Process the collected donation query
+            $donationsByCategory = $notCollectedDonations
+                ->whereHas('donateItems', function ($query) {
+                    $query->where('donation_type', 'financial');
+                })->get()->pluck('donateItems')->flatten()
+                ->groupBy('donationCategory.name')
+                ->map(function ($items) {
+                    return [
+                        'count' => $items->count(),
+                        'total_amount' => $items->sum('amount'),
+                    ];
+                })->filter(function ($value, $key) {
+                    return !empty($key); // Remove empty keys
+                });
+
+            // Ensure all categories exist with default values
+            foreach ($allCategories as $category) {
+                if (!isset($donationsByCategory[$category])) {
+                    $donationsByCategory[$category] = [
+                        'count' => 0,
+                        'total_amount' => 0,
+                    ];
+                }
+            }
+
+
             return response()->json([
                 'allDonationsCount' => $allDonations->count(),
                 'allDonationsAmount' => $allDonationsAmount,
@@ -211,6 +241,8 @@ class DonationReportController extends Controller
                 'inKindNotCollectedDonationsCount' => $inKindNotCollectedDonations->count(),
                 'notCollectedDonationsAmount' => $notCollectedDonationsAmount,
                 'financialNotCollectedDonationsAmount' => $financialNotCollectedDonationsAmount,
+                'donationsByCategory' => $donationsByCategory,
+
             ]);
         }
 

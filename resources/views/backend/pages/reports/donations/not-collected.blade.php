@@ -138,7 +138,29 @@
                     </div>
                 </div>
 
+                <div class="col-xl-6 col-lg-6 order-lg-2 order-xl-1">
+                    <div class="card">
+                        <div class="card-body">
 
+                            <h4 class="header-title mt-2 mb-3">{{__('Donations Categories Report')}}</h4>
+                            <div class="table-responsive">
+                                <table class="table table-centered table-nowrap table-hover mb-0 not-collected-donations-table">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ __('Donation Category') }}</th>
+                                            <th>{{ __('Count') }}</th>
+                                            <th>{{ __('Total Amount') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Data will be inserted here by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
 
             </div>
 
@@ -174,6 +196,21 @@
                     $('#financialNotCollectedDonationsCount').text(response.financialNotCollectedDonationsCount);
                     $('#financialNotCollectedDonationsAmount').text(response.financialNotCollectedDonationsAmount);
                     $('#inKindNotCollectedDonationsCount').text(response.inKindNotCollectedDonationsCount);
+
+                     // Clear the table before appending new data
+                     let tableBody = $('.not-collected-donations-table tbody');
+                    tableBody.empty();
+
+                    // Append donation categories dynamically
+                    $.each(response.donationsByCategory, function(category, data) {
+                        tableBody.append(`
+                            <tr>
+                                <td><strong>${category}</strong></td>
+                                <td>${data.count}</td>
+                                <td>$${data.total_amount}</td>
+                            </tr>
+                        `);
+                    });
                 }
             });
         }
