@@ -4,11 +4,11 @@
         @method('PUT')
         <!-- <input type="hidden" name="donation_category" value="normal"> -->
         <div class="modal-body">
-        <div id="editDonationLoader" class="text-center my-3 d-none">
-    <div class="spinner-border text-primary" role="status">
-        <span class="sr-only">Loading...</span>
-    </div>
-</div>
+            <div id="editDonationLoader" class="text-center my-3 d-none">
+                <div class="spinner-border text-primary" role="status">
+                    <!-- <span class="sr-only">Loading...</span> -->
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
