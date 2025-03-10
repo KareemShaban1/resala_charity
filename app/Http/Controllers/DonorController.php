@@ -356,6 +356,9 @@ class DonorController extends Controller
                     if (!empty($phone['number'])) {
                         $normalizedPhone = preg_replace('/\D/', '', $phone['number']); // Normalize phone number
 
+                        \Log::info('Phone number: ' . $normalizedPhone);
+                        \Log::info('Existing phones: ' . $existingPhones->toJson());
+                        \Log::info($existingPhones->has($normalizedPhone));
                         if ($existingPhones->has($normalizedPhone)) {
                             // Update existing phone
                             $donor->phones()->where('id', $existingPhones[$normalizedPhone])->update([
