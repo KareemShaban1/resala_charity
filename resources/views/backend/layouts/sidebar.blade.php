@@ -44,7 +44,6 @@
               <li class="side-nav-item">
                   <a href="{{route('backups.index')}}" class="side-nav-link">
                       <i class="uil-home-alt"></i>
-
                       <span>
                           {{__('Backups')}}
                       </span>

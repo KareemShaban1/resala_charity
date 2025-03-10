@@ -389,6 +389,7 @@ class DonorController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Update donor failed: ',[$e,$e->getMessage()]);
             return response()->json([
                 'success' => false,
                 'message' => __('messages.Donor updated failed'),
