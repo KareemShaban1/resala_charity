@@ -1029,11 +1029,17 @@
     // Show modal
     $('#editDonationModal').modal('show');
 
-    // Fetch donation data
-    $.get(`{{ url('donations') }}/${id}/edit`)
-        .done(function(data) {
-            // Populate basic fields
-            $('#edit_donor_id').val(data.donor_id).trigger('change');
+    $.ajax({
+    url: `{{ url('donations') }}/${id}/edit`,
+    method: 'GET',
+    headers: {
+        'X-Requested-With': 'XMLHttpRequest' // Ensures Laravel returns JSON instead of redirecting
+    },
+    success: function (data) {
+        // Handle data population here
+
+        // Populate basic fields
+        $('#edit_donor_id').val(data.donor_id).trigger('change');
             $('#edit_date').val(data.date);
             $('#edit_donation_status').val(data.status).trigger('change');
             $('#edit_donation_type').val(data.donation_type).trigger('change');
@@ -1067,10 +1073,16 @@
             // Toggle sections based on donation type
             toggleEditDonationType();
             toggleEditDonationStatus();
-        })
-        .fail(function() {
-            alert('{{ __("Failed to load donation details. Please try again.") }}');
-        });
+    },
+    error: function (xhr) {
+        console.error(xhr.responseText);
+        alert('{{ __("Failed to load donation details. Please try again.") }}');
+    }
+});
+
+
+    // Fetch donation data
+    
 }
 
 
