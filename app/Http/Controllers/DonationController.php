@@ -475,12 +475,21 @@ class DonationController extends Controller
 
 
 
-    public function edit(Donation $donation)
-    {
-        $this->authorize('update', Donation::class);
+   public function edit(Donation $donation)
+{
+    $this->authorize('update', Donation::class);
 
-        return response()->json($donation->load(['donateItems', 'donor', 'collectingDonation']));
-    }
+    return response()->json($donation->load([
+        'donateItems' => function ($q) {
+            $q->select(['id', 'donation_id', 'donation_item_type', 'donation_type', 
+                'financial_receipt_number', 'amount', 'item_name', 'donation_category_id'
+            ])->with('donationCategory:id,name'); // Eager load category name
+        },
+        'donor:id,name',
+        'collectingDonation'
+    ]));
+}
+
 
     public function update(Request $request, Donation $donation)
     {
