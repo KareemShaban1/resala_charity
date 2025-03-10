@@ -208,7 +208,8 @@ class DonationReportController extends Controller
             $allCategories = \App\Models\DonationCategory::pluck('name')->toArray();
 
             // Process the collected donation query
-            $donationsByCategory = $notCollectedDonations
+            $donationsByCategory = $donationQuery
+                ->whereDoesntHave('collectingDonation')
                 ->whereHas('donateItems', function ($query) {
                     $query->where('donation_type', 'financial');
                 })->get()->pluck('donateItems')->flatten()
