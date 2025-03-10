@@ -33,7 +33,24 @@
                                 <option value="{{ $department->id }}">{{ $department->name }}</option>
                                 @endforeach
                             </select>
-
+                        </div>
+                        <div class="col-md-4">
+                            <label for="area_id" class="form-label">{{ __('Area') }}</label>
+                            <select name="area_id" id="area_id" class="form-control">
+                                <option value="">{{ __('All') }}</option>
+                                @foreach (App\Models\Area::all() as $area)
+                                <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="user_id" class="form-label">{{ __('Created By') }}</label>
+                            <select name="user_id" id="user_id" class="form-control">
+                                <option value="">{{ __('All') }}</option>
+                                @foreach (App\Models\User::all() as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="row">
@@ -205,6 +222,8 @@
                     department_id: $('#department_id').val(),
                     reporting_way: $('#reporting_way').val(),
                     collecting_way: $('#collecting_way').val(),
+                    area_id: $('#area_id').val(),
+                    user_id: $('#user_id').val(),
                 },
                 success: function(response) {
                     $('#allDonations').text(response.allDonationsCount);
@@ -250,6 +269,8 @@
             $('#employee_id').val('');
             $('#reporting_way').val('');
             $('#collecting_way').val('');
+            $('#area_id').val('');
+            $('#user_id').val('');
             fetchDonations();
         });
 

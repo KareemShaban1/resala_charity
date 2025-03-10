@@ -34,6 +34,20 @@ class DonationReportController extends Controller
                 });
             }
 
+            if (isset($request->area_id)) {
+                $donationQuery->whereHas('donor', function ($q) {
+                    $q->where('area_id', request('area_id'));
+                });
+                $collectedDonationQuery->whereHas('donor', function ($q) {
+                    $q->where('area_id', request('area_id'));
+                });
+            }
+
+            if (isset($request->user_id)) {
+                $donationQuery->where('created_by', request('user_id'));
+                $collectedDonationQuery->where('created_by', request('user_id'));
+            }
+
             if (isset($request->department_id)) {
                 $donationQuery->whereHas('collectingDonation', function ($query) use ($request) {
                     $query->whereHas('employee', function ($q) use ($request) {
@@ -145,7 +159,7 @@ class DonationReportController extends Controller
         return view('backend.pages.reports.donations.collected');
     }
 
-    public function notCollectedDonations()
+    public function notCollectedDonations(Request $request)
     {
 
         $donationQuery = Donation::query();
@@ -155,6 +169,15 @@ class DonationReportController extends Controller
                 $startDate = request('start_date');
                 $endDate = request('end_date');
                 $donationQuery->whereBetween('created_at', [$startDate, $endDate]);
+            }
+
+            if (isset($request->area_id)) {
+                $donationQuery->whereHas('donor', function ($q) {
+                    $q->where('area_id', request('area_id'));
+                });
+            }
+            if (isset($request->user_id)) {
+                $donationQuery->where('created_by', request('user_id'));
             }
 
             $allDonations = (clone $donationQuery)->get();
