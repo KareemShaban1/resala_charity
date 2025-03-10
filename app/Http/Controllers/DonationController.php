@@ -481,14 +481,21 @@ class DonationController extends Controller
     {
         $this->authorize('update', Donation::class);
     
-        return Cache::remember("donation:{$donation->id}", 300, function () use ($donation) {
-            return response()->json($donation->load([
-                'donateItems:id,donation_id,donation_item_type,donation_type,financial_receipt_number,amount,item_name,donation_category_id',
-                'donateItems.donationCategory:id,name',
-                'donor:id,name',
-                'collectingDonation:id,donation_id,collecting_date,in_kind_receipt_number,employee_id,collecting_way'
-            ]));
-        });
+        // return Cache::remember("donation:{$donation->id}", 300, function () use ($donation) {
+        //     return response()->json($donation->load([
+        //         'donateItems:id,donation_id,donation_item_type,donation_type,financial_receipt_number,amount,item_name,donation_category_id',
+        //         'donateItems.donationCategory:id,name',
+        //         'donor:id,name',
+        //         'collectingDonation:id,donation_id,collecting_date,in_kind_receipt_number,employee_id,collecting_way'
+        //     ]));
+        // });
+        return response()->json($donation->load([
+            'donateItems:id,donation_id,donation_item_type,donation_type,financial_receipt_number,amount,item_name,donation_category_id',
+            'donateItems.donationCategory:id,name',
+            'donor:id,name',
+            'collectingDonation:id,donation_id,collecting_date,in_kind_receipt_number,employee_id,collecting_way'
+        ]));
+        
     }
     
 
