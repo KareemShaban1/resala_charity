@@ -265,7 +265,8 @@
                 },
                 {
                     data: 'last_donation_date',
-                    name: 'last_donation_date'
+                    name: 'last_donation_date',
+                    searchable: false
                 },
 
                 {
