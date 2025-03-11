@@ -250,7 +250,7 @@ class CollectingLineController extends Controller
                 ->leftJoin('monthly_form_donations', 'donations.id', '=', 'monthly_form_donations.donation_id')
                 ->with('donor', 'donateItems')
                 ->whereDoesntHave('collectingLines') // Exclude donations already assigned to a collecting line
-                ->where('donations.status', 'not_collected')
+                ->whereNot('donations.status', 'collected')
                 ->groupBy(
                     'donations.donor_id',
                     'donors.id',
