@@ -373,9 +373,9 @@
     });
 
     // Handle remove phone button click
-    $(document).on('click', '.remove-phone', function() {
-        $(this).closest('.input-group').remove();
-    });
+    // $(document).on('click', '.remove-phone', function() {
+    //     $(this).closest('.input-group').remove();
+    // });
 
     let donorsTable;
     let randomDonorsTable;
@@ -1262,6 +1262,61 @@ $('#addActivityForm').on('submit', function(e) {
             }
         });
     });
+
+
+    $(document).on('click', '.remove-phone', function() {
+        const row = $(this).closest('.input-group'); // Get the correct row
+        const phoneId = row.find('input[name*="[id]"]').val(); // Extract phone ID
+    console.log(phoneId)
+
+    if (!phoneId) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Phone ID not found.'
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: "{{ __('Are you sure?') }}",
+        text: "{{ __('You wont be able to revert this!') }}",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText:"{{ __('Cancel') }}",
+        confirmButtonText: "{{ __('Yes, delete it!') }}"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `{{ url('donors/delete-donor-phone') }}/${phoneId}`, // Endpoint for deletion
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRF token for Laravel
+                },
+                success: function(response) {
+                    Swal.fire(
+                        'Deleted!',
+                        response.message || 'Phone number removed successfully.',
+                        'success'
+                    );
+                    row.remove(); // Remove the row from the DOM
+                    $(this).closest('.input-group').remove();
+                },
+                error: function(error) {
+                    console.error("Error deleting phone:", error);
+                    Swal.fire(
+                        'Error!',
+                        'Failed to delete the phone number. Please try again.',
+                        'error'
+                    );
+                }
+            });
+        }
+    });
+});
+
 
 
 document.addEventListener('keydown', function(event) {

@@ -708,4 +708,21 @@ class DonorController extends Controller
         $fileName = 'non_matching_numbers_' . now()->format('Ymd_His') . '.xlsx';
         return Excel::download(new NonMatchingNumbersExport($nonMatchingNumbers), $fileName);
     }
+
+    public function deleteDonorPhone($id){
+        $this->authorize('delete', Donor::class);
+
+        $donorPhone = DonorPhone::find($id);
+
+        if (!$donorPhone) {
+            return response()->json(['message' => 'Donor Phone not found.'], 404);
+        }
+
+        try {
+            $donorPhone->delete(); // Soft delete or permanent delete based on your setup
+            return response()->json(['message' => 'Donor Phone deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to delete donor phone.'], 500);
+        }
+    }
 }

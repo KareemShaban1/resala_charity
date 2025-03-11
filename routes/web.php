@@ -118,8 +118,11 @@ Route::group(
 
         Route::resource('activities', DonorActivityController::class);
 
-
         Route::post('/donors/upload-phone-numbers', [DonorController::class, 'uploadPhoneNumbers'])->name('donors.uploadPhoneNumbers');
+        Route::delete('/donors/delete-donor-phone/{id}', [DonorController::class, 'deleteDonorPhone'])
+        ->name('donors.delete-donor-phone');
+        
+        
         // Donation Categories Routes
         Route::get('/donation-categories/data', [DonationCategoryController::class, 'data'])->name('donation-categories.data');
         Route::resource('donation-categories', DonationCategoryController::class);
