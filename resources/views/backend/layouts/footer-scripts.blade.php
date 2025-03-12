@@ -20,6 +20,7 @@
  <script src="{{asset('backend/assets/js/vendor/buttons.html5.min.js')}} "></script>
  <script src="{{asset('backend/assets/js/vendor/buttons.flash.min.js')}}"></script>
  <script src="{{asset('backend/assets/js/vendor/buttons.print.min.js')}}"></script>
+ <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script> <!-- ✅ Required for colvis -->
 
 
  <!-- Datatable Init js -->

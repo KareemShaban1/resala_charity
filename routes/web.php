@@ -221,6 +221,9 @@ Route::group(
         Route::post('/collecting-lines/assign-donation', [CollectingLineController::class, 'assignDonation'])
             ->name('collecting-lines.assign-donation');
 
+            Route::post('/collecting-lines/assign-bulk-donation', [CollectingLineController::class, 'assignBulkDonations'])
+            ->name('collecting-lines.assign-bulk-donation');    
+
         Route::get('/collecting-lines/donations/data', [CollectingLineController::class, 'getDonationsByCollectingLine'])
             ->name('collecting-lines.donations.data');
 

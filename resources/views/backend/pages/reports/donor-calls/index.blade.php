@@ -206,8 +206,8 @@
                         <td>
                             ${activity.activity_status?.name ?? ''}
                         </td>
-                        <td>${activity.response}</td>
-                        <td>${activity.notes}</td>
+                        <td>${activity.response ?? ''}</td>
+                        <td>${activity.notes ?? ''}</td>
                         </tr>`;
                     });
                 } else {

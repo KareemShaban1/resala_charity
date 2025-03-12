@@ -22334,10 +22334,15 @@ div.table-responsive>div.dataTables_wrapper>div.row>div[class^=col-]:first-child
     z-index: 1060 !important;
 }
 
+div.dt-button-collection div.dropdown-menu {
+    left: 10px;
+}
+
 .child-row td {
     background-color: #f9f9f9 !important;
     font-style: italic;
 }
+
 
 
 #donors-table {
@@ -22351,6 +22356,7 @@ div.table-responsive>div.dataTables_wrapper>div.row>div[class^=col-]:first-child
     overflow: hidden;
     text-overflow:clip;
 }
+
 
 /* Set specific column widths */
 #donors-table th:nth-child(1),

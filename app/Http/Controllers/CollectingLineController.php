@@ -663,7 +663,6 @@ class CollectingLineController extends Controller
     }
 
 
-
     public function getDonationsByCollectingLine(Request $request)
     {
         $collectingLine = CollectingLine::find($request->collecting_line_id);
@@ -798,6 +797,8 @@ class CollectingLineController extends Controller
             donations.status,
             donations.created_by,
             donations.created_at,
+            donations.collecting_time,
+            donations.notes,
             donations.donation_type,
             donation_collectings.collecting_date,
             donation_collectings.in_kind_receipt_number,
@@ -819,6 +820,8 @@ class CollectingLineController extends Controller
                 'donations.created_by',
                 'donations.created_at',
                 'donations.donation_type',
+                'donations.collecting_time',
+                'donations.notes',
                 'donation_collectings.collecting_date',
                 'donation_collectings.in_kind_receipt_number',
                 'donors.name',
@@ -830,7 +833,6 @@ class CollectingLineController extends Controller
             )
             ->get();
 
-        // Organize data based on donor.parent_id
         // Organize data based on donor.parent_id
         $organizedData = [];
 
@@ -861,10 +863,8 @@ class CollectingLineController extends Controller
             }
         }
 
-
         // Additional data for the PDF
         $additionalData = [
-
             'collecting_line_name' => $collectingLine->number,
             'representative' => $collectingLine->representative->name ?? '',
             'driver' => $collectingLine->driver->name ?? '',
@@ -963,4 +963,33 @@ class CollectingLineController extends Controller
             'data' => $donation,
         ]);
     }
+
+    public function assignBulkDonations(Request $request)
+{
+    $request->validate([
+        'donation_ids' => 'required|array',
+        'donation_ids.*' => 'exists:donations,id',
+        'collecting_line_id' => 'required|exists:collecting_lines,id',
+    ]);
+
+    $donationIds = $request->donation_ids;
+    $collectingLineId = $request->collecting_line_id;
+
+    foreach ($donationIds as $donationId) {
+        $donation = Donation::find($donationId);
+
+        // Skip if the donation is already assigned
+        if ($donation->collectingLines()->where('collecting_line_id', $collectingLineId)->exists()) {
+            continue;
+        }
+
+        $donation->collectingLines()->attach($collectingLineId);
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => __('messages.Donations assigned successfully'),
+    ]);
+}
+
 }

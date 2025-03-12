@@ -40,4 +40,5 @@ return [
     "CallType created successfully"=> "تم إضافة نوع المكالمة بنجاح",
     "CallType updated successfully"=> "تم تحديث نوع المكالمة بنجاح",
     "CallType deleted successfully"=> "تم حذف نوع المكالمة بنجاح",
+    "Collecting Line updated successfully"=>"تم تعديل خط السير بنجاح"
 ];
