@@ -220,6 +220,8 @@ Route::group(
 
         Route::post('/collecting-lines/assign-donation', [CollectingLineController::class, 'assignDonation'])
             ->name('collecting-lines.assign-donation');
+            Route::post('/collecting-lines/un-assign-donation', [CollectingLineController::class, 'unAssignDonation'])
+            ->name('collecting-lines.un-assign-donation');    
 
             Route::post('/collecting-lines/assign-bulk-donation', [CollectingLineController::class, 'assignBulkDonations'])
             ->name('collecting-lines.assign-bulk-donation');    

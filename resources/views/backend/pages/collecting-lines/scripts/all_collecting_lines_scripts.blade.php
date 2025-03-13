@@ -173,7 +173,13 @@
                             name: 'donateItems',
                             orderable: false,
                             searchable: false
-                        }
+                        },
+                        {
+                            data: 'actions',
+                            name: 'actions',
+                            orderable: false,
+                            searchable: false
+                        },
                     ],
                     order: [
                         [0, 'desc']

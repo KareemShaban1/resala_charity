@@ -25,7 +25,7 @@
             </div>
             <div class="mb-3">
                 <label for="area_group_id" class="form-label">{{__('Area Group')}}</label>
-                <select class="form-control select2" id="area_group_id" name="area_group_id" required>
+                <select class="form-control select2" id="area_group_id" name="area_group_id">
                     <option value="">{{__('Select Area Group')}}</option>
                     @foreach(\App\Models\AreaGroup::all() as $area_group)
                     <option value="{{ $area_group->id }}">{{ $area_group->name }}</option>

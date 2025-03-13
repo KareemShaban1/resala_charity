@@ -10,6 +10,7 @@
                     <th>{{__('Monthly Form Day')}}</th>
                     <th>{{__('Collected')}}</th>
                     <th>{{__('Donates')}}</th>
+                    <th>{{__('Actions') }}</th>
                 </tr>
             </thead>
             <tbody>

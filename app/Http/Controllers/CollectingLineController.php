@@ -663,125 +663,106 @@ class CollectingLineController extends Controller
     }
 
 
-    public function getDonationsByCollectingLine(Request $request)
-    {
-        $collectingLine = CollectingLine::find($request->collecting_line_id);
-        if ($request->ajax()) {
-            $data = $collectingLine->donations()
-                ->selectRaw('
-                    donations.id,
-                    donations.donor_id,
-                    donations.status,
-                    donations.created_by,
-                    donations.created_at,
-                    donations.donation_type,
-                    donation_collectings.collecting_date,
-                    donation_collectings.in_kind_receipt_number,
-                    donors.name as donor_name,
-                    areas.name as area_name,
-                    donors.address,
-                    GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers
-                ')
-                ->leftJoin('donors', 'donations.donor_id', '=', 'donors.id')
-                ->leftJoin('donation_collectings', 'donations.id', '=', 'donation_collectings.donation_id')
-                ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
-                ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
-                ->with('donor', 'donateItems')
-                ->groupBy(
-                    'donations.donor_id',
-                    'donors.name',
-                    'donors.parent_id',
-                    'areas.name',
-                    'donors.address',
-                    'donations.id',
-                    'donations.created_at',
-                    'donations.status',
-                    'donations.created_by',
-                    'donations.donation_type',
-                    'donation_collectings.collecting_date',
-                    'donation_collectings.in_kind_receipt_number'
-                );
+public function getDonationsByCollectingLine(Request $request)
+{
+    $collectingLine = CollectingLine::find($request->collecting_line_id);
 
-
-            // // Apply additional filters (if needed)
-            // if ($request->has('date') && $request->date != '') {
-            //     $data->whereDate('created_at', '>=', $request->date);
-            // }
-            // if ($request->has('area_group') && $request->area_group != '') {
-            //     $data->where('area_group_id', $request->area_group);
-            // }
-
-            return DataTables::of($data)
-                ->addColumn('name', function ($item) {
-                    return $item->donor->name;
-                })
-                ->addColumn('area', function ($item) {
-                    return $item->donor->area->name;
-                })
-                ->addColumn('address', function ($item) {
-                    return $item->donor->address;
-                })
-                ->addColumn('monthly_donation_day', function ($item) {
-                    return $item->donor?->monthly_donation_day ?? 0;
-                })
-                ->addColumn('phones', function ($item) {
-                    return $item->donor?->phones->isNotEmpty() ?
-                        $item->donor->phones->map(function ($phone) {
-                            return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
-                        })->implode(', ') : 'N/A';
-                })
-                ->addColumn('donateItems', function ($item) {
-                    return $item->donateItems->map(function ($donate) use ($item) {
-                        if ($item->donation_type === 'financial') {
-                            return '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
-                                ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount;
-                        } elseif ($item->donation_type === 'inKind') {
-                            return '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
-                                ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount;
-                        } elseif ($item->donation_type === 'both') {
-                            if (isset($donate->donation_category_id) && isset($donate->amount)) {
-                                return '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
-                                    ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount . '<br>';
-                            }
-                            if (isset($donate->item_name) && isset($donate->amount)) {
-                                return  '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
-                                    ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount;
-                            }
-                        }
-                        return '';
-                    })->implode('<br>');
-                })
-                ->addColumn('receipt_number', function ($item) {
-                    if ($item->collectingDonation) {
-                        if ($item->donation_type === 'inKind') {
-                            return '<span class="text-danger">' . __('Financial Receipt Number') . ' : ' . $item->collectingDonation?->in_kind_receipt_number . '</span>';
-                        } elseif ($item->donation_type === 'financial') {
-                            return ' <span class="text-success">' .  __('In Kind Receipt Number') . ' : ' . $item->collectingDonation?->financial_receipt_number . '</span>';
-                        } else {
-                            return '<span class="text-danger">' . __('Financial Receipt Number') . ' : ' . $item->collectingDonation?->financial_receipt_number . '</span>
-                            <br>
-                            <span class="text-success">' .  __('In Kind Receipt Number') . ' : ' . $item->collectingDonation?->in_kind_receipt_number . '</span>';
-                        }
-                    }
-                })
-                ->addColumn('collected', function ($item) {
-                    if ($item->collectingDonation) {
-                        return ' <span class="text-success">' .  __('Collected') . '</span>';
-                    } else {
-                        return ' <span class="text-danger">' .  __('Not Collected') . '</span><br>' . __('') . '';
-                    }
-                })
-                ->addColumn('actions', function ($item) {
-                    return '<a href="javascript:void(0);" onclick="editDonation(' . $item->id . ')"
-                    class="btn btn-sm btn-info">
-                        <i class="mdi mdi-square-edit-outline"></i>
-                    </a>';
-                })
-                ->rawColumns(['donateItems', 'receipt_number', 'collected', 'actions'])
-                ->make(true);
-        }
+    if (!$collectingLine) {
+        return response()->json(['message' => 'Collecting Line not found'], 404);
     }
 
+    if ($request->ajax()) {
+        $data = $collectingLine->donations()
+            ->selectRaw('
+                donations.id,
+                donations.donor_id,
+                donations.status,
+                donations.created_by,
+                donations.created_at,
+                donations.donation_type,
+                donation_collectings.collecting_date,
+                donation_collectings.in_kind_receipt_number,
+                donors.name as donor_name,
+                areas.name as area_name,
+                donors.address,
+                GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers
+            ')
+            ->leftJoin('donors', 'donations.donor_id', '=', 'donors.id')
+            ->leftJoin('donation_collectings', 'donations.id', '=', 'donation_collectings.donation_id')
+            ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
+            ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
+            ->with(['donor', 'donateItems'])
+            ->groupBy(
+                'donations.id',
+                'donations.donor_id',
+                'donations.status',
+                'donations.created_by',
+                'donations.created_at',
+                'donations.donation_type',
+                'donation_collectings.collecting_date',
+                'donation_collectings.in_kind_receipt_number',
+                'donors.name',
+                'areas.name',
+                'donors.address'
+            );
+
+        return DataTables::of($data)
+            ->addColumn('name', fn($item) => $item->donor->name ?? 'N/A')
+            ->addColumn('area', fn($item) => $item->donor->area->name ?? 'N/A')
+            ->addColumn('address', fn($item) => $item->donor->address ?? 'N/A')
+            ->addColumn('monthly_donation_day', fn($item) => $item->donor?->monthly_donation_day ?? 0)
+            ->addColumn('phones', fn($item) => $item->donor?->phones->isNotEmpty()
+                ? $item->donor->phones->map(fn($phone) => $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')')->implode(', ')
+                : 'N/A'
+            )
+            ->addColumn('donateItems', function ($item) {
+                return $item->donateItems->map(function ($donate) use ($item) {
+                    return match ($item->donation_type) {
+                        'financial' => '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
+                            ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount,
+                        'inKind' => '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
+                            ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount,
+                        'both' => (
+                            ($donate->donation_category_id ? '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
+                                ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount . '<br>' : '') .
+                            ($donate->item_name ? '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
+                                ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount : '')
+                        ),
+                        default => '',
+                    };
+                })->implode('<br>');
+            })
+            ->addColumn('receipt_number', function ($item) {
+                if ($item->collectingDonation) {
+                    return match ($item->donation_type) {
+                        'inKind' => '<span class="text-danger">' . __('Financial Receipt Number') . ' : ' . $item->collectingDonation?->in_kind_receipt_number . '</span>',
+                        'financial' => '<span class="text-success">' . __('In Kind Receipt Number') . ' : ' . $item->collectingDonation?->financial_receipt_number . '</span>',
+                        'both' => '<span class="text-danger">' . __('Financial Receipt Number') . ' : ' . $item->collectingDonation?->financial_receipt_number . '</span><br>
+                            <span class="text-success">' . __('In Kind Receipt Number') . ' : ' . $item->collectingDonation?->in_kind_receipt_number . '</span>',
+                        default => '',
+                    };
+                }
+                return 'N/A';
+            })
+            ->addColumn('collected', fn($item) => $item->collectingDonation
+                ? '<span class="text-success">' . __('Collected') . '</span>'
+                : '<span class="text-danger">' . __('Not Collected') . '</span>'
+            )
+            ->addColumn('actions', function ($item) use ($request) {
+                return '
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-primary" 
+                    onclick="unAssignCollectingLine(' . $item->id . ',' . $request->collecting_line_id . ')">
+                        ' . __('Remove From Collecting Line') . '
+                    </button>
+                </div>';
+            })
+            ->rawColumns(['donateItems', 'receipt_number', 'collected', 'actions'])
+            ->make(true);
+    }
+
+    return response()->json(['message' => 'Invalid request'], 400);
+}
 
 
     public function exportCollectingLineToPdf(Request $request)
@@ -956,6 +937,26 @@ class CollectingLineController extends Controller
 
         // Assign the donation to the collecting line
         $donation->collectingLines()->attach($request->collecting_line_id);
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.Donation assigned successfully'),
+            'data' => $donation,
+        ]);
+    }
+
+    public function unAssignDonation(Request $request)
+    {
+        $request->validate([
+            'donation_id' => 'required|exists:donations,id',
+            'collecting_line_id' => 'required|exists:collecting_lines,id',
+        ]);
+
+        $donation = Donation::find($request->donation_id);
+
+
+        // Assign the donation to the collecting line
+        $donation->collectingLines()->detach($request->collecting_line_id);
 
         return response()->json([
             'success' => true,

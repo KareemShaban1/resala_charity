@@ -295,7 +295,7 @@
                         title: 'Success',
                         text: response.message
                     });
-                    $('#assignDonationModal').modal('hide'); // Close the modal
+                    $('#assignBulkDonationModal').modal('hide'); // Close the modal
 
                     donationsTable.ajax.reload(); // Refresh the table
                 },
@@ -649,26 +649,21 @@
             }
         });
 
-        // Open the View Donations Modal when the "View Donations" button is clicked
-        $('#collecting-lines-table').on('click', '.view-donations-btn', function() {
-            var collectingLineId = $(this).data('id'); // Ensure this matches the button's data attribute
-            // Store the collectingLine ID in the modal's data attribute
-            $('#viewDonationsModal').data('collecting-line-id', collectingLineId);
+        // Event handler for opening the View Donations Modal
+        $(document).on('click', '.view-donations-btn', function() {
+            var collectingLineId = $(this).data('id'); // Get collecting line ID from the button
+            $('#viewDonationsModal').data('collecting-line-id', collectingLineId).modal('show');
 
-            // Show the modal
-            $('#viewDonationsModal').modal('show');
-
-            // Initialize DataTable for viewing donations (only if not already initialized)
+            // Check if DataTable is already initialized
             if (!$.fn.DataTable.isDataTable('#view-donations-table')) {
-                var viewDonationsTable = $('#view-donations-table').DataTable({
+                // Initialize DataTable
+                $('#view-donations-table').DataTable({
                     processing: true,
                     serverSide: true,
                     ajax: {
                         url: "{{ route('collecting-lines.donations.data') }}",
                         data: function(d) {
-                            // Retrieve the collectingLine ID from the modal's data attribute
                             d.collecting_line_id = $('#viewDonationsModal').data('collecting-line-id');
-                            // Additional filters (if needed)
                             d.date = $('#date').val();
                             d.area_group = $('#area_group').val();
                         }
@@ -704,6 +699,12 @@
                             name: 'donateItems',
                             orderable: false,
                             searchable: false
+                        },
+                        {
+                            data: 'actions',
+                            name: 'actions',
+                            orderable: false,
+                            searchable: false
                         }
                     ],
                     order: [
@@ -718,7 +719,7 @@
                         {
                             extend: 'excel',
                             text: 'Excel',
-                            title: 'Areas Data',
+                            title: 'Donations Data',
                             exportOptions: {
                                 columns: [0, 1, 2, 3]
                             }
@@ -728,28 +729,26 @@
                             exportOptions: {
                                 columns: [0, 1, 2, 3]
                             }
-                        },
+                        }
                     ],
                     dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
                     pageLength: 10,
                     responsive: true,
-                    language: languages[language], // Apply language dynamically
-                    "drawCallback": function() {
+                    language: languages[language], // Dynamic language support
+                    drawCallback: function() {
                         $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
                     }
                 });
             } else {
-                // If the DataTable is already initialized, reload it with the new collecting_line_id
-                $('#view-donations-table').DataTable().ajax.reload();
+                // If DataTable is already initialized, reload with new collecting_line_id
+                $('#view-donations-table').DataTable().ajax.reload(null, false);
             }
         });
 
-        // Clear the collectingLine ID when the modal is hidden
+        // Clear modal data when closed
         $('#viewDonationsModal').on('hidden.bs.modal', function() {
             $(this).removeData('collecting-line-id');
         });
-
-
 
     });
 
@@ -1089,6 +1088,54 @@
             }
         });
     });
+
+    function unAssignCollectingLine(donationId, collectingLineId) {
+        let formData = new FormData();
+        formData.append('donation_id', donationId);
+        formData.append('collecting_line_id', collectingLineId);
+
+        $.ajax({
+            url: "{{ route('collecting-lines.un-assign-donation') }}", // Route to unassign donation
+            type: "POST",
+            data: formData,
+            processData: false, // Prevent jQuery from converting the data
+            contentType: false, // Ensure correct Content-Type is used
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message,
+                    });
+                    $('#viewDonationsModal').modal('hide');
+                    // Reload the DataTable (if needed)
+                    $('#donations-table').DataTable().ajax.reload();
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    for (var key in errors) {
+                        if (errors.hasOwnProperty(key)) {
+                            var input = $('[name="' + key + '"]');
+                            input.addClass('is-invalid');
+                            input.siblings('.invalid-feedback').text(errors[key][0]);
+                        }
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON.message || 'Something went wrong!',
+                    });
+                }
+            }
+        });
+    }
+
 
     // Handle "Select" button click
     $(document).on('click', '.assign-btn', function() {

@@ -655,7 +655,7 @@
                 delay: 250,
                 data: function(params) {
                     return {
-                        query: params.term // Search query
+                        query: params.term, // Search query
                     };
                 },
                 processResults: function(data) {
@@ -723,7 +723,8 @@
                 delay: 250,
                 data: function(params) {
                     return {
-                        query: params.term // Search query
+                        query: params.term, // Search query
+                        monthly: true
                     };
                 },
                 processResults: function(data) {

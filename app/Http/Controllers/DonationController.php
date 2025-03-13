@@ -867,6 +867,7 @@ class DonationController extends Controller
                 }
                 $monthlyForm = MonthlyForm::where('donor_id', $validatedData['donor_id'])->first();
 
+                // dd($monthlyForm);
                 DB::table('monthly_form_donations')->insert([
                     "donation_id" => $donation->id,
                     "monthly_form_id" => $monthlyForm->id,
