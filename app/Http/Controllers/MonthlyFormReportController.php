@@ -173,15 +173,15 @@ class MonthlyFormReportController extends Controller
             }], 'amount')->get()->sum('total_amount');
 
         // Collected and Not Collected Forms Count
-        $monthlyFormsNotCollectedCount = $monthlyFormsQuery->whereNotIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))->count();
-        $monthlyFormsNotCollectedAmount = $monthlyFormsQuery->whereNotIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))
+        $monthlyFormsNotCollectedCount = (clone $monthlyFormsQuery)->whereNotIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))->count();
+        $monthlyFormsNotCollectedAmount = (clone $monthlyFormsQuery)->whereNotIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))
             ->withSum(['items as total_amount' => function ($query) {
                 $query->where('donation_type', 'financial');
             }], 'amount')->get()->sum('total_amount');
 
 
-        $monthlyFormsCollectedCount = $monthlyFormsQuery->whereIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))->count();
-        $monthlyFormsCollectedAmount = $monthlyFormsQuery->whereIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))
+        $monthlyFormsCollectedCount = (clone $monthlyFormsQuery)->whereIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))->count();
+        $monthlyFormsCollectedAmount = (clone $monthlyFormsQuery)->whereIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))
             ->withSum(['items as total_amount' => function ($query) {
                 $query->where('donation_type', 'financial');
             }], 'amount')->get()->sum('total_amount');
