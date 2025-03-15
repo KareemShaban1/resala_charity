@@ -306,7 +306,8 @@ class DonationController extends Controller
 
     public function getDonationDetails($id)
     {
-        $donation = Donation::with('donor', 'donateItems', 'collectingDonation', 'createdBy')->findOrFail($id);
+        $donation = Donation::with('donor' , 'donor.phones', 'donateItems', 'collectingDonation', 'createdBy')
+        ->findOrFail($id);
 
         // Check if the donation category is "gathered"
         if ($donation->donation_category === 'gathered') {

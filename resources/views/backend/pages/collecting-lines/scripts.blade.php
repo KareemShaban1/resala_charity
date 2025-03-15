@@ -132,12 +132,12 @@
                     data: 'area',
                     name: 'area'
                 },
-                {
-                    data: 'phones',
-                    name: 'phones',
-                    orderable: false,
-                    searchable: true
-                },
+                // {
+                //     data: 'phones',
+                //     name: 'phones',
+                //     orderable: false,
+                //     searchable: true
+                // },
                 {
                     data: 'notes',
                     name: 'notes'
@@ -145,6 +145,12 @@
                 {
                     data: 'created_by',
                     name: 'created_by'
+                },
+                {
+                    data: 'donateItems',
+                    name: 'donateItems',
+                    orderable: false,
+                    searchable: false
                 },
                 // {
                 //     data:'last_donation_date',
@@ -1534,13 +1540,18 @@
                </div>
                 <div class="row">
                 <div class="col-md-6">
-                  <p><strong>{{__('Collecting Time')}}:</strong> ${data.collecting_time}</p>
+                  <p><strong>{{__('Collecting Time')}}:</strong> ${data.collecting_time ?? 'N/A'}</p>
                 </div>
                   <div class="col-md-6">
-                  <p><strong>{{__('Notes')}}:</strong> ${data.notes}</p>
+                  <p><strong>{{__('Notes')}}:</strong> ${data.notes ?? 'N/A'}</p>
                 </div>
                 </div>
      `;
+
+                    data.donor.phones
+                        .forEach(item => {
+                            modalContent += `<p><strong>{{__('Phones')}}:</strong> ${item.phone_number} </p>`;
+                        });
 
                 // Financial Donations Table
                 if (data.donation_type === 'financial' || data.donation_type === 'both') {

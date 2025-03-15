@@ -102,9 +102,10 @@
                             <th>{{__('ID')}}</th>
                             <th>{{__('Donor Name')}}</th>
                             <th>{{__('Area')}}</th>
-                            <th>{{__('Phones')}}</th>
+                            <!-- <th>{{__('Phones')}}</th> -->
                             <th>{{ __('Notes') }}</th>
                             <th>{{__('Created By')}}</th>
+                            <th>{{__('Donates')}}</th>
                             <!-- <th>{{__('Last Donation Date')}}</th> -->
                             <th>{{__('Actions')}}</th>
                         </tr>

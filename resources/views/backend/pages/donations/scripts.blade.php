@@ -916,7 +916,7 @@
                     <p><strong>{{__('Notes')}}:</strong> ${data.notes ?? 'N/A'}</p>
                   </div>
                   </div>
-       `;
+                        `;
 
                 // Financial Donations Table
                 if (data.donation_type === 'financial' || data.donation_type === 'both') {
