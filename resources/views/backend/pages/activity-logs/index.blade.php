@@ -112,7 +112,7 @@
             }
         },
         columns: [
-            { data: 'id', name: 'id' },
+            { data: 'id', name: 'id', searchable: false },
             { data: 'action', name: 'action' },
             { data: 'model', name: 'model' },
             { data: 'model_id', name: 'model_id', searchable: true },
