@@ -142,6 +142,10 @@
                     data: 'notes',
                     name: 'notes'
                 },
+                {
+                    data: 'created_by',
+                    name: 'created_by'
+                },
                 // {
                 //     data:'last_donation_date',
                 //     name:'last_donation_date'
@@ -701,8 +705,8 @@
                             searchable: false
                         },
                         {
-                            data: 'actions',
-                            name: 'actions',
+                            data: 'un_assign_actions',
+                            name: 'un_assign_actions',
                             orderable: false,
                             searchable: false
                         }

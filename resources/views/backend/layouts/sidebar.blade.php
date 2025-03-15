@@ -43,7 +43,7 @@
               @can('backups.index')
               <li class="side-nav-item">
                   <a href="{{route('backups.index')}}" class="side-nav-link">
-                      <i class="uil-home-alt"></i>
+                      <i class="uil-database"></i>
                       <span>
                           {{__('Backups')}}
                       </span>
@@ -281,7 +281,7 @@
               @if(Gate::any(['view donation categories','view donations' ,'view monthly donations','view gathered donations']))
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarDonations" aria-expanded="false" aria-controls="sidebarDonations" class="side-nav-link">
-                      <i class="uil-money-withdraw"></i>
+                      <i class="uil-money-insert"></i>
                       <span> {{__('Donations')}} </span>
                       <span class="menu-arrow"></span>
                   </a>
@@ -359,7 +359,7 @@
               @if(Gate::any(['view monthly forms reports','view donor activities reports','view donor random calls reports']))
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarMonthlyFormsReport" aria-expanded="false" aria-controls="sidebarMonthlyFormsReport" class="side-nav-link">
-                      <i class="uil-money-withdraw"></i>
+                      <i class="uil-file-alt"></i>
                       <span> {{__('Reports')}} </span>
                       <span class="menu-arrow"></span>
                   </a>

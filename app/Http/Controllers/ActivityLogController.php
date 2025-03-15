@@ -43,6 +43,9 @@ class ActivityLogController extends Controller
         }
 
         return DataTables::of($query)
+            ->filterColumn('model_id', function ($query, $value) {
+                $query->where('model_id', $value);
+            })
             ->editColumn('created_at', function ($item) {
                 return $item->created_at->format('Y-m-d H:i:s');
             })

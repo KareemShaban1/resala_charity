@@ -115,7 +115,7 @@
             { data: 'id', name: 'id' },
             { data: 'action', name: 'action' },
             { data: 'model', name: 'model' },
-            { data: 'model_id', name: 'model_id' },
+            { data: 'model_id', name: 'model_id', searchable: true },
             { data: 'changes', name: 'changes' },
             { data: 'user.name', name: 'user.name', defaultContent: 'System' },
             { data: 'created_at', name: 'created_at' },

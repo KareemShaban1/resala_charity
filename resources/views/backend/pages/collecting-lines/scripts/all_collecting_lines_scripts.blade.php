@@ -175,8 +175,8 @@
                             searchable: false
                         },
                         {
-                            data: 'actions',
-                            name: 'actions',
+                            data: 'un_assign_actions',
+                            name: 'un_assign_actions',
                             orderable: false,
                             searchable: false
                         },

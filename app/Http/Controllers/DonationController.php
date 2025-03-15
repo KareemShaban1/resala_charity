@@ -112,8 +112,6 @@ class DonationController extends Controller
             } elseif ($status === 'cancelled') {
                 $query->where('donations.status', 'cancelled');
             }
-
-            // followed_up,cancelled
         }
 
         // Date filter
@@ -157,6 +155,18 @@ class DonationController extends Controller
             })
             ->filterColumn('phones', function ($query, $keyword) {
                 $query->where('donor_phones.phone_number', 'LIKE', "%{$keyword}%");
+            })
+            ->filterColumn('created_by', function ($query, $keyword) {
+                $query->whereHas('createdBy', function ($query) use ($keyword) {
+                    $query->where('name', 'LIKE', "%{$keyword}%");
+                }); 
+            })
+            ->filterColumn('user_department', function ($query, $keyword) {
+                $query->whereHas('createdBy', function ($query) use ($keyword) {
+                    $query->whereHas('department', function ($query) use ($keyword) {
+                        $query->where('name', 'LIKE', "%{$keyword}%");
+                    });
+                });
             })
             ->addColumn('action', function ($item) {
                 $btn = '<div class="d-flex gap-2">';
@@ -234,18 +244,18 @@ class DonationController extends Controller
                 return $item->donateItems->map(function ($donate) use ($item) {
                     if ($item->donation_type === 'financial') {
                         return '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
-                            ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount;
+                            ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount . ' - ( ' . $donate->financial_receipt_number . ' )';
                     } elseif ($item->donation_type === 'inKind') {
                         return '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
-                            ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount;
+                            ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount . ' - ( ' . $item->in_kind_receipt_number . ' )' ;
                     } elseif ($item->donation_type === 'both') {
                         if (isset($donate->donation_category_id) && isset($donate->amount)) {
                             return '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
-                                ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount . '<br>';
+                                ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount . ' - ( ' . $donate->financial_receipt_number . ' )' . '<br>';
                         }
                         if (isset($donate->item_name) && isset($donate->amount)) {
                             return  '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
-                                ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount;
+                                ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount . ' - ( ' . $item->in_kind_receipt_number . ' )';
                         }
                     }
                     return '';
@@ -267,6 +277,12 @@ class DonationController extends Controller
                     return $item->donor_id . '-' . $item->created_at;
                 }
                 return null;
+            })
+            ->addColumn('created_by', function ($item) {
+                return $item->createdBy->name;
+            })
+            ->addColumn('user_department', function ($item) {
+                return $item->createdBy->department->name;
             })
             ->rawColumns(['name', 'action', 'donateItems', 'receipt_number', 'donation_status'])
             ->make(true);

@@ -43,6 +43,8 @@
                                 <th>{{__('Phones')}}</th>
                                 <th>{{__('Donation Type')}}</th>
                                 <th>{{__('Donation Status')}}</th>
+                                <th>{{__('Created By')}}</th>
+                                <th>{{__('User Department')}}</th>
                                 <th>{{__('Donates')}}</th>
                                 <th>{{__('Actions')}}</th>
                             </tr>

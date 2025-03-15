@@ -13,28 +13,28 @@
         // Bind events
         bindEvents();
 
-    
+
     });
 
     function initializeSelect2() {
         // Main form selects
         $('#governorate_id').select2({
             dropdownParent: $('#addDonorModal'),
-            placeholder: '{{__('Select Governorate')}}',
+            placeholder: "{{__('Select Governorate')}}",
             allowClear: true,
             width: '100%'
         });
 
         $('#city_id').select2({
             dropdownParent: $('#addDonorModal'),
-            placeholder: '{{__('Select City')}}',
+            placeholder: "{{__('Select City')}}",
             allowClear: true,
             width: '100%'
         });
 
         $('#area_id').select2({
             dropdownParent: $('#addDonorModal'),
-            placeholder: '{{__('Select Area')}}',
+            placeholder: "{{__('Select Area')}}",
             allowClear: true,
             width: '100%'
         });
@@ -47,6 +47,13 @@
                 url: '{{ route("donors.search") }}',
                 dataType: 'json',
                 delay: 250,
+                /**
+                 * Function to provide data to the AJAX call for searching donors
+                 * @param {Object} params - The parameters passed in by Select2
+                 * @returns {Object} - The data to be sent in the AJAX call
+                 * @property {string} query - The search query
+                 * @property {boolean} monthly - Whether to search for monthly donors
+                 */
                 data: function(params) {
                     return {
                         query: params.term, // Search query
@@ -81,21 +88,21 @@
         // Modal form selects
         $('#edit_governorate_id').select2({
             dropdownParent: $('#editDonorModal'),
-            placeholder: '{{__('Select Governorate')}}',
+            placeholder: "{{__('Select Governorate')}}",
             allowClear: true,
             width: '100%'
         });
 
         $('#edit_city_id').select2({
             dropdownParent: $('#editDonorModal'),
-            placeholder: '{{__('Select City')}}',
+            placeholder: "{{__('Select City')}}",
             allowClear: true,
             width: '100%'
         });
 
         $('#edit_area_id').select2({
             dropdownParent: $('#editDonorModal'),
-            placeholder: '{{__('Select Area')}}',
+            placeholder: "{{__('Select Area')}}",
             allowClear: true,
             width: '100%'
         });
@@ -150,7 +157,7 @@
                 // Clear previous states
                 $(this).find('.is-invalid').removeClass('is-invalid');
                 $(this).find('.invalid-feedback').text('');
-                
+
             },
             'shown.bs.modal': function() {
                 // Initialize Select2 after modal is shown
@@ -200,12 +207,12 @@
                 $('#edit_governorate_id').val(data.governorate_id).trigger('change');
 
                 // Load cities and ensure the correct city is selected before loading areas
-            loadCities(data.governorate_id, $('#edit_city_id'), data.city_id)
-                .then(() => {
-                    if (data.city_id) {
-                        return loadAreas(data.city_id, $('#edit_area_id'), data.area_id);
-                    }
-                });
+                loadCities(data.governorate_id, $('#edit_city_id'), data.city_id)
+                    .then(() => {
+                        if (data.city_id) {
+                            return loadAreas(data.city_id, $('#edit_area_id'), data.area_id);
+                        }
+                    });
 
 
             }
@@ -224,14 +231,14 @@
     }
 
 
-    function donorDetails(id){
+    function donorDetails(id) {
 
         $('#donorDetailsModal').modal('show');
 
         $.get(`{{ url('donors') }}/${id}`)
-        .done(function(data) {
+            .done(function(data) {
 
-            let modalContent = `
+                let modalContent = `
             <h4 class="text-primary">{{__('Donor Information')}}</h4>
             <div class="row mb-3">
                 <div class="col-md-3">
@@ -294,13 +301,13 @@
                 `;
 
                 data.phones
-                        .forEach(phone => {
-                            modalContent += `
+                    .forEach(phone => {
+                        modalContent += `
                             <div class="col-md-12"> ${phone.phone_number} --- (${phone.phone_type}) </div>
                             `;
-                        })
+                    })
 
-                        modalContent += `
+                modalContent += `
                           <h4 class="text-primary mt-3">{{__('Activities')}}</h4>
                         <table class="table table-bordered">
                             <thead>
@@ -337,9 +344,9 @@
                         
                         `;
 
-              // Add the constructed content to the modal body
-              $('#donorDetailsModal .modal-body').html(modalContent);    
-        });
+                // Add the constructed content to the modal body
+                $('#donorDetailsModal .modal-body').html(modalContent);
+            });
 
     }
 
@@ -387,20 +394,28 @@
             processing: true,
             serverSide: true,
             ajax: {
-            url: "{{ route('donors.data') }}",
-            data: function(d) {
-                d.date_filter = $('#date-filter').val();
-                d.start_date = $('#start-date').val();
-                d.end_date = $('#end-date').val();
-                d.category = 'normal';
+                url: "{{ route('donors.data') }}",
+                data: function(d) {
+                    d.date_filter = $('#date-filter').val();
+                    d.start_date = $('#start-date').val();
+                    d.end_date = $('#end-date').val();
+                    d.category = 'normal';
 
-            }
-        },
-        autoWidth:false,
-        columnDefs: [
-            {width: "20px"  , targets: 0}, // ID column
-            { width: "10p%" ,targets: 1,  }, // Name column
-            {  width: "50px",targets: 2 }, // Donor type column
+                }
+            },
+            autoWidth: false,
+            columnDefs: [{
+                    width: "20px",
+                    targets: 0
+                }, // ID column
+                {
+                    width: "10p%",
+                    targets: 1,
+                }, // Name column
+                {
+                    width: "50px",
+                    targets: 2
+                }, // Donor type column
             ],
             columns: [{
                     data: 'id',
@@ -424,11 +439,11 @@
                     data: 'donor_category',
                     name: 'donors.donor_category',
                     render: function(data, type, row) {
-                        if(data === 'special'){
+                        if (data === 'special') {
                             return 'مميز';
-                        }else if (data === 'normal'){
+                        } else if (data === 'normal') {
                             return 'عادى';
-                        }else {
+                        } else {
                             return 'عشوائى';
                         }
                     },
@@ -481,99 +496,112 @@
             ],
 
             initComplete: function() {
-            // Apply column-specific search
-            this.api().columns().every(function() {
-                var column = this;
-                $('input, select', column.header()).on('change keyup', function() {
-                    column.search($(this).val()).draw();
+                // Apply column-specific search
+                this.api().columns().every(function() {
+                    var column = this;
+                    $('input, select', column.header()).on('change keyup', function() {
+                        column.search($(this).val()).draw();
+                    });
                 });
-            });
-        },
+            },
             order: [
                 [0, 'desc']
             ],
             search: {
                 regex: true
             },
-            buttons: [
-    {
-        extend: 'excel',
-        text: 'Excel',
-        title: 'Donors Data',
-        exportOptions: {
-            columns: ':visible', // Ensures all visible columns are exported
-            header: true,
-            format: {
-                header: function (data, columnIdx) {
-                    // Select the first row of <thead> and exclude the second row (filters)
-                    if ($('#donors-table thead tr:first-child th').eq(columnIdx).length) {
-                        return $('#donors-table thead tr:first-child th').eq(columnIdx).text();
+            buttons: [{
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Donors Data',
+                    exportOptions: {
+                        columns: ':visible', // Ensures all visible columns are exported
+                        header: true,
+                        format: {
+                            header: function(data, columnIdx) {
+                                // Select the first row of <thead> and exclude the second row (filters)
+                                if ($('#donors-table thead tr:first-child th').eq(columnIdx).length) {
+                                    return $('#donors-table thead tr:first-child th').eq(columnIdx).text();
+                                }
+                                return '';
+                            }
+                        }
                     }
-                    return '';
-                }
-            }
-        }
-    },
-    {
-        extend: 'print',
-        text: 'Print',
-        exportOptions: {
-            columns: ':visible',
-            header: true,
-            format: {
-                header: function (data, columnIdx) {
-                    if ($('#donors-table thead tr:first-child th').eq(columnIdx).length) {
-                        return $('#donors-table thead tr:first-child th').eq(columnIdx).text();
+                },
+                {
+                    extend: 'colvis',
+                    text: 'Columns',
+                    columns: ':not(:last-child)', // Exclude action column
+                    columnText: function(dt, idx, title) {
+                        // Select the first row of <thead> and get the text of the corresponding column
+                        let columnTitle = $('#donors-table thead tr:first-child th').eq(idx).text();
+                        return columnTitle.trim() || `Column ${idx + 1}`;
                     }
-                    return '';
-                }
-            }
-        }
-    },
-    {
-        extend: 'copy',
-        text: 'Copy',
-        exportOptions: {
-            columns: ':visible',
-            header: true,
-            format: {
-                header: function (data, columnIdx) {
-                    if ($('#donors-table thead tr:first-child th').eq(columnIdx).length) {
-                        return $('#donors-table thead tr:first-child th').eq(columnIdx).text();
+                },
+
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    exportOptions: {
+                        columns: ':visible',
+                        header: true,
+                        format: {
+                            header: function(data, columnIdx) {
+                                if ($('#donors-table thead tr:first-child th').eq(columnIdx).length) {
+                                    return $('#donors-table thead tr:first-child th').eq(columnIdx).text();
+                                }
+                                return '';
+                            }
+                        }
                     }
-                    return '';
+                },
+                {
+                    extend: 'copy',
+                    text: 'Copy',
+                    exportOptions: {
+                        columns: ':visible',
+                        header: true,
+                        format: {
+                            header: function(data, columnIdx) {
+                                if ($('#donors-table thead tr:first-child th').eq(columnIdx).length) {
+                                    return $('#donors-table thead tr:first-child th').eq(columnIdx).text();
+                                }
+                                return '';
+                            }
+                        }
+                    }
                 }
-            }
-        }
-    }
-],
+            ],
 
 
 
             dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
-            lengthMenu: [[10, 25, 50, 100, 500, 1000, 2000], [10, 25, 50, 100, 500, 1000, 2000]], 
+            lengthMenu: [
+                [10, 25, 50, 100, 500, 1000, 2000],
+                [10, 25, 50, 100, 500, 1000, 2000]
+            ],
             pageLength: 10,
             responsive: true,
             language: languages[language],
             "drawCallback": function() {
                 $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
             },
-            createdRow: function (row, data, dataIndex) {
+            createdRow: function(row, data, dataIndex) {
 
-            // Get the parent ID or group ID from the data
-            const parentId = data.parent_donor_group_id;
+                // Get the parent ID or group ID from the data
+                const parentId = data.parent_donor_group_id;
 
-            // Generate a unique color for this parent
-            const color = getColorForParent(parentId);
+                // Generate a unique color for this parent
+                const color = getColorForParent(parentId);
 
-            if (data.is_child === 'Parent') {
-                // For child rows, apply the color to all columns
-                $(row).addClass('child-row');
-                $(row).find('td').attr('style', 'background-color: ' + color + ' !important');
-            } else if (data.is_child === 'Child') {
-                // For parent rows, apply the color only to the first column
-                $(row).find('td:first').attr('style', 'background-color: ' + color + ' !important');
-            }
+                if (data.is_child === 'Parent') {
+                    // For child rows, apply the color to all columns
+                    $(row).addClass('child-row');
+                    $(row).find('td').attr('style', 'background-color: ' + color + ' !important');
+                } else if (data.is_child === 'Child') {
+                    // For parent rows, apply the color only to the first column
+                    $(row).find('td:first').attr('style', 'background-color: ' + color + ' !important');
+                }
             }
         });
 
@@ -583,19 +611,27 @@
             processing: true,
             serverSide: true,
             ajax: {
-            url: "{{ route('donors.data') }}",
-            data: function(d) {
-                d.date_filter = $('#date-filter').val();
-                d.start_date = $('#start-date').val();
-                d.end_date = $('#end-date').val();
-                d.category = 'random';
-            }
-        },
-        autoWidth:false,
-        columnDefs: [
-            {width: "20px"  , targets: 0}, // ID column
-            { width: "10p%" ,targets: 1,  }, // Name column
-            {  width: "50px",targets: 2 }, // Donor type column
+                url: "{{ route('donors.data') }}",
+                data: function(d) {
+                    d.date_filter = $('#date-filter').val();
+                    d.start_date = $('#start-date').val();
+                    d.end_date = $('#end-date').val();
+                    d.category = 'random';
+                }
+            },
+            autoWidth: false,
+            columnDefs: [{
+                    width: "20px",
+                    targets: 0
+                }, // ID column
+                {
+                    width: "10p%",
+                    targets: 1,
+                }, // Name column
+                {
+                    width: "50px",
+                    targets: 2
+                }, // Donor type column
             ],
             columns: [{
                     data: 'id',
@@ -619,11 +655,11 @@
                     data: 'donor_category',
                     name: 'donors.donor_category',
                     render: function(data, type, row) {
-                        if(data === 'special'){
+                        if (data === 'special') {
                             return 'مميز';
-                        }else if (data === 'normal'){
+                        } else if (data === 'normal') {
                             return 'عادى';
-                        }else {
+                        } else {
                             return 'عشوائى';
                         }
                     },
@@ -682,110 +718,112 @@
             ],
 
             initComplete: function() {
-            // Apply column-specific search
-            this.api().columns().every(function() {
-                var column = this;
-                $('input, select', column.header()).on('change keyup', function() {
-                    column.search($(this).val()).draw();
+                // Apply column-specific search
+                this.api().columns().every(function() {
+                    var column = this;
+                    $('input, select', column.header()).on('change keyup', function() {
+                        column.search($(this).val()).draw();
+                    });
                 });
-            });
-        },
+            },
             order: [
                 [0, 'desc']
             ],
             search: {
                 regex: true
             },
-            buttons: [
-    {
-        extend: 'excel',
-        text: 'Excel',
-        title: 'Donors Data',
-        exportOptions: {
-            columns: ':visible', // Ensures all visible columns are exported
-            header: true,
-            format: {
-                header: function (data, columnIdx) {
-                    // Select the first row of <thead> and exclude the second row (filters)
-                    if ($('#random-donors-table thead tr:first-child th').eq(columnIdx).length) {
-                        return $('#random-donors-table thead tr:first-child th').eq(columnIdx).text();
+            buttons: [{
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Donors Data',
+                    exportOptions: {
+                        columns: ':visible', // Ensures all visible columns are exported
+                        header: true,
+                        format: {
+                            header: function(data, columnIdx) {
+                                // Select the first row of <thead> and exclude the second row (filters)
+                                if ($('#random-donors-table thead tr:first-child th').eq(columnIdx).length) {
+                                    return $('#random-donors-table thead tr:first-child th').eq(columnIdx).text();
+                                }
+                                return '';
+                            }
+                        }
                     }
-                    return '';
-                }
-            }
-        }
-    },
-    {
-        extend: 'print',
-        text: 'Print',
-        exportOptions: {
-            columns: ':visible',
-            header: true,
-            format: {
-                header: function (data, columnIdx) {
-                    if ($('#random-donors-table thead tr:first-child th').eq(columnIdx).length) {
-                        return $('#random-donors-table thead tr:first-child th').eq(columnIdx).text();
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    exportOptions: {
+                        columns: ':visible',
+                        header: true,
+                        format: {
+                            header: function(data, columnIdx) {
+                                if ($('#random-donors-table thead tr:first-child th').eq(columnIdx).length) {
+                                    return $('#random-donors-table thead tr:first-child th').eq(columnIdx).text();
+                                }
+                                return '';
+                            }
+                        }
                     }
-                    return '';
-                }
-            }
-        }
-    },
-    {
-        extend: 'copy',
-        text: 'Copy',
-        exportOptions: {
-            columns: ':visible',
-            header: true,
-            format: {
-                header: function (data, columnIdx) {
-                    if ($('#random-donors-table thead tr:first-child th').eq(columnIdx).length) {
-                        return $('#random-donors-table thead tr:first-child th').eq(columnIdx).text();
+                },
+                {
+                    extend: 'copy',
+                    text: 'Copy',
+                    exportOptions: {
+                        columns: ':visible',
+                        header: true,
+                        format: {
+                            header: function(data, columnIdx) {
+                                if ($('#random-donors-table thead tr:first-child th').eq(columnIdx).length) {
+                                    return $('#random-donors-table thead tr:first-child th').eq(columnIdx).text();
+                                }
+                                return '';
+                            }
+                        }
                     }
-                    return '';
                 }
-            }
-        }
-    }
-],
+            ],
             dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
-            lengthMenu: [[10, 25, 50, 100, 500, 1000, 2000], [10, 25, 50, 100, 500, 1000, 2000]], 
+            lengthMenu: [
+                [10, 25, 50, 100, 500, 1000, 2000],
+                [10, 25, 50, 100, 500, 1000, 2000]
+            ],
             pageLength: 10,
             responsive: true,
             language: languages[language],
             "drawCallback": function() {
                 $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
             },
-            createdRow: function (row, data, dataIndex) {
+            createdRow: function(row, data, dataIndex) {
 
-            // Get the parent ID or group ID from the data
-            const parentId = data.parent_donor_group_id;
+                // Get the parent ID or group ID from the data
+                const parentId = data.parent_donor_group_id;
 
-            // Generate a unique color for this parent
-            const color = getColorForParent(parentId);
+                // Generate a unique color for this parent
+                const color = getColorForParent(parentId);
 
-            if (data.is_child === 'Parent') {
-                // For child rows, apply the color to all columns
-                $(row).addClass('child-row');
-                $(row).find('td').attr('style', 'background-color: ' + color + ' !important');
-            } else if (data.is_child === 'Child') {
-                // For parent rows, apply the color only to the first column
-                $(row).find('td:first').attr('style', 'background-color: ' + color + ' !important');
-            }
+                if (data.is_child === 'Parent') {
+                    // For child rows, apply the color to all columns
+                    $(row).addClass('child-row');
+                    $(row).find('td').attr('style', 'background-color: ' + color + ' !important');
+                } else if (data.is_child === 'Child') {
+                    // For parent rows, apply the color only to the first column
+                    $(row).find('td:first').attr('style', 'background-color: ' + color + ' !important');
+                }
             }
         });
     }
 
-        
-        function getColorForParent(parentId) {
-                // Use a hash function to generate a unique color
-                const colors = [
-                    '#f9f9f9', '#e6f7ff', '#fff7e6', '#e6ffe6', '#ffe6e6', 
-                    '#e6e6ff', '#f0e6ff', '#ffe6f0', '#e6fff0', '#fff0e6'
-                ];
-                const index = parentId % colors.length; // Ensure the index is within the array bounds
-                return colors[index];
-            }
+
+    function getColorForParent(parentId) {
+        // Use a hash function to generate a unique color
+        const colors = [
+            '#f9f9f9', '#e6f7ff', '#fff7e6', '#e6ffe6', '#ffe6e6',
+            '#e6e6ff', '#f0e6ff', '#ffe6f0', '#e6fff0', '#fff0e6'
+        ];
+        const index = parentId % colors.length; // Ensure the index is within the array bounds
+        return colors[index];
+    }
 
 
 
@@ -794,8 +832,8 @@
         donorsTable.draw();
     });
 
-       // Date filter change
-       $('#date-filter').on('change', function () {
+    // Date filter change
+    $('#date-filter').on('change', function() {
         if ($(this).val() === 'range') {
             $('#custom-range, #end-date-container').show();
         } else {
@@ -807,7 +845,7 @@
 
 
     // Start date and end date change
-    $('#start-date, #end-date').on('change', function () {
+    $('#start-date, #end-date').on('change', function() {
         donorsTable.ajax.reload();
     });
 
@@ -821,72 +859,76 @@
 
 
     function loadCities(governorateId, targetSelect, selectedCityId = null) {
-    targetSelect.prop('disabled', true);
-    
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: "{{ route('cities.by-governorate') }}",
-            type: 'GET',
-            data: { governorate_id: governorateId },
-            success: function(response) {
-                targetSelect.empty().append('<option value="">Select City</option>');
+        targetSelect.prop('disabled', true);
 
-                if (response.success && Array.isArray(response.data)) {
-                    response.data.forEach(city => {
-                        targetSelect.append(`<option value="${city.id}" ${city.id == selectedCityId ? 'selected' : ''}>${city.name}</option>`);
-                    });
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: "{{ route('cities.by-governorate') }}",
+                type: 'GET',
+                data: {
+                    governorate_id: governorateId
+                },
+                success: function(response) {
+                    targetSelect.empty().append('<option value="">Select City</option>');
+
+                    if (response.success && Array.isArray(response.data)) {
+                        response.data.forEach(city => {
+                            targetSelect.append(`<option value="${city.id}" ${city.id == selectedCityId ? 'selected' : ''}>${city.name}</option>`);
+                        });
+                    }
+
+                    targetSelect.prop('disabled', false);
+
+                    if (selectedCityId) {
+                        targetSelect.val(selectedCityId).trigger('change');
+                    }
+
+                    resolve(); // Ensure it completes before proceeding
+                },
+                error: function(xhr) {
+                    console.error('Error loading cities:', xhr);
+                    targetSelect.prop('disabled', false);
+                    reject();
                 }
-                
-                targetSelect.prop('disabled', false);
-
-                if (selectedCityId) {
-                    targetSelect.val(selectedCityId).trigger('change');
-                }
-
-                resolve(); // Ensure it completes before proceeding
-            },
-            error: function(xhr) {
-                console.error('Error loading cities:', xhr);
-                targetSelect.prop('disabled', false);
-                reject();
-            }
+            });
         });
-    });
-}
+    }
 
-function loadAreas(cityId, targetSelect, selectedAreaId = null) {
-    targetSelect.prop('disabled', true);
-    
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: "{{ route('areas.by-city') }}",
-            type: 'GET',
-            data: { city_id: cityId },
-            success: function(response) {
-                targetSelect.empty().append('<option value="">Select Area</option>');
+    function loadAreas(cityId, targetSelect, selectedAreaId = null) {
+        targetSelect.prop('disabled', true);
 
-                if (response.success && Array.isArray(response.data)) {
-                    response.data.forEach(area => {
-                        targetSelect.append(`<option value="${area.id}" ${area.id == selectedAreaId ? 'selected' : ''}>${area.name}</option>`);
-                    });
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: "{{ route('areas.by-city') }}",
+                type: 'GET',
+                data: {
+                    city_id: cityId
+                },
+                success: function(response) {
+                    targetSelect.empty().append('<option value="">Select Area</option>');
+
+                    if (response.success && Array.isArray(response.data)) {
+                        response.data.forEach(area => {
+                            targetSelect.append(`<option value="${area.id}" ${area.id == selectedAreaId ? 'selected' : ''}>${area.name}</option>`);
+                        });
+                    }
+
+                    targetSelect.prop('disabled', false);
+
+                    if (selectedAreaId) {
+                        targetSelect.val(selectedAreaId).trigger('change');
+                    }
+
+                    resolve();
+                },
+                error: function(xhr) {
+                    console.error('Error loading areas:', xhr);
+                    targetSelect.prop('disabled', false);
+                    reject();
                 }
-                
-                targetSelect.prop('disabled', false);
-
-                if (selectedAreaId) {
-                    targetSelect.val(selectedAreaId).trigger('change');
-                }
-
-                resolve();
-            },
-            error: function(xhr) {
-                console.error('Error loading areas:', xhr);
-                targetSelect.prop('disabled', false);
-                reject();
-            }
+            });
         });
-    });
-}
+    }
 
 
     // Add Donor Form Submit
@@ -914,17 +956,17 @@ function loadAreas(cityId, targetSelect, selectedAreaId = null) {
             },
             error: function(xhr) {
                 if (xhr.status === 422) {
-                var errors = xhr.responseJSON.errors;
-                var errorMessages = Object.values(errors).map(function(error) {
-                    return error[0];
-                }).join('<br>');
+                    var errors = xhr.responseJSON.errors;
+                    var errorMessages = Object.values(errors).map(function(error) {
+                        return error[0];
+                    }).join('<br>');
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Errors',
-                    html: errorMessages
-                });
-            }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Errors',
+                        html: errorMessages
+                    });
+                }
             }
         });
     });
@@ -1102,42 +1144,42 @@ function loadAreas(cityId, targetSelect, selectedAreaId = null) {
 
 
     function assignDonor(donorId) {
-    $('#assignDonorModal').modal('show');
-    $('#parent_donor_id').val(donorId);
-    
-    const payload = {
-        parent_donor_id: donorId,
-        _token: $('meta[name="csrf-token"]').attr('content') // Include CSRF token
-    };
+        $('#assignDonorModal').modal('show');
+        $('#parent_donor_id').val(donorId);
 
-    // Perform the AJAX request to fetch non-assigned children
-    $.ajax({
-        url: '/donors-not-assigned',  // New endpoint for non-assigned children
-        method: 'POST',
-        data: payload,
-        success: function(data) {
-            // Populate the donor select dropdown with non-assigned children
-            const donorSelect = $('#assign_donor_id');
-            donorSelect.html('<option value="">{{__('Select Donor')}}</option>'); // Reset the select options
-            data.forEach(donor => {
-                donorSelect.append(`<option value="${donor.id}">${donor.name}</option>`);
-            });
-        },
-        error: function(xhr) {
-            console.error("Error fetching non-assigned children donors:", xhr.responseText);
-        }
-    });
+        const payload = {
+            parent_donor_id: donorId,
+            _token: $('meta[name="csrf-token"]').attr('content') // Include CSRF token
+        };
 
-    $.ajax({
-        url: '/donors-children',
-        method: 'POST',
-        data: payload,
-        success: function(data) {
-            // Populate the table
-            const tableBody = $('#childrenDonorTableBody');
-            tableBody.empty(); // Clear previous data
-            data.forEach(donor => {
-                tableBody.append(`
+        // Perform the AJAX request to fetch non-assigned children
+        $.ajax({
+            url: '/donors-not-assigned', // New endpoint for non-assigned children
+            method: 'POST',
+            data: payload,
+            success: function(data) {
+                // Populate the donor select dropdown with non-assigned children
+                const donorSelect = $('#assign_donor_id');
+                donorSelect.html('<option value="">{{__("Select Donor")}}</option>'); // Reset the select options
+                data.forEach(donor => {
+                    donorSelect.append(`<option value="${donor.id}">${donor.name}</option>`);
+                });
+            },
+            error: function(xhr) {
+                console.error("Error fetching non-assigned children donors:", xhr.responseText);
+            }
+        });
+
+        $.ajax({
+            url: '/donors-children',
+            method: 'POST',
+            data: payload,
+            success: function(data) {
+                // Populate the table
+                const tableBody = $('#childrenDonorTableBody');
+                tableBody.empty(); // Clear previous data
+                data.forEach(donor => {
+                    tableBody.append(`
                     <tr>
                         <td>${donor.id}</td>
                         <td>${donor.name}</td>
@@ -1148,27 +1190,27 @@ function loadAreas(cityId, targetSelect, selectedAreaId = null) {
                         </td>
                     </tr>
                 `);
-            });
-        },
-        error: function(xhr) {
-            console.error("Error fetching children donors:", xhr.responseText);
-        }
-    });
-}
+                });
+            },
+            error: function(xhr) {
+                console.error("Error fetching children donors:", xhr.responseText);
+            }
+        });
+    }
 
-function reAssignDonor(donorId , parentDonorId) {
-    console.log(donorId , parentDonorId);
-    const payload = {
-        donor_id: donorId,
-        parent_donor_id: parentDonorId,
-        _token: $('meta[name="csrf-token"]').attr('content') // Include CSRF token
-    };
-    $.ajax({
-        url: '/donors-re-assign',  // New endpoint for non-assigned children
-        method: 'POST',
-        data: payload,
-        success: function(response) {
-            if (response.success) {
+    function reAssignDonor(donorId, parentDonorId) {
+        console.log(donorId, parentDonorId);
+        const payload = {
+            donor_id: donorId,
+            parent_donor_id: parentDonorId,
+            _token: $('meta[name="csrf-token"]').attr('content') // Include CSRF token
+        };
+        $.ajax({
+            url: '/donors-re-assign', // New endpoint for non-assigned children
+            method: 'POST',
+            data: payload,
+            success: function(response) {
+                if (response.success) {
                     $('#assignDonorModal').modal('hide');
                     donorsTable.ajax.reload();
                     Swal.fire({
@@ -1177,23 +1219,23 @@ function reAssignDonor(donorId , parentDonorId) {
                         text: response.message
                     });
                 }
-        },
-        error: function(xhr) {
-            console.error("Error fetching non-assigned children donors:", xhr.responseText);
-        }
-    });
+            },
+            error: function(xhr) {
+                console.error("Error fetching non-assigned children donors:", xhr.responseText);
+            }
+        });
 
-}
+    }
 
-function addActivity(donorId) {
-    
-    $('#addActivityModal').modal('show');
-    $('#add_activity_donor_id').val(donorId);
-    
+    function addActivity(donorId) {
 
-}
+        $('#addActivityModal').modal('show');
+        $('#add_activity_donor_id').val(donorId);
 
-$('#addActivityForm').on('submit', function(e) {
+
+    }
+
+    $('#addActivityForm').on('submit', function(e) {
         e.preventDefault();
         var form = $(this);
         var url = form.attr('action');
@@ -1267,71 +1309,71 @@ $('#addActivityForm').on('submit', function(e) {
     $(document).on('click', '.remove-phone', function() {
         const row = $(this).closest('.input-group'); // Get the correct row
         const phoneId = row.find('input[name*="[id]"]').val(); // Extract phone ID
-    console.log(phoneId)
+        console.log(phoneId)
 
-    if (!phoneId) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Phone ID not found.'
-        });
-        return;
-    }
-
-    Swal.fire({
-        title: "{{ __('Are you sure?') }}",
-        text: "{{ __('You wont be able to revert this!') }}",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        cancelButtonText:"{{ __('Cancel') }}",
-        confirmButtonText: "{{ __('Yes, delete it!') }}"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: `{{ url('donors/delete-donor-phone') }}/${phoneId}`, // Endpoint for deletion
-                type: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRF token for Laravel
-                },
-                success: function(response) {
-                    Swal.fire(
-                        'Deleted!',
-                        response.message || 'Phone number removed successfully.',
-                        'success'
-                    );
-                    row.remove(); // Remove the row from the DOM
-                    $(this).closest('.input-group').remove();
-                },
-                error: function(error) {
-                    console.error("Error deleting phone:", error);
-                    Swal.fire(
-                        'Error!',
-                        'Failed to delete the phone number. Please try again.',
-                        'error'
-                    );
-                }
+        if (!phoneId) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Phone ID not found.'
             });
+            return;
         }
+
+        Swal.fire({
+            title: "{{ __('Are you sure?') }}",
+            text: "{{ __('You wont be able to revert this!') }}",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: "{{ __('Cancel') }}",
+            confirmButtonText: "{{ __('Yes, delete it!') }}"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `{{ url('donors/delete-donor-phone') }}/${phoneId}`, // Endpoint for deletion
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRF token for Laravel
+                    },
+                    success: function(response) {
+                        Swal.fire(
+                            'Deleted!',
+                            response.message || 'Phone number removed successfully.',
+                            'success'
+                        );
+                        row.remove(); // Remove the row from the DOM
+                        $(this).closest('.input-group').remove();
+                    },
+                    error: function(error) {
+                        console.error("Error deleting phone:", error);
+                        Swal.fire(
+                            'Error!',
+                            'Failed to delete the phone number. Please try again.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
     });
-});
 
 
 
-document.addEventListener('keydown', function(event) {
-    // Check if Ctrl (or Cmd on Mac) is pressed
-    if (event.ctrlKey || event.metaKey) {
-        // Prevent the default behavior (if needed)
-        event.preventDefault();
+    document.addEventListener('keydown', function(event) {
+        // Check if Ctrl (or Cmd on Mac) is pressed
+        if (event.ctrlKey || event.metaKey) {
+            // Prevent the default behavior (if needed)
+            event.preventDefault();
 
-        // Check for F1 key
-        if (event.key === 'F1') {
-            $('#addDonorModal').modal('show'); // Open the "Add Donor" modal
+            // Check for F1 key
+            if (event.key === 'F1') {
+                $('#addDonorModal').modal('show'); // Open the "Add Donor" modal
+            }
+
         }
-
-    }
-    if (event.key === 'F2') {
+        if (event.key === 'F2') {
             // Check if the "Add Monthly Form" modal is open
             if ($('#addDonorModal').is(':visible')) {
                 $('#addDonorForm').submit(); // Submit the "Add" form
@@ -1342,10 +1384,6 @@ document.addEventListener('keydown', function(event) {
             }
 
         }
-});
-
-
-
-
+    });
 </script>
 @endpush

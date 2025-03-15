@@ -27,6 +27,16 @@
                     </select>
                 </div>
                 <div class="col-md-3">
+                    <label for="status-filter" class="form-label">{{__('Status')}}</label>
+                    <select id="status-filter" class="form-control">
+                        <option value="all">{{__('All')}}</option>
+                        <option value="collected">{{__('Collected')}}</option>
+                        <option value="not_collected">{{__('Not Collected')}}</option>
+                        <option value="followed_up">{{__('Followed Up')}}</option>
+                        <option value="cancelled">{{__('Cancelled')}}</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
                     <button id="clear-filters" class="btn btn-secondary mt-4">{{__('Clear Filters')}}</button>
                 </div>
             </div>

@@ -18,7 +18,8 @@
                     d.start_date = $('#start-date').val();
                     d.end_date = $('#end-date').val();
                     d.donation_category = $('#donation-category-filter').val();
-                                }
+                    d.status = $('#status-filter').val();
+                }
             },
             columns: [{
                     data: 'id',
@@ -53,6 +54,16 @@
                 {
                     data: 'donation_status',
                     name: 'donation_status'
+                },
+                {
+                    data: 'created_by',
+                    name: 'created_by',
+                    visible: false
+                },
+                {
+                    data: 'user_department',
+                    name: 'user_department',
+                    visible: false
                 },
 
                 {
@@ -88,16 +99,8 @@
                 },
                 {
                     extend: 'colvis',
-                    text: 'colvis',
+                    text: 'Columns',
                 },
-                // {
-                //     extend: 'pdf', 
-                //     text: 'PDF', 
-                //     title: 'Donations Data', 
-                //     exportOptions: {
-                //         columns: [0, 1]
-                //     }
-                // },
                 {
                     extend: 'copy',
                     exportOptions: {
@@ -106,7 +109,10 @@
                 },
             ],
             dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
-            lengthMenu: [[10, 25, 50, 100, 500, 1000, 2000], [10, 25, 50, 100, 500, 1000, 2000]], 
+            lengthMenu: [
+                [10, 25, 50, 100, 500, 1000, 2000],
+                [10, 25, 50, 100, 500, 1000, 2000]
+            ],
             pageLength: 10,
             responsive: true,
             language: languages[language],
@@ -126,7 +132,7 @@
                     d.start_date = $('#start-date').val();
                     d.end_date = $('#end-date').val();
                     // d.donation_category = $('#donation-category-filter').val(); 
-                               }
+                }
             },
             columns: [{
                     data: 'id',
@@ -194,14 +200,6 @@
                         columns: [0, 1, 2, 3, 4, 5, 6]
                     }
                 },
-                // {
-                //     extend: 'pdf', 
-                //     text: 'PDF', 
-                //     title: 'Donations Data', 
-                //     exportOptions: {
-                //         columns: [0, 1]
-                //     }
-                // },
                 {
                     extend: 'copy',
                     exportOptions: {
@@ -210,7 +208,10 @@
                 },
             ],
             dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
-            lengthMenu: [[10, 25, 50, 100, 500, 1000, 2000], [10, 25, 50, 100, 500, 1000, 2000]], 
+            lengthMenu: [
+                [10, 25, 50, 100, 500, 1000, 2000],
+                [10, 25, 50, 100, 500, 1000, 2000]
+            ],
             pageLength: 10,
             responsive: true,
             language: languages[language],
@@ -229,7 +230,7 @@
                     d.start_date = $('#start-date').val();
                     d.end_date = $('#end-date').val();
                     // d.donation_category = $('#donation-category-filter').val(); 
-                               }
+                }
             },
             columns: [{
                     data: 'id',
@@ -313,7 +314,10 @@
                 },
             ],
             dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
-            lengthMenu: [[10, 25, 50, 100, 500, 1000, 2000], [10, 25, 50, 100, 500, 1000, 2000]], 
+            lengthMenu: [
+                [10, 25, 50, 100, 500, 1000, 2000],
+                [10, 25, 50, 100, 500, 1000, 2000]
+            ],
             pageLength: 10,
             responsive: true,
             language: languages[language],
@@ -343,37 +347,41 @@
             return color;
         }
 
-         // Date filter change
-    $('#date-filter').on('change', function () {
-        if ($(this).val() === 'range') {
-            $('#custom-range, #end-date-container').show();
-        } else {
-            $('#custom-range, #end-date-container').hide();
+        // Date filter change
+        $('#date-filter').on('change', function() {
+            if ($(this).val() === 'range') {
+                $('#custom-range, #end-date-container').show();
+            } else {
+                $('#custom-range, #end-date-container').hide();
+                $('#start-date, #end-date').val('');
+            }
+            donationTable.ajax.reload();
+            gatheredDonationTable.ajax.reload();
+            monthlyDonationTable.ajax.reload();
+        });
+
+        // Start date and end date change
+        $('#start-date, #end-date').on('change', function() {
+            donationTable.ajax.reload();
+        });
+
+        // Donation category filter change
+        $('#donation-category-filter').on('change', function() {
+            donationTable.ajax.reload();
+        });
+
+        $('#status-filter').on('change', function() {
+            donationTable.ajax.reload();
+        });
+
+        // Clear filters
+        $('#clear-filters').on('click', function() {
+            $('#date-filter').val('all');
             $('#start-date, #end-date').val('');
-        }
-        donationTable.ajax.reload();
-        gatheredDonationTable.ajax.reload();
-        monthlyDonationTable.ajax.reload();
-    });
-
-    // Start date and end date change
-    $('#start-date, #end-date').on('change', function () {
-        donationTable.ajax.reload();
-    });
-
-    // Donation category filter change
-    $('#donation-category-filter').on('change', function () {
-        donationTable.ajax.reload();
-    });
-
-    // Clear filters
-    $('#clear-filters').on('click', function () {
-        $('#date-filter').val('all');
-        $('#start-date, #end-date').val('');
-        $('#donation-category-filter').val('all');
-        $('#custom-range, #end-date-container').hide();
-        donationTable.ajax.reload();
-    });
+            $('#donation-category-filter').val('all');
+            $('#custom-range, #end-date-container').hide();
+            donationTable.ajax.reload();
+        });
 
 
 
@@ -613,7 +621,7 @@
 
                         Swal.fire({
                             icon: 'error',
-                            title: '{{ __('validation.Validation Error ') }}', // Ensure this is rendered as a string by Blade
+                            title: '{{ __("validation.Validation Error") }}', // Ensure this is rendered as a string by Blade
                             html: `<div style="direction: rtl; text-align: center;">${errorDetails}</div>`,
                             customClass: {
                                 popup: 'text-start',
@@ -970,9 +978,9 @@
                 </table>`;
                 }
 
-                if(data.donation_category !== 'gathered'){
-                // Collecting Donation Info
-                modalContent += `
+                if (data.donation_category !== 'gathered') {
+                    // Collecting Donation Info
+                    modalContent += `
             <h4 class="text-success">{{__('Collecting Donation Information')}}</h4>
                 <p>
                 <strong>{{ __('Collecting Date') }}:</strong> 
@@ -1010,92 +1018,92 @@
     let existingInKindIndices = new Set();
 
     function editDonation(id) {
-    var form = $('#editDonationForm');
+        var form = $('#editDonationForm');
 
-    // Reset the form fields
-    form.trigger('reset');
-    form.find('.is-invalid').removeClass('is-invalid');
-    form.find('.invalid-feedback').text('');
+        // Reset the form fields
+        form.trigger('reset');
+        form.find('.is-invalid').removeClass('is-invalid');
+        form.find('.invalid-feedback').text('');
 
-    // Reset dropdowns and reinitialize Select2 if used
-    form.find('select').val(null).trigger('change');
+        // Reset dropdowns and reinitialize Select2 if used
+        form.find('select').val(null).trigger('change');
 
-    // Clear dynamically added donation rows
-    $('#edit-financial-donation-rows-container').empty();
-    $('#edit-in-kind-donation-rows-container').empty();
+        // Clear dynamically added donation rows
+        $('#edit-financial-donation-rows-container').empty();
+        $('#edit-in-kind-donation-rows-container').empty();
 
-    // Reset indices tracking
-    existingFinancialIndices = new Set();
-    existingInKindIndices = new Set();
+        // Reset indices tracking
+        existingFinancialIndices = new Set();
+        existingInKindIndices = new Set();
 
-    // Set the form action
-    form.attr('action', `{{ route('donations.update', '') }}/${id}`);
-    
-    // Show modal
-    $('#editDonationModal').modal('show');
+        // Set the form action
+        form.attr('action', `{{ route('donations.update', '') }}/${id}`);
 
-    // **Show Loading Spinner & Disable Form Inputs**
-    $('#editDonationLoader').removeClass('d-none');  // Show loading spinner
-    form.find('input, select, textarea, button').prop('disabled', true); // Disable inputs
+        // Show modal
+        $('#editDonationModal').modal('show');
 
-    $.ajax({
-    url: `{{ url('donations') }}/${id}/edit`,
-    method: 'GET',
-    headers: {
-        'X-Requested-With': 'XMLHttpRequest' // Ensures Laravel returns JSON instead of redirecting
-    },
-    success: function (data) {
-        // Handle data population here
+        // **Show Loading Spinner & Disable Form Inputs**
+        $('#editDonationLoader').removeClass('d-none'); // Show loading spinner
+        form.find('input, select, textarea, button').prop('disabled', true); // Disable inputs
 
-        // Populate basic fields
-        $('#edit_donor_id').val(data.donor_id).trigger('change');
-            $('#edit_date').val(data.date);
-            $('#edit_donation_status').val(data.status).trigger('change');
-            $('#edit_donation_type').val(data.donation_type).trigger('change');
-            $('#edit_donation_category').val(data.donation_category).trigger('change');
-            $('#edit_reporting_way').val(data.reporting_way).trigger('change');
-            $('#edit_collecting_date').val(formatDate(data.collecting_donation?.collecting_date));
-            $('#edit_in_kind_receipt_number').val(data.collecting_donation?.in_kind_receipt_number);
-            $('#edit_employee_id').val(data.collecting_donation?.employee_id).trigger('change');
-            $('#edit_notes').val(data.notes);
-            $('#edit_collecting_time').val(data.collecting_time);
-            $('#edit_collecting_way').val(data.collecting_donation?.collecting_way).trigger('change');
+        $.ajax({
+            url: `{{ url('donations') }}/${id}/edit`,
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest' // Ensures Laravel returns JSON instead of redirecting
+            },
+            success: function(data) {
+                // Handle data population here
 
-            // Populate financial donations
-            const financialContainer = $('#edit-financial-donation-rows-container');
-            data.donate_items
-                .filter(item => item.donation_type === 'financial')
-                .forEach((donationItem, index) => {
-                    existingFinancialIndices.add(index);
-                    financialContainer.append(renderFinancialRow(donationItem, index, donationCategories));
-                });
+                // Populate basic fields
+                $('#edit_donor_id').val(data.donor_id).trigger('change');
+                $('#edit_date').val(data.date);
+                $('#edit_donation_status').val(data.status).trigger('change');
+                $('#edit_donation_type').val(data.donation_type).trigger('change');
+                $('#edit_donation_category').val(data.donation_category).trigger('change');
+                $('#edit_reporting_way').val(data.reporting_way).trigger('change');
+                $('#edit_collecting_date').val(formatDate(data.collecting_donation?.collecting_date));
+                $('#edit_in_kind_receipt_number').val(data.collecting_donation?.in_kind_receipt_number);
+                $('#edit_employee_id').val(data.collecting_donation?.employee_id).trigger('change');
+                $('#edit_notes').val(data.notes);
+                $('#edit_collecting_time').val(data.collecting_time);
+                $('#edit_collecting_way').val(data.collecting_donation?.collecting_way).trigger('change');
 
-            // Populate in-kind donations
-            const inKindContainer = $('#edit-in-kind-donation-rows-container');
-            data.donate_items
-                .filter(item => item.donation_type === 'inKind')
-                .forEach((donationItem, index) => {
-                    existingInKindIndices.add(index);
-                    inKindContainer.append(renderInKindRow(donationItem, index));
-                });
+                // Populate financial donations
+                const financialContainer = $('#edit-financial-donation-rows-container');
+                data.donate_items
+                    .filter(item => item.donation_type === 'financial')
+                    .forEach((donationItem, index) => {
+                        existingFinancialIndices.add(index);
+                        financialContainer.append(renderFinancialRow(donationItem, index, donationCategories));
+                    });
 
-            // Toggle sections based on donation type
-            toggleEditDonationType();
-            toggleEditDonationStatus();
-    },
-    error: function (xhr) {
-        console.error(xhr.responseText);
-        alert('{{ __("Failed to load donation details. Please try again.") }}');
-    },
-    complete: function () {
-            // **Hide Loading Spinner & Enable Form Inputs**
-            $('#editDonationLoader').addClass('d-none'); // Hide loading spinner
-            form.find('input, select, textarea, button').prop('disabled', false); // Enable inputs
-        }
-});
+                // Populate in-kind donations
+                const inKindContainer = $('#edit-in-kind-donation-rows-container');
+                data.donate_items
+                    .filter(item => item.donation_type === 'inKind')
+                    .forEach((donationItem, index) => {
+                        existingInKindIndices.add(index);
+                        inKindContainer.append(renderInKindRow(donationItem, index));
+                    });
 
-    
-}
+                // Toggle sections based on donation type
+                toggleEditDonationType();
+                toggleEditDonationStatus();
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+                alert('{{ __("Failed to load donation details. Please try again.") }}');
+            },
+            complete: function() {
+                // **Hide Loading Spinner & Enable Form Inputs**
+                $('#editDonationLoader').addClass('d-none'); // Hide loading spinner
+                form.find('input, select, textarea, button').prop('disabled', false); // Enable inputs
+            }
+        });
+
+
+    }
 
 
 
@@ -1276,7 +1284,7 @@
 
                     Swal.fire({
                         icon: 'error',
-                        title: '{{ __('validation.Validation Error ') }}', // Ensure this is rendered as a string by Blade
+                        title: '{{ __("validation.Validation Error") }}', // Ensure this is rendered as a string by Blade
                         html: `<div style="direction: rtl; text-align: center;">${errorDetails}</div>`,
                         customClass: {
                             popup: 'text-start',
@@ -1313,50 +1321,50 @@
 
 
     $(document).ready(function() {
-    // Listen for changes to the number_of_months input
-    $('#number_of_months').on('input', function() {
-        const numberOfMonths = parseInt($(this).val());
-        if (!isNaN(numberOfMonths) && numberOfMonths > 0) {
-            generateDonationRows(numberOfMonths);
-        } else {
-            // Clear the rows if the input is invalid
-            $('#gathered-financial-donation-rows-container').empty();
-        }
+        // Listen for changes to the number_of_months input
+        $('#number_of_months').on('input', function() {
+            const numberOfMonths = parseInt($(this).val());
+            if (!isNaN(numberOfMonths) && numberOfMonths > 0) {
+                generateDonationRows(numberOfMonths);
+            } else {
+                // Clear the rows if the input is invalid
+                $('#gathered-financial-donation-rows-container').empty();
+            }
+        });
+
+        // Handle row removal
+        $(document).on('click', '.remove-row-btn', function() {
+            $(this).closest('.donation-row').remove(); // Remove the row
+        });
+
+        // Clear rows when modal is closed
+        $('#addGatheredDonationModal').on('hidden.bs.modal', function() {
+            $('#gathered-financial-donation-rows-container').empty(); // Clear rows
+            $('#number_of_months').val(''); // Reset the number of months input
+        });
     });
 
-    // Handle row removal
-    $(document).on('click', '.remove-row-btn', function() {
-        $(this).closest('.donation-row').remove(); // Remove the row
-    });
+    function getFirstDayOfNextMonth() {
+        const today = new Date();
+        const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 2); // First day of next month
+        return nextMonth;
+    }
 
-    // Clear rows when modal is closed
-    $('#addGatheredDonationModal').on('hidden.bs.modal', function() {
-        $('#gathered-financial-donation-rows-container').empty(); // Clear rows
-        $('#number_of_months').val(''); // Reset the number of months input
-    });
-});
+    function generateDonationRows(numberOfMonths) {
+        const container = $('#gathered-financial-donation-rows-container');
+        container.empty(); // Clear existing rows
 
-function getFirstDayOfNextMonth() {
-    const today = new Date();
-    const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 2); // First day of next month
-    return nextMonth;
-}
+        const firstDayOfNextMonth = getFirstDayOfNextMonth(); // Get the first day of the next month
 
-function generateDonationRows(numberOfMonths) {
-    const container = $('#gathered-financial-donation-rows-container');
-    container.empty(); // Clear existing rows
+        for (let i = 0; i < numberOfMonths; i++) {
+            const monthIndex = i + 1; // Start from 1 instead of 0
+            const collectingDate = new Date(firstDayOfNextMonth);
+            collectingDate.setMonth(firstDayOfNextMonth.getMonth() + i); // Increment by the number of months
 
-    const firstDayOfNextMonth = getFirstDayOfNextMonth(); // Get the first day of the next month
+            // Format the date as YYYY-MM-DD
+            const formattedDate = collectingDate.toISOString().split('T')[0];
 
-    for (let i = 0; i < numberOfMonths; i++) {
-        const monthIndex = i + 1; // Start from 1 instead of 0
-        const collectingDate = new Date(firstDayOfNextMonth);
-        collectingDate.setMonth(firstDayOfNextMonth.getMonth() + i); // Increment by the number of months
-
-        // Format the date as YYYY-MM-DD
-        const formattedDate = collectingDate.toISOString().split('T')[0];
-
-        const row = `
+            const row = `
             <div class="row donation-row">
                 <input type="hidden" name="donates[${i}][financial_donation_type]" value="financial">
                 <div class="col-md-3">
@@ -1390,65 +1398,65 @@ function generateDonationRows(numberOfMonths) {
                 </div>
             </div>
         `;
-        container.append(row); // Add the row to the container
+            container.append(row); // Add the row to the container
+        }
     }
-}
 
-        // Attach a submit event listener to the form
-        $('#addGatheredDonationForm').on('submit', function (e) {
-            e.preventDefault(); // Prevent the default form submission
+    // Attach a submit event listener to the form
+    $('#addGatheredDonationForm').on('submit', function(e) {
+        e.preventDefault(); // Prevent the default form submission
 
-            // Get the form data
-            const formData = new FormData(this);
+        // Get the form data
+        const formData = new FormData(this);
 
-            // Send an AJAX request
-            $.ajax({
-                url: '{{ route("donations.store-gathered-donation") }}', // Replace with your route
-                method: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    $('#addGatheredDonationModal').modal('hide'); // Close the modal
-                    // Optionally, reset the form
-                    $('#addGatheredDonationForm')[0].reset();
-                    donationTable.ajax.reload();
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: response.message
-                    });
-                },
-                error: function(xhr) {
-                if (xhr.status === 422) {
-                var errors = xhr.responseJSON.errors;
-                var errorMessages = Object.values(errors).map(function(error) {
-                    return error[0];
-                }).join('<br>');
-
+        // Send an AJAX request
+        $.ajax({
+            url: '{{ route("donations.store-gathered-donation") }}', // Replace with your route
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                $('#addGatheredDonationModal').modal('hide'); // Close the modal
+                // Optionally, reset the form
+                $('#addGatheredDonationForm')[0].reset();
+                donationTable.ajax.reload();
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Errors',
-                    html: errorMessages
+                    icon: 'success',
+                    title: 'Success',
+                    text: response.message
                 });
-            }
-            }
-            });
-        });
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    var errorMessages = Object.values(errors).map(function(error) {
+                        return error[0];
+                    }).join('<br>');
 
-
-        document.addEventListener('keydown', function(event) {
-            // Check if Ctrl (or Cmd on Mac) is pressed
-            if (event.ctrlKey || event.metaKey) {
-                // Prevent the default behavior (if needed)
-                event.preventDefault();
-
-                // Check for F1 key
-                if (event.key === 'F1') {
-                    $('#addDonationModal').modal('show'); // Open the "Add Donor" modal
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Errors',
+                        html: errorMessages
+                    });
                 }
             }
-            if (event.key === 'F2') {
+        });
+    });
+
+
+    document.addEventListener('keydown', function(event) {
+        // Check if Ctrl (or Cmd on Mac) is pressed
+        if (event.ctrlKey || event.metaKey) {
+            // Prevent the default behavior (if needed)
+            event.preventDefault();
+
+            // Check for F1 key
+            if (event.key === 'F1') {
+                $('#addDonationModal').modal('show'); // Open the "Add Donor" modal
+            }
+        }
+        if (event.key === 'F2') {
             // Check if the "Add Monthly Form" modal is open
             if ($('#addDonationModal').is(':visible')) {
                 $('#addDonationForm').submit(); // Submit the "Add" form
@@ -1459,17 +1467,17 @@ function generateDonationRows(numberOfMonths) {
             }
 
         }
-        });
+    });
 
-        function addActivity(donorId) {
-            console.log(donorId);
-    $('#addActivityModal').modal('show');
-    $('#add_activity_donor_id').val(donorId);
-    
+    function addActivity(donorId) {
+        console.log(donorId);
+        $('#addActivityModal').modal('show');
+        $('#add_activity_donor_id').val(donorId);
 
-}
 
-$('#addActivityForm').on('submit', function(e) {
+    }
+
+    $('#addActivityForm').on('submit', function(e) {
         e.preventDefault();
         var form = $(this);
         var url = form.attr('action');
@@ -1503,35 +1511,34 @@ $('#addActivityForm').on('submit', function(e) {
         });
     });
 
-      
-    $('#call_type_id').on('change', function () {
-    const callTypeSelect = document.getElementById('call_type_id');
-    const statusContainer = document.getElementById('status-container');
 
-    // Ensure there are at least two options
-    if (callTypeSelect.options.length > 1) {
-        const secondOptionValue = callTypeSelect.options[1].value; // Get the second option's value
+    $('#call_type_id').on('change', function() {
+        const callTypeSelect = document.getElementById('call_type_id');
+        const statusContainer = document.getElementById('status-container');
 
-        // Debugging: Check selected value and second option value
-        console.log(callTypeSelect.value, secondOptionValue);
+        // Ensure there are at least two options
+        if (callTypeSelect.options.length > 1) {
+            const secondOptionValue = callTypeSelect.options[1].value; // Get the second option's value
 
-        // Ensure the status container visibility changes based on the selected value
-        if (callTypeSelect.value === secondOptionValue) {
-            statusContainer.style.display = 'block';
-        } else {
-            statusContainer.style.display = 'none';
+            // Debugging: Check selected value and second option value
+            console.log(callTypeSelect.value, secondOptionValue);
+
+            // Ensure the status container visibility changes based on the selected value
+            if (callTypeSelect.value === secondOptionValue) {
+                statusContainer.style.display = 'block';
+            } else {
+                statusContainer.style.display = 'none';
+            }
         }
-    }
-});
+    });
 
-document.addEventListener('keydown', function(event) {
-    if (event.ctrlKey && event.key === 'c') {
-        event.stopPropagation(); // Prevent DataTables from blocking copy action
-    }
-    if (event.ctrlKey && event.key === 'v') {
-        event.stopPropagation(); // Prevent DataTables from blocking copy action
-    }
-}, true);
-
+    document.addEventListener('keydown', function(event) {
+        if (event.ctrlKey && event.key === 'c') {
+            event.stopPropagation(); // Prevent DataTables from blocking copy action
+        }
+        if (event.ctrlKey && event.key === 'v') {
+            event.stopPropagation(); // Prevent DataTables from blocking copy action
+        }
+    }, true);
 </script>
 @endpush
