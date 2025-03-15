@@ -70,7 +70,7 @@
                     data: 'donateItems', // Add the 'donates' column
                     name: 'donateItems',
                     orderable: false,
-                    searchable: false
+                    searchable: true
                 },
 
                 {
