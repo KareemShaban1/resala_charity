@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ActivityStatus;
-use App\Http\Requests\StoreActivityStatusRequest;
-use App\Http\Requests\UpdateActivityStatusRequest;
+use App\Models\ActivityReason;
+use App\Http\Requests\StoreActivityReasonRequest;
+use App\Http\Requests\UpdateActivityReasonRequest;
 use Yajra\DataTables\Facades\DataTables;
 
-class ActivityStatusController  extends BaseController
+class ActivityReasonController extends BaseController
 {
     public function __construct()
     {
-        $this->model = ActivityStatus::class;
-        $this->viewPath = 'backend.pages.activity-statuses';
+        $this->model = ActivityReason::class;
+        $this->viewPath = 'backend.pages.activity-reasons';
         $this->routePrefix = 'call-types';
         $this->validationRules = [
-            'name' => 'required|string|max:255|unique:activity_statuses,name',
+            'name' => 'required|string|max:255|unique:activity_reasons,name',
             'active' => 'nullable|boolean',
+
         ];
     }
     public function data()
@@ -28,15 +29,15 @@ class ActivityStatusController  extends BaseController
                 $editButton = '';
                 $deleteButton = '';
     
-                if (auth()->user()->can('update activity status')) {
-                    $editButton = '<a href="javascript:void(0);" onclick="editActivityStatus(' . $item->id . ', ' . htmlspecialchars(json_encode($item->name)) . ', ' . $item->active . ')" 
+                if (auth()->user()->can('update activity reason')) {
+                    $editButton = '<a href="javascript:void(0);" onclick="editActivityReason(' . $item->id . ', ' . htmlspecialchars(json_encode($item->name)) . ', ' . $item->active . ')" 
                                    class="btn btn-sm btn-info">
                                    <i class="mdi mdi-square-edit-outline"></i>
                                </a>';
                 }
     
-                if (auth()->user()->can('delete activity status')) {
-                    $deleteButton = '<a href="javascript:void(0);" onclick="deleteRecord(' . $item->id . ', \'activity-statuses\')" 
+                if (auth()->user()->can('delete activity reason')) {
+                    $deleteButton = '<a href="javascript:void(0);" onclick="deleteRecord(' . $item->id . ', \'activity-reasons\')" 
                                      class="btn btn-sm btn-danger">
                                      <i class="mdi mdi-delete"></i>
                                  </a>';
@@ -55,8 +56,9 @@ class ActivityStatusController  extends BaseController
     protected function getUpdateValidationRules($id)
     {
         return [
-            'name' => 'required|string|max:255|unique:activity_statuses,name,' . $id,
+            'name' => 'required|string|max:255|unique:activity_reasons,name,' . $id,
             'active' => 'nullable|boolean',
+
         ];
     }
 }

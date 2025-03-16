@@ -1,6 +1,6 @@
 @extends('backend.layouts.master')
 @section('title')
-{{__('Activity Statuses')}}
+{{__('Activity Reasons')}}
 @endsection
 @section('content')
 <div class="container-fluid">
@@ -9,11 +9,11 @@
         <div class="col-12">
             <div class="page-title-box">
                 <div class="page-title-right">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addActivityStatusModal">
-                        <i class="mdi mdi-plus"></i> {{__('Add Activity Status')}}
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addActivityReasonModal">
+                        <i class="mdi mdi-plus"></i> {{__('Add Activity Reason')}}
                     </button>
                 </div>
-                <h4 class="page-title">{{__('Activity Statuses')}}</h4>
+                <h4 class="page-title">{{__('Activity Reasons')}}</h4>
             </div>
         </div>
     </div>
@@ -23,7 +23,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <table id="ActivityStatuses-table" class="table dt-responsive nowrap w-100">
+                    <table id="activity-reasons-table" class="table dt-responsive nowrap w-100">
                         <thead>
                             <tr>
                                 <th>{{__('ID')}}</th>
@@ -39,9 +39,9 @@
     </div>
 </div>
 
-<!-- Add ActivityStatus Modal -->
-<x-modal id="addActivityStatusModal" title="{{__('Add Activity Status')}}">
-    <form id="addActivityStatusForm" method="POST" action="{{ route('activity-statuses.store') }}">
+<!-- Add ActivityReason Modal -->
+<x-modal id="addActivityReasonModal" title="{{__('Add Activity Reason')}}">
+    <form id="addActivityReasonForm" method="POST" action="{{ route('activity-reasons.store') }}">
         @csrf
         <div class="modal-body">
             <div class="mb-3">
@@ -65,9 +65,9 @@
     </form>
 </x-modal>
 
-<!-- Edit ActivityStatus Modal -->
-<x-modal id="editActivityStatusModal" title="{{__('Edit Activity Status')}}">
-    <form id="editActivityStatusForm" method="POST">
+<!-- Edit ActivityReason Modal -->
+<x-modal id="editActivityReasonModal" title="{{__('Edit Activity Reason')}}">
+    <form id="editActivityReasonForm" method="POST">
         @csrf
         @method('PUT')
         <div class="modal-body">
@@ -98,12 +98,11 @@
 <script>
     $(function () {
         // Initialize DataTable
-        var table = $('#ActivityStatuses-table').DataTable({
-            ajax: "{{ route('activity-statuses.data') }}",
+        var table = $('#activity-reasons-table').DataTable({
+            ajax: "{{ route('activity-reasons.data') }}",
             columns: [
                 {data: 'id', name: 'id'},
                 {data: 'name', name: 'name'},
-                // {data: 'created_at', name: 'created_at'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ],
             order: [
@@ -118,7 +117,7 @@
                 {
                     extend: 'excel',
                     text: 'Excel',
-                    title: 'ActivityStatuses Data',
+                    title: 'ActivityReasons Data',
                     exportOptions: {
                         columns: [0, 1]
                     }
@@ -126,7 +125,7 @@
                 // {
                 //     extend: 'pdf', 
                 //     text: 'PDF', 
-                //     title: 'ActivityStatuses Data', 
+                //     title: 'ActivityReasons Data', 
                 //     exportOptions: {
                 //         columns: [0, 1, 2, 3]
                 //     }
@@ -148,8 +147,8 @@
             }
         });
 
-        // Add ActivityStatus Form Submit
-        $('#addActivityStatusForm').on('submit', function(e) {
+        // Add ActivityReason Form Submit
+        $('#addActivityReasonForm').on('submit', function(e) {
             e.preventDefault();
             var form = $(this);
             var url = form.attr('action');
@@ -163,7 +162,7 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        $('#addActivityStatusModal').modal('hide');
+                        $('#addActivityReasonModal').modal('hide');
                         form[0].reset();
                         table.ajax.reload();
                         Swal.fire({
@@ -192,8 +191,8 @@
             });
         });
 
-        // Edit ActivityStatus Form Submit
-        $('#editActivityStatusForm').on('submit', function(e) {
+        // Edit ActivityReason Form Submit
+        $('#editActivityReasonForm').on('submit', function(e) {
             e.preventDefault();
             var form = $(this);
             var url = form.attr('action');
@@ -217,7 +216,7 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        $('#editActivityStatusModal').modal('hide');
+                        $('#editActivityReasonModal').modal('hide');
                         form[0].reset();
                         table.ajax.reload();
                         Swal.fire({
@@ -254,13 +253,14 @@
         });
     });
 
-    // Edit ActivityStatus Function
-    function editActivityStatus(id, name,active) {
-        var form = $('#editActivityStatusForm');
-        form.attr('action', `{{ route('activity-statuses.update', '') }}/${id}`);
+    // Edit ActivityReason Function
+    function editActivityReason(id, name,active) {
+        console.log(active);
+        var form = $('#editActivityReasonForm');
+        form.attr('action', `{{ route('activity-reasons.update', '') }}/${id}`);
         form.find('#edit_name').val(name);
         form.find('#edit_active').prop('checked', active === 1);
-        $('#editActivityStatusModal').modal('show');
+        $('#editActivityReasonModal').modal('show');
     }
 </script>
 @endpush

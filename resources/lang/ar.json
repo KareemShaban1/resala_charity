@@ -486,5 +486,11 @@
     "Grand Area":"المنطقة الكبرى",
     "Edit Collecting Line": "تعديل خط السير",
     "Remove From Collecting Line": "حذف من خط السير",
-    "User Department":"قسم المستخدم"
+    "User Department":"قسم المستخدم",
+    "Reason": "السبب",
+    "Select Status": "أختار الحالة",
+    "Select Reason": "أختار السبب",
+    "No Donations Found": "لا يوجد تبرعات",
+    "No Activities Found": "لا يوجد نشاطات",
+    "No Monthly Forms Found": "لا يوجد استمارات شهرية"
 }

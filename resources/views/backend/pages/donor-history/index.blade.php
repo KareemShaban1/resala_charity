@@ -29,13 +29,31 @@
 
             <!-- Date Filters -->
             <div class="mt-3 row" sttyle="display: flex; align-items: center;">
-                <div class="col-md-3">
+                <!-- <div class="col-md-3">
                     <label for="start-date" class="form-label">{{ __('Start Date') }}</label>
                     <input type="date" class="form-control" id="start-date">
                 </div>
                 <div class="col-md-3">
                     <label for="end-date" class="form-label">{{ __('End Date') }}</label>
                     <input type="date" class="form-control" id="end-date">
+                </div> -->
+                <div class="col-md-3">
+                    <label for="date-filter" class="form-label">{{__('Date Filter')}}</label>
+                    <select id="date-filter" class="form-control">
+                        <option value="all">{{__('All Dates')}}</option>
+                        <option value="today">{{__('Today')}}</option>
+                        <option value="week">{{__('This Week')}}</option>
+                        <option value="month">{{__('This Month')}}</option>
+                        <option value="range">{{__('Custom Range')}}</option>
+                    </select>
+                </div>
+                <div class="col-md-3" id="custom-range" style="display: none;">
+                    <label for="start-date">{{__('Start Date')}}</label>
+                    <input type="date" id="start-date" class="form-control">
+                </div>
+                <div class="col-md-3" id="end-date-container" style="display: none;">
+                    <label for="end-date">{{__('End Date')}}</label>
+                    <input type="date" id="end-date" class="form-control">
                 </div>
                 <div class="col-md-3 mt-3">
                     <button type="button" class="btn btn-primary" id="filter-button">{{ __('Filter') }}</button>
@@ -113,8 +131,11 @@
                 url: url,
                 method: 'GET',
                 data: {
-                    start_date: startDate,
-                    end_date: endDate
+                    // start_date: startDate,
+                    // end_date: endDate,
+                    date_filter: $('#date-filter').val(),
+                    start_date: $('#start-date').val(),
+                    end_date: $('#end-date').val(),
                 },
                 success: function(response) {
                     if (tab === 'donations') {
@@ -156,6 +177,7 @@
         $('#filter-button').on('click', function() {
             let startDate = $('#start-date').val();
             let endDate = $('#end-date').val();
+            
             // let activeTab = $('#donorTabs .nav-link.active').attr('id') === 'donations-tab' ? 'donations' : 'monthly-forms';
 
             let activeTab;
@@ -204,6 +226,17 @@
 
 
 
+        $('#date-filter').on('change', function() {
+            if ($(this).val() === 'range') {
+                $('#custom-range, #end-date-container').show();
+            } else {
+                $('#custom-range, #end-date-container').hide();
+                $('#start-date, #end-date').val('');
+            }
+            // donationTable.ajax.reload();
+            // gatheredDonationTable.ajax.reload();
+            // monthlyDonationTable.ajax.reload();
+        });
 
     });
 </script>

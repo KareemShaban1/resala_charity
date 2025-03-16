@@ -203,7 +203,7 @@
               </li>
               @endcan
 
-              @if(Gate::any(['view call types','view activity statuses','view donors','view random donors']))
+              @if(Gate::any(['view call types','view activity statuses','view activity reasons','view donors','view random donors']))
               <li class="side-nav-item">
                   <a data-bs-toggle="collapse" href="#sidebarDonors" aria-expanded="false" aria-controls="sidebarDonors" class="side-nav-link">
                       <i class="uil-users-alt"></i>
@@ -224,6 +224,14 @@
                           <li>
                               <a href="{{route('activity-statuses.index')}}">
                                   <span> {{__('Activity Statuses')}} </span>
+                              </a>
+                          </li>
+                          @endcan
+
+                          @can('view activity reasons')
+                          <li>
+                              <a href="{{route('activity-reasons.index')}}">
+                                  <span> {{__('Activity Reasons')}} </span>
                               </a>
                           </li>
                           @endcan

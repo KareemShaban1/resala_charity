@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\ActivityReasonController;
 use App\Http\Controllers\ActivityStatusController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GovernorateController;
@@ -193,6 +194,9 @@ Route::group(
 
         Route::get('/activity-statuses/data', [ActivityStatusController::class, 'data'])->name('activity-statuses.data');
         Route::resource('activity-statuses', ActivityStatusController::class);
+
+        Route::get('/activity-reasons/data', [ActivityReasonController::class, 'data'])->name('activity-reasons.data');
+        Route::resource('activity-reasons', ActivityReasonController::class);
 
         // Collecting Lines Routes
         // Route::resource('collecting-lines', CollectingLineController::class);

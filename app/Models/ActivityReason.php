@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ActivityStatus extends Model
+class ActivityReason extends Model
 {
     use HasFactory;
 
@@ -14,7 +14,8 @@ class ActivityStatus extends Model
         'active',
     ];
 
-    public function scopeActive($query){
-        $query->where('active',1);
+    public function scopeActive($query)
+    {
+        return $query->where('active', 1);
     }
 }

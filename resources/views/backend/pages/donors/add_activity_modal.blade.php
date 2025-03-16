@@ -43,8 +43,21 @@
                         <label for="activity_status_id" class="form-label">{{__('Status')}}</label>
                         <select name="activity_status_id" id="activity_status_id" class="form-control">
                             <option value="" selected>{{__('Select Status')}}</option>
-                            @foreach(\App\Models\ActivityStatus::all() as $status)
+                            @foreach(\App\Models\ActivityStatus::active()->get() as $status)
                             <option value="{{$status->id}}">{{$status->name}}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="activity_reason_id" class="form-label">{{__('Reason')}}</label>
+                        <select name="activity_reason_id" id="activity_reason_id" class="form-control">
+                            <option value="" selected>{{__('Select Reason')}}</option>
+                            @foreach(\App\Models\ActivityReason::active()->get() as $reason)
+                            <option value="{{$reason->id}}">{{$reason->name}}</option>
                             @endforeach
                         </select>
                         <div class="invalid-feedback"></div>

@@ -13,6 +13,7 @@ class DonorActivity extends Model
         'call_type_id',
         'date_time',
         'activity_status_id',
+        'activity_reason_id',
         'response',
         'notes',
         'activity_type',
@@ -30,5 +31,8 @@ class DonorActivity extends Model
     }
     public function activityStatus(){
         return $this->belongsTo(ActivityStatus::class);
+    }
+    public function activityReason(){
+        return $this->belongsTo(ActivityReason::class);
     }
 }

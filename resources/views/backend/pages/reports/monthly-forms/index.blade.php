@@ -29,14 +29,34 @@
                             @endforeach
                         </select>
                     </div>
-                    <!-- <div class="col-md-3">
-                        <label for="from_date">{{ __('From Date') }}</label>
-                        <input type="date" name="from_date" id="from_date" class="form-control">
+                    <div class="col-md-3">
+                        <label for="follow_up_department_id">{{ __('Follow Up Department') }}</label>
+                        <select name="follow_up_department_id" id="follow_up_department_id" class="form-control">
+                            <option value="">{{ __('All Departments') }}</option>
+                            @foreach (App\Models\Department::all() as $department)
+                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col-md-3">
-                        <label for="to_date">{{ __('To Date') }}</label>
-                        <input type="date" name="to_date" id="to_date" class="form-control">
-                    </div> -->
+                        <label for="monthly_form_status">{{ __(key: 'Status') }}</label>
+                        <select name="status" id="monthly_form_status" class="form-control">
+                            <option value="">{{ __('All') }}</option>
+                            <option value="collected">{{ __('Collected') }}</option>
+                            <option value="not_collected">{{ __('Not Collected') }}</option>
+                            <option value="cancelled">{{ __('Cancelled') }}</option>
+                            <option value="follow up">{{ __('Follow Up') }}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="area_id">{{ __('Area') }}</label>
+                        <select name="area_id" id="area_id" class="form-control">
+                            <option value="">{{ __('All') }}</option>
+                            @foreach (App\Models\Area::all() as $area)
+                            <option value="{{ $area->id }}">{{ $area->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="col-md-3 d-flex align-items-end">
                         <button class="btn btn-primary w-100" id="filterButton">{{ __('Filter') }}</button>
                     </div>
@@ -101,18 +121,22 @@
         $('#month_year').val(currentMonthYear);
         $('#filterButton').on('click', function() {
             let month_year = $('#month_year').val();
-            // let from_date = $('#from_date').val();
-            // let to_date = $('#to_date').val();
             let department_id = $('#department_id').val();
+            let follow_up_department_id = $('#follow_up_department_id').val();
+            let monthly_form_status = $('#monthly_form_status').val();
+            let area_id = $('#area_id').val();
+
 
             $.ajax({
                 url: "{{ route('monthly-forms-report.filter') }}",
                 method: "GET",
                 data: {
                     month_year: month_year,
-                    // from_date: from_date,
-                    // to_date: to_date,
-                    department_id: department_id
+                    department_id: department_id,
+                    follow_up_department_id: follow_up_department_id,
+                    status: monthly_form_status,
+                    area_id: area_id,
+
                 },
                 success: function(response) {
                     $('#filteredData').html(response.filteredTable);

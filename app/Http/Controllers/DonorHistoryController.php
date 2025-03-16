@@ -27,6 +27,8 @@ class DonorHistoryController extends Controller
             $donations->whereBetween('created_at', [$request->start_date, $request->end_date]);
         }
 
+        
+
         $donations = $donations->get();
         $donations->load('collectingDonation', 'donateItems');
 
@@ -56,9 +58,20 @@ class DonorHistoryController extends Controller
 
         $activities = $donor->activities();
 
-        // Apply date filter if provided
-        if ($request->start_date && $request->end_date) {
-            $activities->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        if (request()->has('date_filter')) {
+            $dateFilter = request('date_filter');
+            $startDate = request('start_date');
+            $endDate = request('end_date');
+
+            if ($dateFilter === 'today') {
+                $activities->whereDate('created_at', today());
+            } elseif ($dateFilter === 'week') {
+                $activities->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+            } elseif ($dateFilter === 'month') {
+                $activities->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()]);
+            } elseif ($dateFilter === 'range' && $startDate && $endDate) {
+                $activities->whereBetween('created_at', [$startDate, $endDate]);
+            }
         }
 
         $activities = $activities->get();
@@ -70,7 +83,7 @@ class DonorHistoryController extends Controller
     {
         $activity = DonorActivity::findOrFail($id);
 
-        $activity->load('donor', 'callType', 'createdBy','activityStatus');
+        $activity->load('donor', 'callType', 'createdBy','activityStatus','activityReason');
         return response()->json($activity);
     }
 }

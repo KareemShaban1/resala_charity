@@ -61,7 +61,7 @@ class Donor extends Model
 
     public function activities()
     {
-        return $this->hasMany(DonorActivity::class)->with(['callType','createdBy','activityStatus']);
+        return $this->hasMany(DonorActivity::class)->with(['callType','createdBy','activityStatus','activityReason']);
     }
 
     public function department(){

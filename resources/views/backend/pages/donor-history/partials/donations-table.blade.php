@@ -1,5 +1,5 @@
 @if($donations->isEmpty())
-<p>{{ __('No donations found.') }}</p>
+<p>{{ __('No Donations Found') }}</p>
 @else
 <table class="table table-bordered">
     <thead>

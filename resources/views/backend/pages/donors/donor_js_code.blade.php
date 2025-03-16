@@ -316,6 +316,7 @@
                                     <th>{{__('Call Type')}}</th>
                                     <th>{{__('Date Time')}}</th>
                                     <th>{{__('Status')}}</th>
+                                    <th>{{__('Reason')}}</th>
                                     <th>{{__('Response')}}</th>
                                     <th>{{__('Notes')}}</th>
                                     <th>{{__('Created By')}}</th>
@@ -329,7 +330,10 @@
                                         <td>${activity.call_type?.name}</td>
                                         <td>${activity.date_time}</td>
                                         <td>
-                                           ${activity.activity_status.name ?? '' }
+                                           ${activity.activity_status?.name ?? '' }
+                                        </td>
+                                        <td>
+                                           ${activity.activity_reason?.name ?? '' }
                                         </td>
                                         <td>${activity.response ?? ''}</td>
                                         <td>${activity.notes ?? ''}</td>
@@ -515,11 +519,21 @@
                     text: 'Excel',
                     title: 'Donors Data',
                     exportOptions: {
-                        columns: ':visible', // Ensures all visible columns are exported
+                        columns: ':visible',
                         header: true,
                         format: {
+                            body: function(data, row, column, node) {
+                                if (column === 6) { // Ensure this is the correct index for 'phones'
+                                    let extractedPhones = $('<div>').html(data).children('div').map(function() {
+                                        return $(this).text().trim(); // Extract text from each <div>
+                                    }).get().join(' --- '); // Change ' --- ' to '/' if needed
+
+                                    return extractedPhones || "N/A"; // Ensure non-empty output
+                                }
+
+                                return $('<div>').html(data).text().trim(); // Remove HTML from other columns
+                            },
                             header: function(data, columnIdx) {
-                                // Select the first row of <thead> and exclude the second row (filters)
                                 if ($('#donors-table thead tr:first-child th').eq(columnIdx).length) {
                                     return $('#donors-table thead tr:first-child th').eq(columnIdx).text();
                                 }

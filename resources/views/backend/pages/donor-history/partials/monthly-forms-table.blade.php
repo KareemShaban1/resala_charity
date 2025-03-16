@@ -1,5 +1,5 @@
 @if($monthlyForms->isEmpty())
-    <p>{{ __('No monthly forms found.') }}</p>
+    <p>{{ __('No Monthly Forms Found') }}</p>
 @else
     <table class="table table-bordered">
         <thead>

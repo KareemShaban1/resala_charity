@@ -1,5 +1,5 @@
 @if($activities->isEmpty())
-<p>{{ __('No Activities found.') }}</p>
+<p>{{ __('No Activities Found') }}</p>
 @else
 <table id="activities-table" class="table table-bordered">
     <thead>
@@ -25,7 +25,7 @@
             <td>{{ $activity->createdBy->name }}</td>
             <td>
                 @if ($activity->created_by === Auth::user()->id || Auth::user()->is_super_admin )
-                <button class="btn btn-warning" onclick="editActivity({{ $activity->id }})">{{ __('Edit') }}</button>
+                <button class="btn btn-warning text-white" onclick="editActivity({{ $activity->id }})">{{ __('Edit') }}</button>
                 @endif
                 @if ($activity->created_by === Auth::user()->id || Auth::user()->is_super_admin)
                 <button class="btn btn-danger" onclick="deleteActivity({{ $activity->id }})">{{ __('Delete') }}</button>
@@ -54,7 +54,9 @@
             <p><strong>{{ __('Call Type') }}:</strong> ${data.call_type?.name ?? 'N/A'}</p>
              <p><strong>{{ __('Status') }}:</strong> 
             ${data.activity_status?.name ?? 'N/A' }
-             
+            </p>
+             <p><strong>{{ __('Reason') }}:</strong> 
+            ${data.activity_reason?.name ?? 'N/A' }
             </p>
             <p><strong>{{ __('Date Time') }}:</strong> ${data.date_time }</p>
             <p><strong>{{ __('Created By') }}:</strong> ${data.created_by?.name ?? 'N/A' }</p>
@@ -81,7 +83,8 @@
                 $('#editActivityModal [name="donor_id"]').val(data.donor_id);
                 $('#editActivityModal [name="activity_type"]').val(data.activity_type);
                 $('#editActivityModal [name="call_type_id"]').val(data.call_type_id).trigger('change');
-                $('#editActivityModal [name="activity_status_id"]').val(data.call_type_id).trigger('change');
+                $('#editActivityModal [name="activity_status_id"]').val(data.activity_status_id).trigger('change'); 
+                $('#editActivityModal [name="activity_reason_id"]').val(data.activity_reason_id).trigger('change'); 
                 $('#editActivityModal [name="date_time"]').val(data.date_time);
                 $('#editActivityModal [name="notes"]').val(data.notes);
                 $('#editActivityModal [name="response"]').val(data.response);
