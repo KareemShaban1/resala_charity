@@ -492,5 +492,11 @@
     "Select Reason": "أختار السبب",
     "No Donations Found": "لا يوجد تبرعات",
     "No Activities Found": "لا يوجد نشاطات",
-    "No Monthly Forms Found": "لا يوجد استمارات شهرية"
+    "No Monthly Forms Found": "لا يوجد استمارات شهرية",
+    "Activity Reasons": "أسباب النشاط",
+    "Add Activity Reason": "إضافة سبب نشاط",
+    "Edit Activity Reason": "تعديل سبب نشاط",
+    "Delete Activity Reason": "حذف سبب نشاط",
+    "Activity Reason": "سبب نشاط",
+    "Select Activity Reason": "حدد سبب النشاط"
 }
