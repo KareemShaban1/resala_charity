@@ -326,6 +326,7 @@
                     d.end_date = $('#end-date').val();
                     d.area_group = $('#area_group').val();
                     d.area = $('#area').val();
+                    d.follow_up_department_id = $('#follow_up_department_id').val();
 
                 }
             },

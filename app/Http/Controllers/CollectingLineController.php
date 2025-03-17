@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCollectingLineRequest;
 use App\Http\Requests\UpdateCollectingLineRequest;
 use App\Models\Area;
 use App\Models\AreaGroup;
+use App\Models\Department;
 use App\Models\Donation;
 use App\Models\DonationCategory;
 use App\Models\Donor;
@@ -45,7 +46,7 @@ class CollectingLineController extends Controller
 
         return view(
             'backend.pages.collecting-lines.allCollectingLines',
-            compact('representatives', 'drivers', 'donors', 'employees', 'areas', 'areaGroups', 'donationCategories')
+            compact('representatives', 'drivers', 'donors','employees', 'areas', 'areaGroups', 'donationCategories')
         );
     }
     /**
@@ -70,10 +71,11 @@ class CollectingLineController extends Controller
         $areas = Area::all();
         $donationCategories = DonationCategory::all();
         $donors = Donor::all();
+        $followUpDepartments = Department::all();
 
         return view(
             'backend.pages.collecting-lines.addCollectingLines',
-            compact('representatives', 'drivers', 'donors', 'employees', 'areaGroups', 'areas', 'donationCategories')
+            compact('representatives', 'drivers', 'donors','followUpDepartments', 'employees', 'areaGroups', 'areas', 'donationCategories')
         );
     }
 
@@ -568,6 +570,10 @@ class CollectingLineController extends Controller
             $query->whereHas('donor.area', function ($q) use ($request) {
                 $q->where('areas.id', $request->area);
             });
+        }
+
+        if ($request->has('follow_up_department_id') && $request->follow_up_department_id != '') {
+            $query->where('follow_up_department_id', $request->follow_up_department_id);
         }
 
         return DataTables::of($query)

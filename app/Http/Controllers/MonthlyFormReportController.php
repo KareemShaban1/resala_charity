@@ -25,24 +25,23 @@ class MonthlyFormReportController extends Controller
         $donorQuery = Donor::query();
 
         // Filter by month
-        $monthlyFormsQuery = MonthlyFormDonation::query();
-        if ($monthYear) {
-            $monthlyFormsQuery->whereYear('created_at', substr($monthYear, 0, 4))
-                ->whereMonth('created_at', substr($monthYear, 5, 2));
+        $monthlyFormsDonationsQuery = MonthlyFormDonation::query();
 
+        if ($monthYear) {
+            $monthlyFormsDonationsQuery
+                ->where('month', substr($monthYear, 5, 2));
             $donorQuery->whereYear('created_at', substr($monthYear, 0, 4))
                 ->whereMonth('created_at', substr($monthYear, 5, 2));
         }
-
         if ($departmentId) {
-            $monthlyFormsQuery->whereHas('monthlyForm', function ($query) use ($departmentId) {
+            $monthlyFormsDonationsQuery->whereHas('monthlyForm', function ($query) use ($departmentId) {
                 $query->where('department_id', $departmentId);
             });
             $donorQuery->where('department_id', operator: $departmentId);
         }
 
         if ($followUpDepartmentId) {
-            $monthlyFormsQuery->whereHas('monthlyForm', function ($query) use ($followUpDepartmentId) {
+            $monthlyFormsDonationsQuery->whereHas('monthlyForm', function ($query) use ($followUpDepartmentId) {
                 $query->where('follow_up_department_id', $followUpDepartmentId);
             });
             $donorQuery->whereHas('monthlyForms', function ($query) use ($followUpDepartmentId) {
@@ -50,8 +49,13 @@ class MonthlyFormReportController extends Controller
             });
         }
 
+        if ($status) {
+            $monthlyFormsDonationsQuery->whereHas('donation', function ($query) use ($status) {
+                $query->where('status', $status);
+            });
+        }
 
-        $monthlyFormsDonations = $monthlyFormsQuery->whereHas('donation', function ($query) {
+        $monthlyFormsDonations = $monthlyFormsDonationsQuery->whereHas('donation', function ($query) {
             $query->whereHas('collectingDonation');
         })->get();
 
@@ -140,23 +144,21 @@ class MonthlyFormReportController extends Controller
         $areaId = $request->input('area_id');
         $donorQuery = Donor::query();
 
-        // Filter by month
+        // monthly forms donations query
         $monthlyFormsDonationsQuery = MonthlyFormDonation::query();
-        if ($monthYear) {
-            $monthlyFormsDonationsQuery->whereYear('created_at', substr($monthYear, 0, 4))
-                ->whereMonth('created_at', substr($monthYear, 5, 2));
 
+        if ($monthYear) {
+            $monthlyFormsDonationsQuery
+                ->where('month', substr($monthYear, 5, 2));
             $donorQuery->whereYear('created_at', substr($monthYear, 0, 4))
                 ->whereMonth('created_at', substr($monthYear, 5, 2));
         }
-
         if ($departmentId) {
             $monthlyFormsDonationsQuery->whereHas('monthlyForm', function ($query) use ($departmentId) {
                 $query->where('department_id', $departmentId);
             });
             $donorQuery->where('department_id', operator: $departmentId);
         }
-
 
         if ($followUpDepartmentId) {
             $monthlyFormsDonationsQuery->whereHas('monthlyForm', function ($query) use ($followUpDepartmentId) {
@@ -167,12 +169,18 @@ class MonthlyFormReportController extends Controller
             });
         }
 
+        if ($status) {
+            $monthlyFormsDonationsQuery->whereHas('donation', function ($query) use ($status) {
+                $query->where('status', $status);
+            });
+        }
+
         $monthlyFormsDonations = $monthlyFormsDonationsQuery->whereHas('donation', function ($query) {
             $query->whereHas('collectingDonation');
         })->get();
 
 
-        $donorsCount = $donorQuery->count();
+
 
         $monthlyFormsQuery = MonthlyForm::whereHas('items', function ($query) {
             $query->where('donation_type', 'financial');
@@ -185,12 +193,14 @@ class MonthlyFormReportController extends Controller
             $monthlyFormsQuery->where('follow_up_department_id', $followUpDepartmentId);
         }
 
+        // all monthly forms that is all monthly forms that has items with donation type "financial" 
         // Total Forms
         $allMonthlyFormsCount = $monthlyFormsQuery->count();
         $allMonthlyFormsAmount = $monthlyFormsQuery->withSum(['items as total_amount' => function ($query) {
             $query->where('donation_type', 'financial');
         }], 'amount')->get()->sum('total_amount');
 
+        // cancelled monthly forms that is all monthly forms that cancelled and has items with donation type "financial" 
         $cancelledMonthlyFormsCount = MonthlyForm::where('status', 'cancelled')
             ->count();
         $cancelledMonthlyFormsAmount = MonthlyForm::where('status', 'cancelled')
@@ -201,7 +211,7 @@ class MonthlyFormReportController extends Controller
             }], 'amount')->get()->sum('total_amount');
 
 
-        // Collected and Not Collected Forms Count
+        // Not Collected Forms Count and Amount
         $monthlyFormsNotCollectedCount = (clone $monthlyFormsQuery)->whereNotIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))->count();
         $monthlyFormsNotCollectedAmount = (clone $monthlyFormsQuery)->whereNotIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))
             ->withSum(['items as total_amount' => function ($query) {
@@ -209,6 +219,7 @@ class MonthlyFormReportController extends Controller
             }], 'amount')->get()->sum('total_amount');
 
 
+        // Collected Forms Count and Amount
         $monthlyFormsCollectedCount = (clone $monthlyFormsQuery)->whereIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))->count();
         $monthlyFormsCollectedAmount = (clone $monthlyFormsQuery)->whereIn('id', $monthlyFormsDonations->pluck('monthly_form_id'))
             ->withSum(['items as total_amount' => function ($query) {
@@ -222,11 +233,11 @@ class MonthlyFormReportController extends Controller
         })
             ->with([
                 'phones',
-                'monthlyForms' => function ($query) use ($monthYear, $departmentId, $followUpDepartmentId) {
+                'monthlyForms' => function ($query) use ($monthYear, $departmentId, $followUpDepartmentId, $status) {
                     $query->when($departmentId, fn($q) => $q->where('department_id', $departmentId))
                         ->when($followUpDepartmentId, fn($q) => $q->where('follow_up_department_id', $followUpDepartmentId))
                         ->with([
-                            'donations' => function ($donationQuery) use ($monthYear) {
+                            'donations' => function ($donationQuery) use ($monthYear, $status) {
                                 $donationQuery->with('donateItems.donationCategory')
                                     ->whereHas('collectingDonation')
                                     ->when(
@@ -234,7 +245,7 @@ class MonthlyFormReportController extends Controller
                                         fn($q) =>
                                         $q->whereYear('date', substr($monthYear, 0, 4))
                                             ->whereMonth('date', substr($monthYear, 5, 2))
-                                    );
+                                    )->when($status, fn($q) => $q->where('status', $status));
                             }
                         ]);
                 }

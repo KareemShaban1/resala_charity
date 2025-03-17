@@ -56,6 +56,15 @@
             </select>
         </div>
         <div class="col-md-3">
+            <label for="follow_up_department_id" class="form-label">{{__('Follow Up Department')}}</label>
+            <select id="follow_up_department_id" class="form-control">
+                <option value="" readonly>{{__('Select Department')}}</option>
+                @foreach($followUpDepartments as $followUpDepartment)
+                <option value="{{ $followUpDepartment->id }}">{{ $followUpDepartment->name }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-3">
             <button id="filter-btn" class="btn btn-primary mt-4">{{__('Filter')}}</button>
             <button id="clear-filters" class="btn btn-secondary mt-4">{{__('Clear Filters')}}</button>
         </div>
