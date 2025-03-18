@@ -169,11 +169,11 @@ class MonthlyFormReportController extends Controller
             });
         }
 
-        if ($status) {
-            $monthlyFormsDonationsQuery->whereHas('donation', function ($query) use ($status) {
-                $query->where('status', $status);
-            });
-        }
+        // if ($status) {
+        //     $monthlyFormsDonationsQuery->whereHas('donation', function ($query) use ($status) {
+        //         $query->where('status', $status);
+        //     });
+        // }
 
         $monthlyFormsDonations = $monthlyFormsDonationsQuery->whereHas('donation', function ($query) {
             $query->whereHas('collectingDonation');
@@ -227,9 +227,19 @@ class MonthlyFormReportController extends Controller
             }], 'amount')->get()->sum('total_amount');
 
 
-        $donorsWithForms = Donor::whereHas('monthlyForms', function ($query) use ($departmentId, $followUpDepartmentId) {
+        $donorsWithForms = Donor::whereHas('monthlyForms', function ($query) use ($departmentId, $followUpDepartmentId, $status, $monthYear) {
             $query->when($departmentId, fn($q) => $q->where('department_id', $departmentId))
-                ->when($followUpDepartmentId, fn($q) => $q->where('follow_up_department_id', $followUpDepartmentId));
+                ->when($followUpDepartmentId, fn($q) => $q->where('follow_up_department_id', $followUpDepartmentId))
+                ->whereHas('donations', function ($donationQuery) use ($status, $monthYear) {
+                    $donationQuery
+                        ->when(
+                            $monthYear,
+                            fn($q) =>
+                            $q->whereYear('date', substr($monthYear, 0, 4))
+                                ->whereMonth('date', substr($monthYear, 5, 2))
+                        )
+                        ->when($status, fn($q) => $q->where('status', $status)); // Apply status filter correctly
+                });
         })
             ->with([
                 'phones',

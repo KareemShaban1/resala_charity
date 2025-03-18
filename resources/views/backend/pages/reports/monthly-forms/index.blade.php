@@ -48,15 +48,7 @@
                             <option value="follow up">{{ __('Follow Up') }}</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label for="area_id">{{ __('Area') }}</label>
-                        <select name="area_id" id="area_id" class="form-control">
-                            <option value="">{{ __('All') }}</option>
-                            @foreach (App\Models\Area::all() as $area)
-                            <option value="{{ $area->id }}">{{ $area->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                   
                     <div class="col-md-3 d-flex align-items-end">
                         <button class="btn btn-primary w-100" id="filterButton">{{ __('Filter') }}</button>
                     </div>
