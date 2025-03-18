@@ -28,17 +28,16 @@
 
               <!-- <li class="side-nav-title side-nav-item">Navigation</li> -->
 
-              @can('view dashboard')
+              <!-- @can('view dashboard')
               <li class="side-nav-item">
                   <a href="{{route('dashboard.index')}}" class="side-nav-link">
                       <i class="uil-home-alt"></i>
-                      <!-- <span class="badge bg-success float-end">4</span> -->
                       <span>
                           {{__('Dashboard')}}
                       </span>
                   </a>
               </li>
-              @endcan
+              @endcan -->
 
               @can('backups.index')
               <li class="side-nav-item">
