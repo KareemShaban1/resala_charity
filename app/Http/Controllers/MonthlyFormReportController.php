@@ -237,8 +237,8 @@ class MonthlyFormReportController extends Controller
                             fn($q) =>
                             $q->whereYear('date', substr($monthYear, 0, 4))
                                 ->whereMonth('date', substr($monthYear, 5, 2))
-                        )
-                        ->when($status, fn($q) => $q->where('status', $status)); // Apply status filter correctly
+                        );
+                        // ->when($status, fn($q) => $q->where('status', $status)); // Apply status filter correctly
                 });
         })
             ->with([
@@ -255,7 +255,8 @@ class MonthlyFormReportController extends Controller
                                         fn($q) =>
                                         $q->whereYear('date', substr($monthYear, 0, 4))
                                             ->whereMonth('date', substr($monthYear, 5, 2))
-                                    )->when($status, fn($q) => $q->where('status', $status));
+                                    );
+                                    // ->when($status, fn($q) => $q->where('status', $status));
                             }
                         ]);
                 }

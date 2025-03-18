@@ -498,5 +498,10 @@
     "Edit Activity Reason": "تعديل سبب نشاط",
     "Delete Activity Reason": "حذف سبب نشاط",
     "Activity Reason": "سبب نشاط",
-    "Select Activity Reason": "حدد سبب النشاط"
+    "Select Activity Reason": "حدد سبب النشاط",
+    "Filter by Donor Name": "تصفية اسم المتبرع",
+    "Filter by Area": "تصفية المنطقة",
+    "Filter by Status": "تصفية الحالة",
+    "All Statuses": "جميع الحالات",
+    "Total Amount": "اجمالى المبلغ"
 }

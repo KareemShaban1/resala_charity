@@ -38,16 +38,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label for="monthly_form_status">{{ __(key: 'Status') }}</label>
-                        <select name="status" id="monthly_form_status" class="form-control">
-                            <option value="">{{ __('All') }}</option>
-                            <option value="collected">{{ __('Collected') }}</option>
-                            <option value="not_collected">{{ __('Not Collected') }}</option>
-                            <option value="cancelled">{{ __('Cancelled') }}</option>
-                            <option value="follow up">{{ __('Follow Up') }}</option>
-                        </select>
-                    </div>
+                    
                    
                     <div class="col-md-3 d-flex align-items-end">
                         <button class="btn btn-primary w-100" id="filterButton">{{ __('Filter') }}</button>
@@ -141,5 +132,39 @@
             });
         });
     });
+
+    document.addEventListener("DOMContentLoaded", function () {
+    const filterDonorName = document.getElementById("filterDonorName");
+    const filterArea = document.getElementById("filterArea");
+    const filterStatus = document.getElementById("filterStatus");
+    const rows = document.querySelectorAll(".donor-row");
+
+    function applyFilters() {
+        const nameValue = filterDonorName.value.toLowerCase();
+        const areaValue = filterArea.value.toLowerCase();
+        const statusValue = filterStatus.value;
+
+        rows.forEach(row => {
+            const donorName = row.getAttribute("data-donor-name");
+            const area = row.getAttribute("data-area");
+            const status = row.getAttribute("data-status");
+
+            const matchesName = !nameValue || donorName.includes(nameValue);
+            const matchesArea = !areaValue || area.includes(areaValue);
+            const matchesStatus = !statusValue || status === statusValue;
+
+            if (matchesName && matchesArea && matchesStatus) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+    filterDonorName.addEventListener("input", applyFilters);
+    filterArea.addEventListener("input", applyFilters);
+    filterStatus.addEventListener("change", applyFilters);
+});
+
 </script>
 @endpush
