@@ -765,6 +765,16 @@
                     }
                 },
                 {
+                    extend: 'colvis',
+                    text: 'Columns',
+                    columns: ':not(:last-child)', // Exclude action column
+                    columnText: function(dt, idx, title) {
+                        // Select the first row of <thead> and get the text of the corresponding column
+                        let columnTitle = $('#random-donors-table thead tr:first-child th').eq(idx).text();
+                        return columnTitle.trim() || `Column ${idx + 1}`;
+                    }
+                },
+                {
                     extend: 'print',
                     text: 'Print',
                     exportOptions: {
