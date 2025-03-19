@@ -146,7 +146,7 @@ class DonorsImport implements
             'area_name' => 'nullable|string|exists:areas,name|regex:/^[\p{Arabic}\s]+$/u',
             'department_name' => 'nullable|string|exists:departments,name|regex:/^[\p{Arabic}\s]+$/u',
             'donor_type' => 'nullable|string|in:normal,monthly',
-            'donor_category' => 'nullable|string|in:normal,special',
+            'donor_category' => 'nullable|string|in:normal,special,random',
             'notes' => '',
             'monthly_donation_day' => 'nullable',
             'phones' => [
