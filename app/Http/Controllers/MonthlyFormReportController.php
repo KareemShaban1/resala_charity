@@ -280,7 +280,7 @@ class MonthlyFormReportController extends Controller
                 )
             )->render(),
             'donorsWithFormsTable' => view('backend.pages.reports.monthly-forms.partials.donors_with_forms_table', compact('donorsWithForms'))->render(),
-            'donorsPaginationLinks' => (string) $donorsWithForms->links('pagination::bootstrap-4'),
+            'donorsPaginationLinks' => $donorsWithForms->links('pagination::bootstrap-4')->toHtml(),
 
         ]);
     }

@@ -72,12 +72,11 @@
                             <h5 class="text-info">{{ __('Donors with Monthly Forms') }}</h5>
                             <div id="donorsWithFormsTable">
                                 @include('backend.pages.reports.monthly-forms.partials.donors_with_forms_table', ['donorsWithForms' => $donorsWithForms])
-                                <!-- Pagination Links -->
-                                <div class="d-flex justify-content-center mt-3 pagination-links">
+                            </div>
+                             <!-- Pagination Links -->
+                             <div class="d-flex justify-content-center mt-3 pagination-links">
                                     {{ $donorsWithForms->links('pagination::bootstrap-4') }}
                                 </div>
- 
-                            </div>
 
                         </div>
 
@@ -98,9 +97,9 @@
 
 @push('scripts')
 <script>
-  $(document).ready(function() {
+ $(document).ready(function() {
     // Set default value for month_year as current month (YYYY-MM)
-    let currentMonthYear = new Date().toISOString().slice(0, 7); // Format: YYYY-MM
+    let currentMonthYear = new Date().toISOString().slice(0, 7);
     $('#month_year').val(currentMonthYear);
 
     function fetchFilteredData(page = 1) {
@@ -119,6 +118,9 @@
             success: function(response) {
                 $('#donorsWithFormsTable').html(response.donorsWithFormsTable);
                 $('.pagination-links').html(response.donorsPaginationLinks);
+            },
+            error: function(xhr) {
+                console.error("Error fetching data", xhr);
             }
         });
     }
@@ -128,12 +130,13 @@
         fetchFilteredData(1);
     });
 
-    // Handle pagination clicks dynamically
-    $(document).on('click', '.pagination a', function(event) {
+    // Ensure pagination links work after updating
+    $(document).on('click', '.pagination-links a', function(event) {
         event.preventDefault();
         let page = $(this).attr('href').split('page=')[1];
         fetchFilteredData(page);
     });
 });
+
 </script>
 @endpush
