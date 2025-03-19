@@ -97,7 +97,7 @@
 
 @push('scripts')
 <script>
- $(document).ready(function() {
+    $(document).ready(function() {
     // Set default value for month_year as current month (YYYY-MM)
     let currentMonthYear = new Date().toISOString().slice(0, 7);
     $('#month_year').val(currentMonthYear);
@@ -119,6 +119,7 @@
                 $('#donorsWithFormsTable').html(response.donorsWithFormsTable);
                 $('.pagination-links').html(response.donorsPaginationLinks);
 
+                // Apply donor filters to the newly loaded data
                 applyDonorFilters();
             },
             error: function(xhr) {
@@ -127,46 +128,31 @@
         });
     }
 
-    // Function to apply donor-specific filters
+    // Function to filter donor rows locally
     function applyDonorFilters() {
-        const filterDonorName = document.getElementById("filterDonorName");
-        const filterArea = document.getElementById("filterArea");
-        const filterStatus = document.getElementById("filterStatus");
-        const rows = document.querySelectorAll(".donor-row");
+        let filterDonorName = $("#filterDonorName").val().toLowerCase();
+        let filterArea = $("#filterArea").val().toLowerCase();
+        let filterStatus = $("#filterStatus").val();
 
-        function applyFilters() {
-            const nameValue = filterDonorName.value.toLowerCase();
-            const areaValue = filterArea.value.toLowerCase();
-            const statusValue = filterStatus.value;
+        $(".donor-row").each(function() {
+            let donorName = $(this).attr("data-donor-name").toLowerCase();
+            let area = $(this).attr("data-area").toLowerCase();
+            let status = $(this).attr("data-status");
 
-            rows.forEach(row => {
-                const donorName = row.getAttribute("data-donor-name");
-                const area = row.getAttribute("data-area");
-                const status = row.getAttribute("data-status");
+            let matchesName = !filterDonorName || donorName.includes(filterDonorName);
+            let matchesArea = !filterArea || area.includes(filterArea);
+            let matchesStatus = !filterStatus || status === filterStatus;
 
-                const matchesName = !nameValue || donorName.includes(nameValue);
-                const matchesArea = !areaValue || area.includes(areaValue);
-                const matchesStatus = !statusValue || status === statusValue;
-
-                if (matchesName && matchesArea && matchesStatus) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
-            });
-        }
-
-
-        // Add event listeners for donor-specific filters
-        filterDonorName.addEventListener("input", applyFilters);
-        filterArea.addEventListener("input", applyFilters);
-        filterStatus.addEventListener("change", applyFilters);
-
-        // Apply filters immediately after the data is loaded
-        applyFilters();
+            $(this).toggle(matchesName && matchesArea && matchesStatus);
+        });
     }
 
-    // Handle filter button click
+    // Apply filters when inputs change
+    $("#filterDonorName, #filterArea, #filterStatus").on("input change", function() {
+        applyDonorFilters();
+    });
+
+    // Handle filter button click (fetch data only when needed)
     $('#filterButton').on('click', function() {
         fetchFilteredData(1);
     });
@@ -178,6 +164,7 @@
         fetchFilteredData(page);
     });
 });
+
 
 </script>
 @endpush
