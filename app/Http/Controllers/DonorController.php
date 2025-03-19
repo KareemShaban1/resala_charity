@@ -120,11 +120,14 @@ class DonorController extends Controller
                         }
                     } elseif ($columnName === 'last_activity_status') {
                         $query->whereHas('activities', function ($q) use ($searchValue) {
-                            $q->whereHas('activityStatus', function ($q2) use ($searchValue) {
+                            $q->where('id', function ($subquery) {
+                                $subquery->select('id')
+                                    ->from('activities')
+                                    ->orderByDesc('created_at') // Get the latest activity
+                                    ->limit(1);
+                            })->whereHas('activityStatus', function ($q2) use ($searchValue) {
                                 $q2->where('name', 'like', "%{$searchValue}%");
-                            })
-                            ->orderBy('created_at', 'desc') // Ensure we are filtering only the latest activity
-                            ->limit(1); // Limit to only the latest activity
+                            });
                         });
                     } else {
                         $query->where($columnName, 'like', "%{$searchValue}%");
@@ -147,17 +150,6 @@ class DonorController extends Controller
                 $query->whereBetween('donors.created_at', [now()->startOfWeek(), now()->endOfWeek()]);
             } elseif ($dateFilter === 'month') {
                 $query->whereBetween('donors.created_at', [now()->startOfMonth(), now()->endOfMonth()]);
-            }elseif ($columnName === 'last_activity_status') {
-                $query->whereHas('activities', function ($q) use ($searchValue) {
-                    $q->where('id', function ($subquery) {
-                        $subquery->select('id')
-                            ->from('activities')
-                            ->orderByDesc('created_at') // Get the latest activity
-                            ->limit(1);
-                    })->whereHas('activityStatus', function ($q2) use ($searchValue) {
-                        $q2->where('name', 'like', "%{$searchValue}%");
-                    });
-                });
             }  elseif ($dateFilter === 'range' && $startDate && $endDate) {
                 $query->whereBetween('donors.created_at', [$startDate, $endDate]);
             }
