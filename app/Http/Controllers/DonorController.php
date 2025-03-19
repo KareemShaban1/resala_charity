@@ -122,7 +122,7 @@ class DonorController extends Controller
                         $query->whereHas('activities', function ($q) use ($searchValue) {
                             $q->where('id', function ($subquery) {
                                 $subquery->select('id')
-                                    ->from('activities')
+                                    ->from('donor_activities')
                                     ->orderByDesc('created_at') // Get the latest activity
                                     ->limit(1);
                             })->whereHas('activityStatus', function ($q2) use ($searchValue) {
