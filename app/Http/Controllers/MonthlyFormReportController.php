@@ -223,12 +223,8 @@ class MonthlyFormReportController extends Controller
 
 
         $donorsWithForms = Donor::whereHas('monthlyForms', function ($query) use ($departmentId, $followUpDepartmentId, $status, $monthYear) {
-            $query->when($departmentId, fn($q) => $q->whereHas('monthlyForm', function ($query) use ($departmentId) {
-                $query->where('department_id', $departmentId);
-            }))
-                ->when($followUpDepartmentId, fn($q) => $q->whereHas('monthlyForm', function ($query) use ($followUpDepartmentId) {
-                    $query->where('follow_up_department_id', $followUpDepartmentId);
-                }))
+            $query->when($departmentId, fn($q) => $q->where('department_id', $departmentId))
+                ->when($followUpDepartmentId, fn($q) => $q->where('follow_up_department_id', $followUpDepartmentId))
                 ->whereHas('donations', function ($donationQuery) use ($status, $monthYear) {
                     $donationQuery
                         ->when(
