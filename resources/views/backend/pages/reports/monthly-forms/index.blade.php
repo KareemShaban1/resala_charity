@@ -118,7 +118,7 @@
             },
             success: function(response) {
                 $('#donorsWithFormsTable').html(response.donorsWithFormsTable);
-                $('.pagination-links').html(response.paginationLinks);
+                $('.pagination-links').html(response.donorsPaginationLinks);
             }
         });
     }
