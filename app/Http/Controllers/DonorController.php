@@ -63,32 +63,32 @@ class DonorController extends Controller
             CASE WHEN donors.parent_id IS NOT NULL THEN 1 ELSE 0 END as is_child_order,
             (SELECT COUNT(*) FROM donor_activities WHERE donor_activities.donor_id = donors.id) as activities_count'
             );
-            // ->orderBy('parent_donor_group_id', 'asc')
-            // ->orderBy('is_child_order', 'asc')
-            // ->orderBy('donors.created_at', 'desc');
+        // ->orderBy('parent_donor_group_id', 'asc')
+        // ->orderBy('is_child_order', 'asc')
+        // ->orderBy('donors.created_at', 'desc');
 
-              // Handle sorting dynamically
-    if ($request->has('order')) {
-        $orderColumnIndex = $request->input('order.0.column'); // Get column index
-        $orderDirection = $request->input('order.0.dir'); // asc or desc
+        // Handle sorting dynamically
+        if ($request->has('order')) {
+            $orderColumnIndex = $request->input('order.0.column'); // Get column index
+            $orderDirection = $request->input('order.0.dir'); // asc or desc
 
-        $columns = [
-            'donors.id',   // Index 0
-            'donors.name', // Index 1
-            'donors.donor_type', // Index 2
-            'donors.donor_category', // Index 3
-            'city.name', // Index 4
-            'area.name', // Index 5
-            'phones', // Index 6
-            'donors.active' // Index 7
-        ];
+            $columns = [
+                'donors.id',   // Index 0
+                'donors.name', // Index 1
+                'donors.donor_type', // Index 2
+                'donors.donor_category', // Index 3
+                'city.name', // Index 4
+                'area.name', // Index 5
+                'phones', // Index 6
+                'donors.active' // Index 7
+            ];
 
-        if (isset($columns[$orderColumnIndex])) {
-            $query->orderBy($columns[$orderColumnIndex], $orderDirection);
+            if (isset($columns[$orderColumnIndex])) {
+                $query->orderBy($columns[$orderColumnIndex], $orderDirection);
+            }
+        } else {
+            $query->orderBy('donors.id', 'desc'); // Default ordering
         }
-    } else {
-        $query->orderBy('donors.id', 'desc'); // Default ordering
-    }
 
 
 
@@ -121,15 +121,15 @@ class DonorController extends Controller
                     } elseif ($columnName === 'last_activity_status') {
                         $query->whereHas('activities', function ($q) use ($searchValue) {
                             $q->where('id', function ($subquery) {
-                                $subquery->select('id')
+                                $subquery->selectRaw('MAX(id)')
                                     ->from('donor_activities')
-                                    ->orderByDesc('created_at') // Get the latest activity
-                                    ->limit(1);
+                                    ->whereColumn('donor_activities.donor_id', 'donors.id'); // Ensure it belongs to the same donor
                             })->whereHas('activityStatus', function ($q2) use ($searchValue) {
                                 $q2->where('name', 'like', "%{$searchValue}%");
                             });
                         });
-                    } else {
+                    }
+                     else {
                         $query->where($columnName, 'like', "%{$searchValue}%");
                     }
                 }
@@ -150,7 +150,7 @@ class DonorController extends Controller
                 $query->whereBetween('donors.created_at', [now()->startOfWeek(), now()->endOfWeek()]);
             } elseif ($dateFilter === 'month') {
                 $query->whereBetween('donors.created_at', [now()->startOfMonth(), now()->endOfMonth()]);
-            }  elseif ($dateFilter === 'range' && $startDate && $endDate) {
+            } elseif ($dateFilter === 'range' && $startDate && $endDate) {
                 $query->whereBetween('donors.created_at', [$startDate, $endDate]);
             }
         }
@@ -729,7 +729,8 @@ class DonorController extends Controller
         return Excel::download(new NonMatchingNumbersExport($nonMatchingNumbers), $fileName);
     }
 
-    public function deleteDonorPhone($id){
+    public function deleteDonorPhone($id)
+    {
         $this->authorize('delete', Donor::class);
 
         $donorPhone = DonorPhone::find($id);
