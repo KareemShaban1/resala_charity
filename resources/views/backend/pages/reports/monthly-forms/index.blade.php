@@ -97,8 +97,7 @@
 
 @push('scripts')
 <script>
-    $(document).ready(function() {
-    // Set default value for month_year as current month (YYYY-MM)
+$(document).ready(function() {
     let currentMonthYear = new Date().toISOString().slice(0, 7);
     $('#month_year').val(currentMonthYear);
 
@@ -119,7 +118,7 @@
                 $('#donorsWithFormsTable').html(response.donorsWithFormsTable);
                 $('.pagination-links').html(response.donorsPaginationLinks);
 
-                // Apply donor filters to the newly loaded data
+                // Apply donor filters after updating the table
                 applyDonorFilters();
             },
             error: function(xhr) {
@@ -128,7 +127,6 @@
         });
     }
 
-    // Function to filter donor rows locally
     function applyDonorFilters() {
         let filterDonorName = $("#filterDonorName").val().toLowerCase();
         let filterArea = $("#filterArea").val().toLowerCase();
@@ -147,23 +145,21 @@
         });
     }
 
-    // Apply filters when inputs change
     $("#filterDonorName, #filterArea, #filterStatus").on("input change", function() {
         applyDonorFilters();
     });
 
-    // Handle filter button click (fetch data only when needed)
     $('#filterButton').on('click', function() {
         fetchFilteredData(1);
     });
 
-    // Ensure pagination links work after updating
     $(document).on('click', '.pagination-links a', function(event) {
         event.preventDefault();
         let page = $(this).attr('href').split('page=')[1];
         fetchFilteredData(page);
     });
 });
+
 
 
 </script>
