@@ -110,7 +110,7 @@ class MonthlyFormReportController extends Controller
                             ->whereMonth('date', substr($monthYear, 5, 2));
                     }
                 }]);
-            }])->paginate(10); // Paginate with 10 records per page
+            }])->get();
 
 
         // Add a collected_status attribute
