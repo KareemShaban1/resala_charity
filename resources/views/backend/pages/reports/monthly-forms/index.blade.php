@@ -73,9 +73,9 @@
                             <div id="donorsWithFormsTable">
                                 @include('backend.pages.reports.monthly-forms.partials.donors_with_forms_table', ['donorsWithForms' => $donorsWithForms])
                                 <!-- Pagination Links -->
-                                <div class="d-flex justify-content-center mt-3">
+                                <!-- <div class="d-flex justify-content-center mt-3">
                                     {{ $donorsWithForms->links('pagination::bootstrap-4') }}
-                                </div>
+                                </div> -->
  
                             </div>
 
