@@ -122,7 +122,9 @@ class DonorController extends Controller
                         $query->whereHas('activities', function ($q) use ($searchValue) {
                             $q->whereHas('activityStatus', function ($q2) use ($searchValue) {
                                 $q2->where('name', 'like', "%{$searchValue}%");
-                            });
+                            })
+                            ->orderBy('created_at', 'desc') // Ensure we are filtering only the latest activity
+                            ->limit(1); // Limit to only the latest activity
                         });
                     } else {
                         $query->where($columnName, 'like', "%{$searchValue}%");

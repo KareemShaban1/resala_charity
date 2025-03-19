@@ -95,7 +95,27 @@
                     text: 'Excel',
                     title: 'Monthly Forms Data',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5]
+                        columns: ':visible',
+                        header: true,
+                        format: {
+                            body: function(data, row, column, node) {
+                                if (column === 3) { // Ensure this is the correct index for 'phones'
+                                    let extractedPhones = $('<div>').html(data).children('div').map(function() {
+                                        return $(this).text().trim(); // Extract text from each <div>
+                                    }).get().join(' --- '); // Change ' --- ' to '/' if needed
+
+                                    return extractedPhones || "N/A"; // Ensure non-empty output
+                                }
+
+                                return $('<div>').html(data).text().trim(); // Remove HTML from other columns
+                            },
+                            header: function(data, columnIdx) {
+                                if ($('#donors-table thead tr:first-child th').eq(columnIdx).length) {
+                                    return $('#donors-table thead tr:first-child th').eq(columnIdx).text();
+                                }
+                                return '';
+                            }
+                        }
                     }
                 },
                 {
