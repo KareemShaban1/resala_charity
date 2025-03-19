@@ -383,10 +383,6 @@
         addPhoneField(container);
     });
 
-    // Handle remove phone button click
-    // $(document).on('click', '.remove-phone', function() {
-    //     $(this).closest('.input-group').remove();
-    // });
 
     let donorsTable;
     let randomDonorsTable;
@@ -423,7 +419,8 @@
             ],
             columns: [{
                     data: 'id',
-                    name: 'donors.id' // Explicitly specify the table name
+                    name: 'donors.id', // Explicitly specify the table name
+                    orderable: true,
                 },
                 {
                     data: 'name',
@@ -509,7 +506,7 @@
                 });
             },
             order: [
-                [0, 'desc']
+                [0, 'asc']
             ],
             search: {
                 regex: true

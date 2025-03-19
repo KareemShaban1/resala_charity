@@ -86,15 +86,35 @@
             buttons: [{
                     extend: 'print',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6]
+                        columns: [0, 1, 2, 3, 4, 5, 6,7,8]
                     }
                 },
                 {
                     extend: 'excel',
                     text: 'Excel',
-                    title: 'Donations Data',
+                    title: 'Donation Data',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6]
+                        columns: ':visible',
+                        header: true,
+                        format: {
+                            body: function(data, row, column, node) {
+                                if (column === 3) { // Ensure this is the correct index for 'phones'
+                                    let extractedPhones = $('<div>').html(data).children('div').map(function() {
+                                        return $(this).text().trim(); // Extract text from each <div>
+                                    }).get().join(' --- '); // Change ' --- ' to '/' if needed
+
+                                    return extractedPhones || "N/A"; // Ensure non-empty output
+                                }
+
+                                return $('<div>').html(data).text().trim(); // Remove HTML from other columns
+                            },
+                            header: function(data, columnIdx) {
+                                if ($('#donors-table thead tr:first-child th').eq(columnIdx).length) {
+                                    return $('#donors-table thead tr:first-child th').eq(columnIdx).text();
+                                }
+                                return '';
+                            }
+                        }
                     }
                 },
                 {
@@ -104,7 +124,7 @@
                 {
                     extend: 'copy',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6]
+                        columns: [0, 1, 2, 3, 4, 5, 6,7,8]
                     }
                 },
             ],
@@ -899,7 +919,10 @@
                  </div>
                  <div class="col-md-3">
                     <p><strong>{{__('Reporting Way')}}:</strong> 
-                    ${data.reporting_way === 'call' ? '{{__("Call")}}' : data.reporting_way === 'whatsapp_chat' ? '{{__("Whatsapp Chat")}}' : '{{__("Monthly Donation")}}' }</p>
+                    ${data.reporting_way === 'call' ? '{{__("Call")}}' 
+                    : data.reporting_way === 'whatsapp_chat' ? '{{__("Whatsapp Chat")}}' 
+                    : data.reporting_way === 'location' ? '{{__("Location")}}' 
+                    : '{{__("Other")}}' }</p>
                  </div>
                   <div class="col-md-3">
                     <p><strong>{{__('Created By')}}:</strong> ${data.created_by?.name}</p>

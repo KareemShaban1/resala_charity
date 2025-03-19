@@ -62,11 +62,33 @@ class DonorController extends Controller
             CASE WHEN donors.parent_id IS NOT NULL THEN donors.parent_id ELSE donors.id END as parent_donor_group_id,
             CASE WHEN donors.parent_id IS NOT NULL THEN 1 ELSE 0 END as is_child_order,
             (SELECT COUNT(*) FROM donor_activities WHERE donor_activities.donor_id = donors.id) as activities_count'
-            )
-            ->orderBy('parent_donor_group_id', 'asc')
-            ->orderBy('is_child_order', 'asc')
-            ->orderBy('donors.created_at', 'desc');
+            );
+            // ->orderBy('parent_donor_group_id', 'asc')
+            // ->orderBy('is_child_order', 'asc')
+            // ->orderBy('donors.created_at', 'desc');
 
+              // Handle sorting dynamically
+    if ($request->has('order')) {
+        $orderColumnIndex = $request->input('order.0.column'); // Get column index
+        $orderDirection = $request->input('order.0.dir'); // asc or desc
+
+        $columns = [
+            'donors.id',   // Index 0
+            'donors.name', // Index 1
+            'donors.donor_type', // Index 2
+            'donors.donor_category', // Index 3
+            'city.name', // Index 4
+            'area.name', // Index 5
+            'phones', // Index 6
+            'donors.active' // Index 7
+        ];
+
+        if (isset($columns[$orderColumnIndex])) {
+            $query->orderBy($columns[$orderColumnIndex], $orderDirection);
+        }
+    } else {
+        $query->orderBy('donors.id', 'desc'); // Default ordering
+    }
 
 
 
