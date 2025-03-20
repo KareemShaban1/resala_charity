@@ -110,7 +110,7 @@ class MonthlyFormReportController extends Controller
                             ->whereMonth('date', substr($monthYear, 5, 2));
                     }
                 }]);
-            }])->get(); // Paginate with 10 records per page
+            }])->paginate(10); // Paginate with 10 records per page
 
 
         // Add a collected_status attribute
@@ -254,7 +254,7 @@ class MonthlyFormReportController extends Controller
                         // ]);
                 }
             ])
-            ->get();
+            ->paginate(10);
 
         // ✅ Optimized transformation logic
         $donorsWithForms->each(function ($donor) {
@@ -280,7 +280,7 @@ class MonthlyFormReportController extends Controller
                 )
             )->render(),
             'donorsWithFormsTable' => view('backend.pages.reports.monthly-forms.partials.donors_with_forms_table', compact('donorsWithForms'))->render(),
-            'donorsPaginationLinks' => $donorsWithForms->links('pagination::bootstrap-4')->toHtml(),
+            'donorsPaginationLinks' => (string) $donorsWithForms->links('pagination::bootstrap-4'),
 
         ]);
     }
