@@ -110,7 +110,7 @@ class MonthlyFormReportController extends Controller
                             ->whereMonth('date', substr($monthYear, 5, 2));
                     }
                 }]);
-            }])->paginate(10); // Paginate with 10 records per page
+            }])->get(); // Paginate with 10 records per page
 
 
         // Add a collected_status attribute
@@ -254,7 +254,7 @@ class MonthlyFormReportController extends Controller
                         // ]);
                 }
             ])
-            ->paginate(10);
+            ->get();
 
         // ✅ Optimized transformation logic
         $donorsWithForms->each(function ($donor) {
