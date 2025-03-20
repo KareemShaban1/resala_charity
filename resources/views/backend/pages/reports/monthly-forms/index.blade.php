@@ -97,7 +97,7 @@
 
 @push('scripts')
 <script>
-    $(document).ready(function() {
+  $(document).ready(function() {
     // Set default value for month_year as current month (YYYY-MM)
     let currentMonthYear = new Date().toISOString().slice(0, 7);
     $('#month_year').val(currentMonthYear);
@@ -119,7 +119,7 @@
                 $('#donorsWithFormsTable').html(response.donorsWithFormsTable);
                 $('.pagination-links').html(response.donorsPaginationLinks);
 
-                // Apply donor filters to the newly loaded data
+                // Reapply donor filters to the newly loaded data
                 applyDonorFilters();
             },
             error: function(xhr) {
@@ -148,7 +148,7 @@
     }
 
     // Apply filters when inputs change
-    $("#filterDonorName, #filterArea, #filterStatus").on("input change", function() {
+    $(document).on("input change", "#filterDonorName, #filterArea, #filterStatus", function() {
         applyDonorFilters();
     });
 
