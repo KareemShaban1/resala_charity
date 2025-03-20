@@ -142,6 +142,7 @@ class MonthlyFormReportController extends Controller
         $followUpDepartmentId = $request->input('follow_up_department_id');
         $status = $request->input('status');
         $areaId = $request->input('area_id');
+        $donorsPages = $request->input('donors_pages');
         $donorQuery = Donor::query();
 
         // monthly forms donations query
@@ -225,36 +226,36 @@ class MonthlyFormReportController extends Controller
         $donorsWithForms = Donor::whereHas('monthlyForms', function ($query) use ($departmentId, $followUpDepartmentId, $monthYear) {
             $query->when($departmentId, fn($q) => $q->where('department_id', $departmentId))
                 ->when($followUpDepartmentId, fn($q) => $q->where('follow_up_department_id', $followUpDepartmentId));
-                // ->whereHas('donations', function ($donationQuery) use ($monthYear) {
-                //     $donationQuery
-                //         ->when(
-                //             $monthYear,
-                //             fn($q) =>
-                //             $q->whereYear('date', substr($monthYear, 0, 4))
-                //                 ->whereMonth('date', substr($monthYear, 5, 2))
-                //         );
-                // });
+            // ->whereHas('donations', function ($donationQuery) use ($monthYear) {
+            //     $donationQuery
+            //         ->when(
+            //             $monthYear,
+            //             fn($q) =>
+            //             $q->whereYear('date', substr($monthYear, 0, 4))
+            //                 ->whereMonth('date', substr($monthYear, 5, 2))
+            //         );
+            // });
         })
             ->with([
                 'phones',
                 'monthlyForms' => function ($query) use ($monthYear, $departmentId, $followUpDepartmentId,) {
                     $query->when($departmentId, fn($q) => $q->where('department_id', $departmentId))
                         ->when($followUpDepartmentId, fn($q) => $q->where('follow_up_department_id', $followUpDepartmentId));
-                        // ->with([
-                        //     'donations' => function ($donationQuery) use ($monthYear) {
-                        //         $donationQuery->with('donateItems.donationCategory')
-                        //             ->whereHas('collectingDonation')
-                        //             ->when(
-                        //                 $monthYear,
-                        //                 fn($q) =>
-                        //                 $q->whereYear('date', substr($monthYear, 0, 4))
-                        //                     ->whereMonth('date', substr($monthYear, 5, 2))
-                        //             );
-                        //     }
-                        // ]);
+                    // ->with([
+                    //     'donations' => function ($donationQuery) use ($monthYear) {
+                    //         $donationQuery->with('donateItems.donationCategory')
+                    //             ->whereHas('collectingDonation')
+                    //             ->when(
+                    //                 $monthYear,
+                    //                 fn($q) =>
+                    //                 $q->whereYear('date', substr($monthYear, 0, 4))
+                    //                     ->whereMonth('date', substr($monthYear, 5, 2))
+                    //             );
+                    //     }
+                    // ]);
                 }
             ])
-            ->paginate(10);
+            ->paginate($donorsPages);
 
         // ✅ Optimized transformation logic
         $donorsWithForms->each(function ($donor) {
@@ -284,7 +285,6 @@ class MonthlyFormReportController extends Controller
 
         ]);
     }
-
 
     // public function index(Request $request)
     // {

@@ -1,15 +1,16 @@
 <!-- Filter Inputs -->
 <div class="mb-3">
     <div class="row">
-        <div class="col-md-4">
+    
+        <div class="col-md-3">
             <input type="text" id="filterDonorName" class="form-control" placeholder="{{ __('Filter by Donor Name') }}">
 
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <input type="text" id="filterArea" class="form-control" placeholder="{{ __('Filter by Area') }}">
 
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <select id="filterStatus" class="form-control">
                 <option value="">{{ __('All Statuses') }}</option>
                 <option value="collected">{{ __('Collected') }}</option>

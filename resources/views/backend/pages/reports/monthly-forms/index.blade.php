@@ -38,8 +38,10 @@
                             @endforeach
                         </select>
                     </div>
-                    
-                   
+
+
+
+
                     <div class="col-md-3 d-flex align-items-end">
                         <button class="btn btn-primary w-100" id="filterButton">{{ __('Filter') }}</button>
                     </div>
@@ -66,17 +68,30 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                       
+
 
                         <div class="col-md-12">
                             <h5 class="text-info">{{ __('Donors with Monthly Forms') }}</h5>
+                            <div class="col-md-3 mb-3">
+                                <label for="donors_pages" class="form-label">{{ __('Items Per Page') }}</label>
+                                <select id="donors_pages" class="form-control">
+                                    <option value="10">{{ __('10') }}</option>
+                                    <option value="50">{{ __('50') }}</option>
+                                    <option value="100">{{ __('100') }}</option>
+                                    <option value="200">{{ __('200') }}</option>
+                                    <option value="400">{{ __('400') }}</option>
+                                    <option value="800">{{ __('800') }}</option>
+                                    <option value="1000">{{ __('1000') }}</option>
+                                </select>
+                            </div>
                             <div id="donorsWithFormsTable">
+
                                 @include('backend.pages.reports.monthly-forms.partials.donors_with_forms_table', ['donorsWithForms' => $donorsWithForms])
                             </div>
-                             <!-- Pagination Links -->
-                             <div class="d-flex justify-content-center mt-3 pagination-links">
-                                    {{ $donorsWithForms->links('pagination::bootstrap-4') }}
-                                </div>
+                            <!-- Pagination Links -->
+                            <div class="d-flex justify-content-center mt-3 pagination-links">
+                                {{ $donorsWithForms->links('pagination::bootstrap-4') }}
+                            </div>
 
                         </div>
 
@@ -97,74 +112,80 @@
 
 @push('scripts')
 <script>
-  $(document).ready(function() {
-    // Set default value for month_year as current month (YYYY-MM)
-    let currentMonthYear = new Date().toISOString().slice(0, 7);
-    $('#month_year').val(currentMonthYear);
+    $(document).ready(function() {
+        // Set default value for month_year as current month (YYYY-MM)
+        let currentMonthYear = new Date().toISOString().slice(0, 7);
+        $('#month_year').val(currentMonthYear);
 
-    function fetchFilteredData(page = 1) {
-        let month_year = $('#month_year').val();
-        let department_id = $('#department_id').val();
-        let follow_up_department_id = $('#follow_up_department_id').val();
+        function fetchFilteredData(page = 1) {
+            let month_year = $('#month_year').val();
+            let department_id = $('#department_id').val();
+            let follow_up_department_id = $('#follow_up_department_id').val();
+            let donors_pages = $('#donors_pages').val();
 
-        $.ajax({
-            url: "{{ route('monthly-forms-report.filter') }}?page=" + page,
-            method: "GET",
-            data: {
-                month_year: month_year,
-                department_id: department_id,
-                follow_up_department_id: follow_up_department_id,
-            },
-            success: function(response) {
-                $('#donorsWithFormsTable').html(response.donorsWithFormsTable);
-                $('.pagination-links').html(response.donorsPaginationLinks);
+            $.ajax({
+                url: "{{ route('monthly-forms-report.filter') }}?page=" + page,
+                method: "GET",
+                data: {
+                    month_year: month_year,
+                    department_id: department_id,
+                    follow_up_department_id: follow_up_department_id,
+                    donors_pages: donors_pages
+                },
+                success: function(response) {
+                    $('#donorsWithFormsTable').html(response.donorsWithFormsTable);
+                    $('.pagination-links').html(response.donorsPaginationLinks);
 
-                // Reapply donor filters to the newly loaded data
-                applyDonorFilters();
-            },
-            error: function(xhr) {
-                console.error("Error fetching data", xhr);
-            }
+                    // Reapply donor filters to the newly loaded data
+                    applyDonorFilters();
+                },
+                error: function(xhr) {
+                    console.error("Error fetching data", xhr);
+                }
+            });
+        }
+
+        // Function to filter donor rows locally
+        function applyDonorFilters() {
+            let filterDonorName = $("#filterDonorName").val().toLowerCase();
+            let filterArea = $("#filterArea").val().toLowerCase();
+            let filterStatus = $("#filterStatus").val();
+
+            $(".donor-row").each(function() {
+                let donorName = $(this).attr("data-donor-name").toLowerCase();
+                let area = $(this).attr("data-area").toLowerCase();
+                let status = $(this).attr("data-status");
+
+                let matchesName = !filterDonorName || donorName.includes(filterDonorName);
+                let matchesArea = !filterArea || area.includes(filterArea);
+                let matchesStatus = !filterStatus || status === filterStatus;
+
+                $(this).toggle(matchesName && matchesArea && matchesStatus);
+            });
+        }
+
+        // Apply filters when inputs change
+        $(document).on("input change", "#filterDonorName, #filterArea, #filterStatus", function() {
+            applyDonorFilters();
         });
-    }
 
-    // Function to filter donor rows locally
-    function applyDonorFilters() {
-        let filterDonorName = $("#filterDonorName").val().toLowerCase();
-        let filterArea = $("#filterArea").val().toLowerCase();
-        let filterStatus = $("#filterStatus").val();
-
-        $(".donor-row").each(function() {
-            let donorName = $(this).attr("data-donor-name").toLowerCase();
-            let area = $(this).attr("data-area").toLowerCase();
-            let status = $(this).attr("data-status");
-
-            let matchesName = !filterDonorName || donorName.includes(filterDonorName);
-            let matchesArea = !filterArea || area.includes(filterArea);
-            let matchesStatus = !filterStatus || status === filterStatus;
-
-            $(this).toggle(matchesName && matchesArea && matchesStatus);
+        // Handle filter button click (fetch data only when needed)
+        $('#filterButton').on('click', function() {
+            fetchFilteredData(1);
         });
-    }
 
-    // Apply filters when inputs change
-    $(document).on("input change", "#filterDonorName, #filterArea, #filterStatus", function() {
-        applyDonorFilters();
+        $('#donors_pages').on('change', function() {
+            console.log("test")
+            fetchFilteredData(1);
+        });
+
+
+        // Ensure pagination links work after updating
+        $(document).on('click', '.pagination-links a', function(event) {
+            event.preventDefault();
+            let page = $(this).attr('href').split('page=')[1];
+            fetchFilteredData(page);
+        });
     });
-
-    // Handle filter button click (fetch data only when needed)
-    $('#filterButton').on('click', function() {
-        fetchFilteredData(1);
-    });
-
-    // Ensure pagination links work after updating
-    $(document).on('click', '.pagination-links a', function(event) {
-        event.preventDefault();
-        let page = $(this).attr('href').split('page=')[1];
-        fetchFilteredData(page);
-    });
-});
-
-
 </script>
 @endpush
