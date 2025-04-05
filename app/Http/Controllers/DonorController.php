@@ -161,6 +161,8 @@ class DonorController extends Controller
                 $query->whereIn('donors.donor_category', ['normal', 'special']);
             } elseif ($category === 'random') {
                 $query->where('donors.donor_category', 'random');
+            }elseif($category === 'all'){
+                $query->whereIn('donors.donor_category', ['normal', 'special', 'random']);
             }
         }
 
@@ -172,10 +174,6 @@ class DonorController extends Controller
                 });
             })
             ->addColumn('phones', function ($donor) {
-                // return $donor->phones->isNotEmpty() ?
-                //     $donor->phones->map(function ($phone) {
-                //         return $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')';
-                //     })->implode(', ') : 'N/A';
                 return $donor->phones->isNotEmpty() ?
                     $donor->phones->map(function ($phone) {
                         return $phone->phone_number;
