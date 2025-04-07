@@ -369,7 +369,8 @@
                     <option value="other" ${type === 'other' ? 'selected' : ''}>{{__('Other')}}</option>
                 </select>
                 ${index === 0 ? 
-                    `<button type="button" class="btn btn-success add-phone"><i class="mdi mdi-plus"></i></button>` :
+                    `<button type="button" class="btn btn-danger remove-phone"><i class="mdi mdi-minus"></i></button>
+                    <button type="button" class="btn btn-success add-phone"><i class="mdi mdi-plus"></i></button>` :
                     `<button type="button" class="btn btn-danger remove-phone"><i class="mdi mdi-minus"></i></button>`
                 }
             </div>
@@ -1330,15 +1331,18 @@
     $(document).on('click', '.remove-phone', function() {
         const row = $(this).closest('.input-group'); // Get the correct row
         const phoneId = row.find('input[name*="[id]"]').val(); // Extract phone ID
-        console.log(phoneId)
 
         if (!phoneId) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Phone ID not found.'
-            });
-            return;
+            // Swal.fire({
+            //     icon: 'error',
+            //     title: 'Oops...',
+            //     text: 'Phone ID not found.'
+            // });
+            // return;
+            row.remove(); // Remove the row from the DOM
+                        $(this).closest('.input-group').remove();
+                        return;
+
         }
 
         Swal.fire({
