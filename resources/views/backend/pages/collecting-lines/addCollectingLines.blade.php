@@ -108,6 +108,9 @@
                 <table id="donations-table" class="table dt-responsive nowrap w-100">
                     <thead>
                         <tr>
+                            <th>
+                                <input type="checkbox" id="check-all-donations">
+                            </th>
                             <th>{{__('ID')}}</th>
                             <th>{{__('Donor Name')}}</th>
                             <th>{{__('Area')}}</th>
@@ -133,23 +136,23 @@
             <h3>{{__('Monthly Forms')}}</h3>
         </div>
         <div class="card-body">
-        <div style="width: 100%; overflow-x: auto;">
-        <table id="monthly-forms-table" class="table dt-responsive nowrap w-100">
-                <thead>
-                    <tr>
-                        <th>{{__('ID')}}</th>
-                        <th>{{__('Donor Name')}}</th>
-                        <th>{{__('Area')}}</th>
-                        <th>{{__('Phones')}}</th>
-                        <th>{{__('Notes') }}</th>
-                        <th>{{__('Collecting Donation Way')}}</th>
-                        <th>{{__('Monthly Form Day')}}</th>
-                        <th>{{__('Last Donation Date')}}</th>
-                        <th>{{__('Donates')}}</th>
-                        <th>{{__('Actions')}}</th>
-                    </tr>
-                </thead>
-            </table>
+            <div style="width: 100%; overflow-x: auto;">
+                <table id="monthly-forms-table" class="table dt-responsive nowrap w-100">
+                    <thead>
+                        <tr>
+                            <th>{{__('ID')}}</th>
+                            <th>{{__('Donor Name')}}</th>
+                            <th>{{__('Area')}}</th>
+                            <th>{{__('Phones')}}</th>
+                            <th>{{__('Notes') }}</th>
+                            <th>{{__('Collecting Donation Way')}}</th>
+                            <th>{{__('Monthly Form Day')}}</th>
+                            <th>{{__('Last Donation Date')}}</th>
+                            <th>{{__('Donates')}}</th>
+                            <th>{{__('Actions')}}</th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>

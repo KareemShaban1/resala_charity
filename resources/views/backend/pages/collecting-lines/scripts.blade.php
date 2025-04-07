@@ -122,11 +122,15 @@
                         return `<input type="checkbox" class="donation-checkbox" value="${data}">`;
                     },
                     orderable: false,
-                    searchable: false
+                    searchable: true
+                },
+                {
+                    data: 'id',
+                    name: 'id',
                 },
                 {
                     data: 'name',
-                    name: 'name'
+                    name: 'name',
                 },
                 {
                     data: 'area',
@@ -170,7 +174,7 @@
                 }
             ],
             order: [
-                [0, 'desc']
+                [1, 'desc']
             ],
             buttons: [{
                     text: 'Bulk Assign',
@@ -217,6 +221,16 @@
             language: languages[language], // Apply language dynamically
             "drawCallback": function() {
                 $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+
+                // Rebind check all logic
+                $('#check-all-donations').prop('checked', false); // reset on redraw
+                $('.donation-checkbox').off('change').on('change', function() {
+                    if (!$(this).is(':checked')) {
+                        $('#check-all-donations').prop('checked', false);
+                    } else if ($('.donation-checkbox:checked').length === $('.donation-checkbox').length) {
+                        $('#check-all-donations').prop('checked', true);
+                    }
+                });
             },
             createdRow: function(row, data, dataIndex) {
 
@@ -236,6 +250,21 @@
                 }
             }
         });
+
+        $('#check-all-donations').on('click', function() {
+            const isChecked = $(this).is(':checked');
+            $('.donation-checkbox').prop('checked', isChecked);
+        });
+
+        // Optional: handle individual checkboxes to uncheck "Check All" if any unchecked
+        $(document).on('change', '.donation-checkbox', function() {
+            if (!$(this).is(':checked')) {
+                $('#check-all-donations').prop('checked', false);
+            } else if ($('.donation-checkbox:checked').length === $('.donation-checkbox').length) {
+                $('#check-all-donations').prop('checked', true);
+            }
+        });
+
 
         function assignBulkDonations() {
             // Fetch collecting lines based on the selected date filter
@@ -1166,11 +1195,16 @@
                 // Clear the select options
                 $('#collecting_line_id').empty();
 
+
                 // Populate the select options
                 if (response.data.length > 0) {
                     $.each(response.data, function(index, collectingLine) {
+                        const formattedDate = new Date(collectingLine.collecting_date).toLocaleDateString('en-GB'); // output: DD/MM/YYYY
+
                         $('#collecting_line_id').append(
-                            `<option value="${collectingLine.id}">(${collectingLine.number}) - ${collectingLine.area_group.name} - (${collectingLine.collecting_date})</option>`
+                            `<option value="${collectingLine.id}">(${collectingLine.number}) - 
+                            ${collectingLine.area_group.name} - 
+                            (${formattedDate})</option>`
                         );
                     });
                 } else {
@@ -1549,10 +1583,10 @@
                 </div>
      `;
 
-                    data.donor.phones
-                        .forEach(item => {
-                            modalContent += `<p><strong>{{__('Phones')}}:</strong> ${item.phone_number} </p>`;
-                        });
+                data.donor.phones
+                    .forEach(item => {
+                        modalContent += `<p><strong>{{__('Phones')}}:</strong> ${item.phone_number} </p>`;
+                    });
 
                 // Financial Donations Table
                 if (data.donation_type === 'financial' || data.donation_type === 'both') {

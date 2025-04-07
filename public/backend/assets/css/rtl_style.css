@@ -22396,3 +22396,9 @@ div.dt-button-collection div.dropdown-menu {
 #random-donors-table td:nth-child(9) { width: 50px !important; }  /* status */
 #random-donors-table th:nth-child(10),
 #random-donors-table td:nth-child(10) { width: 100px !important; }  /* status */
+
+
+th.no-sort.sorting::before,
+th.no-sort.sorting::after {
+    display: none !important;
+}
