@@ -98,13 +98,13 @@ class CollectingLineController extends Controller
                 $endDate = request('end_date');
 
                 if ($dateFilter === 'today') {
-                    $data->whereDate('created_at', operator: today());
+                    $data->whereDate('collecting_date',  today());
                 } elseif ($dateFilter === 'week') {
-                    $data->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                    $data->whereBetween('collecting_date', [now()->startOfWeek(), now()->endOfWeek()]);
                 } elseif ($dateFilter === 'month') {
-                    $data->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()]);
+                    $data->whereBetween('collecting_date', [now()->startOfMonth(), now()->endOfMonth()]);
                 } elseif ($dateFilter === 'range' && $startDate && $endDate) {
-                    $data->whereBetween('created_at', [$startDate, $endDate]);
+                    $data->whereBetween('collecting_date', [$startDate, $endDate]);
                 }
             }
             // if ($request->has('end_date') && $request->end_date != '') {
