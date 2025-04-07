@@ -895,7 +895,7 @@
              <div class="row">
                 <div class="col-md-3">
                     <p><strong>{{__('Donation Type')}}:</strong>
-                    ${data.donation_type === 'financial' ? '{{__("Financial")}}' : data.donation_type === 'inKind' ? '{{__("In Kind")}}' : '{{__("Both")}}'}
+                    ${data.donation_type === 'financial' ? '{{__("Financial")}}' : data.donation_type === 'inKind' ? '{{__("In-Kind")}}' : '{{__("Both")}}'}
                     </p>
                 </div>
                 <div class="col-md-3">
