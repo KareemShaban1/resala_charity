@@ -118,16 +118,16 @@
             columns: [{
                     data: 'id',
                     name: 'id',
+                }, {
+                    data: 'id',
+                    name: 'id',
                     render: function(data) {
                         return `<input type="checkbox" class="donation-checkbox" value="${data}">`;
                     },
                     orderable: false,
                     searchable: true
                 },
-                {
-                    data: 'id',
-                    name: 'id',
-                },
+
                 {
                     data: 'name',
                     name: 'name',
@@ -473,12 +473,17 @@
 
 
         function getColorForParent(parentId) {
-            // Use a hash function to generate a unique color
             const colors = [
-                '#f9f9f9', '#e6f7ff', '#fff7e6', '#e6ffe6', '#ffe6e6',
-                '#e6e6ff', '#f0e6ff', '#ffe6f0', '#e6fff0', '#fff0e6'
+                // Light colors
+                // '#f9f9f9', '#e6f7ff', '#fff7e6', '#e6ffe6', '#ffe6e6',
+                // '#e6e6ff', '#f0e6ff', '#ffe6f0', '#e6fff0', '#fff0e6',
+
+                // Darker colors
+                '#003366', '#004d40', '#4a148c', '#880e4f', '#bf360c',
+                '#3e2723', '#1b5e20', '#01579b', '#263238', '#311b92'
             ];
-            const index = parentId % colors.length; // Ensure the index is within the array bounds
+
+            const index = parentId % colors.length;
             return colors[index];
         }
 

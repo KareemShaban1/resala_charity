@@ -108,10 +108,10 @@
                 <table id="donations-table" class="table dt-responsive nowrap w-100">
                     <thead>
                         <tr>
+                            <th>{{__('ID')}}</th>
                             <th>
                                 <input type="checkbox" id="check-all-donations">
                             </th>
-                            <th>{{__('ID')}}</th>
                             <th>{{__('Donor Name')}}</th>
                             <th>{{__('Area')}}</th>
                             <!-- <th>{{__('Phones')}}</th> -->

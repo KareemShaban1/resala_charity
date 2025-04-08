@@ -68,8 +68,8 @@
                     <div class="mb-3">
                         <label for="donation_category" class="form-label">{{__('Donation Type')}}</label>
                         <select class="form-control" name="donation_category" id="donation_category">
-                        <option value="monthly">{{__('Monthly')}}</option>
                         <option value="normal">{{__('Normal')}}</option>
+                        <option value="monthly">{{__('Monthly')}}</option>
                             <option value="normal_and_monthly">{{__('Normal and Monthly')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>

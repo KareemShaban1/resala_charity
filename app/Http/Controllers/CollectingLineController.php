@@ -14,7 +14,6 @@ use App\Models\Donor;
 use App\Models\Employee;
 use App\Models\MonthlyForm;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -46,7 +45,7 @@ class CollectingLineController extends Controller
 
         return view(
             'backend.pages.collecting-lines.allCollectingLines',
-            compact('representatives', 'drivers', 'donors','employees', 'areas', 'areaGroups', 'donationCategories')
+            compact('representatives', 'drivers', 'donors', 'employees', 'areas', 'areaGroups', 'donationCategories')
         );
     }
     /**
@@ -75,7 +74,7 @@ class CollectingLineController extends Controller
 
         return view(
             'backend.pages.collecting-lines.addCollectingLines',
-            compact('representatives', 'drivers', 'donors','followUpDepartments', 'employees', 'areaGroups', 'areas', 'donationCategories')
+            compact('representatives', 'drivers', 'donors', 'followUpDepartments', 'employees', 'areaGroups', 'areas', 'donationCategories')
         );
     }
 
@@ -87,10 +86,7 @@ class CollectingLineController extends Controller
         if ($request->ajax()) {
             $data = CollectingLine::query();
 
-            // Apply filters
-            // if ($request->has('date') && $request->date != '') {
-            //     $data->whereDate('collecting_date', '=', $request->date);
-            // }
+
             // Date filter
             if (request()->has('date_filter')) {
                 $dateFilter = request('date_filter');
@@ -107,9 +103,7 @@ class CollectingLineController extends Controller
                     $data->whereBetween('collecting_date', [$startDate, $endDate]);
                 }
             }
-            // if ($request->has('end_date') && $request->end_date != '') {
-            //     $data->whereDate('created_at', '<=', $request->end_date);
-            // }
+
             if ($request->has('area_group') && $request->area_group != '') {
                 $data->where('area_group_id', $request->area_group);
             }
