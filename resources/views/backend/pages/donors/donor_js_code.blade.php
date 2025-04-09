@@ -8,6 +8,7 @@
     flatpickr("#date_time", {
         enableTime: true,
         dateFormat: "Y-m-d H:i",
+        defaultDate: new Date() // sets current date with current hour:minute
     });
 
     $(document).ready(function() {
