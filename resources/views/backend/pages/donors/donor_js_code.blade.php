@@ -1,7 +1,14 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <script>
     let table;
+
+    flatpickr("#date_time", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+    });
 
     $(document).ready(function() {
         // Initialize Select2 for main form

@@ -423,8 +423,6 @@ class CollectingLineController extends Controller
         }
     }
 
-
-
     public function getMonthlyFormsData(Request $request)
     {
 

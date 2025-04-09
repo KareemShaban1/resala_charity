@@ -4,6 +4,12 @@
 {{__('Donors')}}
 @endsection
 
+@push('styles')
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+@endpush
+
 @section('content')
 <div class="container-fluid">
     <!-- start page title -->
