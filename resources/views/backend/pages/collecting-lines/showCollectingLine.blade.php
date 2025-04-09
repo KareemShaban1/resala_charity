@@ -420,6 +420,104 @@
         return `${year}-${month}-${day}`;
     }
 
+    $(document).on('click', '.add-row-btn', function() {
+            const container = $($(this).data('target'));
+            if (container.attr('id') === 'financial-donation-rows-container' || container.attr('id') === 'edit-financial-donation-rows-container') {
+                // Generate a unique index for financial donations
+                let newIndex = 0;
+                while (existingFinancialIndices.has(newIndex)) {
+                    newIndex++;
+                }
+                existingFinancialIndices.add(newIndex); // Track the new index
+
+                container.append(`
+            <div class="row donation-row">
+                <input type="hidden" name="donates[${newIndex}][financial_donation_type]" value="financial">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="donation_category" class="form-label">{{__('Donation Category')}}</label>
+                        <select class="form-control donation-category" name="donates[${newIndex}][financial_donation_categories_id]">
+                            <option value="">{{__('Select Category')}}</option>
+                            @foreach($donationCategories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">{{__('Amount')}}</label>
+                        <input type="number" class="form-control amount" name="donates[${newIndex}][financial_amount]">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">{{__('Financial Receipt Number')}}</label>
+                        <input type="text" class="form-control amount" name="donates[${newIndex}][financial_receipt_number]">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                 <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label">{{__('Donation Item Type')}}</label>
+                    <select class="form-control" name="donates[${newIndex}][financial_donation_item_type]">
+                        <option value="normal">{{__('Normal')}}</option>
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+                <div class="col-md-1 d-flex align-items-center">
+                    <button type="button" class="btn btn-danger mt-2 remove-row-btn">{{__('Remove')}}</button>
+                </div>
+            </div>
+        `);
+            } else if (container.attr('id') === 'in-kind-donation-rows-container' || container.attr('id') === 'edit-in-kind-donation-rows-container') {
+                // Generate a unique index for in-kind donations
+                let newIndex = 0;
+                while (existingInKindIndices.has(newIndex)) {
+                    newIndex++;
+                }
+                existingInKindIndices.add(newIndex); // Track the new index
+
+                container.append(`
+            <div class="row donation-row">
+                <input type="hidden" name="donates[${newIndex}][inKind_donation_type]" value="inKind">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="item_name" class="form-label">{{__('Item Name')}}</label>
+                        <input type="text" class="form-control" name="donates[${newIndex}][in_kind_item_name]">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">{{__('Quantity')}}</label>
+                        <input type="number" class="form-control" name="donates[${newIndex}][in_kind_quantity]">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                 <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label">{{__('Donation Item Type')}}</label>
+                    <select class="form-control" name="donates[${newIndex}][in_kind_donation_item_type]">
+                        <option value="normal">{{__('Normal')}}</option>
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+                <div class="col-md-3 d-flex align-items-center">
+                    <button type="button" class="btn btn-danger mt-2 remove-row-btn">{{__('Remove')}}</button>
+                </div>
+            </div>
+        `);
+            }
+        });
+
+
+
 
 
 
