@@ -187,6 +187,10 @@
                     }
                 },
                 {
+                    extend: 'colvis',
+                    text: 'Columns',
+                },
+                {
                     extend: 'print',
                     exportOptions: {
                         columns: [0, 1, 2, 3]
