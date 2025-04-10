@@ -136,12 +136,16 @@
                     data: 'area',
                     name: 'area'
                 },
-                // {
-                //     data: 'phones',
-                //     name: 'phones',
-                //     orderable: false,
-                //     searchable: true
-                // },
+                {
+                    data: 'department',
+                    name: 'department'
+                },
+                {
+                    data: 'phones',
+                    name: 'phones',
+                    orderable: false,
+                    searchable: true
+                },
                 {
                     data: 'notes',
                     name: 'notes'

@@ -345,6 +345,9 @@ class CollectingLineController extends Controller
                 ->addColumn('monthly_donation_day', function ($item) {
                     return $item->donor?->monthly_donation_day ?? 0;
                 })
+                ->addColumn('department', function ($item) {
+                    return $item->donor?->department->name ?? '';
+                })
                 ->addColumn('phones', function ($item) {
                     // return $item->donor?->phones->isNotEmpty() ?
                     //     $item->donor->phones->map(function ($phone) {

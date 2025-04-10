@@ -44,9 +44,14 @@ class Donation extends Model
         return $this->hasOne(DonationCollecting::class, 'donation_id');
     }
 
-    public function collectingLines()
+    // public function collectingLines()
+    // {
+    //     return $this->belongsToMany(CollectingLine::class, 'collecting_line_donations', 'donation_id', 'collecting_line_id');
+    // }
+
+    public function collectingLine()
     {
-        return $this->belongsToMany(CollectingLine::class, 'collecting_line_donations', 'donation_id', 'collecting_line_id');
+        return $this->belongsTo(CollectingLine::class, 'collecting_line_id');
     }
 
     public function monthlyForms()
