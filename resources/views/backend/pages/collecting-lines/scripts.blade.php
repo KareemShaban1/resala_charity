@@ -694,6 +694,107 @@
             }
         });
 
+         // Event handler for opening the View Donations Modal
+         $(document).on('click', '.view-donations-btn', function() {
+            var collectingLineId = $(this).data('id'); // Get collecting line ID from the button
+            $('#viewDonationsModal').data('collecting-line-id', collectingLineId).modal('show');
+
+            // Check if DataTable is already initialized
+            if (!$.fn.DataTable.isDataTable('#view-donations-table')) {
+                // Initialize DataTable
+                $('#view-donations-table').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: {
+                        url: "{{ route('collecting-lines.donations.data') }}",
+                        data: function(d) {
+                            d.collecting_line_id = $('#viewDonationsModal').data('collecting-line-id');
+                            d.date = $('#date').val();
+                            d.area_group = $('#area_group').val();
+                        }
+                    },
+                    columns: [{
+                            data: 'id',
+                            name: 'id'
+                        },
+                        {
+                            data: 'name',
+                            name: 'name'
+                        },
+                        {
+                            data: 'area',
+                            name: 'area'
+                        },
+                        {
+                            data: 'phones',
+                            name: 'phones',
+                            orderable: false,
+                            searchable: true
+                        },
+                        {
+                            data: 'monthly_donation_day',
+                            name: 'monthly_donation_day'
+                        },
+                        {
+                            data: 'collected',
+                            name: 'collected'
+                        },
+                        {
+                            data: 'donateItems',
+                            name: 'donateItems',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                            data: 'un_assign_actions',
+                            name: 'un_assign_actions',
+                            orderable: false,
+                            searchable: false
+                        }
+                    ],
+                    order: [
+                        [0, 'desc']
+                    ],
+                    buttons: [{
+                            extend: 'print',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3]
+                            }
+                        },
+                        {
+                            extend: 'excel',
+                            text: 'Excel',
+                            title: 'Donations Data',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3]
+                            }
+                        },
+                        {
+                            extend: 'copy',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3]
+                            }
+                        }
+                    ],
+                    dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
+                    pageLength: 10,
+                    responsive: true,
+                    language: languages[language], // Dynamic language support
+                    drawCallback: function() {
+                        $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                    }
+                });
+            } else {
+                // If DataTable is already initialized, reload with new collecting_line_id
+                $('#view-donations-table').DataTable().ajax.reload(null, false);
+            }
+        });
+
+        // Clear modal data when closed
+        $('#viewDonationsModal').on('hidden.bs.modal', function() {
+            $(this).removeData('collecting-line-id');
+        });
+
 
     });
 
