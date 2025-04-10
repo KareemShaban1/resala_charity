@@ -376,8 +376,7 @@
 
                     Swal.fire({
                         icon: 'error',
-                        title: '{{ __('
-                        validation.Validation Error ') }}', // Ensure this is rendered as a string by Blade
+                        title: '{{ __('validation.Validation Error ') }}', // Ensure this is rendered as a string by Blade
                         html: `<div style="direction: rtl; text-align: center;">${errorDetails}</div>`,
                         customClass: {
                             popup: 'text-start',
