@@ -284,6 +284,11 @@
                     _token: $('meta[name="csrf-token"]').attr('content') // if CSRF is needed
                 },
                 success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message
+                    });
                     $('#view-donations-table').DataTable().ajax.reload();
                 },
                 error: function() {
