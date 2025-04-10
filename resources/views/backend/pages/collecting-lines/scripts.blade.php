@@ -1532,130 +1532,148 @@
             .done(function(data) {
                 // Construct the content to be displayed in the modal
                 let modalContent = `
-          <h5>{{__('Donor Information')}}</h5>
-          <div class="row">
-              <div class="col-md-3">
-                          <p><strong>{{__('Name')}}:</strong> ${data.donor.name}</p>
-              </div>
-               <div class="col-md-3">
-                <p><strong>{{__('Donor Type')}}:</strong> 
-                  ${data.donor.donor_type === 'normal' ? '{{__("Normal")}}' : '{{__("Monthly")}}'}
-                  </p>
-              </div>
-              <div class="col-md-6">
-                          <p><strong>{{__('Address')}}:</strong> ${data.donor.address}</p>
-              </div>
-             
-
-          </div>
-        
-
-          <h5>{{__('Donation Information')}}</h5>
-           <div class="row">
-              <div class="col-md-3">
-                  <p><strong>{{__('Donation Type')}}:</strong> ${data.donation_type}</p>
-              </div>
-              <div class="col-md-3">
-                  <p><strong>{{__('Donation Date')}}:</strong> ${data.date}</p>
-              </div>
-              <div class="col-md-3">
-                  <p><strong>{{__('Status')}}:</strong> 
-              
-                  ${data.status === 'collected' ? '{{__("Collected")}}' : '{{__("Not Collected")}}'}</p>
-              </div>
-              </div>
-               <div class="row">
+            <h4 class="text-primary">{{__('Donor Information')}}</h4>
+            <div class="row mb-3">
                 <div class="col-md-3">
-                  <p><strong>{{__('Reporting Date')}}:</strong> ${data.created_at}</p>
-               </div>
-               <div class="col-md-3">
-                  <p><strong>{{__('Reporting Way')}}:</strong> ${data.reporting_way}</p>
-               </div>
-                <div class="col-md-3">
-                  <p><strong>{{__('Created By')}}:</strong> ${data.created_by?.name}</p>
-               </div>
-                <div class="col-md-3">
-                  <p><strong>{{__('Department')}}:</strong> ${data.created_by?.department?.name ?? 'N/A'}</p>
-               </div>
-               </div>
-                <div class="row">
+                            <p><strong>{{__('Name')}}:</strong> ${data.donor.name}</p>
+                </div>
+                 <div class="col-md-3">
+                  <p><strong>{{__('Donor Type')}}:</strong> 
+                    ${data.donor.donor_type === 'normal' ? '{{__("Normal")}}' : '{{__("Monthly")}}'}
+                    </p>
+                </div>
                 <div class="col-md-6">
-                  <p><strong>{{__('Collecting Time')}}:</strong> ${data.collecting_time ?? 'N/A'}</p>
+                            <p><strong>{{__('Address')}}:</strong> ${data.donor.address}</p>
                 </div>
-                  <div class="col-md-6">
-                  <p><strong>{{__('Notes')}}:</strong> ${data.notes ?? 'N/A'}</p>
-                </div>
-                </div>
-     `;
+               
 
-                data.donor.phones
-                    .forEach(item => {
-                        modalContent += `<p><strong>{{__('Phones')}}:</strong> ${item.phone_number} </p>`;
-                    });
+            </div>
+          
+
+            <h4 class="text-danger">{{__('Donation Information')}}</h4>
+             <div class="row">
+                <div class="col-md-3">
+                    <p><strong>{{__('Donation Type')}}:</strong>
+                    ${data.donation_type === 'financial' ? '{{__("Financial")}}' : data.donation_type === 'inKind' ? '{{__("In-Kind")}}' : '{{__("Both")}}'}
+                    </p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>
+                    ${data.donation_category === 'gathered' ? '{{__("Due Date")}}' : '{{__("Donation Date")}}'}:
+                    </strong>
+                     ${data.date}</p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>{{__('Status')}}:</strong> 
+                
+                    ${data.status === 'collected' ? '{{__("Collected")}}' : '{{__("Not Collected")}}'}</p>
+                </div>
+                </div>
+                 <div class="row">
+                  <div class="col-md-3">
+                    <p><strong>
+                    ${data.donation_category === 'gathered' ? '{{__("Collecting Date")}}' : '{{__("Reporting Date")}}'}:</strong> 
+                    
+                    ${data.donation_category === 'gathered' ? formatDate(data.collecting_donation.collecting_date) : formatDate(data.created_at)}</p>
+                 </div>
+                 <div class="col-md-3">
+                    <p><strong>{{__('Reporting Way')}}:</strong> 
+                    ${data.reporting_way === 'call' ? '{{__("Call")}}' 
+                    : data.reporting_way === 'whatsapp_chat' ? '{{__("Whatsapp Chat")}}' 
+                    : data.reporting_way === 'location' ? '{{__("Location")}}' 
+                    : '{{__("Other")}}' }</p>
+                 </div>
+                  <div class="col-md-3">
+                    <p><strong>{{__('Created By')}}:</strong> ${data.created_by?.name}</p>
+                 </div>
+                  <div class="col-md-3">
+                    <p><strong>{{__('Department')}}:</strong> ${data.created_by?.department?.name ?? 'N/A'}</p>
+                 </div>
+                 </div>
+                  <div class="row">
+                  <div class="col-md-6">
+                    <p><strong>{{__('Collecting Time')}}:</strong> ${data.collecting_time ?? 'N/A'}</p>
+                  </div>
+                    <div class="col-md-6">
+                    <p><strong>{{__('Notes')}}:</strong> ${data.notes ?? 'N/A'}</p>
+                  </div>
+                  </div>
+                        `;
 
                 // Financial Donations Table
                 if (data.donation_type === 'financial' || data.donation_type === 'both') {
                     modalContent += `
-              <h5>{{__('Financial Donations')}}</h5>
-              <table class="table table-striped">
-                  <thead>
-                      <tr>
-                          <th>{{__('Donation Category')}}</th>
-                          <th>{{__('Amount')}}</th>
-                          <th>{{__('Financial Receipt Number')}}</th>
-                      </tr>
-                  </thead>
-                  <tbody>`;
+                <h4 class="text-warning">{{__('Financial Donations')}}</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>{{__('Donation Category')}}</th>
+                            <th>{{__('Amount')}}</th>
+                            <th>{{__('Financial Receipt Number')}}</th>
+                             <th>{{__('Total Gathered Amount')}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
 
                     data.donate_items
                         .filter(item => item.donation_type === 'financial')
                         .forEach(item => {
                             modalContent += `
-                      <tr>
-                          <td>${item.donation_category.name}</td>
-                          <td>${item.amount}</td>
-                          <td>${item.financial_receipt_number ?? 'N/A'}</td>
-                      </tr>`;
+                        <tr>
+                            <td>${item.donation_category.name}</td>
+                            <td>${item.amount}</td>
+                            <td>${item.financial_receipt_number ?? "{{ __('N/A') }}"}</td>
+                            <td>${data.total_gathered_amount ?? "{{ __('N/A') }}"}</td>
+                        </tr>`;
                         });
 
                     modalContent += `
-                  </tbody>
-              </table>`;
+                    </tbody>
+                </table>`;
                 }
 
                 // In-Kind Donations Table
                 if (data.donation_type === 'inKind' || data.donation_type === 'both') {
                     modalContent += `
-              <h5>{{__('In-Kind Donations')}}</h5>
-              <table class="table table-striped">
-                  <thead>
-                      <tr>
-                          <th>{{__('Item Name')}}</th>
-                          <th>{{__('Amount')}}</th>
-                      </tr>
-                  </thead>
-                  <tbody>`;
+                <h4 class="text-warning">{{__('In-Kind Donations')}}</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>{{__('Item Name')}}</th>
+                            <th>{{__('Quantity')}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
 
                     data.donate_items
                         .filter(item => item.donation_type === 'inKind')
                         .forEach(item => {
                             modalContent += `
-                      <tr>
-                          <td>${item.item_name}</td>
-                          <td>${item.amount}</td>
-                      </tr>`;
+                        <tr>
+                            <td>${item.item_name}</td>
+                            <td>${item.amount}</td>
+                        </tr>`;
                         });
 
                     modalContent += `
-                  </tbody>
-              </table>`;
+                    </tbody>
+                </table>`;
                 }
 
-                // Collecting Donation Info
-                modalContent += `
-          <h5>{{__('Collecting Donation Information')}}</h5>
-          <p><strong>{{__('Collecting Date')}}:</strong> ${data.collecting_donation?.collecting_date ? formatDate(data.collecting_donation?.collecting_date) : 'N/A'}</p>
-          <p><strong>{{__('In Kind Receipt Number')}}:</strong> ${data.collecting_donation?.in_kind_receipt_number ?? 'N/A'}</p>`;
+                if (data.donation_category !== 'gathered') {
+                    // Collecting Donation Info
+                    modalContent += `
+            <h4 class="text-success">{{__('Collecting Donation Information')}}</h4>
+                <p>
+                <strong>{{ __('Collecting Date') }}:</strong> 
+                ${data.collecting_donation?.collecting_date ? formatDate(data.collecting_donation?.collecting_date) : "{{ __('N/A') }}"}
+                </p>
+                <p>
+                <strong>{{ __('In Kind Receipt Number') }}:</strong> 
+                ${data.collecting_donation?.in_kind_receipt_number ?? "{{ __('N/A') }}"}
+                </p>
+                `;
+                }
 
                 // Add the constructed content to the modal body
                 $('#detailsDonationModal .modal-body').html(modalContent);
