@@ -202,7 +202,7 @@
                             action: function() {
                                 unAssignBulkDonations();
                             }
-                        },{
+                        }, {
                             extend: 'print',
                             exportOptions: {
                                 columns: [0, 1, 2, 3]
@@ -242,8 +242,8 @@
             $(this).removeData('collecting-line-id');
         });
 
-                // When "select all" is clicked
-                $('#select-all').on('click', function() {
+        // When "select all" is clicked
+        $('#select-all').on('click', function() {
             $('.row-checkbox').prop('checked', this.checked);
         });
 
