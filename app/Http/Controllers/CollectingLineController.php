@@ -727,6 +727,12 @@ class CollectingLineController extends Controller
                     $query->where('donor_phones.phone_number', 'LIKE', "%{$keyword}%");
                 })
 
+                ->addColumn('checkbox', function ($row) {
+                    return '<input type="checkbox" class="row-checkbox" value="' . $row->id . '">';
+                })
+                ->addColumn('collecting_line_id', function ($row) use ($request) {
+                    return $request->collecting_line_id;
+                })
                 ->addColumn('name', fn($item) => $item->donor->name ?? 'N/A')
                 ->addColumn('area', fn($item) => $item->donor->area->name ?? 'N/A')
                 ->addColumn('address', fn($item) => $item->donor->address ?? 'N/A')
@@ -791,7 +797,7 @@ class CollectingLineController extends Controller
                     </button>
                 </div>';
                 })
-                ->rawColumns(['donateItems', 'receipt_number', 'collected', 'actions', 'un_assign_actions'])
+                ->rawColumns(['donateItems', 'receipt_number', 'collected', 'actions', 'un_assign_actions','checkbox'])
                 ->make(true);
         }
 
@@ -1026,4 +1032,28 @@ class CollectingLineController extends Controller
             'message' => __('messages.Donations assigned successfully'),
         ]);
     }
+
+    public function unAssignBulkDonations(Request $request)
+    {
+        $request->validate([
+            'donation_ids' => 'required|array',
+            'donation_ids.*' => 'exists:donations,id',
+            'collecting_line_id' => 'required|exists:collecting_lines,id',
+        ]);
+
+        $donationIds = $request->donation_ids;
+        $collectingLineId = $request->collecting_line_id;
+
+        foreach ($donationIds as $donationId) {
+            $donation = Donation::find($donationId);
+            $donation->collectingLines()->detach($collectingLineId);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.Donations unassigned successfully'),
+        ]);
+    }
+
+
 }

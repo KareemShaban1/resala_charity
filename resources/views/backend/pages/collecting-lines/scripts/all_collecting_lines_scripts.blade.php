@@ -147,6 +147,12 @@
                             name: 'id'
                         },
                         {
+                            data: 'checkbox',
+                            name: 'checkbox',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
                             data: 'name',
                             name: 'name'
                         },
@@ -175,6 +181,13 @@
                             searchable: false
                         },
                         {
+                            data: 'collecting_line_id',
+                            name: 'collecting_line_id',
+                            orderable: false,
+                            searchable: false,
+                            visible: false
+                        },
+                        {
                             data: 'un_assign_actions',
                             name: 'un_assign_actions',
                             orderable: false,
@@ -185,6 +198,11 @@
                         [0, 'desc']
                     ],
                     buttons: [{
+                            text: 'Bulk Un Assign',
+                            action: function() {
+                                unAssignBulkDonations();
+                            }
+                        },{
                             extend: 'print',
                             exportOptions: {
                                 columns: [0, 1, 2, 3]
@@ -223,6 +241,58 @@
         $('#viewDonationsModal').on('hidden.bs.modal', function() {
             $(this).removeData('collecting-line-id');
         });
+
+                // When "select all" is clicked
+                $('#select-all').on('click', function() {
+            $('.row-checkbox').prop('checked', this.checked);
+        });
+
+        // Optional: if any row is unchecked, uncheck "select all"
+        $(document).on('change', '.row-checkbox', function() {
+            if (!this.checked) {
+                $('#select-all').prop('checked', false);
+            }
+
+            // If all checkboxes are checked, check "select all"
+            if ($('.row-checkbox:checked').length === $('.row-checkbox').length) {
+                $('#select-all').prop('checked', true);
+            }
+        });
+
+        function unAssignBulkDonations() {
+            let selectedDonations = $('.row-checkbox:checked').map(function() {
+                return $(this).val();
+            }).get();
+
+            console.log(selectedDonations);
+
+            if (selectedDonations.length === 0) {
+                alert('Please select at least one item');
+                return;
+            }
+
+            let collectingLineId = $('#viewDonationsModal').data('collecting-line-id');
+
+            // if (!confirm('Are you sure you want to unassign selected donations?')) return;
+
+            $.ajax({
+                url: "{{ route('collecting-lines.un-assign-bulk-donation') }}",
+                method: 'POST',
+                data: {
+                    donation_ids: selectedDonations,
+                    collecting_line_id: collectingLineId,
+                    _token: $('meta[name="csrf-token"]').attr('content') // if CSRF is needed
+                },
+                success: function(response) {
+                    $('#view-donations-table').DataTable().ajax.reload();
+                },
+                error: function() {
+                    alert('Something went wrong!');
+                }
+            });
+        };
+
+
     });
 </script>
 

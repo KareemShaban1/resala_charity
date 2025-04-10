@@ -4,12 +4,16 @@
             <thead>
                 <tr>
                     <th>{{__('ID')}}</th>
+                    <th>
+                        <input type="checkbox" id="select-all">
+                    </th>
                     <th>{{__('Donor Name')}}</th>
                     <th>{{__('Area')}}</th>
                     <th>{{__('Phones')}}</th>
                     <th>{{__('Monthly Form Day')}}</th>
                     <th>{{__('Collected')}}</th>
                     <th>{{__('Donates')}}</th>
+                    <th class="d-none">{{__('Collecting Line ID')}}</th>
                     <th>{{__('Actions') }}</th>
                 </tr>
             </thead>
