@@ -159,7 +159,7 @@ class DonationController extends Controller
             ->filterColumn('created_by', function ($query, $keyword) {
                 $query->whereHas('createdBy', function ($query) use ($keyword) {
                     $query->where('name', 'LIKE', "%{$keyword}%");
-                }); 
+                });
             })
             ->filterColumn('user_department', function ($query, $keyword) {
                 $query->whereHas('createdBy', function ($query) use ($keyword) {
@@ -171,21 +171,21 @@ class DonationController extends Controller
             ->filterColumn('donateItems', function ($query, $keyword) {
                 $query->whereHas('donateItems', function ($subQuery) use ($keyword) {
                     $subQuery->where('item_name', 'LIKE', "%{$keyword}%")
-                             ->orWhere('amount', 'LIKE', "%{$keyword}%")
-                             ->orWhere('financial_receipt_number', 'LIKE', "%{$keyword}%")
-                             ->orWhere('in_kind_receipt_number', 'LIKE', "%{$keyword}%");
+                        ->orWhere('amount', 'LIKE', "%{$keyword}%")
+                        ->orWhere('financial_receipt_number', 'LIKE', "%{$keyword}%")
+                        ->orWhere('in_kind_receipt_number', 'LIKE', "%{$keyword}%");
                 });
-            })            
+            })
             ->addColumn('action', function ($item) {
                 $btn = '<div class="d-flex gap-2">';
-            
+
                 if (auth()->user()->can('view donations')) {
-                $btn .= '<a href="javascript:void(0);" onclick="donationDetails(' . $item->id . ')" 
+                    $btn .= '<a href="javascript:void(0);" onclick="donationDetails(' . $item->id . ')" 
                          class="btn btn-sm btn-light">
                             <i class="mdi mdi-eye"></i>
                         </a>';
-                }        
-            
+                }
+
                 // Edit Donation Button (only for users with 'update donation' permission)
                 if (auth()->user()->can('update donation')) {
                     $btn .= '<a href="javascript:void(0);" onclick="editDonation(' . $item->id . ')" 
@@ -193,7 +193,7 @@ class DonationController extends Controller
                                 <i class="mdi mdi-square-edit-outline"></i>
                             </a>';
                 }
-            
+
                 // Delete Donation Button (only for users with 'delete donation' permission)
                 if (auth()->user()->can('delete donation')) {
                     $btn .= '<a href="javascript:void(0);" onclick="deleteRecord(' . $item->id . ', \'donations\')" 
@@ -201,7 +201,7 @@ class DonationController extends Controller
                                 <i class="mdi mdi-delete"></i>
                             </a>';
                 }
-            
+
                 // Add Activity Button (only if donor exists & user has 'add activity' permission)
                 if (!empty($item->donor) && auth()->user()->can('create activity')) {
                     $btn .= '<a href="javascript:void(0);" onclick="addActivity(' . $item->donor->id . ')" 
@@ -209,16 +209,16 @@ class DonationController extends Controller
                                 <i class="uil-outgoing-call"></i>
                             </a>';
                 }
-            
+
                 $btn .= '</div>';
                 return $btn;
             })
-            
+
             ->addColumn('name', function ($item) {
-                return $item->donor 
-                ? '<a href="' . route('donor-history.show', [$item->donor->id]) . '" class="text-info">'
+                return $item->donor
+                    ? '<a href="' . route('donor-history.show', [$item->donor->id]) . '" class="text-info">'
                     . $item->donor->name . '</a>'
-                : 'N/A';
+                    : 'N/A';
             })
             ->addColumn('area', function ($item) {
                 return $item->donor?->area?->name ?? '';
@@ -252,29 +252,29 @@ class DonationController extends Controller
                 return $item->donateItems->map(function ($donate) use ($item) {
                     if ($item->donation_type === 'financial') {
                         return '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
-                            ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount . 
+                            ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount .
                             ' - <span style="color: red; font-weight: bold;">( ' . $donate->financial_receipt_number . ' )</span>';
                     } elseif ($item->donation_type === 'inKind') {
                         return '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
-                            ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount . 
+                            ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount .
                             ' - <span style="color: red; font-weight: bold;"> ( ' . $item->in_kind_receipt_number . ' ) </span>';
                     } elseif ($item->donation_type === 'both') {
                         $output = '';
                         if (isset($donate->donation_category_id) && isset($donate->amount)) {
                             $output .= '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
-                                ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount . 
+                                ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount .
                                 ' - <span style="color: red; font-weight: bold;"> (' . $donate->financial_receipt_number . ' )</span><br>';
                         }
                         if (isset($donate->item_name) && isset($donate->amount)) {
                             $output .= '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
-                                ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount . 
+                                ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount .
                                 ' - <span style="color: red; font-weight: bold;"> (' . $item->in_kind_receipt_number . ' )</span>';
                         }
                         return $output;
                     }
                     return '';
                 })->implode('<br>');
-            })            
+            })
             ->addColumn('donation_status', function ($item) {
                 if ($item->status === 'collected') {
                     return ' <span class="text-white badge bg-success">' .  __('Collected') . '</span>';
@@ -306,8 +306,8 @@ class DonationController extends Controller
 
     public function getDonationDetails($id)
     {
-        $donation = Donation::with('donor' , 'donor.phones', 'donateItems', 'collectingDonation', 'createdBy')
-        ->findOrFail($id);
+        $donation = Donation::with('donor', 'donor.phones', 'donateItems', 'collectingDonation', 'createdBy')
+            ->findOrFail($id);
 
         // Check if the donation category is "gathered"
         if ($donation->donation_category === 'gathered') {
@@ -511,7 +511,7 @@ class DonationController extends Controller
     public function edit(Donation $donation)
     {
         $this->authorize('update', Donation::class);
-    
+
         // return Cache::remember("donation:{$donation->id}", 300, function () use ($donation) {
         //     return response()->json($donation->load([
         //         'donateItems:id,donation_id,donation_item_type,donation_type,financial_receipt_number,amount,item_name,donation_category_id',
@@ -526,9 +526,8 @@ class DonationController extends Controller
             'donor:id,name',
             'collectingDonation:id,donation_id,collecting_date,in_kind_receipt_number,employee_id,collecting_way'
         ]));
-        
     }
-    
+
 
     public function update(Request $request, Donation $donation)
     {

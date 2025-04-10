@@ -123,7 +123,7 @@
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="amount" class="form-label">{{__('Amount')}}</label>
-                                    <input type="number" class="form-control amount" name="donates[0][financial_amount]">
+                                    <input type="number" step="0.01" class="form-control amount" name="donates[0][financial_amount]">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>

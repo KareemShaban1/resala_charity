@@ -267,6 +267,7 @@ class CollectingLineController extends Controller
                 ->orderBy('is_child_order', 'asc'); // Ensure parents appear above their children; // Ensures Parent first, then Child under it
 
 
+
             // if ($request->has('date') && $request->date != '') {
             //     $data->whereDate('donations.date',  $request->date);
             // }
@@ -713,6 +714,19 @@ class CollectingLineController extends Controller
                 );
 
             return DataTables::of($data)
+                ->filterColumn('name', function ($query, $keyword) {
+                    $query->where('donors.name', 'LIKE', "%{$keyword}%");
+                })
+                ->filterColumn('area', function ($query, $keyword) {
+                    $query->where('areas.name', 'LIKE', "%{$keyword}%");
+                })
+                ->filterColumn('address', function ($query, $keyword) {
+                    $query->where('donors.address', 'LIKE', "%{$keyword}%");
+                })
+                ->filterColumn('phones', function ($query, $keyword) {
+                    $query->where('donor_phones.phone_number', 'LIKE', "%{$keyword}%");
+                })
+
                 ->addColumn('name', fn($item) => $item->donor->name ?? 'N/A')
                 ->addColumn('area', fn($item) => $item->donor->area->name ?? 'N/A')
                 ->addColumn('address', fn($item) => $item->donor->address ?? 'N/A')
@@ -866,7 +880,7 @@ class CollectingLineController extends Controller
 
         // Additional data for the PDF
         $additionalData = [
-            'collecting_line_name' => $collectingLine->number,
+            'collecting_line_number' => $collectingLine->number,
             'representative' => $collectingLine->representative->name ?? '',
             'driver' => $collectingLine->driver->name ?? '',
             'employee' => $collectingLine->employee->name ?? '',

@@ -507,7 +507,7 @@
                 <div class="col-md-2">
                     <div class="mb-3">
                         <label for="amount" class="form-label">{{__('Amount')}}</label>
-                        <input type="number" class="form-control amount" name="donates[${newIndex}][financial_amount]">
+                        <input type="number" step="0.01" class="form-control amount" name="donates[${newIndex}][financial_amount]">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -553,7 +553,7 @@
                 <div class="col-md-3">
                     <div class="mb-3">
                         <label for="quantity" class="form-label">{{__('Quantity')}}</label>
-                        <input type="number" class="form-control" name="donates[${newIndex}][in_kind_quantity]">
+                        <input type="number" step="0.01" class="form-control" name="donates[${newIndex}][in_kind_quantity]">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -1148,7 +1148,7 @@
             </div>
             <div class="col-md-2">
                 <label class="form-label">{{__('Amount')}}</label>
-                <input type="number" class="form-control" name="donates[${index}][financial_amount]" value="${donationItem.amount || ''}">
+                <input type="number" step="0.01" class="form-control" name="donates[${index}][financial_amount]" value="${donationItem.amount || ''}">
                 <div class="invalid-feedback"></div>
             </div>
              <div class="col-md-3">
@@ -1184,7 +1184,7 @@
             </div>
             <div class="col-md-3">
                 <label class="form-label">{{__('Quantity')}}</label>
-                <input type="number" class="form-control" name="donates[${index}][in_kind_quantity]" value="${donationItem.amount || ''}">
+                <input type="number" step="0.01" class="form-control" name="donates[${index}][in_kind_quantity]" value="${donationItem.amount || ''}">
                 <div class="invalid-feedback"></div>
             </div>
              <div class="col-md-3">
@@ -1405,7 +1405,7 @@
                 <div class="col-md-3">
                     <div class="mb-3">
                         <label class="form-label">{{__('Amount')}}</label>
-                        <input type="number" class="form-control amount" name="donates[${i}][financial_amount]">
+                        <input type="number" step="0.01" class="form-control amount" name="donates[${i}][financial_amount]">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>

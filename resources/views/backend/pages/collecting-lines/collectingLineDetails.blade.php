@@ -44,13 +44,12 @@
     <div style="text-align: center;">
         <h1> خط سير مندوب</h1>
     </div>
-    <!-- <div style="display:flex; flex-direction: row; align-items: center;">
-        <h2>خط الجمع: {{ $additionalData['collecting_line_name'] }}</h2>
-        <h3>تاريخ الجمع: {{ $additionalData['collecting_line_date'] }}</h3>
-        <h3>إجمالي التبرعات: {{ $additionalData['total_donations'] }}</h3>
-    </div> -->
+   
     <table style="width: 100%; border: none; margin-bottom:20px">
         <tr style="border:none">
+        <td style="text-align: right; font-size: 18px; font-weight: bold; border:none">
+                {{ __('Line Number') }}: {{ $additionalData['collecting_line_number'] }}
+            </td>
             <td style="text-align: right; font-size: 18px; font-weight: bold; border:none">
                 {{ __('Representative') }}: {{ $additionalData['representative'] }}
             </td>

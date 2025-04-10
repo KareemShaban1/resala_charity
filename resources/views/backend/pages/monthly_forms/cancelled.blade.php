@@ -53,6 +53,9 @@
 <!-- Edit Monthly Form Modal -->
 @include('backend.pages.monthly_forms.edit_modal')
 
+<!-- View Donations Modal -->
+@include('backend.pages.monthly_forms.details_modal')
+
 <script>
     var donationCategories = @json($donationCategories);
 </script>
