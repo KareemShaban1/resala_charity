@@ -1,123 +1,143 @@
 @extends('backend.layouts.master')
 
 @section('content')
-<div class="container">
-    <div class="card">
+<div class="container-fluid">
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+               
+                <h4 class="page-title">{{__('Collecting Line')}}</h4>
+            </div>
 
-    <table id="collecting-line-donations-table" class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>{{__('ID')}}</th>
-                    <th>{{__('Donor Name')}}</th>
-                    <th>{{__('Area')}}</th>
-                    <th>{{__('Phones')}}</th>
-                    <th>{{__('Monthly Form Day')}}</th>
-                    <th>{{__('Collected')}}</th>
-                    <th>{{__('Donates')}}</th>
-                    <th>{{__('Actions')}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Data will be populated via DataTables -->
-            </tbody>
-        </table>
+          
 
+        </div>
+    </div>
+    <!-- end page title -->
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <table id="collecting-line-donations-table" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>{{__('ID')}}</th>
+                                <th>{{__('Donor Name')}}</th>
+                                <th>{{__('Area')}}</th>
+                                <th>{{__('Phones')}}</th>
+                                <th>{{__('Monthly Form Day')}}</th>
+                                <th>{{__('Collected')}}</th>
+                                <th>{{__('Donates')}}</th>
+                                <th>{{__('Actions')}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be populated via DataTables -->
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
     </div>
     <!-- Edit Donation Modal -->
-@include('backend.pages.donations.edit_modal')
+    @include('backend.pages.donations.edit_modal')
 </div>
 
 @push('scripts')
 <script>
-        var donationCategories = @json($donationCategories);
+    var donationCategories = @json($donationCategories);
     var collectingLine = @json($collectingLine);
     var viewDonationsTable = $('#collecting-line-donations-table').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ajax: {
-                        url: "{{ route('collecting-lines.donations.data') }}",
-                        data: function(d) {
-                            // // Retrieve the collectingLine ID from the modal's data attribute
-                            d.collecting_line_id = collectingLine.id;
-                            // console.log('Sending Collecting Line ID:', d.collecting_line_id); // Debugging: Verify the ID being sent
-                            // // Additional filters (if needed)
-                            // d.date = $('#date').val();
-                            // d.area_group = $('#area_group').val();
-                        }
-                    },
-                    columns: [{
-                            data: 'id',
-                            name: 'id'
-                        },
-                        {
-                            data: 'name',
-                            name: 'name'
-                        },
-                        {
-                            data: 'area',
-                            name: 'area'
-                        },
-                        {
-                            data: 'phones',
-                            name: 'phones',
-                            orderable: false,
-                            searchable: true
-                        },
-                        {
-                            data: 'monthly_donation_day',
-                            name: 'monthly_donation_day'
-                        },
-                        {
-                            data: 'collected',
-                            name: 'collected'
-                        },
-                        {
-                            data: 'donateItems',
-                            name: 'donateItems',
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                            data: 'actions',
-                            name: 'actions',
-                            orderable: false,
-                            searchable: false
-                        }
-                    ],
-                    order: [
-                        [0, 'desc']
-                    ],
-                    buttons: [{
-                            extend: 'print',
-                            exportOptions: {
-                                columns: [0, 1, 2, 3]
-                            }
-                        },
-                        {
-                            extend: 'excel',
-                            text: 'Excel',
-                            title: 'Areas Data',
-                            exportOptions: {
-                                columns: [0, 1, 2, 3]
-                            }
-                        },
-                        {
-                            extend: 'copy',
-                            exportOptions: {
-                                columns: [0, 1, 2, 3]
-                            }
-                        },
-                    ],
-                    dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
-                    pageLength: 10,
-                    responsive: true,
-                    language: languages[language], // Apply language dynamically
-                    "drawCallback": function() {
-                        $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
-                    }
-                });
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: "{{ route('collecting-lines.donations.data') }}",
+            data: function(d) {
+                // // Retrieve the collectingLine ID from the modal's data attribute
+                d.collecting_line_id = collectingLine.id;
+                // console.log('Sending Collecting Line ID:', d.collecting_line_id); // Debugging: Verify the ID being sent
+                // // Additional filters (if needed)
+                // d.date = $('#date').val();
+                // d.area_group = $('#area_group').val();
+            }
+        },
+        columns: [{
+                data: 'id',
+                name: 'id'
+            },
+            {
+                data: 'name',
+                name: 'name'
+            },
+            {
+                data: 'area',
+                name: 'area'
+            },
+            {
+                data: 'phones',
+                name: 'phones',
+                orderable: false,
+                searchable: true
+            },
+            {
+                data: 'monthly_donation_day',
+                name: 'monthly_donation_day'
+            },
+            {
+                data: 'collected',
+                name: 'collected'
+            },
+            {
+                data: 'donateItems',
+                name: 'donateItems',
+                orderable: false,
+                searchable: false
+            },
+            {
+                data: 'actions',
+                name: 'actions',
+                orderable: false,
+                searchable: false
+            }
+        ],
+        order: [
+            [0, 'desc']
+        ],
+        buttons: [{
+                extend: 'print',
+                exportOptions: {
+                    columns: [0, 1, 2, 3]
+                }
+            },
+            {
+                extend: 'excel',
+                text: 'Excel',
+                title: 'Areas Data',
+                exportOptions: {
+                    columns: [0, 1, 2, 3]
+                }
+            },
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: [0, 1, 2, 3]
+                }
+            },
+        ],
+        dom: '<"d-flex justify-content-between align-items-center mb-3"lfB>rtip',
+        pageLength: 10,
+        responsive: true,
+        language: languages[language], // Apply language dynamically
+        "drawCallback": function() {
+            $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+        }
+    });
 
-                let existingFinancialIndices = new Set();
+    let existingFinancialIndices = new Set();
     let existingInKindIndices = new Set();
 
     function editDonation(id) {
@@ -356,7 +376,8 @@
 
                     Swal.fire({
                         icon: 'error',
-                        title: '{{ __('validation.Validation Error ') }}', // Ensure this is rendered as a string by Blade
+                        title: '{{ __('
+                        validation.Validation Error ') }}', // Ensure this is rendered as a string by Blade
                         html: `<div style="direction: rtl; text-align: center;">${errorDetails}</div>`,
                         customClass: {
                             popup: 'text-start',
@@ -411,8 +432,8 @@
         }
     }
 
-        // Helper function to format date in YYYY-MM-DD
-        function formatDate(dateString) {
+    // Helper function to format date in YYYY-MM-DD
+    function formatDate(dateString) {
         const date = new Date(dateString);
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
@@ -421,16 +442,16 @@
     }
 
     $(document).on('click', '.add-row-btn', function() {
-            const container = $($(this).data('target'));
-            if (container.attr('id') === 'financial-donation-rows-container' || container.attr('id') === 'edit-financial-donation-rows-container') {
-                // Generate a unique index for financial donations
-                let newIndex = 0;
-                while (existingFinancialIndices.has(newIndex)) {
-                    newIndex++;
-                }
-                existingFinancialIndices.add(newIndex); // Track the new index
+        const container = $($(this).data('target'));
+        if (container.attr('id') === 'financial-donation-rows-container' || container.attr('id') === 'edit-financial-donation-rows-container') {
+            // Generate a unique index for financial donations
+            let newIndex = 0;
+            while (existingFinancialIndices.has(newIndex)) {
+                newIndex++;
+            }
+            existingFinancialIndices.add(newIndex); // Track the new index
 
-                container.append(`
+            container.append(`
             <div class="row donation-row">
                 <input type="hidden" name="donates[${newIndex}][financial_donation_type]" value="financial">
                 <div class="col-md-3">
@@ -474,15 +495,15 @@
                 </div>
             </div>
         `);
-            } else if (container.attr('id') === 'in-kind-donation-rows-container' || container.attr('id') === 'edit-in-kind-donation-rows-container') {
-                // Generate a unique index for in-kind donations
-                let newIndex = 0;
-                while (existingInKindIndices.has(newIndex)) {
-                    newIndex++;
-                }
-                existingInKindIndices.add(newIndex); // Track the new index
+        } else if (container.attr('id') === 'in-kind-donation-rows-container' || container.attr('id') === 'edit-in-kind-donation-rows-container') {
+            // Generate a unique index for in-kind donations
+            let newIndex = 0;
+            while (existingInKindIndices.has(newIndex)) {
+                newIndex++;
+            }
+            existingInKindIndices.add(newIndex); // Track the new index
 
-                container.append(`
+            container.append(`
             <div class="row donation-row">
                 <input type="hidden" name="donates[${newIndex}][inKind_donation_type]" value="inKind">
                 <div class="col-md-3">
@@ -513,14 +534,8 @@
                 </div>
             </div>
         `);
-            }
-        });
-
-
-
-
-
-
+        }
+    });
 </script>
 @endpush
 @endsection
