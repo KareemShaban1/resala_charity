@@ -135,6 +135,14 @@
                 success: function(response) {
                     $('#donorsWithFormsTable').html(response.donorsWithFormsTable);
                     $('.pagination-links').html(response.donorsPaginationLinks);
+                    $('#allMonthlyFormsCount').text(response.allMonthlyFormsCount);
+                    $('#allMonthlyFormsAmount').text(response.allMonthlyFormsAmount);
+                    $('#cancelledMonthlyFormsCount').text(response.cancelledMonthlyFormsCount);
+                    $('#cancelledMonthlyFormsAmount').text(response.cancelledMonthlyFormsAmount);
+                    $('#monthlyFormsCollectedCount').text(response.monthlyFormsCollectedCount);
+                    $('#monthlyFormsCollectedAmount').text(response.monthlyFormsCollectedAmount);
+                    $('#monthlyFormsNotCollectedCount').text(response.monthlyFormsNotCollectedCount);
+                    $('#monthlyFormsNotCollectedAmount').text(response.monthlyFormsNotCollectedAmount);
 
                     // Reapply donor filters to the newly loaded data
                     applyDonorFilters();

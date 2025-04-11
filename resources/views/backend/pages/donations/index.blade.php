@@ -46,6 +46,7 @@
                                 <th>{{__('Created By')}}</th>
                                 <th>{{__('User Department')}}</th>
                                 <th>{{__('Donates')}}</th>
+                                <th>{{__('Collecting Line')}}</th>
                                 <th>{{__('Actions')}}</th>
                             </tr>
                         </thead>

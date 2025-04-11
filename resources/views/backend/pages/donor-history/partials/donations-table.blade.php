@@ -6,6 +6,7 @@
         <tr>
             <th>{{ __('ID') }}</th>
             <th>{{ __('Donation Type') }}</th>
+            <th>{{ __('Donation Category') }}</th>
             <th>{{ __('Status') }}</th>
             <th>{{ __('Created By') }}</th>
             <th>{{ __('Donates') }}</th>
@@ -29,6 +30,16 @@
 
                 @endif
             </td>
+            <td>
+                @if ($donation->donation_category === 'monthly')
+                {{ __('Monthly') }}
+                @elseif ($donation->donation_category === 'normal')
+                {{ __('Normal') }}
+                @else
+                {{ __('Gathered') }}
+                @endif
+            </td>
+            
             <td>
             @if ($donation->status === 'collected')
             <span class="text-white badge bg-success">{{ __('Collected') }}</span>
@@ -70,26 +81,44 @@
 
                 <p>
                     <span class="fw-bold me-2">
-                        {{ __('Reporting way') }}
+                        {{ __('Reporting way') }} :
                     </span>
                     @if ($donation->reporting_way === 'call')
                     <span class="me-2">
-                        {{ __('Call') }}:
+                        {{ __('Call') }}
                     </span>
                     @elseif($donation->reporting_way === 'whatsapp_chat')
                     <span class="me-2">
-                        {{ __('WhatsApp Chat') }}:
+                        {{ __('WhatsApp Chat') }}
                     </span>
                     @elseif($donation->reporting_way === 'location')
                     <span class="me-2">
-                        {{ __('Location') }}:
+                        {{ __('Location') }}
                     </span>
                     @elseif($donation->reporting_way === 'other')
                     <span class="me-2">
-                        {{ __('Other') }}:
+                        {{ __('Other') }}
                     </span>
                     @endif
 
+                </p>
+                <p>
+                    <span class="fw-bold me-2">
+                        {{ __('Collecting Way') }}:
+                    </span>
+                    @if ($donation->collectingDonation->collecting_way === 'representative')
+                    <span class="me-2">
+                        {{ __('Representative') }}
+                    </span>
+                    @elseif($donation->collectingDonation->collecting_way === 'online')
+                    <span class="me-2">
+                        {{ __('Online') }}
+                    </span>
+                    @elseif($donation->collectingDonation->collecting_way === 'location')
+                    <span class="me-2">
+                        {{ __('Location') }}
+                    </span>
+                    @endif
                 </p>
                 <p>
                     <span class="fw-bold me-2">

@@ -13,11 +13,11 @@
                                 <h5 class="font-14 my-1 fw-normal">{{__('Total Monthly Forms')}}</h5>
                             </td>
                             <td>
-                                <h5 class="font-14 my-1 fw-normal">{{ $allMonthlyFormsCount }}</h5>
+                                <h5 class="font-14 my-1 fw-normal" id="allMonthlyFormsCount">{{ $allMonthlyFormsCount }}</h5>
                                 <span class="text-muted font-13">{{__('Donors Count')}}</span>
                             </td>
                             <td>
-                                <h5 class="font-14 my-1 fw-normal">${{ number_format($allMonthlyFormsAmount) }}</h5>
+                                <h5 class="font-14 my-1 fw-normal" id="allMonthlyFormsAmount">${{ number_format($allMonthlyFormsAmount) }}</h5>
                                 <span class="text-muted font-13">{{__('Total')}}</span>
                             </td>
                         </tr>
@@ -25,25 +25,26 @@
                             <td>
                                 <h5 class="font-14 my-1 fw-normal">{{__('Collected Monthly Forms')}}</h5>
                             </td>
+                           
                             <td>
-                                <h5 class="font-14 my-1 fw-normal">{{ $monthlyFormsCollectedCount }}</h5>
+                                <h5 class="font-14 my-1 fw-normal" id="monthlyFormsCollectedCount">{{ $monthlyFormsCollectedCount }}</h5>
                                 <span class="text-muted font-13">{{__('Donors Count')}}</span>
                             </td>
                             <td>
-                                <h5 class="font-14 my-1 fw-normal">${{ number_format($monthlyFormsCollectedAmount) }}</h5>
+                                <h5 class="font-14 my-1 fw-normal" id="monthlyFormsCollectedAmount">${{ number_format($monthlyFormsCollectedAmount) }}</h5>
                                 <span class="text-muted font-13">{{__('Total')}}</span>
                             </td>
                         </tr>
                         <tr class="text-danger">
                             <td>
-                                <h5 class="font-14 my-1 fw-normal">{{__('Not Collected Monthly Forms')}}</h5>
+                                <h5 class="font-14 my-1 fw-normal" >{{__('Not Collected Monthly Forms')}}</h5>
                             </td>
                             <td>
-                                <h5 class="font-14 my-1 fw-normal">{{ $monthlyFormsNotCollectedCount }}</h5>
+                                <h5 class="font-14 my-1 fw-normal" id="monthlyFormsNotCollectedCount">{{ $monthlyFormsNotCollectedCount }}</h5>
                                 <span class="text-muted font-13">{{__('Donors Count')}}</span>
                             </td>
                             <td>
-                                <h5 class="font-14 my-1 fw-normal">${{ number_format($monthlyFormsNotCollectedAmount) }}</h5>
+                                <h5 class="font-14 my-1 fw-normal" id="monthlyFormsNotCollectedAmount">${{ number_format($monthlyFormsNotCollectedAmount) }}</h5>
                                 <span class="text-muted font-13">{{__('Total')}}</span>
                             </td>
                         </tr>

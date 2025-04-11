@@ -76,6 +76,7 @@ class DonationController extends Controller
         donations.donation_category,
         donation_collectings.collecting_date,
         donation_collectings.in_kind_receipt_number,
+        collecting_lines.number as collecting_line_number,
         donors.name as donor_name,
         areas.name as area_name,
         donors.address,
@@ -85,6 +86,8 @@ class DonationController extends Controller
             ->leftJoin('donation_collectings', 'donations.id', '=', 'donation_collectings.donation_id')
             ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
             ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
+            ->leftJoin('collecting_line_donations', 'donations.id', '=', 'collecting_line_donations.donation_id')
+            ->leftJoin('collecting_lines', 'collecting_lines.id', '=', 'collecting_line_donations.collecting_line_id')
             ->with('donor', 'donateItems')
             ->groupBy(
                 'donations.donor_id',
@@ -98,7 +101,8 @@ class DonationController extends Controller
                 'donations.donation_type',
                 'donations.donation_category',
                 'donation_collectings.collecting_date',
-                'donation_collectings.in_kind_receipt_number'
+                'donation_collectings.in_kind_receipt_number',
+                'collecting_lines.number'
             );
 
         if (request()->has('status')) {
@@ -161,6 +165,10 @@ class DonationController extends Controller
                     $query->where('name', 'LIKE', "%{$keyword}%");
                 });
             })
+            ->addColumn('collecting_line_number', function ($item) {
+                return $item->collecting_line_number ?? 'N/A';
+            })
+            
             ->filterColumn('user_department', function ($query, $keyword) {
                 $query->whereHas('createdBy', function ($query) use ($keyword) {
                     $query->whereHas('department', function ($query) use ($keyword) {

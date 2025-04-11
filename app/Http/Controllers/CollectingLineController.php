@@ -32,12 +32,13 @@ class CollectingLineController extends Controller
         $drivers = Employee::whereHas('department', function ($q) {
             $q->where('name', 'السائقين');
         })->get();
-        $employees = Employee::whereHas(
-            'department',
-            function ($q) {
-                $q->where('name', 'استمارات وعناوين');
-            }
-        )->get();
+        // $employees = Employee::whereHas(
+        //     'department',
+        //     function ($q) {
+        //         $q->where('name', 'استمارات وعناوين');
+        //     }
+        // )->get();
+        $employees = Employee::all();
         $areaGroups = AreaGroup::all();
         $areas = Area::all();
         $donationCategories = DonationCategory::all();
@@ -45,7 +46,7 @@ class CollectingLineController extends Controller
 
         return view(
             'backend.pages.collecting-lines.allCollectingLines',
-            compact('representatives', 'drivers', 'donors', 'employees', 'areas', 'areaGroups', 'donationCategories')
+            compact('representatives', 'drivers', 'donors','employees', 'areas', 'areaGroups', 'donationCategories')
         );
     }
     /**
@@ -60,12 +61,13 @@ class CollectingLineController extends Controller
         $drivers = Employee::whereHas('department', function ($q) {
             $q->where('name', 'السائقين');
         })->get();
-        $employees = Employee::whereHas(
-            'department',
-            function ($q) {
-                $q->where('name', 'استمارات وعناوين');
-            }
-        )->get();
+        // $employees = Employee::whereHas(
+        //     'department',
+        //     function ($q) {
+        //         $q->where('name', 'استمارات وعناوين');
+        //     }
+        // )->get();
+        $employees = Employee::all();
         $areaGroups = AreaGroup::all();
         $areas = Area::all();
         $donationCategories = DonationCategory::all();
@@ -199,6 +201,7 @@ class CollectingLineController extends Controller
         $donors = Donor::all();
         $donationCategories = DonationCategory::all();
         $employees = Employee::all();
+        
         return view(
             'backend.pages.collecting-lines.showCollectingLine',
             compact('collectingLine', 'donors', 'donationCategories', 'employees')
@@ -713,9 +716,17 @@ class CollectingLineController extends Controller
                     'donation_collectings.in_kind_receipt_number',
                     'donors.name',
                     'areas.name',
-                    'donors.address'
+                    'donors.address',
+
                 );
 
+
+                $totalFinancialAmount = $collectingLine->donations()
+                ->where('donations.donation_type', '!=', 'inKind')
+                ->join('donation_items', 'donations.id', '=', 'donation_items.donation_id')
+                ->sum('donation_items.amount');
+
+                
             return DataTables::of($data)
                 ->filterColumn('name', function ($query, $keyword) {
                     $query->where('donors.name', 'LIKE', "%{$keyword}%");
@@ -800,6 +811,7 @@ class CollectingLineController extends Controller
                     </button>
                 </div>';
                 })
+                ->with('total_financial_amount', $totalFinancialAmount)
                 ->rawColumns(['donateItems', 'receipt_number', 'collected', 'actions', 'un_assign_actions','checkbox'])
                 ->make(true);
         }

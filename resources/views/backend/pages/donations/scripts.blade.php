@@ -72,6 +72,11 @@
                     orderable: false,
                     searchable: true
                 },
+                {
+                    data: 'collecting_line_number',
+                    name: 'collecting_lines.number',
+                },
+
 
                 {
                     data: 'action',
@@ -86,7 +91,7 @@
             buttons: [{
                     extend: 'print',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6,7,8]
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
                     }
                 },
                 {
@@ -124,7 +129,7 @@
                 {
                     extend: 'copy',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6,7,8]
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
                     }
                 },
             ],
