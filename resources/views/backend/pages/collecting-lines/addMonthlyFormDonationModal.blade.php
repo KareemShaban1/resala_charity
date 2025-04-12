@@ -22,7 +22,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="add_donation_status" class="form-label">{{__('Status')}}</label>
-                        <select class="form-control" name="status" id="add_donation_status" onchange="toggleEditDonationStatus()">
+                        <select class="form-control" name="status" id="add_donation_status" onchange="toggleAddDonationStatus()">
                             <option value="collected">{{__('Collected')}}</option>
                             <option value="not_collected">{{__('Not Collected')}}</option>
                         </select>
@@ -68,8 +68,8 @@
                     <div class="mb-3">
                         <label for="add_donation_category" class="form-label">{{__('Donation Type')}}</label>
                         <select class="form-control" name="donation_category" id="add_donation_category">
-                        <option value="monthly">{{__('Monthly')}}</option>
-                        <option value="normal">{{__('Normal')}}</option>
+                            <option value="monthly">{{__('Monthly')}}</option>
+                            <option value="normal">{{__('Normal')}}</option>
                             <option value="normal_and_monthly">{{__('Normal and Monthly')}}</option>
                         </select>
                         <div class="invalid-feedback"></div>
@@ -196,25 +196,25 @@
             </div>
 
             <div class="row d-none" id="add-collecting-section">
-                <div class="col-md-6 d-none" id="add-in-kind-receipt-container">
+                <div class="col-md-3" id="add-in-kind-receipt-container">
                     <div class="mb-3">
                         <label for="receipt_number" class="form-label">{{__('In Kind Receipt Number')}}</label>
-                        <input type="text" class="form-control" id="add_in_kind_receipt_number" name="in_kind_receipt_number">
+                        <input type="text" class="form-control" id="in_kind_receipt_number" name="in_kind_receipt_number">
                         <div class="invalid-feedback"></div>
                     </div>
 
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="mb-3">
-                        <label for="add_collecting_date" class="form-label">{{__('Collecting Date')}}</label>
-                        <input type="date" class="form-control" id="add_collecting_date" name="collecting_date">
+                        <label for="collecting_date" class="form-label">{{__('Collecting Date')}}</label>
+                        <input type="date" class="form-control" id="collecting_date" name="collecting_date">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="mb-3">
-                        <label for="add_collecting_way" class="form-label">{{__('Collecting Way')}}</label>
-                        <select name="collecting_way" id="add_collecting_way">
+                        <label for="collecting_way" class="form-label">{{__('Collecting Way')}}</label>
+                        <select name="collecting_way" id="collecting_way" class="form-control">
                             <option value="representative">{{__('Representative')}}</option>
                             <option value="location">{{__('Location')}}</option>
                             <option value="online">{{__('Online')}}</option>
@@ -222,10 +222,11 @@
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                <div class="col-md-4">
+
+                <div class="col-md-3">
                     <div class="mb-3">
-                        <label for="add_employee_id" class="form-label">{{__('Collecting By')}}</label>
-                        <select class="form-control select2" id="add_employee_id" name="employee_id">
+                        <label for="name" class="form-label">{{__('Collecting By')}}</label>
+                        <select class="form-control select2" id="employee_id" name="employee_id">
                             <option value="">{{__('Select Employee')}}</option>
                             @foreach($employees as $employee)
                             <option value="{{ $employee->id }}">{{ $employee->name }}</option>

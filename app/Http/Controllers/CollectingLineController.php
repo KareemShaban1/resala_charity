@@ -314,6 +314,9 @@ class CollectingLineController extends Controller
                 ->filterColumn('phones', function ($query, $keyword) {
                     $query->where('donor_phones.phone_number', 'LIKE', "%{$keyword}%");
                 })
+                ->filterColumn('department', function ($query, $keyword) {
+                    $query->where('donors.department_id', 'LIKE', "%{$keyword}%");
+                })
                 ->filterColumn('created_by', function ($query, $keyword) {
                     $query->whereHas('createdBy', function ($q) use ($keyword) {
                         $q->where('name', 'LIKE', "%{$keyword}%");
@@ -740,7 +743,9 @@ class CollectingLineController extends Controller
                 ->filterColumn('phones', function ($query, $keyword) {
                     $query->where('donor_phones.phone_number', 'LIKE', "%{$keyword}%");
                 })
-
+                ->filterColumn('collected', function ($query, $keyword) {
+                    $query->where('donations.status', 'LIKE', "%{$keyword}%");
+                })
                 ->addColumn('checkbox', function ($row) {
                     return '<input type="checkbox" class="row-checkbox" value="' . $row->id . '">';
                 })
