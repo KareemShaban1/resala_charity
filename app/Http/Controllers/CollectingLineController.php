@@ -724,6 +724,19 @@ class CollectingLineController extends Controller
 
                 );
 
+                if (request()->has('status')) {
+                    $status = request('status');
+                    if ($status === 'collected') {
+                        $data->where('donations.status', 'collected');
+                    } elseif ($status === 'not_collected') {
+                        $data->where('donations.status', 'not_collected');
+                    } elseif ($status === 'followed_up') {
+                        $data->where('donations.status', 'followed_up');
+                    } elseif ($status === 'cancelled') {
+                        $data->where('donations.status', 'cancelled');
+                    }
+                }
+
 
                 $totalFinancialAmount = $collectingLine->donations()
                 ->where('donations.donation_type', '!=', 'inKind')
