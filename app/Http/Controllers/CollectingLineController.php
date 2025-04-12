@@ -726,7 +726,7 @@ class CollectingLineController extends Controller
 
 
                 $totalFinancialAmount = $collectingLine->donations()
-                ->where('donations.donation_type', '!=', 'inKind')
+                ->where('donations.donation_type', '==', 'financial')
                 ->join('donation_items', 'donations.id', '=', 'donation_items.donation_id')
                 ->sum('donation_items.amount');
 
