@@ -703,10 +703,11 @@
         });
 
 
-  // Open the View Donations Modal when the "View Donations" button is clicked
-  $(document).on('click', '.view-donations-btn', function() {
-    let viewDonationsTable;
-    var collectingLineId = $(this).data('id'); // Ensure this matches the button's data attribute
+        let viewDonationsTable;
+
+        // Open the View Donations Modal when the "View Donations" button is clicked
+        $(document).on('click', '.view-donations-btn', function() {
+            var collectingLineId = $(this).data('id'); // Ensure this matches the button's data attribute
             // Store the collectingLine ID in the modal's data attribute
             $('#viewDonationsModal').data('collecting-line-id', collectingLineId);
 
