@@ -705,6 +705,7 @@
 
   // Open the View Donations Modal when the "View Donations" button is clicked
   $(document).on('click', '.view-donations-btn', function() {
+    let viewDonationsTable;
     var collectingLineId = $(this).data('id'); // Ensure this matches the button's data attribute
             // Store the collectingLine ID in the modal's data attribute
             $('#viewDonationsModal').data('collecting-line-id', collectingLineId);
@@ -714,7 +715,7 @@
 
             // Initialize DataTable for viewing donations (only if not already initialized)
             if (!$.fn.DataTable.isDataTable('#view-donations-table')) {
-                var viewDonationsTable = $('#view-donations-table').DataTable({
+                viewDonationsTable = $('#view-donations-table').DataTable({
                     processing: true,
                     serverSide: true,
                     ajax: {
