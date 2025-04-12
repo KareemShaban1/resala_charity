@@ -826,6 +826,10 @@
             $(this).removeData('collecting-line-id');
         });
 
+        $('#status-filter').on('change', function() {
+            $('#view-donations-table').DataTable().ajax.reload();
+        });
+
         // When "select all" is clicked
         $('#select-all').on('click', function() {
             $('.row-checkbox').prop('checked', this.checked);
