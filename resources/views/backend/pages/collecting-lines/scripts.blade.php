@@ -827,7 +827,7 @@
         });
 
         $('#status-filter').on('change', function() {
-            $('#view-donations-table').DataTable().ajax.reload();
+            viewDonationsTable.ajax.reload();
         });
 
         // When "select all" is clicked
