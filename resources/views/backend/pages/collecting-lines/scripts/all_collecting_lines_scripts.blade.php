@@ -138,8 +138,8 @@
                             // Retrieve the collectingLine ID from the modal's data attribute
                             d.collecting_line_id = $('#viewDonationsModal').data('collecting-line-id');
                             // Additional filters (if needed)
-                            d.date = $('#date').val();
-                            d.area_group = $('#area_group').val();
+                            d.status = $('#status-filter').val();
+
                         }
                     },
                     columns: [{
