@@ -1285,6 +1285,11 @@
                         title: 'Success',
                         text: response.message
                     });
+                    flatpickr("#date_time", {
+                        enableTime: true,
+                        dateFormat: "Y-m-d H:i",
+                        defaultDate: new Date() // sets current date with current hour:minute
+                    });
                 }
             },
             error: function(xhr) {
@@ -1348,8 +1353,8 @@
             // });
             // return;
             row.remove(); // Remove the row from the DOM
-                        $(this).closest('.input-group').remove();
-                        return;
+            $(this).closest('.input-group').remove();
+            return;
 
         }
 
