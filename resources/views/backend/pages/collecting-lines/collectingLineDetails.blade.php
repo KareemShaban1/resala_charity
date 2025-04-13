@@ -98,8 +98,8 @@
             @endphp
             <tr>
                 <td>{{ $index++ }}</td>
-                <td>{{ $parentDonation->donor_name }}</td>
-                <td>{{ $parentDonation->phone_numbers }}</td>
+                <td>{{ $parentDonation->donor_name ?? '' }}</td>
+                <td>{{ $parentDonation->phone_numbers ?? '' }}</td>
                 <td>
                     @foreach ($parentDonation->donateItems->where('donation_type', 'inKind') as $in_kind)
                     {{ $in_kind->item_name }} ({{ $in_kind->amount }})<br>
