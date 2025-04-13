@@ -44,10 +44,10 @@
     <div style="text-align: center;">
         <h1> خط سير مندوب</h1>
     </div>
-   
+
     <table style="width: 100%; border: none; margin-bottom:20px">
         <tr style="border:none">
-        <td style="text-align: right; font-size: 18px; font-weight: bold; border:none">
+            <td style="text-align: right; font-size: 18px; font-weight: bold; border:none">
                 {{ __('Line Number') }}: {{ $additionalData['collecting_line_number'] }}
             </td>
             <td style="text-align: right; font-size: 18px; font-weight: bold; border:none">
@@ -93,13 +93,15 @@
             @php $index = 1; @endphp
             @foreach ($organizedData as $parentId => $donationData)
             @php
-            $parentDonation = $donationData['parent'];
-            $childDonations = $donationData['children'];
+            $parentDonation = $donationData['parent'] ?? null;
+            $childDonations = $donationData['children'] ?? [];
             @endphp
+
+            @if ($parentDonation)
             <tr>
                 <td>{{ $index++ }}</td>
-                <td>{{ $parentDonation->donor_name ?? '' }}</td>
-                <td>{{ $parentDonation->phone_numbers ?? '' }}</td>
+                <td>{{ $parentDonation->donor_name }}</td>
+                <td>{{ $parentDonation->phone_numbers }}</td>
                 <td>
                     @foreach ($parentDonation->donateItems->where('donation_type', 'inKind') as $in_kind)
                     {{ $in_kind->item_name }} ({{ $in_kind->amount }})<br>
@@ -117,6 +119,8 @@
                 <td></td>
                 <td></td>
             </tr>
+            @endif
+
             @foreach ($childDonations as $childDonation)
             <tr class="child-row">
                 <td>{{ $index++ }}</td>
@@ -132,8 +136,7 @@
                     {{ $financial->donationCategory?->name }} ({{ $financial->amount }})<br>
                     @endforeach
                 </td>
-                <!-- <td>{{ $childDonation->address }}</td> -->
-                 <td> /////////////// </td>
+                <td>{{ $childDonation->address }}</td>
                 <td>{{ $childDonation->collecting_time }}</td>
                 <td>{{ $childDonation->notes }}</td>
                 <td></td>
@@ -143,6 +146,7 @@
             @endforeach
             @endforeach
         </tbody>
+
     </table>
 </body>
 
