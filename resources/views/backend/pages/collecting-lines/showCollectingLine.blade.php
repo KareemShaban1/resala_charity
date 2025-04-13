@@ -484,14 +484,14 @@
                 <div class="col-md-2">
                     <div class="mb-3">
                         <label for="amount" class="form-label">{{__('Amount')}}</label>
-                        <input type="number" class="form-control amount" name="donates[${newIndex}][financial_amount]">
+                        <input type="number"  editDonationModalclass="form-control amount" name="donates[${newIndex}][financial_amount]">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="mb-3">
-                        <label for="amount" class="form-label">{{__('Financial Receipt Number')}}</label>
-                        <input type="text" class="form-control amount" name="donates[${newIndex}][financial_receipt_number]">
+                        <label for="financial_receipt_number" class="form-label">{{__('Financial Receipt Number')}}</label>
+                        <input type="text" class="form-control" name="donates[${newIndex}][financial_receipt_number]">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
