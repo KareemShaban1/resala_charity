@@ -37,12 +37,12 @@
                         <tbody>
                             <!-- Data will be populated via DataTables -->
                         </tbody>
-                        <tfoot>
+                        <!-- <tfoot>
                             <tr>
                                 <th colspan="4">{{ __('Total') }}</th>
                                 <th id="total-donate-items" colspan="4"></th>
                             </tr>
-                        </tfoot>
+                        </tfoot> -->
 
                     </table>
 
@@ -138,13 +138,13 @@
         "drawCallback": function() {
             $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
         },
-        footerCallback: function(row, data, start, end, display) {
-    var api = this.api();
-    var json = api.ajax.json();
-    var totalAmount = json.total_financial_amount ?? 0;
+        // footerCallback: function(row, data, start, end, display) {
+        //     var api = this.api();
+        //     var json = api.ajax.json();
+        //     var totalAmount = json.total_financial_amount ?? 0;
 
-    $('#total-donate-items').html('<strong>' + totalAmount + '</strong>');
-}
+        //     $('#total-donate-items').html('<strong>' + totalAmount + '</strong>');
+        // }
 
     });
 
