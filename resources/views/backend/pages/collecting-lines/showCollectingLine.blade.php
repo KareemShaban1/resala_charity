@@ -146,7 +146,7 @@
             var totalAmount = json.total_financial_amount ?? 0;
 
             // Update footer cell (adjust column index as needed)
-            $(api.column(6).footer()).html(
+            $(api.column(5).footer()).html(
                 '<td colspan="3"> <strong>' + totalAmount + '</strong> </td>'
             );
         }
