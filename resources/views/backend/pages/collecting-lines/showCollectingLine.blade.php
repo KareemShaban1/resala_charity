@@ -40,7 +40,7 @@
                         <tfoot>
                             <tr>
                                 <th colspan="4">{{ __('Total') }}</th>
-                                <th id="total-donate-items" colspan="4"></th>
+                                <th id="total-donate-items" colspan="3"></th>
                             </tr>
                         </tfoot>
 
@@ -147,7 +147,7 @@
 
             // Update footer cell (adjust column index as needed)
             $(api.column(6).footer()).html(
-                '<td colspan="4"> <strong>' + totalAmount + '</strong> </td>'
+                '<td colspan="3"> <strong>' + totalAmount + '</strong> </td>'
             );
         }
     });
