@@ -181,7 +181,7 @@
 @include('backend.pages.collecting-lines.assignBulkDonationCollectingLineModal')
 
 <!-- Edit Donation Modal -->
-@include('backend.pages.donations.edit_modal')
+@include('backend.pages.collecting-lines.editDonationModal')
 
 <!-- Donation Details Modal -->
 @include('backend.pages.donations.details_modal')

@@ -71,7 +71,60 @@
 
 
 
-
+    <!-- <tbody>
+            @php $index = 1; @endphp
+            @foreach ($organizedData as $parentId => $donationData)
+            @php
+            $parentDonation = $donationData['parent'] ;
+            $childDonations = $donationData['children'];
+            @endphp
+            <tr>
+                <td>{{ $index++ }}</td>
+                <td>{{ $parentDonation->donor_name }}</td>
+                <td>{{ $parentDonation->phone_numbers }}</td>
+                <td>
+                    @foreach ($parentDonation->donateItems->where('donation_type', 'inKind') as $in_kind)
+                    {{ $in_kind->item_name }} ({{ $in_kind->amount }})<br>
+                    @endforeach
+                </td>
+                <td>
+                    @foreach ($parentDonation->donateItems->where('donation_type', 'financial') as $financial)
+                    {{ $financial->donationCategory?->name }} ({{ $financial->amount }})<br>
+                    @endforeach
+                </td>
+                <td>{{ $parentDonation->address }}</td>
+                <td>{{ $parentDonation->collecting_time }}</td>
+                <td>{{ $parentDonation->notes }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            @foreach ($childDonations as $childDonation)
+            <tr class="child-row">
+                <td>{{ $index++ }}</td>
+                <td>{{ $childDonation->donor_name }}</td>
+                <td>{{ $childDonation->phone_numbers }}</td>
+                <td>
+                    @foreach ($childDonation->donateItems->where('donation_type', 'inKind') as $in_kind)
+                    {{ $in_kind->item_name }} ({{ $in_kind->amount }})<br>
+                    @endforeach
+                </td>
+                <td>
+                    @foreach ($childDonation->donateItems->where('donation_type', 'financial') as $financial)
+                    {{ $financial->donationCategory?->name }} ({{ $financial->amount }})<br>
+                    @endforeach
+                </td>
+                // <td>{{ $childDonation->address }}</td>
+                 <td> /////////////// </td>
+                <td>{{ $childDonation->collecting_time }}</td>
+                <td>{{ $childDonation->notes }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            @endforeach
+            @endforeach
+        </tbody> -->
 
     <table>
         <thead>

@@ -1146,19 +1146,27 @@
 
     // Function to toggle donation type visibility
     function toggleEditDonationType() {
-        const donationType = document.getElementById('add_donation_type').value;
-        const financialSection = document.getElementById('add-financial-donations-section');
-        const inKindSection = document.getElementById('add-in-kind-donations-section');
+        const donationType = document.getElementById('edit_donation_type').value;
+        const editFinancialContainer = document.getElementById('edit-financial-donations-section');
+        const editInKindContainer = document.getElementById('edit-in-kind-donations-section');
+        // const financialReceiptConatiner = document.getElementById('edit-financial-receipt-container');
+        // const inKindReceiptConatiner = document.getElementById('edit-in-kind-receipt-container');
 
         if (donationType === 'financial') {
-            financialSection.classList.remove('d-none');
-            inKindSection.classList.add('d-none');
+            editFinancialContainer.classList.remove('d-none');
+            // editInKindContainer.classList.add('d-none');
+            // financialReceiptConatiner.classList.remove('d-none');
+            // inKindReceiptConatiner.classList.add('d-none');
         } else if (donationType === 'inKind') {
-            financialSection.classList.add('d-none');
-            inKindSection.classList.remove('d-none');
+            editFinancialContainer.classList.add('d-none');
+            // editInKindContainer.classList.remove('d-none');
+            // financialReceiptConatiner.classList.add('d-none');
+            // inKindReceiptConatiner.classList.remove('d-none');
         } else {
-            financialSection.classList.remove('d-none');
-            inKindSection.classList.remove('d-none');
+            editFinancialContainer.classList.remove('d-none');
+            editInKindContainer.classList.remove('d-none');
+            // financialReceiptConatiner.classList.remove('d-none');
+            // inKindReceiptConatiner.classList.remove('d-none');
         }
     }
 
