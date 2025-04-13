@@ -72,6 +72,7 @@
                         <th>{{__('Representative')}}</th>
                         <th>{{__('Driver')}}</th>
                         <th>{{__('Employee')}}</th>
+                        <th>{{__('All Collected')}}</th>
                         <th>{{__('Actions')}}</th>
                     </tr>
                 </thead>

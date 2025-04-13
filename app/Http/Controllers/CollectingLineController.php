@@ -46,7 +46,7 @@ class CollectingLineController extends Controller
 
         return view(
             'backend.pages.collecting-lines.allCollectingLines',
-            compact('representatives', 'drivers', 'donors','employees', 'areas', 'areaGroups', 'donationCategories')
+            compact('representatives', 'drivers', 'donors', 'employees', 'areas', 'areaGroups', 'donationCategories')
         );
     }
     /**
@@ -80,85 +80,77 @@ class CollectingLineController extends Controller
         );
     }
 
+
+    // show collecting line
     /**
      * Fetch collecting lines data for DataTables.
      */
     public function getCollectingLinesData(Request $request)
     {
         if ($request->ajax()) {
-            $data = CollectingLine::query();
-
-
-            // Date filter
-            if (request()->has('date_filter')) {
-                $dateFilter = request('date_filter');
-                $startDate = request('start_date');
-                $endDate = request('end_date');
-
-                if ($dateFilter === 'today') {
-                    $data->whereDate('collecting_date',  today());
-                } elseif ($dateFilter === 'week') {
-                    $data->whereBetween('collecting_date', [now()->startOfWeek(), now()->endOfWeek()]);
-                } elseif ($dateFilter === 'month') {
-                    $data->whereBetween('collecting_date', [now()->startOfMonth(), now()->endOfMonth()]);
-                } elseif ($dateFilter === 'range' && $startDate && $endDate) {
-                    $data->whereBetween('collecting_date', [$startDate, $endDate]);
-                }
-            }
-
-            if ($request->has('area_group') && $request->area_group != '') {
-                $data->where('area_group_id', $request->area_group);
-            }
-
+            $data = CollectingLine::with('donations') // eager load related donations
+                ->when($request->has('date_filter'), function ($query) use ($request) {
+                    $dateFilter = $request->get('date_filter');
+                    $startDate = $request->get('start_date');
+                    $endDate = $request->get('end_date');
+    
+                    if ($dateFilter === 'today') {
+                        $query->whereDate('collecting_date', today());
+                    } elseif ($dateFilter === 'week') {
+                        $query->whereBetween('collecting_date', [now()->startOfWeek(), now()->endOfWeek()]);
+                    } elseif ($dateFilter === 'month') {
+                        $query->whereBetween('collecting_date', [now()->startOfMonth(), now()->endOfMonth()]);
+                    } elseif ($dateFilter === 'range' && $startDate && $endDate) {
+                        $query->whereBetween('collecting_date', [$startDate, $endDate]);
+                    }
+                })
+                ->when($request->filled('area_group'), function ($query) use ($request) {
+                    $query->where('area_group_id', $request->area_group);
+                });
+    
             return DataTables::of($data)
-                ->addColumn('areaGroup', function ($row) {
-                    return $row->areaGroup->name;
-                })
-                ->addColumn('representative', function ($row) {
-                    return $row->representative->name;
-                })
-                ->addColumn('driver', function ($row) {
-                    return $row->driver->name;
-                })
-                ->addColumn('employee', function ($row) {
-                    return $row->employee->name;
+                ->addColumn('areaGroup', fn($row) => $row->areaGroup->name ?? '')
+                ->addColumn('representative', fn($row) => $row->representative->name ?? '')
+                ->addColumn('driver', fn($row) => $row->driver->name ?? '')
+                ->addColumn('employee', fn($row) => $row->employee->name ?? '')
+                ->addColumn('all_collected', function ($row) {
+                    // Check if all donations have status 'collected'
+                    $allCollected = $row->collectingLineDonations->every(fn($donation) => $donation->status === 'collected');
+                    return $allCollected ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-warning">No</span>';
                 })
                 ->addColumn('action', function ($row) {
                     $btn = '';
-
-                    // Edit Button (only for users with 'update collecting line' permission)
+    
                     if (auth()->user()->can('update collecting line')) {
-                        $btn .= '<button class="edit-btn btn btn-sm btn-primary" 
-                                 data-id="' . $row->id . '"
-                                 data-area-group-id="' . $row->area_group_id . '"
-                                 data-representative-id="' . $row->representative_id . '"
-                                 data-driver-id="' . $row->driver_id . '"
-                                 data-employee-id="' . $row->employee_id . '"
-                                 data-collecting-date="' . $row->collecting_date . '">' . __('Edit') . '</button>';
+                        $btn .= '<button class="edit-btn btn btn-sm btn-primary"
+                            data-id="' . $row->id . '"
+                            data-area-group-id="' . $row->area_group_id . '"
+                            data-representative-id="' . $row->representative_id . '"
+                            data-driver-id="' . $row->driver_id . '"
+                            data-employee-id="' . $row->employee_id . '"
+                            data-collecting-date="' . $row->collecting_date . '">' . __('Edit') . '</button>';
                     }
-
-                    // Delete Button (only for users with 'delete collecting line' permission)
+    
                     if (auth()->user()->can('delete collecting line')) {
                         $btn .= ' <button class="delete-btn btn btn-sm btn-danger" data-id="' . $row->id . '">' . __('Delete') . '</button>';
                     }
-
-                    // View Donations Button (only for users with 'view donations' permission)
+    
                     if (auth()->user()->can('view donations')) {
                         $btn .= ' <button class="btn btn-sm btn-info view-donations-btn" data-id="' . $row->id . '">' . __('View Donations') . '</button>';
                     }
-
-                    // View Collecting Line Button (only for users with 'view collecting line' permission)
+    
                     if (auth()->user()->can('view collecting lines')) {
-                        $btn .= ' <a href="' . route('collecting-lines.export-pdf', ['collecting_line_id' => $row->id]) . '" 
-                                  class="btn btn-sm btn-info">' . __('View Collecting Line') . '</a>';
+                        $btn .= ' <a href="' . route('collecting-lines.export-pdf', ['collecting_line_id' => $row->id]) . '"
+                                   class="btn btn-sm btn-info">' . __('View Collecting Line') . '</a>';
                     }
-
+    
                     return $btn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'all_collected']) // enable HTML rendering
                 ->make(true);
         }
     }
+    
 
     public function getCollectingLinesByDate(Request $request)
     {
@@ -201,13 +193,179 @@ class CollectingLineController extends Controller
         $donors = Donor::all();
         $donationCategories = DonationCategory::all();
         $employees = Employee::all();
-        
+
         return view(
             'backend.pages.collecting-lines.showCollectingLine',
             compact('collectingLine', 'donors', 'donationCategories', 'employees')
         );
     }
 
+        // get donations by collecting line 
+        public function getDonationsByCollectingLine(Request $request)
+        {
+            $collectingLine = CollectingLine::find($request->collecting_line_id);
+    
+            if (!$collectingLine) {
+                return response()->json(['message' => 'Collecting Line not found'], 404);
+            }
+    
+            if ($request->ajax()) {
+                $data = $collectingLine->donations()
+                    ->selectRaw('
+                    donations.id,
+                    donations.donor_id,
+                    donations.status,
+                    donations.created_by,
+                    donations.created_at,
+                    donations.donation_type,
+                    donation_collectings.collecting_date,
+                    donation_collectings.in_kind_receipt_number,
+                    donors.name as donor_name,
+                    areas.name as area_name,
+                    donors.address,
+                    GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers
+                ')
+                    ->leftJoin('donors', 'donations.donor_id', '=', 'donors.id')
+                    ->leftJoin('donation_collectings', 'donations.id', '=', 'donation_collectings.donation_id')
+                    ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
+                    ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
+                    ->with(['donor', 'donateItems'])
+                    ->groupBy(
+                        'donations.id',
+                        'donations.donor_id',
+                        'donations.status',
+                        'donations.created_by',
+                        'donations.created_at',
+                        'donations.donation_type',
+                        'donation_collectings.collecting_date',
+                        'donation_collectings.in_kind_receipt_number',
+                        'donors.name',
+                        'areas.name',
+                        'donors.address',
+    
+                    );
+    
+                if (request()->has('status')) {
+                    $status = request('status');
+                    if ($status === 'collected') {
+                        $data->where('donations.status', 'collected');
+                    } elseif ($status === 'not_collected') {
+                        $data->where('donations.status', 'not_collected');
+                    } elseif ($status === 'followed_up') {
+                        $data->where('donations.status', 'followed_up');
+                    } elseif ($status === 'cancelled') {
+                        $data->where('donations.status', 'cancelled');
+                    }
+                }
+    
+    
+                $totalFinancialAmount = $collectingLine->donations()
+                    ->where('donations.donation_type', '!=', 'inKind')
+                    ->join('donation_items', 'donations.id', '=', 'donation_items.donation_id')
+                    ->where('donation_items.donation_type', 'financial') // <-- this line filters only financial
+                    ->sum('donation_items.amount');
+    
+    
+                return DataTables::of($data)
+                    ->filterColumn('name', function ($query, $keyword) {
+                        $query->where('donors.name', 'LIKE', "%{$keyword}%");
+                    })
+                    ->filterColumn('area', function ($query, $keyword) {
+                        $query->where('areas.name', 'LIKE', "%{$keyword}%");
+                    })
+                    ->filterColumn('address', function ($query, $keyword) {
+                        $query->where('donors.address', 'LIKE', "%{$keyword}%");
+                    })
+                    ->filterColumn('phones', function ($query, $keyword) {
+                        $query->where('donor_phones.phone_number', 'LIKE', "%{$keyword}%");
+                    })
+                    ->filterColumn('collected', function ($query, $keyword) {
+                        $query->where('donations.status', 'LIKE', "%{$keyword}%");
+                    })
+                    ->addColumn('checkbox', function ($row) {
+                        return '<input type="checkbox" class="row-checkbox" value="' . $row->id . '">';
+                    })
+                    ->addColumn('collecting_line_id', function ($row) use ($request) {
+                        return $request->collecting_line_id;
+                    })
+                    ->addColumn('name', fn($item) => $item->donor->name ?? 'N/A')
+                    ->addColumn('area', fn($item) => $item->donor->area->name ?? 'N/A')
+                    ->addColumn('address', fn($item) => $item->donor->address ?? 'N/A')
+                    ->addColumn('monthly_donation_day', fn($item) => $item->donor?->monthly_donation_day ?? 0)
+                    ->addColumn(
+                        'phones',
+                        fn($item) => $item->donor?->phones->isNotEmpty()
+                            ? $item->donor->phones->map(fn($phone) => $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')')->implode(', ')
+                            : 'N/A'
+                    )
+                    ->addColumn('donateItems', function ($item) {
+                        return $item->donateItems->map(function ($donate) use ($item) {
+                            return match ($item->donation_type) {
+                                'financial' => '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
+                                    ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount,
+                                'inKind' => '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
+                                    ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount,
+                                'both' => (
+                                    ($donate->donation_category_id ? '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
+                                        ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount . '<br>' : '') .
+                                    ($donate->item_name ? '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
+                                        ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount : '')
+                                ),
+                                default => '',
+                            };
+                        })->implode('<br>');
+                    })
+                    ->addColumn('receipt_number', function ($item) {
+                        if ($item->collectingDonation) {
+                            return match ($item->donation_type) {
+                                'inKind' => '<span class="text-danger">' . __('Financial Receipt Number') . ' : ' . $item->collectingDonation?->in_kind_receipt_number . '</span>',
+                                'financial' => '<span class="text-success">' . __('In Kind Receipt Number') . ' : ' . $item->collectingDonation?->financial_receipt_number . '</span>',
+                                'both' => '<span class="text-danger">' . __('Financial Receipt Number') . ' : ' . $item->collectingDonation?->financial_receipt_number . '</span><br>
+                                <span class="text-success">' . __('In Kind Receipt Number') . ' : ' . $item->collectingDonation?->in_kind_receipt_number . '</span>',
+                                default => '',
+                            };
+                        }
+                        return 'N/A';
+                    })
+                    ->addColumn(
+                        'collected',
+                        fn($item) => $item->collectingDonation
+                            ? '<span class="text-success">' . __('Collected') . '</span>'
+                            : '<span class="text-danger">' . __('Not Collected') . '</span>'
+                    )
+                    ->addColumn('actions', function ($item) use ($request) {
+                        return '
+                        <div class="d-flex gap-2">
+                        <a href="javascript:void(0);" onclick="editDonation(' . $item->id . ')"
+                            class="btn btn-sm btn-info">
+                                <i class="mdi mdi-square-edit-outline"></i>
+                            </a>
+                    </div>';
+                    })
+                    ->addColumn('un_assign_actions', function ($item) use ($request) {
+                        return '
+                        <div class="d-flex gap-2">
+                       
+                        <button class="btn btn-sm btn-primary" 
+                        onclick="unAssignCollectingLine(' . $item->id . ',' . $request->collecting_line_id . ')">
+                            ' . __('Remove From Collecting Line') . '
+                        </button>
+                    </div>';
+                    })
+                    ->with('total_financial_amount', $totalFinancialAmount)
+                    ->rawColumns(['donateItems', 'receipt_number', 'collected', 'actions', 'un_assign_actions', 'checkbox'])
+                    ->make(true);
+            }
+    
+            return response()->json(['message' => 'Invalid request'], 400);
+        }
+
+
+
+
+
+
+    // get donations data that show in add collecting line
     public function getDonationsData(Request $request)
     {
 
@@ -434,6 +592,8 @@ class CollectingLineController extends Controller
         }
     }
 
+
+    // get monthly forms data that show in add collecting line
     public function getMonthlyFormsData(Request $request)
     {
 
@@ -680,164 +840,8 @@ class CollectingLineController extends Controller
     }
 
 
-    public function getDonationsByCollectingLine(Request $request)
-    {
-        $collectingLine = CollectingLine::find($request->collecting_line_id);
-
-        if (!$collectingLine) {
-            return response()->json(['message' => 'Collecting Line not found'], 404);
-        }
-
-        if ($request->ajax()) {
-            $data = $collectingLine->donations()
-                ->selectRaw('
-                donations.id,
-                donations.donor_id,
-                donations.status,
-                donations.created_by,
-                donations.created_at,
-                donations.donation_type,
-                donation_collectings.collecting_date,
-                donation_collectings.in_kind_receipt_number,
-                donors.name as donor_name,
-                areas.name as area_name,
-                donors.address,
-                GROUP_CONCAT(DISTINCT donor_phones.phone_number SEPARATOR ", ") as phone_numbers
-            ')
-                ->leftJoin('donors', 'donations.donor_id', '=', 'donors.id')
-                ->leftJoin('donation_collectings', 'donations.id', '=', 'donation_collectings.donation_id')
-                ->leftJoin('areas', 'donors.area_id', '=', 'areas.id')
-                ->leftJoin('donor_phones', 'donors.id', '=', 'donor_phones.donor_id')
-                ->with(['donor', 'donateItems'])
-                ->groupBy(
-                    'donations.id',
-                    'donations.donor_id',
-                    'donations.status',
-                    'donations.created_by',
-                    'donations.created_at',
-                    'donations.donation_type',
-                    'donation_collectings.collecting_date',
-                    'donation_collectings.in_kind_receipt_number',
-                    'donors.name',
-                    'areas.name',
-                    'donors.address',
-
-                );
-
-                if (request()->has('status')) {
-                    $status = request('status');
-                    if ($status === 'collected') {
-                        $data->where('donations.status', 'collected');
-                    } elseif ($status === 'not_collected') {
-                        $data->where('donations.status', 'not_collected');
-                    } elseif ($status === 'followed_up') {
-                        $data->where('donations.status', 'followed_up');
-                    } elseif ($status === 'cancelled') {
-                        $data->where('donations.status', 'cancelled');
-                    }
-                }
 
 
-                $totalFinancialAmount = $collectingLine->donations()
-                ->where('donations.donation_type', '!=', 'inKind')
-                ->join('donation_items', 'donations.id', '=', 'donation_items.donation_id')
-                ->where('donation_items.donation_type', 'financial') // <-- this line filters only financial
-                ->sum('donation_items.amount');
-
-                
-            return DataTables::of($data)
-                ->filterColumn('name', function ($query, $keyword) {
-                    $query->where('donors.name', 'LIKE', "%{$keyword}%");
-                })
-                ->filterColumn('area', function ($query, $keyword) {
-                    $query->where('areas.name', 'LIKE', "%{$keyword}%");
-                })
-                ->filterColumn('address', function ($query, $keyword) {
-                    $query->where('donors.address', 'LIKE', "%{$keyword}%");
-                })
-                ->filterColumn('phones', function ($query, $keyword) {
-                    $query->where('donor_phones.phone_number', 'LIKE', "%{$keyword}%");
-                })
-                ->filterColumn('collected', function ($query, $keyword) {
-                    $query->where('donations.status', 'LIKE', "%{$keyword}%");
-                })
-                ->addColumn('checkbox', function ($row) {
-                    return '<input type="checkbox" class="row-checkbox" value="' . $row->id . '">';
-                })
-                ->addColumn('collecting_line_id', function ($row) use ($request) {
-                    return $request->collecting_line_id;
-                })
-                ->addColumn('name', fn($item) => $item->donor->name ?? 'N/A')
-                ->addColumn('area', fn($item) => $item->donor->area->name ?? 'N/A')
-                ->addColumn('address', fn($item) => $item->donor->address ?? 'N/A')
-                ->addColumn('monthly_donation_day', fn($item) => $item->donor?->monthly_donation_day ?? 0)
-                ->addColumn(
-                    'phones',
-                    fn($item) => $item->donor?->phones->isNotEmpty()
-                        ? $item->donor->phones->map(fn($phone) => $phone->phone_number . ' (' . ucfirst($phone->phone_type) . ')')->implode(', ')
-                        : 'N/A'
-                )
-                ->addColumn('donateItems', function ($item) {
-                    return $item->donateItems->map(function ($donate) use ($item) {
-                        return match ($item->donation_type) {
-                            'financial' => '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
-                                ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount,
-                            'inKind' => '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
-                                ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount,
-                            'both' => (
-                                ($donate->donation_category_id ? '<strong class="donation-type financial">' . __('Financial Donation') . ':</strong> ' .
-                                    ($donate->donationCategory->name ?? 'N/A') . ' - ' . $donate->amount . '<br>' : '') .
-                                ($donate->item_name ? '<strong class="donation-type in-kind">' . __('inKind Donation') . ':</strong> ' .
-                                    ($donate->item_name ?? 'N/A') . ' - ' . $donate->amount : '')
-                            ),
-                            default => '',
-                        };
-                    })->implode('<br>');
-                })
-                ->addColumn('receipt_number', function ($item) {
-                    if ($item->collectingDonation) {
-                        return match ($item->donation_type) {
-                            'inKind' => '<span class="text-danger">' . __('Financial Receipt Number') . ' : ' . $item->collectingDonation?->in_kind_receipt_number . '</span>',
-                            'financial' => '<span class="text-success">' . __('In Kind Receipt Number') . ' : ' . $item->collectingDonation?->financial_receipt_number . '</span>',
-                            'both' => '<span class="text-danger">' . __('Financial Receipt Number') . ' : ' . $item->collectingDonation?->financial_receipt_number . '</span><br>
-                            <span class="text-success">' . __('In Kind Receipt Number') . ' : ' . $item->collectingDonation?->in_kind_receipt_number . '</span>',
-                            default => '',
-                        };
-                    }
-                    return 'N/A';
-                })
-                ->addColumn(
-                    'collected',
-                    fn($item) => $item->collectingDonation
-                        ? '<span class="text-success">' . __('Collected') . '</span>'
-                        : '<span class="text-danger">' . __('Not Collected') . '</span>'
-                )
-                ->addColumn('actions', function ($item) use ($request) {
-                    return '
-                    <div class="d-flex gap-2">
-                    <a href="javascript:void(0);" onclick="editDonation(' . $item->id . ')"
-                        class="btn btn-sm btn-info">
-                            <i class="mdi mdi-square-edit-outline"></i>
-                        </a>
-                </div>';
-                })
-                ->addColumn('un_assign_actions', function ($item) use ($request) {
-                    return '
-                    <div class="d-flex gap-2">
-                   
-                    <button class="btn btn-sm btn-primary" 
-                    onclick="unAssignCollectingLine(' . $item->id . ',' . $request->collecting_line_id . ')">
-                        ' . __('Remove From Collecting Line') . '
-                    </button>
-                </div>';
-                })
-                ->with('total_financial_amount', $totalFinancialAmount)
-                ->rawColumns(['donateItems', 'receipt_number', 'collected', 'actions', 'un_assign_actions','checkbox'])
-                ->make(true);
-        }
-
-        return response()->json(['message' => 'Invalid request'], 400);
-    }
 
 
     public function exportCollectingLineToPdf(Request $request)
@@ -1089,6 +1093,4 @@ class CollectingLineController extends Controller
             'message' => __('messages.Donations unassigned successfully'),
         ]);
     }
-
-
 }

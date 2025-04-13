@@ -48,6 +48,8 @@ class CollectingLine extends Model
 
     }
 
+    
+
     public static function generateUniqueNumber()
     {
         $year = date('Y'); // Get current year

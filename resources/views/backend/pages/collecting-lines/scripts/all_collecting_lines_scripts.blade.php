@@ -50,6 +50,10 @@
                     name: 'employee'
                 },
                 {
+                    data: 'all_collected',
+                    name: 'all_collected'
+                },
+                {
                     data: 'action',
                     name: 'action',
                     orderable: false,

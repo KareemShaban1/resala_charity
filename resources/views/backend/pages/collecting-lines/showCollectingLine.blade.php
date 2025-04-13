@@ -28,7 +28,7 @@
                                 <th>{{__('Donor Name')}}</th>
                                 <th>{{__('Area')}}</th>
                                 <th>{{__('Phones')}}</th>
-                                <th>{{__('Monthly Form Day')}}</th>
+                                <!-- <th>{{__('Monthly Form Day')}}</th> -->
                                 <th>{{__('Collected')}}</th>
                                 <th>{{__('Donates')}}</th>
                                 <th>{{__('Actions')}}</th>
@@ -86,10 +86,10 @@
                 orderable: false,
                 searchable: true
             },
-            {
-                data: 'monthly_donation_day',
-                name: 'monthly_donation_day'
-            },
+            // {
+            //     data: 'monthly_donation_day',
+            //     name: 'monthly_donation_day'
+            // },
             {
                 data: 'collected',
                 name: 'collected'
