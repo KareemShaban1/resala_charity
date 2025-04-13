@@ -88,69 +88,84 @@ class CollectingLineController extends Controller
     public function getCollectingLinesData(Request $request)
     {
         if ($request->ajax()) {
-            $data = CollectingLine::with('donations') // eager load related donations
-                ->when($request->has('date_filter'), function ($query) use ($request) {
-                    $dateFilter = $request->get('date_filter');
-                    $startDate = $request->get('start_date');
-                    $endDate = $request->get('end_date');
-    
-                    if ($dateFilter === 'today') {
-                        $query->whereDate('collecting_date', today());
-                    } elseif ($dateFilter === 'week') {
-                        $query->whereBetween('collecting_date', [now()->startOfWeek(), now()->endOfWeek()]);
-                    } elseif ($dateFilter === 'month') {
-                        $query->whereBetween('collecting_date', [now()->startOfMonth(), now()->endOfMonth()]);
-                    } elseif ($dateFilter === 'range' && $startDate && $endDate) {
-                        $query->whereBetween('collecting_date', [$startDate, $endDate]);
-                    }
-                })
-                ->when($request->filled('area_group'), function ($query) use ($request) {
-                    $query->where('area_group_id', $request->area_group);
-                });
-    
+            $data = CollectingLine::with('donations');
+
+
+            // Date filter
+            if (request()->has('date_filter')) {
+                $dateFilter = request('date_filter');
+                $startDate = request('start_date');
+                $endDate = request('end_date');
+
+                if ($dateFilter === 'today') {
+                    $data->whereDate('collecting_date',  today());
+                } elseif ($dateFilter === 'week') {
+                    $data->whereBetween('collecting_date', [now()->startOfWeek(), now()->endOfWeek()]);
+                } elseif ($dateFilter === 'month') {
+                    $data->whereBetween('collecting_date', [now()->startOfMonth(), now()->endOfMonth()]);
+                } elseif ($dateFilter === 'range' && $startDate && $endDate) {
+                    $data->whereBetween('collecting_date', [$startDate, $endDate]);
+                }
+            }
+
+            if ($request->has('area_group') && $request->area_group != '') {
+                $data->where('area_group_id', $request->area_group);
+            }
+
             return DataTables::of($data)
-                ->addColumn('areaGroup', fn($row) => $row->areaGroup->name ?? '')
-                ->addColumn('representative', fn($row) => $row->representative->name ?? '')
-                ->addColumn('driver', fn($row) => $row->driver->name ?? '')
-                ->addColumn('employee', fn($row) => $row->employee->name ?? '')
+                ->addColumn('areaGroup', function ($row) {
+                    return $row->areaGroup->name;
+                })
+                ->addColumn('representative', function ($row) {
+                    return $row->representative->name;
+                })
+                ->addColumn('driver', function ($row) {
+                    return $row->driver->name;
+                })
+                ->addColumn('employee', function ($row) {
+                    return $row->employee->name;
+                })
                 ->addColumn('all_collected', function ($row) {
                     // Check if all donations have status 'collected'
-                    $allCollected = $row->collectingLineDonations->every(fn($donation) => $donation->status === 'collected');
+                    $allCollected = $row->donations->every(fn($donation) => $donation->status === 'collected');
                     return $allCollected ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-warning">No</span>';
                 })
                 ->addColumn('action', function ($row) {
                     $btn = '';
-    
+
+                    // Edit Button (only for users with 'update collecting line' permission)
                     if (auth()->user()->can('update collecting line')) {
-                        $btn .= '<button class="edit-btn btn btn-sm btn-primary"
-                            data-id="' . $row->id . '"
-                            data-area-group-id="' . $row->area_group_id . '"
-                            data-representative-id="' . $row->representative_id . '"
-                            data-driver-id="' . $row->driver_id . '"
-                            data-employee-id="' . $row->employee_id . '"
-                            data-collecting-date="' . $row->collecting_date . '">' . __('Edit') . '</button>';
+                        $btn .= '<button class="edit-btn btn btn-sm btn-primary" 
+                                 data-id="' . $row->id . '"
+                                 data-area-group-id="' . $row->area_group_id . '"
+                                 data-representative-id="' . $row->representative_id . '"
+                                 data-driver-id="' . $row->driver_id . '"
+                                 data-employee-id="' . $row->employee_id . '"
+                                 data-collecting-date="' . $row->collecting_date . '">' . __('Edit') . '</button>';
                     }
-    
+
+                    // Delete Button (only for users with 'delete collecting line' permission)
                     if (auth()->user()->can('delete collecting line')) {
                         $btn .= ' <button class="delete-btn btn btn-sm btn-danger" data-id="' . $row->id . '">' . __('Delete') . '</button>';
                     }
-    
+
+                    // View Donations Button (only for users with 'view donations' permission)
                     if (auth()->user()->can('view donations')) {
                         $btn .= ' <button class="btn btn-sm btn-info view-donations-btn" data-id="' . $row->id . '">' . __('View Donations') . '</button>';
                     }
-    
+
+                    // View Collecting Line Button (only for users with 'view collecting line' permission)
                     if (auth()->user()->can('view collecting lines')) {
-                        $btn .= ' <a href="' . route('collecting-lines.export-pdf', ['collecting_line_id' => $row->id]) . '"
-                                   class="btn btn-sm btn-info">' . __('View Collecting Line') . '</a>';
+                        $btn .= ' <a href="' . route('collecting-lines.export-pdf', ['collecting_line_id' => $row->id]) . '" 
+                                  class="btn btn-sm btn-info">' . __('View Collecting Line') . '</a>';
                     }
-    
+
                     return $btn;
                 })
-                ->rawColumns(['action', 'all_collected']) // enable HTML rendering
+                ->rawColumns(['action'])
                 ->make(true);
         }
     }
-    
 
     public function getCollectingLinesByDate(Request $request)
     {
