@@ -37,12 +37,12 @@
                         <tbody>
                             <!-- Data will be populated via DataTables -->
                         </tbody>
-                        <!-- <tfoot>
+                        <tfoot>
                             <tr>
                                 <th colspan="4">{{ __('Total') }}</th>
                                 <th id="total-donate-items" colspan="4"></th>
                             </tr>
-                        </tfoot> -->
+                        </tfoot>
 
                     </table>
 
@@ -138,14 +138,18 @@
         "drawCallback": function() {
             $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
         },
-        // footerCallback: function(row, data, start, end, display) {
-        //     var api = this.api();
-        //     var json = api.ajax.json();
-        //     var totalAmount = json.total_financial_amount ?? 0;
+        footerCallback: function(row, data, start, end, display) {
+            var api = this.api();
 
-        //     $('#total-donate-items').html('<strong>' + totalAmount + '</strong>');
-        // }
+            // Get total amount from server response
+            var json = api.ajax.json();
+            var totalAmount = json.total_financial_amount ?? 0;
 
+            // Update footer cell (adjust column index as needed)
+            $(api.column(6).footer()).html(
+                '<td colspan="4"> <strong>' + totalAmount + '</strong> </td>'
+            );
+        }
     });
 
     let existingFinancialIndices = new Set();
