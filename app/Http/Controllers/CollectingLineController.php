@@ -126,10 +126,18 @@ class CollectingLineController extends Controller
                     return $row->employee->name;
                 })
                 ->addColumn('all_collected', function ($row) {
-                    // Check if all donations have status 'collected'
+                    // If donations is null or empty, treat as "No"
+                    if (!$row->donations || $row->donations->isEmpty()) {
+                        return '<span class="badge bg-warning">No</span>';
+                    }
+                
                     $allCollected = $row->donations->every(fn($donation) => $donation->status === 'collected');
-                    return $allCollected ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-warning">No</span>';
+                
+                    return $allCollected
+                        ? '<span class="badge bg-success">Yes</span>'
+                        : '<span class="badge bg-warning">No</span>';
                 })
+                
                 ->addColumn('action', function ($row) {
                     $btn = '';
 
