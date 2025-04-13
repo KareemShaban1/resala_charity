@@ -128,14 +128,14 @@ class CollectingLineController extends Controller
                 ->addColumn('all_collected', function ($row) {
                     // If donations is null or empty, treat as "No"
                     if (!$row->donations || $row->donations->isEmpty()) {
-                        return '<span class="badge bg-warning">'.__('No').'</span>';
+                        return '<span class="badge bg-warning">' . __('No') . '</span>';
                     }
                 
                     $allCollected = $row->donations->every(fn($donation) => $donation->status === 'collected');
                 
                     return $allCollected
-                        ? '<span class="badge bg-success">'.__('Yes').'</span>'
-                        : '<span class="badge bg-warning">'.__('No').'</span>';
+                        ? '<span class="badge bg-success">' . __('Yes') .'</span>'
+                        : '<span class="badge bg-warning">' . __('No') . '</span>';
                 })
                 
                 ->addColumn('action', function ($row) {
