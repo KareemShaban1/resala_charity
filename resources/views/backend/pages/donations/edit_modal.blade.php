@@ -110,6 +110,7 @@
                 <div class="card-body">
                     <div id="edit-financial-donation-rows-container">
                         <div class="row donation-row">
+                            
                             <input type="hidden" name="donates[0][financial_donation_type]" value="financial">
                             <div class="col-md-4">
                                 <div class="mb-3">

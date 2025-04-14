@@ -222,6 +222,7 @@
         <div class="row donation-row">
             <input type="hidden" name="donates[${index}][financial_donation_type]" value="financial">
             <input type="hidden" name="donates[${index}][financial_donation_item_id]" value="${donationItem.id || ''}">
+            <input type="hidden" name="donates[${index}][financial_donation_item_id]" value="${donationItem.id || ''}">
             <div class="col-md-3">
                 <label class="form-label">{{__('Donation Category')}}</label>
                 <select class="form-control" name="donates[${index}][financial_donation_categories_id]">
@@ -298,7 +299,7 @@
     // Remove Row Edit with SweetAlert Confirmation
     $(document).on('click', '.remove-row-btn-edit', function() {
         const row = $(this).closest('.donation-row');
-        const donationId = row.find('input[name*="_donation_id"]').val(); // Extract donation ID
+        const donationId = row.find('input[name*="_donation_item_id"]').val(); // Extract donation ID
 
         if (!donationId) {
             Swal.fire({
@@ -484,7 +485,7 @@
                 <div class="col-md-2">
                     <div class="mb-3">
                         <label for="amount" class="form-label">{{__('Amount')}}</label>
-                        <input type="number"  editDonationModalclass="form-control amount" name="donates[${newIndex}][financial_amount]">
+                        <input type="number" class="form-control amount" name="donates[${newIndex}][financial_amount]">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -548,6 +549,29 @@
                 </div>
             </div>
         `);
+        }
+    });
+
+
+    $(document).on('click', '.remove-row-btn', function() {
+        const row = $(this).closest('.donation-row');
+        const input = row.find('input[name*="donates"]');
+        const name = input.attr('name');
+        const index = name.match(/\[(\d+)\]/)[1]; // Extract the index from the input name
+
+        if (name.includes('financial_donation_type')) {
+            existingFinancialIndices.delete(parseInt(index)); // Remove the index from the set
+        } else if (name.includes('inKind_donation_type')) {
+            existingInKindIndices.delete(parseInt(index)); // Remove the index from the set
+        }
+
+        row.remove(); // Remove the row from the DOM
+    });
+
+    // Handle Remove Row buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-row-btn')) {
+            e.target.closest('.donation-row').remove();
         }
     });
 </script>

@@ -146,7 +146,7 @@
                     data: 'area',
                     name: 'area'
                 },
-                
+
                 {
                     data: 'phones',
                     name: 'phones',
@@ -157,7 +157,7 @@
                     data: 'notes',
                     name: 'notes'
                 },
-                
+
                 {
                     data: 'created_by',
                     name: 'created_by'
@@ -261,9 +261,13 @@
                 const color = getColorForParent(parentId);
 
                 if (data.is_child === 'Parent') {
-                    // For child rows, apply the color to all columns
-                    $(row).addClass('child-row');
-                    $(row).find('td').attr('style', 'background-color: ' + color + ' !important');
+                    // // For child rows, apply the color to all columns
+                    // $(row).addClass('child-row');
+                    // $(row).find('td').attr('style', 'background-color: ' + color + ' !important');
+
+                    // Apply background color to the first 3 columns only
+                    $(row).addClass('parent-row');
+                    $(row).find('td:lt(3)').css('background-color', color);
                 } else if (data.is_child === 'Child') {
                     // For parent rows, apply the color only to the first column
                     $(row).find('td:first').attr('style', 'background-color: ' + color + ' !important');
@@ -938,7 +942,7 @@
     }
 
 
-    
+
     // Function to add monthly form donation
     function addMonthlyFormDonation(monthlyFormId) {
         $('#addMonthlyFormDonationModal').modal('show');

@@ -1181,7 +1181,7 @@
         return `
         <div class="row donation-row">
             <input type="hidden" name="donates[${index}][inKind_donation_type]" value="inKind">
-            <input type="hidden" name="donates[${index}][inKind_donation_id]" value="${donationItem.id || ''}">
+            <input type="hidden" name="donates[${index}][inKind_donation_item_id]" value="${donationItem.id || ''}">
             <div class="col-md-3">
                 <label class="form-label">{{__('Item Name')}}</label>
                 <input type="text" class="form-control" name="donates[${index}][in_kind_item_name]" value="${donationItem.item_name || ''}">
@@ -1219,7 +1219,7 @@
     // Remove Row Edit with SweetAlert Confirmation
     $(document).on('click', '.remove-row-btn-edit', function() {
         const row = $(this).closest('.donation-row');
-        const donationId = row.find('input[name*="_donation_id"]').val(); // Extract donation ID
+        const donationId = row.find('input[name*="_donation_item_id"]').val(); // Extract donation ID
 
         if (!donationId) {
             Swal.fire({
