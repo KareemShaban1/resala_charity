@@ -23,11 +23,12 @@ class UpdateCollectingLineRequest extends FormRequest
     {
         return [
             //
-            'representative_id' => 'required|exists:employees,id',
+            'representative_id' => 'nullable|exists:employees,id',
             'driver_id' => 'nullable|exists:employees,id',
-            'employee_id' => 'required|exists:employees,id',
+            'employee_id' => 'nullable|exists:employees,id',
             'area_group_id' => 'required|exists:area_groups,id',
             'collecting_date' => 'required',
+            'status' => 'required|in:open,closed,pending',
         ];
     }
 }

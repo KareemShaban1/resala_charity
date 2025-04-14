@@ -5,6 +5,7 @@
 <script>
     let table;
 
+    
     flatpickr("#date_time", {
         enableTime: true,
         dateFormat: "Y-m-d H:i",
@@ -12,6 +13,7 @@
     });
 
     $(document).ready(function() {
+       
         // Initialize Select2 for main form
         initializeSelect2();
 

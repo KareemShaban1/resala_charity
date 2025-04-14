@@ -54,6 +54,10 @@
                     name: 'all_collected'
                 },
                 {
+                    data: 'status',
+                    name: 'status'
+                },
+                {
                     data: 'action',
                     name: 'action',
                     orderable: false,
@@ -301,6 +305,68 @@
             });
         };
 
+        // Function to format date
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        // Edit Collecting Line
+        $('#all-collecting-lines-table').on('click', '.edit-btn', function() {
+            var id = $(this).data('id');
+            $('#edit_id').val(id);
+            $('#edit_representative_id').val($(this).data('representative-id'));
+            $('#edit_driver_id').val($(this).data('driver-id'));
+            $('#edit_employee_id').val($(this).data('employee-id'));
+            $('#edit_area_group_id').val($(this).data('area-group-id'));
+            $('#edit_collecting_date').val(formatDate($(this).data('collecting-date')));
+            $('#edit_status').val($(this).data('status'));
+            $('#editCollectingLineModal').modal('show');
+        });
+
+        $('#editCollectingLineForm').on('submit', function(e) {
+            e.preventDefault();
+            var id = $('#edit_id').val();
+            $.ajax({
+                url: "/collecting-lines/" + id,
+                type: 'PUT',
+                data: $(this).serialize(),
+                success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message
+                    });
+                    $('#editCollectingLineModal').modal('hide');
+                    allCollectingLinesTable.ajax.reload();
+                }
+            });
+        });
+
+
+        // Delete Collecting Line
+        $('#all-collecting-lines-table').on('click', '.delete-btn', function() {
+            var id = $(this).data('id');
+            $('#delete_id').val(id);
+            $('#deleteCollectingLineModal').modal('show');
+        });
+
+        $('#deleteCollectingLineForm').on('submit', function(e) {
+            e.preventDefault();
+            var id = $('#delete_id').val();
+            $.ajax({
+                url: "/collecting-lines/" + id,
+                type: 'DELETE',
+                data: $(this).serialize(),
+                success: function(response) {
+                    $('#deleteCollectingLineModal').modal('hide');
+                    allCollectingLinesTable.ajax.reload();
+                }
+            });
+        });
 
     });
 </script>

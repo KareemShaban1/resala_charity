@@ -160,6 +160,7 @@ class RolesAndPermissionsSeeder extends Seeder
             ['name'=> 'view calls reports','guard_name' => 'web'],
             ['name'=> 'view dashboard','guard_name' => 'web'],
 
+
         ];
         // Create permissions
         // Permission::insert($permissions);

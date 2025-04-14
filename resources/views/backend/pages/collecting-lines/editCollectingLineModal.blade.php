@@ -10,6 +10,7 @@
                     <div class="form-group">
                         <label for="edit_representative_id">{{__('Representative')}}</label>
                         <select name="representative_id" id="edit_representative_id" class="form-control">
+                            <option value="">{{__('Select Representative')}}</option>
                             @foreach($representatives as $representative)
                             <option value="{{ $representative->id }}">{{ $representative->name }}</option>
                             @endforeach
@@ -20,6 +21,7 @@
                     <div class="form-group">
                         <label for="edit_driver_id">{{__('Driver')}}</label>
                         <select name="driver_id" id="edit_driver_id" class="form-control">
+                            <option value="">{{__('Select Driver')}}</option>
                             @foreach($drivers as $driver)
                             <option value="{{ $driver->id }}">{{ $driver->name }}</option>
                             @endforeach
@@ -31,6 +33,8 @@
                     <div class="form-group">
                         <label for="edit_employee_id">{{__('Employee')}}</label>
                         <select name="employee_id" id="edit_employee_id" class="form-control">
+                        <option value="">{{__('Select Employee')}}</option>
+
                             @foreach($employees as $employee)
                             <option value="{{ $employee->id }}">{{ $employee->name }}</option>
                             @endforeach
@@ -52,6 +56,16 @@
                     <div class="form-group">
                         <label for="edit_collecting_date">{{__(key: 'Collecting Date')}}</label>
                         <input type="date" class="form-control" id="edit_collecting_date" name="collecting_date" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="edit_status">{{__(key: 'Status')}}</label>
+                        <select name="status" id="edit_status" class="form-control">
+                            <option value="open">{{__(key: 'Open')}}</option>
+                            <option value="closed">{{__(key: 'Closed')}}</option>
+                            <option value="pending">{{__(key: 'Pending')}}</option>
+                        </select>
                     </div>
                 </div>
             </div>

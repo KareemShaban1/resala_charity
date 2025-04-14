@@ -9,7 +9,8 @@
         var today = new Date().toISOString().split('T')[0];
         $('#date').val(today);
 
-        // Initialize DataTables
+
+        // collecting lines table
         collectingLinesTable = $('#collecting-lines-table').DataTable({
             processing: true,
             serverSide: true,
@@ -46,6 +47,10 @@
                 {
                     data: 'employee',
                     name: 'employee'
+                },
+                {
+                    data: 'status',
+                    name: 'status'
                 },
                 {
                     data: 'action',
@@ -100,6 +105,7 @@
         });
 
 
+        // donations table 
         donationsTable = $('#donations-table').DataTable({
             processing: true,
             serverSide: true,
@@ -352,7 +358,10 @@
             });
         });
 
-        // Initialize DataTable
+
+
+
+        // monthly forms table
         monthlyFormstable = $('#monthly-forms-table').DataTable({
             ajax: {
                 url: "{{ route('collecting-lines.monthly-forms') }}",
@@ -496,6 +505,8 @@
         }
 
 
+
+        // filters 
         $('#date-filter').on('change', function() {
             if ($(this).val() === 'range') {
                 $('#custom-range, #end-date-container').show();
@@ -522,13 +533,13 @@
             monthlyFormstable.ajax.reload();
         });
 
-
-        // Apply Filters
         $('#filter-btn').on('click', function() {
             collectingLinesTable.ajax.reload();
             donationsTable.ajax.reload();
             monthlyFormstable.ajax.reload();
         });
+
+
 
         // Add Collecting Line
         $('#addCollectingLineForm').on('submit', function(e) {
@@ -544,8 +555,10 @@
             });
         });
 
+
+
         // Edit Collecting Line
-        $('#collecting-lines-table, #all-collecting-lines-table').on('click', '.edit-btn', function() {
+        $('#collecting-lines-table').on('click', '.edit-btn', function() {
             var id = $(this).data('id');
             $('#edit_id').val(id);
             $('#edit_representative_id').val($(this).data('representative-id'));
@@ -553,6 +566,7 @@
             $('#edit_employee_id').val($(this).data('employee-id'));
             $('#edit_area_group_id').val($(this).data('area-group-id'));
             $('#edit_collecting_date').val(formatDate($(this).data('collecting-date')));
+            $('#edit_status').val($(this).data('status'));
             $('#editCollectingLineModal').modal('show');
         });
 
@@ -575,6 +589,8 @@
             });
         });
 
+
+
         // Delete Collecting Line
         $('#collecting-lines-table').on('click', '.delete-btn', function() {
             var id = $(this).data('id');
@@ -596,7 +612,11 @@
             });
         });
 
-        // Initialize DataTable for selecting collecting lines
+
+
+
+
+        // get collecting lines to add assign donation to collecting line
         var selectCollectingLinesTable = $('#select-collecting-lines-table').DataTable({
             processing: true,
             serverSide: true,
@@ -703,8 +723,10 @@
         });
 
 
-        let viewDonationsTable;
 
+
+        // show donations of collecting line
+        let viewDonationsTable;
         // Open the View Donations Modal when the "View Donations" button is clicked
         $(document).on('click', '.view-donations-btn', function() {
             var collectingLineId = $(this).data('id'); // Ensure this matches the button's data attribute
@@ -852,6 +874,10 @@
             }
         });
 
+
+
+
+        // un assign donations to collecting line
         function unAssignBulkDonations() {
             let selectedDonations = $('.row-checkbox:checked').map(function() {
                 return $(this).val();
@@ -905,6 +931,8 @@
         return `${year}-${month}-${day}`;
     }
 
+
+    
     // Function to add monthly form donation
     function addMonthlyFormDonation(monthlyFormId) {
         $('#addMonthlyFormDonationModal').modal('show');
@@ -1132,6 +1160,10 @@
     </div>`;
     }
 
+
+
+
+
     // Function to toggle donation status visibility
     function toggleEditDonationStatus() {
         const donationStatus = document.getElementById('add_donation_status').value;
@@ -1170,6 +1202,7 @@
         }
     }
 
+    
     // Add event listeners for "Add Row" buttons
     $(document).on('click', '#add-financial-row-edit', function() {
         const financialContainer = $('#add-financial-donation-rows-container');

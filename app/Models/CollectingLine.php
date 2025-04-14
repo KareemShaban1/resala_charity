@@ -16,6 +16,7 @@ class CollectingLine extends Model
         'area_group_id',
         'collecting_date',
         'number',
+        'status',
     ];
 
     protected $casts = [
@@ -48,7 +49,7 @@ class CollectingLine extends Model
 
     }
 
-    
+
 
     public static function generateUniqueNumber()
     {

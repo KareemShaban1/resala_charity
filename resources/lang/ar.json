@@ -167,6 +167,7 @@
     "Parent Donor": "متبرع رئيسي",
     "Select Parent Donor": "حدد المتبرع الرئيسي",
     "Assign Donor": "تعيين المتبرع",
+    "assign Donor": "تعيين المتبرع",
     "Select Donor": "حدد المتبرع",
     "Select Donors": "حدد المتبرعين",
     "Assign": "تعيين",
@@ -507,6 +508,13 @@
     "Donors with Monthly Forms": "المتبرعين أصحاب الأستمارات الشهرية",
     "Line Number":"رقم خط السير",
     "Collecting Line":"خط السير",
-    "All Collected":"الكل محصل"
+    "All Collected":"الكل محصل",
+    "Select Representative":"حدد مندوب",
+    "Open":"مفتوح",
+    "Closed":"مغلق",
+    "Pending":"قيد الانتظار",
+    "Are you sure you want to delete this collecting line?" : "هل أنت متأكد من حذف خط السير هذا ",
+    "Delete Collecting Line" : "حذف خط السير"
+
 
 }

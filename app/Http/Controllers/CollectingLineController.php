@@ -81,7 +81,6 @@ class CollectingLineController extends Controller
     }
 
 
-    // show collecting line
     /**
      * Fetch collecting lines data for DataTables.
      */
@@ -117,13 +116,24 @@ class CollectingLineController extends Controller
                     return $row->areaGroup->name;
                 })
                 ->addColumn('representative', function ($row) {
-                    return $row->representative->name;
+                    return $row->representative->name ?? '';
                 })
                 ->addColumn('driver', function ($row) {
-                    return $row->driver->name;
+                    return $row->driver->name ?? '';
                 })
                 ->addColumn('employee', function ($row) {
-                    return $row->employee->name;
+                    return $row->employee->name ?? '';
+                })
+                ->addColumn('status', function ($row) {
+                    switch ($row->status) {
+                        case 'open':
+                            return '<span class="badge bg-success">' . __('Open') . '</span>';
+                        case 'pending':
+                            return '<span class="badge bg-warning">' . __('Pending') . '</span>';
+                        case 'closed':
+                            return '<span class="badge bg-danger">' . __('Closed') . '</span>';
+                    }
+                    
                 })
                 ->addColumn('all_collected', function ($row) {
                     // If donations is null or empty, treat as "No"
@@ -149,6 +159,7 @@ class CollectingLineController extends Controller
                                  data-representative-id="' . $row->representative_id . '"
                                  data-driver-id="' . $row->driver_id . '"
                                  data-employee-id="' . $row->employee_id . '"
+                                 data-status="' . $row->status . '"
                                  data-collecting-date="' . $row->collecting_date . '">' . __('Edit') . '</button>';
                     }
 
@@ -170,7 +181,7 @@ class CollectingLineController extends Controller
 
                     return $btn;
                 })
-                ->rawColumns(['action', 'all_collected'])
+                ->rawColumns(['action', 'all_collected', 'status'])
                 ->make(true);
         }
     }
@@ -178,7 +189,8 @@ class CollectingLineController extends Controller
     public function getCollectingLinesByDate(Request $request)
     {
 
-        $data = CollectingLine::with('areaGroup');
+        $data = CollectingLine::with('areaGroup')
+        ->whereNot('status', 'closed');
         // if ($request->has('date') && $request->date != '') {
         //     $data->whereDate('collecting_date', '=', $request->date);
         // }
@@ -861,10 +873,6 @@ class CollectingLineController extends Controller
             ->rawColumns(['action', 'items'])
             ->make(true);
     }
-
-
-
-
 
 
     public function exportCollectingLineToPdf(Request $request)

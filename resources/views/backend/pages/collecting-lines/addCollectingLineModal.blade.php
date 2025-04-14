@@ -8,6 +8,7 @@
                     <div class="form-group">
                         <label for="name">{{__('Representative')}}</label>
                         <select name="representative_id" id="representative_id" class="form-control">
+                            <option value="" readonly>{{__('Select Representative')}}</option>
                             @foreach($representatives as $representative)
                             <option value="{{ $representative->id }}">{{ $representative->name }}</option>
                             @endforeach
@@ -20,6 +21,7 @@
                     <div class="form-group">
                         <label for="driver_id">{{__('Driver')}}</label>
                         <select name="driver_id" id="driver_id" class="form-control">
+                            <option value="" readonly>{{__('Select Driver')}}</option>
                             @foreach($drivers as $driver)
                             <option value="{{ $driver->id }}">{{ $driver->name }}</option>
                             @endforeach
@@ -32,6 +34,7 @@
                     <div class="form-group">
                         <label for="employee_id">{{__('Employee')}}</label>
                         <select name="employee_id" id="employee_id" class="form-control">
+                            <option value="" readonly>{{__('Select Employee')}}</option>
                             @foreach($employees as $employee)
                             <option value="{{ $employee->id }}">{{ $employee->name }}</option>
                             @endforeach
@@ -56,7 +59,18 @@
                         <input type="date" class="form-control" id="collecting_date" name="collecting_date" required>
                     </div>
                 </div>
+                <div class="col-md-6 mb-3">
+                <div class="form-group">
+                    <label for="status">{{__(key: 'Status')}}</label>
+                    <select name="status" id="add_status" class="form-control">
+                        <option value="open">{{__(key: 'Open')}}</option>
+                        <option value="closed">{{__(key: 'Closed')}}</option>
+                        <option value="pending">{{__(key: 'Pending')}}</option>
+                    </select>
+                </div>
             </div>
+            </div>
+           
 
         </div>
 

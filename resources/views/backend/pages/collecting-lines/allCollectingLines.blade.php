@@ -73,6 +73,7 @@
                         <th>{{__('Driver')}}</th>
                         <th>{{__('Employee')}}</th>
                         <th>{{__('All Collected')}}</th>
+                        <th>{{__('Status')}}</th>
                         <th>{{__('Actions')}}</th>
                     </tr>
                 </thead>
@@ -104,6 +105,4 @@
 @endsection
 @include('backend.pages.collecting-lines.scripts.all_collecting_lines_scripts')
 
-@include('backend.pages.collecting-lines.scripts')
 
-@include('backend.pages.collecting-lines.scripts.edit_donation_scripts')
