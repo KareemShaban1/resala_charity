@@ -139,13 +139,14 @@
                     name: 'name',
                 },
                 {
+                    data: 'donor_type',
+                    name: 'donor_type'
+                },
+                {
                     data: 'area',
                     name: 'area'
                 },
-                {
-                    data: 'department',
-                    name: 'department'
-                },
+                
                 {
                     data: 'phones',
                     name: 'phones',
@@ -156,9 +157,14 @@
                     data: 'notes',
                     name: 'notes'
                 },
+                
                 {
                     data: 'created_by',
                     name: 'created_by'
+                },
+                {
+                    data: 'department',
+                    name: 'department'
                 },
                 {
                     data: 'donateItems',
@@ -1202,7 +1208,7 @@
         }
     }
 
-    
+
     // Add event listeners for "Add Row" buttons
     $(document).on('click', '#add-financial-row-edit', function() {
         const financialContainer = $('#add-financial-donation-rows-container');

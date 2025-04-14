@@ -443,7 +443,8 @@ class CollectingLineController extends Controller
                 ->leftJoin('departments', 'donors.department_id', '=', 'departments.id')
                 ->with('donor', 'donateItems')
                 ->whereDoesntHave('collectingLines') // Exclude donations already assigned to a collecting line
-                ->whereNot('donations.status', 'collected')
+                // ->whereNot('donations.status', 'collected')
+                ->whereNotIn('donations.status', ['collected','canceled'])
                 ->groupBy(
                     'donations.donor_id',
                     'donors.id',
@@ -546,7 +547,15 @@ class CollectingLineController extends Controller
                     return $item->donor?->monthly_donation_day ?? 0;
                 })
                 ->addColumn('department', function ($item) {
-                    return $item->donor?->department->name ?? '';
+                    return $item->donation?->createdBy->department?->name ?? '';
+                })
+                ->addColumn('donor_type', function ($item) {
+                    switch ($item->donor_type) {
+                        case 'monthly':
+                            return __('Monthly');
+                        case 'normal':
+                            return __('Normal');
+                    }
                 })
                 ->addColumn('phones', function ($item) {
                     // return $item->donor?->phones->isNotEmpty() ?
@@ -622,7 +631,7 @@ class CollectingLineController extends Controller
                 ->addColumn('created_by', function ($item) {
                     return $item->createdBy->name ?? null;
                 })
-                ->rawColumns(['action', 'donateItems', 'receipt_number', 'collected'])
+                ->rawColumns(['action', 'donateItems', 'receipt_number', 'collected', 'donor_type'])
                 ->make(true);
         }
     }

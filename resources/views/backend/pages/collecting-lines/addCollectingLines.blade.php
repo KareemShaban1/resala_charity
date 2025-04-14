@@ -114,11 +114,12 @@
                                 <input type="checkbox" id="check-all-donations">
                             </th>
                             <th>{{__('Donor Name')}}</th>
+                            <th>{{__('Donor Type')}}</th>
                             <th>{{__('Area')}}</th>
-                            <th>{{__('Department')}}</th>
                             <th>{{__('Phones')}}</th>
                             <th>{{ __('Notes') }}</th>
                             <th>{{__('Created By')}}</th>
+                            <th>{{__('Department')}}</th>
                             <th>{{__('Donates')}}</th>
                             <!-- <th>{{__('Last Donation Date')}}</th> -->
                             <th>{{__('Actions')}}</th>
