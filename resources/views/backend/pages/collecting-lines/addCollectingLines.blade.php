@@ -198,4 +198,4 @@
 
 @include('backend.pages.collecting-lines.scripts')
 
-@include('backend.pages.collecting-lines.scripts.edit_donation_scripts')
+<!-- @include('backend.pages.collecting-lines.scripts.edit_donation_scripts') -->
