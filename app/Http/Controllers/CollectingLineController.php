@@ -547,10 +547,10 @@ class CollectingLineController extends Controller
                     return $item->donor?->monthly_donation_day ?? 0;
                 })
                 ->addColumn('department', function ($item) {
-                    return $item->donation?->createdBy->department?->name ?? '';
+                    return $item->createdBy->department?->name ?? '';
                 })
                 ->addColumn('donor_type', function ($item) {
-                    switch ($item->donor_type) {
+                    switch ($item->donor?->donor_type) {
                         case 'monthly':
                             return __('Monthly');
                         case 'normal':
