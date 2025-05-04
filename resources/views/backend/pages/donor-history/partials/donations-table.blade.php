@@ -39,19 +39,19 @@
                 {{ __('Gathered') }}
                 @endif
             </td>
-            
-            <td>
-            @if ($donation->status === 'collected')
-            <span class="text-white badge bg-success">{{ __('Collected') }}</span>
-            @elseif ($donation->status === 'not_collected')
-            <span class="text-white badge bg-danger">{{ __('Not Collected') }}</span>
-            @elseif($donation->status === 'followed_up')
-            <span class="text-white badge bg-warning">{{ __('Followed Up') }}</span>
-            @elseif($donation->status === 'cancelled')
-            <span class="text-white badge bg-danger">{{ __('Cancelled Donation') }}</span>
-            @endif
 
-            <!-- {{ $donation->status === 'collected' ? __('Collected') : __('Not Collected') }}</td> -->
+            <td>
+                @if ($donation->status === 'collected')
+                <span class="text-white badge bg-success">{{ __('Collected') }}</span>
+                @elseif ($donation->status === 'not_collected')
+                <span class="text-white badge bg-danger">{{ __('Not Collected') }}</span>
+                @elseif($donation->status === 'followed_up')
+                <span class="text-white badge bg-warning">{{ __('Followed Up') }}</span>
+                @elseif($donation->status === 'cancelled')
+                <span class="text-white badge bg-danger">{{ __('Cancelled Donation') }}</span>
+                @endif
+
+                <!-- {{ $donation->status === 'collected' ? __('Collected') : __('Not Collected') }}</td> -->
             <td>{{ $donation->createdBy->name }}</td>
             <td>
                 @foreach ($donation->donateItems as $item)
@@ -61,17 +61,17 @@
                         {{ $item->donationCategory->name }} :
                     </span>
                     {{ $item->amount }} -----
-                    ( {{ __('Receipt') }}: 
+                    ( {{ __('Receipt') }}:
                     <span class="text-info"> {{ $item->financial_receipt_number }} </span>)
                     @else
                     <span class="fw-bold me-2">
                         {{ $item->item_name}} :
                     </span>
-                    {{ $item->amount }} ----- 
-                   ( {{ __('Receipt') }}: 
-                   <span class="text-info">  {{ $donation->collectingDonation->in_kind_receipt_number ?? '' }} </span> )
+                    {{ $item->amount }} -----
+                    ( {{ __('Receipt') }}:
+                    <span class="text-info"> {{ $donation->collectingDonation->in_kind_receipt_number ?? '' }} </span> )
                     @endif
-                  
+
                 </div>
                 @endforeach
             </td>
@@ -132,8 +132,8 @@
                         {{ __('Collecting Date') }}:
                     </span>
                     {{ \Carbon\Carbon::parse($donation->collectingDonation->collecting_date)->format('d/m/Y') }}
-                    </p>
-            
+                </p>
+
 
 
 

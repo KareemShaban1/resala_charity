@@ -27,8 +27,6 @@ class DonorHistoryController extends Controller
             $donations->whereBetween('created_at', [$request->start_date, $request->end_date]);
         }
 
-        
-
         $donations = $donations->get();
         $donations->load('collectingDonation', 'donateItems');
 

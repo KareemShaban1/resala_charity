@@ -757,11 +757,13 @@ class CollectingLineController extends Controller
                     $q->whereIn('donors.monthly_donation_day', $daysInRange);
                 });
 
-                $query->whereNotExists(function ($subQuery) use ($startMonth, $endMonth) {
+                // get monthly form donations that are not in the range of start date and end date
+                $query->whereNotExists(function ($subQuery) use ($startDate, $endDate) {
                     $subQuery->select(DB::raw(1))
                         ->from('monthly_form_donations')
                         ->whereColumn('monthly_form_donations.monthly_form_id', 'monthly_forms.id')
-                        ->whereBetween(DB::raw('MONTH(monthly_form_donations.donation_date)'), [$startMonth, $endMonth]);
+                        ->whereBetween('monthly_form_donations.donation_date', [$startDate, $endDate]);
+                        // ->whereBetween(DB::raw('MONTH(monthly_form_donations.donation_date)'), [$startMonth, $endMonth]);
                 });
             }
         }
