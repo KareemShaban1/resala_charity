@@ -84,6 +84,7 @@
                     <tr>
                         <th>{{__('ID')}}</th>
                         <th>{{__('Collecting Line Number')}}</th>
+                        <th>{{__('Collecting Date')}}</th>
                         <th>{{__('Area Group')}}</th>
                         <th>{{__('Representative')}}</th>
                         <th>{{__('Driver')}}</th>

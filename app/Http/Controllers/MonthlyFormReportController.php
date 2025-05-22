@@ -142,6 +142,7 @@ class MonthlyFormReportController extends Controller
         $followUpDepartmentId = $request->input('follow_up_department_id');
         $status = $request->input('status');
         $areaId = $request->input('area_id');
+        $donorsPages = $request->input('donors_pages');
 
 
         // Filter by month
@@ -226,7 +227,7 @@ class MonthlyFormReportController extends Controller
                             ->whereMonth('date', substr($monthYear, 5, 2));
                     }
                 }]);
-            }])->paginate(10); // Paginate with 10 records per page
+            }])->paginate($donorsPages ?? 10); // Paginate with 10 records per page
 
 
         // Add a collected_status attribute

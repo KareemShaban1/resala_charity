@@ -6,12 +6,15 @@
 
 @section('content')
 <div class="container-fluid">
-    <!-- start page title -->
-    <div class="row">
+   
+     <!-- start page title -->
+     <div class="row">
         <div class="col-12">
             <div class="page-title-box">
-                
                 <h4 class="page-title">{{__('Cancelled Monthly Forms')}}</h4>
+
+                <!-- Filters -->
+                @include('backend.pages.monthly_forms.partials.filters')
             </div>
         </div>
     </div>

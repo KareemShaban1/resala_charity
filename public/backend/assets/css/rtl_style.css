@@ -334,7 +334,9 @@ thead,
 tr {
     border-color: inherit;
     border-style: solid;
-    border-width: 0
+    border-width: 0;
+    font-size: 16px;
+    color: black;
 }
 
 label {
@@ -22402,3 +22404,26 @@ th.no-sort.sorting::before,
 th.no-sort.sorting::after {
     display: none !important;
 }
+
+#monthly-forms-table th:nth-child(2),
+#monthly-forms-table td:nth-child(2) { 
+    width: 70px !important;
+    white-space: normal !important;
+ }  /* Name */
+
+ #monthly-forms-table th:nth-child(5),
+#monthly-forms-table td:nth-child(5) { 
+    width: 70px !important;
+    white-space: normal !important;
+ }  /* Notes */
+
+
+ #monthly-forms-table th:nth-child(7),
+ #monthly-forms-table td:nth-child(7) { 
+     width: 50px !important;
+     white-space: normal !important;
+  }  /* Notes */
+
+ .child-row td {
+    color:white;
+ }

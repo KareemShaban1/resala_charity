@@ -4,6 +4,10 @@
         @method('PUT')
         <input type="hidden" name="id" id="edit_id">
         <div class="modal-body">
+            <div id="editMonthlyFormLoader" class="text-center my-3 d-none">
+                <div class="spinner-border text-primary" role="status">
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
@@ -93,17 +97,17 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                    <div class="mb-3">
-                        <label for="follow_up_department_id" class="form-label">{{__('Follow Up Department')}}</label>
-                        <select class="form-control select2" id="edit_follow_up_department_id" name="follow_up_department_id" required>
-                            <option value="">{{__('Select Department')}}</option>
-                            @foreach($departments as $department)
-                            <option value="{{ $department->id }}">{{ $department->name }}</option>
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback"></div>
+                        <div class="mb-3">
+                            <label for="follow_up_department_id" class="form-label">{{__('Follow Up Department')}}</label>
+                            <select class="form-control select2" id="edit_follow_up_department_id" name="follow_up_department_id" required>
+                                <option value="">{{__('Select Department')}}</option>
+                                @foreach($departments as $department)
+                                <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                @endforeach
+                            </select>
+                            <div class="invalid-feedback"></div>
+                        </div>
                     </div>
-                </div>
                     <div class="col-md-12">
                         <div class="mb-3">
                             <label for="edit_notes" class="form-label">{{__('Notes')}}</label>

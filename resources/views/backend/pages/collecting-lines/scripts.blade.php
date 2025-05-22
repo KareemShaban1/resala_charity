@@ -33,6 +33,10 @@
                     name: 'number',
                 },
                 {
+                    data: 'collecting_date',
+                    name: 'collecting_date'
+                },
+                {
                     data: 'areaGroup',
                     name: 'areaGroup'
                 },
@@ -1868,24 +1872,54 @@
 
     function editDonation(id) {
         var form = $('#editDonationForm');
+
+        // Reset the form fields
         form.trigger('reset');
         form.find('.is-invalid').removeClass('is-invalid');
         form.find('.invalid-feedback').text('');
+
+        // Reset dropdowns and reinitialize Select2 if used
+        form.find('select').val(null).trigger('change');
+
+        // Clear dynamically added donation rows
+        $('#edit-financial-donation-rows-container').empty();
+        $('#edit-in-kind-donation-rows-container').empty();
+
+        // Reset indices tracking
+        existingFinancialIndices = new Set();
+        existingInKindIndices = new Set();
+
+        // Set the form action
         form.attr('action', `{{ route('donations.update', '') }}/${id}`);
+
+        // Show modal
         $('#editDonationModal').modal('show');
 
-        $.get(`{{ url('donations') }}/${id}/edit`)
-            .done(function(data) {
+        // **Show Loading Spinner & Disable Form Inputs**
+        $('#editDonationLoader').removeClass('d-none'); // Show loading spinner
+        form.find('input, select, textarea, button').prop('disabled', true); // Disable inputs
+
+        $.ajax({
+            url: `{{ url('donations') }}/${id}/edit`,
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest' // Ensures Laravel returns JSON instead of redirecting
+            },
+            success: function(data) {
                 // Reset existing indices
-                existingFinancialIndices = new Set();
-                existingInKindIndices = new Set();
+                // existingFinancialIndices = new Set();
+                // existingInKindIndices = new Set();
+
+                // console.log($('#edit_donation_category').val());
 
                 // Populate basic fields
                 $('#edit_donor_id').val(data.donor_id).trigger('change');
                 $('#edit_date').val(data.date);
-                $('#edit_donation_status').val(data.status).trigger('change');
-                $('#edit_donation_type').val(data.donation_type).trigger('change');
-                $('#edit_reporting_way').val(data.reporting_way).trigger('change');
+                safeSetSelectValue('#edit_donation_status', data.status);
+                safeSetSelectValue('#edit_donation_type', data.donation_type);
+                safeSetSelectValue('#edit_donation_category', data.donation_category);
+                safeSetSelectValue('#edit_reporting_way', data.reporting_way);
+
                 $('#edit_collecting_date').val(formatDate(data.collecting_donation?.collecting_date));
                 $('#edit_in_kind_receipt_number').val(data.collecting_donation?.in_kind_receipt_number);
                 $('#edit_employee_id').val(data.collecting_donation?.employee_id).trigger('change');
@@ -1916,11 +1950,34 @@
                 // Toggle sections based on donation type
                 toggleEditDonationType();
                 toggleEditDonationStatus();
-            })
-            .fail(function() {
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
                 alert('{{ __("Failed to load donation details. Please try again.") }}');
-            });
+            },
+            complete: function() {
+                // **Hide Loading Spinner & Enable Form Inputs**
+                $('#editDonationLoader').addClass('d-none'); // Hide loading spinner
+                form.find('input, select, textarea, button').prop('disabled', false); // Enable inputs
+            }
+        });
     }
+
+
+    function safeSetSelectValue(selector, value, labelIfMissing = 'Unknown') {
+        value = String(value); // ensure it's a string
+        const $select = $(selector);
+
+        // Check if option exists
+        if ($select.find(`option[value="${value}"]`).length === 0) {
+            // Option doesn't exist, append it
+            $select.append(`<option value="${value}">${labelIfMissing}</option>`);
+        }
+
+        // Set value and trigger change
+        $select.val(value).trigger('change');
+    }
+
 
 
     function renderFinancialRow(donation, index, categories) {

@@ -256,6 +256,18 @@ class DonationController extends Controller
                         return $phone->phone_number;
                     })->implode(', ') : 'N/A';
             })
+           
+            ->addColumn('donation_status', function ($item) {
+                if ($item->status === 'collected') {
+                    return ' <span class="text-white badge bg-success">' .  __('Collected') . '</span>';
+                } elseif ($item->status === 'not_collected') {
+                    return ' <span class="text-white badge bg-primary">' .  __('Not Collected') . '</span><br>' . __('') . '';
+                } elseif ($item->status === 'followed_up') {
+                    return ' <span class="text-white badge bg-warning">' .  __('Followed Up') . '</span><br>' . __('') . '';
+                } elseif ($item->status === 'cancelled') {
+                    return ' <span class="text-white badge bg-danger">' .  __('Cancelled Donation') . '</span><br>' . __('') . '';
+                }
+            })
             ->addColumn('donateItems', function ($item) {
                 return $item->donateItems->map(function ($donate) use ($item) {
                     if ($item->donation_type === 'financial') {
@@ -283,17 +295,6 @@ class DonationController extends Controller
                     return '';
                 })->implode('<br>');
             })
-            ->addColumn('donation_status', function ($item) {
-                if ($item->status === 'collected') {
-                    return ' <span class="text-white badge bg-success">' .  __('Collected') . '</span>';
-                } elseif ($item->status === 'not_collected') {
-                    return ' <span class="text-white badge bg-primary">' .  __('Not Collected') . '</span><br>' . __('') . '';
-                } elseif ($item->status === 'followed_up') {
-                    return ' <span class="text-white badge bg-warning">' .  __('Followed Up') . '</span><br>' . __('') . '';
-                } elseif ($item->status === 'cancelled') {
-                    return ' <span class="text-white badge bg-danger">' .  __('Cancelled Donation') . '</span><br>' . __('') . '';
-                }
-            })
             ->addColumn('group_key', function ($item) {
                 if ($item->donation_category === 'gathered') {
                     return $item->donor_id . '-' . $item->created_at;
@@ -306,7 +307,7 @@ class DonationController extends Controller
             ->addColumn('user_department', function ($item) {
                 return $item->createdBy->department->name;
             })
-            ->rawColumns(['name', 'action', 'donateItems', 'receipt_number', 'donation_status'])
+            ->rawColumns(['name', 'action', 'receipt_number', 'donation_status', 'donateItems'])
             ->make(true);
     }
 
@@ -551,7 +552,7 @@ class DonationController extends Controller
             'employee_id' => 'nullable|exists:employees,id',
             'collecting_date' => 'nullable|date',
             'donation_type' => 'required|string|in:financial,inKind,both',
-            'donation_category' => 'required|string|in:normal,monthly',
+            'donation_category' => 'required|string',
             'collecting_time' => 'nullable|string',
             'collecting_way' => 'nullable|string|in:representative,location,online',
             'notes' => 'nullable|string',

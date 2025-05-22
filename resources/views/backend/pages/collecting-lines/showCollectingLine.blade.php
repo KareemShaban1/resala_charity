@@ -39,7 +39,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="4">{{ __('Total') }}</th>
+                                <th colspan="4">{{ __('Total Collected') }}</th>
                                 <th id="total-donate-items" colspan="3"></th>
                             </tr>
                         </tfoot>
@@ -174,6 +174,7 @@
                 $('#edit_date').val(data.date);
                 $('#edit_donation_status').val(data.status).trigger('change');
                 $('#edit_donation_type').val(data.donation_type).trigger('change');
+                $('#edit_donation_category').val(data.donation_category).trigger('change');
                 $('#edit_reporting_way').val(data.reporting_way).trigger('change');
                 $('#edit_collecting_date').val(formatDate(data.collecting_donation?.collecting_date));
                 $('#edit_in_kind_receipt_number').val(data.collecting_donation?.in_kind_receipt_number);

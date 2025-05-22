@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MonthlyForm;
 use App\Http\Requests\StoreMonthlyFormRequest;
 use App\Http\Requests\UpdateMonthlyFormRequest;
+use App\Http\Resources\MonthlyFormResource;
 use App\Imports\MonthlyFormsImport;
 use App\Imports\MonthlyFormsItemsImport;
 use App\Models\Department;
@@ -38,7 +39,7 @@ class MonthlyFormController extends Controller
     public function cancelledMonthlyForms()
     {
         $donors = Donor::all();
-        $donationCategories = DonationCategory::all();
+        $donationCategories = DonationCategory::select('id','name')->get();
         $departments = Department::all();
         $employees = Employee::all();
         return view(
@@ -379,7 +380,7 @@ class MonthlyFormController extends Controller
     {
         $this->authorize('update', MonthlyForm::class);
 
-        return response()->json($monthlyForm->load(['items', 'donor']));
+        return response()->json(new MonthlyFormResource($monthlyForm->load('items')), 200);
     }
     public function update(UpdateMonthlyFormRequest $request, MonthlyForm $monthlyForm)
     {

@@ -65,13 +65,14 @@
                     name: 'user_department',
                     visible: false
                 },
-
-                {
-                    data: 'donateItems', // Add the 'donates' column
+                                {
+                    data: 'donateItems',
                     name: 'donateItems',
                     orderable: false,
-                    searchable: true
-                },
+                    searchable: false,
+                                },
+
+
                 {
                     data: 'collecting_line_number',
                     name: 'collecting_lines.number',
@@ -156,7 +157,7 @@
                     d.date_filter = $('#date-filter').val();
                     d.start_date = $('#start-date').val();
                     d.end_date = $('#end-date').val();
-                    // d.donation_category = $('#donation-category-filter').val(); 
+                    // d.donation_category = $('#donation-category-filter').val();
                 }
             },
             columns: [{
@@ -254,7 +255,7 @@
                     d.date_filter = $('#date-filter').val();
                     d.start_date = $('#start-date').val();
                     d.end_date = $('#end-date').val();
-                    // d.donation_category = $('#donation-category-filter').val(); 
+                    // d.donation_category = $('#donation-category-filter').val();
                 }
             },
             columns: [{
@@ -323,14 +324,6 @@
                         columns: [0, 1, 2, 3, 4, 5, 6]
                     }
                 },
-                // {
-                //     extend: 'pdf', 
-                //     text: 'PDF', 
-                //     title: 'Donations Data', 
-                //     exportOptions: {
-                //         columns: [0, 1]
-                //     }
-                // },
                 {
                     extend: 'copy',
                     exportOptions: {
@@ -410,23 +403,28 @@
 
 
 
-        let financialRowIndex = 0;
-        let inKindRowIndex = 0;
+        // let financialRowIndex = 0;
+        // let inKindRowIndex = 0;
+        // let existingFinancialIndices = new Set();
+        // let existingInKindIndices = new Set();
 
-        // Add row for Financial Donations
         // $(document).on('click', '.add-row-btn', function() {
         //     const container = $($(this).data('target'));
         //     if (container.attr('id') === 'financial-donation-rows-container' || container.attr('id') === 'edit-financial-donation-rows-container') {
-        //         financialRowIndex++;
-        //         console.log(container, financialRowIndex);
+        //          // Generate a unique index for financial donations
+        //          let newIndex = 0;
+        //         while (existingFinancialIndices.has(newIndex)) {
+        //             newIndex++;
+        //         }
+        //         existingFinancialIndices.add(newIndex); // Track the new index
+
         //         container.append(`
         //     <div class="row donation-row">
-        //         <input type="hidden" name="donates[${financialRowIndex}][financial_donation_type]" value="financial">
-
+        //         <input type="hidden" name="donates[${newIndex}][financial_donation_type]" value="financial">
         //         <div class="col-md-3">
         //             <div class="mb-3">
         //                 <label for="donation_category" class="form-label">{{__('Donation Category')}}</label>
-        //                 <select class="form-control donation-category" name="donates[${financialRowIndex}][financial_donation_categories_id]">
+        //                 <select class="form-control donation-category" name="donates[${newIndex}][financial_donation_categories_id]">
         //                     <option value="">{{__('Select Category')}}</option>
         //                     @foreach($donationCategories as $category)
         //                         <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -435,47 +433,70 @@
         //                 <div class="invalid-feedback"></div>
         //             </div>
         //         </div>
-        //         <div class="col-md-3">
+
+        //         <div class="col-md-2">
         //             <div class="mb-3">
         //                 <label for="amount" class="form-label">{{__('Amount')}}</label>
-        //                 <input type="number" class="form-control amount" name="donates[${financialRowIndex}][financial_amount]">
+        //                 <input type="number" step="0.01" class="form-control amount" name="donates[${newIndex}][financial_amount]">
         //                 <div class="invalid-feedback"></div>
         //             </div>
         //         </div>
-
-        //          <div class="col-md-3">
+        //         <div class="col-md-3">
         //             <div class="mb-3">
-        //                 <label for="amount" class="form-label">{{__('Financial Receipt Number')}}</label>
-        //                 <input type="text" class="form-control amount" name="donates[${financialRowIndex}][financial_receipt_number]">
+        //                 <label for="financial_receipt_number" class="form-label">{{__('Financial Receipt Number')}}</label>
+        //                 <input type="text" class="form-control" name="donates[${newIndex}][financial_receipt_number]">
         //                 <div class="invalid-feedback"></div>
         //             </div>
         //         </div>
-
-        //         <div class="col-md-3 d-flex align-items-center">
+        //          <div class="col-md-3">
+        //         <div class="mb-3">
+        //             <label class="form-label">{{__('Donation Item Type')}}</label>
+        //             <select class="form-control" name="donates[${newIndex}][financial_donation_item_type]">
+        //                 <option value="normal">{{__('Normal')}}</option>
+        //             </select>
+        //             <div class="invalid-feedback"></div>
+        //         </div>
+        //     </div>
+        //         <div class="col-md-1 d-flex align-items-center">
         //             <button type="button" class="btn btn-danger mt-2 remove-row-btn">{{__('Remove')}}</button>
         //         </div>
         //     </div>
         // `);
         //     } else if (container.attr('id') === 'in-kind-donation-rows-container' || container.attr('id') === 'edit-in-kind-donation-rows-container') {
-        //         inKindRowIndex++;
+        //         // Generate a unique index for in-kind donations
+        //         let newIndex = 0;
+        //         while (existingInKindIndices.has(newIndex)) {
+        //             newIndex++;
+        //         }
+        //         existingInKindIndices.add(newIndex); // Track the new index
+
         //         container.append(`
         //     <div class="row donation-row">
-        //         <input type="hidden" name="donates[${inKindRowIndex}][inKind_donation_type]" value="inKind">
-        //         <div class="col-md-4">
+        //         <input type="hidden" name="donates[${newIndex}][inKind_donation_type]" value="inKind">
+        //         <div class="col-md-3">
         //             <div class="mb-3">
         //                 <label for="item_name" class="form-label">{{__('Item Name')}}</label>
-        //                 <input type="text" class="form-control" name="donates[${inKindRowIndex}][in_kind_item_name]">
+        //                 <input type="text" class="form-control" name="donates[${newIndex}][in_kind_item_name]">
         //                 <div class="invalid-feedback"></div>
         //             </div>
         //         </div>
-        //         <div class="col-md-4">
+        //         <div class="col-md-3">
         //             <div class="mb-3">
         //                 <label for="quantity" class="form-label">{{__('Quantity')}}</label>
-        //                 <input type="number" class="form-control" name="donates[${inKindRowIndex}][in_kind_quantity]">
+        //                 <input type="number" step="0.01" class="form-control" name="donates[${newIndex}][in_kind_quantity]">
         //                 <div class="invalid-feedback"></div>
         //             </div>
         //         </div>
-        //         <div class="col-md-4 d-flex align-items-center">
+        //          <div class="col-md-3">
+        //         <div class="mb-3">
+        //             <label class="form-label">{{__('Donation Item Type')}}</label>
+        //             <select class="form-control" name="donates[${newIndex}][in_kind_donation_item_type]">
+        //                 <option value="normal">{{__('Normal')}}</option>
+        //             </select>
+        //             <div class="invalid-feedback"></div>
+        //         </div>
+        //     </div>
+        //         <div class="col-md-3 d-flex align-items-center">
         //             <button type="button" class="btn btn-danger mt-2 remove-row-btn">{{__('Remove')}}</button>
         //         </div>
         //     </div>
@@ -483,124 +504,28 @@
         //     }
         // });
 
-        $(document).on('click', '.add-row-btn', function() {
-            const container = $($(this).data('target'));
-            if (container.attr('id') === 'financial-donation-rows-container' || container.attr('id') === 'edit-financial-donation-rows-container') {
-                // Generate a unique index for financial donations
-                let newIndex = 0;
-                while (existingFinancialIndices.has(newIndex)) {
-                    newIndex++;
-                }
-                existingFinancialIndices.add(newIndex); // Track the new index
 
-                container.append(`
-            <div class="row donation-row">
-                <input type="hidden" name="donates[${newIndex}][financial_donation_type]" value="financial">
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="donation_category" class="form-label">{{__('Donation Category')}}</label>
-                        <select class="form-control donation-category" name="donates[${newIndex}][financial_donation_categories_id]">
-                            <option value="">{{__('Select Category')}}</option>
-                            @foreach($donationCategories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                
-                <div class="col-md-2">
-                    <div class="mb-3">
-                        <label for="amount" class="form-label">{{__('Amount')}}</label>
-                        <input type="number" step="0.01" class="form-control amount" name="donates[${newIndex}][financial_amount]">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="financial_receipt_number" class="form-label">{{__('Financial Receipt Number')}}</label>
-                        <input type="text" class="form-control" name="donates[${newIndex}][financial_receipt_number]">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                 <div class="col-md-3">
-                <div class="mb-3">
-                    <label class="form-label">{{__('Donation Item Type')}}</label>
-                    <select class="form-control" name="donates[${newIndex}][financial_donation_item_type]">
-                        <option value="normal">{{__('Normal')}}</option>
-                    </select>
-                    <div class="invalid-feedback"></div>
-                </div>
-            </div>
-                <div class="col-md-1 d-flex align-items-center">
-                    <button type="button" class="btn btn-danger mt-2 remove-row-btn">{{__('Remove')}}</button>
-                </div>
-            </div>
-        `);
-            } else if (container.attr('id') === 'in-kind-donation-rows-container' || container.attr('id') === 'edit-in-kind-donation-rows-container') {
-                // Generate a unique index for in-kind donations
-                let newIndex = 0;
-                while (existingInKindIndices.has(newIndex)) {
-                    newIndex++;
-                }
-                existingInKindIndices.add(newIndex); // Track the new index
+        // $(document).on('click', '.remove-row-btn', function() {
+        //     const row = $(this).closest('.donation-row');
+        //     const input = row.find('input[name*="donates"]');
+        //     const name = input.attr('name');
+        //     const index = name.match(/\[(\d+)\]/)[1]; // Extract the index from the input name
 
-                container.append(`
-            <div class="row donation-row">
-                <input type="hidden" name="donates[${newIndex}][inKind_donation_type]" value="inKind">
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="item_name" class="form-label">{{__('Item Name')}}</label>
-                        <input type="text" class="form-control" name="donates[${newIndex}][in_kind_item_name]">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="quantity" class="form-label">{{__('Quantity')}}</label>
-                        <input type="number" step="0.01" class="form-control" name="donates[${newIndex}][in_kind_quantity]">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                 <div class="col-md-3">
-                <div class="mb-3">
-                    <label class="form-label">{{__('Donation Item Type')}}</label>
-                    <select class="form-control" name="donates[${newIndex}][in_kind_donation_item_type]">
-                        <option value="normal">{{__('Normal')}}</option>
-                    </select>
-                    <div class="invalid-feedback"></div>
-                </div>
-            </div>
-                <div class="col-md-3 d-flex align-items-center">
-                    <button type="button" class="btn btn-danger mt-2 remove-row-btn">{{__('Remove')}}</button>
-                </div>
-            </div>
-        `);
-            }
-        });
+        //     if (name.includes('financial_donation_type')) {
+        //         existingFinancialIndices.delete(parseInt(index)); // Remove the index from the set
+        //     } else if (name.includes('inKind_donation_type')) {
+        //         existingInKindIndices.delete(parseInt(index)); // Remove the index from the set
+        //     }
 
+        //     row.remove(); // Remove the row from the DOM
+        // });
 
-        $(document).on('click', '.remove-row-btn', function() {
-            const row = $(this).closest('.donation-row');
-            const input = row.find('input[name*="donates"]');
-            const name = input.attr('name');
-            const index = name.match(/\[(\d+)\]/)[1]; // Extract the index from the input name
-
-            if (name.includes('financial_donation_type')) {
-                existingFinancialIndices.delete(parseInt(index)); // Remove the index from the set
-            } else if (name.includes('inKind_donation_type')) {
-                existingInKindIndices.delete(parseInt(index)); // Remove the index from the set
-            }
-
-            row.remove(); // Remove the row from the DOM
-        });
-
-        // Handle Remove Row buttons
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('remove-row-btn')) {
-                e.target.closest('.donation-row').remove();
-            }
-        });
+        // // Handle Remove Row buttons
+        // document.addEventListener('click', function(e) {
+        //     if (e.target.classList.contains('remove-row-btn')) {
+        //         e.target.closest('.donation-row').remove();
+        //     }
+        // });
 
 
 
@@ -666,6 +591,144 @@
         });
 
 
+        // $('.modal').on('hidden.bs.modal', function() {
+        //     var form = $(this).find('form');
+        //     form.find('.is-invalid').removeClass('is-invalid');
+        //     form.find('.invalid-feedback').text('');
+        // });
+
+
+
+    });
+
+
+    $(function() {
+
+
+        let financialRowIndex = 0;
+        let inKindRowIndex = 0;
+
+        $(document).on('click', '.add-row-btn', function() {
+            const container = $($(this).data('target'));
+            if (container.attr('id') === 'financial-donation-rows-container' || container.attr('id') === 'edit-financial-donation-rows-container') {
+                // Generate a unique index for financial donations
+                let newIndex = 0;
+                while (existingFinancialIndices.has(newIndex)) {
+                    newIndex++;
+                }
+                existingFinancialIndices.add(newIndex); // Track the new index
+
+                container.append(`
+    <div class="row donation-row">
+        <input type="hidden" name="donates[${newIndex}][financial_donation_type]" value="financial">
+        <div class="col-md-3">
+            <div class="mb-3">
+                <label for="donation_category" class="form-label">{{__('Donation Category')}}</label>
+                <select class="form-control donation-category" name="donates[${newIndex}][financial_donation_categories_id]">
+                    <option value="">{{__('Select Category')}}</option>
+                    @foreach($donationCategories as $category)
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    @endforeach
+                </select>
+                <div class="invalid-feedback"></div>
+            </div>
+        </div>
+        
+        <div class="col-md-2">
+            <div class="mb-3">
+                <label for="amount" class="form-label">{{__('Amount')}}</label>
+                <input type="number" step="0.01" class="form-control amount" name="donates[${newIndex}][financial_amount]">
+                <div class="invalid-feedback"></div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="mb-3">
+                <label for="financial_receipt_number" class="form-label">{{__('Financial Receipt Number')}}</label>
+                <input type="text" class="form-control" name="donates[${newIndex}][financial_receipt_number]">
+                <div class="invalid-feedback"></div>
+            </div>
+        </div>
+         <div class="col-md-3">
+        <div class="mb-3">
+            <label class="form-label">{{__('Donation Item Type')}}</label>
+            <select class="form-control" name="donates[${newIndex}][financial_donation_item_type]">
+                <option value="normal">{{__('Normal')}}</option>
+            </select>
+            <div class="invalid-feedback"></div>
+        </div>
+    </div>
+        <div class="col-md-1 d-flex align-items-center">
+            <button type="button" class="btn btn-danger mt-2 remove-row-btn">{{__('Remove')}}</button>
+        </div>
+    </div>
+`);
+            } else if (container.attr('id') === 'in-kind-donation-rows-container' || container.attr('id') === 'edit-in-kind-donation-rows-container') {
+                // Generate a unique index for in-kind donations
+                let newIndex = 0;
+                while (existingInKindIndices.has(newIndex)) {
+                    newIndex++;
+                }
+                existingInKindIndices.add(newIndex); // Track the new index
+
+                container.append(`
+    <div class="row donation-row">
+        <input type="hidden" name="donates[${newIndex}][inKind_donation_type]" value="inKind">
+        <div class="col-md-3">
+            <div class="mb-3">
+                <label for="item_name" class="form-label">{{__('Item Name')}}</label>
+                <input type="text" class="form-control" name="donates[${newIndex}][in_kind_item_name]">
+                <div class="invalid-feedback"></div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="mb-3">
+                <label for="quantity" class="form-label">{{__('Quantity')}}</label>
+                <input type="number" step="0.01" class="form-control" name="donates[${newIndex}][in_kind_quantity]">
+                <div class="invalid-feedback"></div>
+            </div>
+        </div>
+         <div class="col-md-3">
+        <div class="mb-3">
+            <label class="form-label">{{__('Donation Item Type')}}</label>
+            <select class="form-control" name="donates[${newIndex}][in_kind_donation_item_type]">
+                <option value="normal">{{__('Normal')}}</option>
+            </select>
+            <div class="invalid-feedback"></div>
+        </div>
+    </div>
+        <div class="col-md-3 d-flex align-items-center">
+            <button type="button" class="btn btn-danger mt-2 remove-row-btn">{{__('Remove')}}</button>
+        </div>
+    </div>
+`);
+            }
+        });
+
+
+        $(document).on('click', '.remove-row-btn', function() {
+            const row = $(this).closest('.donation-row');
+            const input = row.find('input[name*="donates"]');
+            const name = input.attr('name');
+            const index = name.match(/\[(\d+)\]/)[1]; // Extract the index from the input name
+
+            if (name.includes('financial_donation_type')) {
+                existingFinancialIndices.delete(parseInt(index)); // Remove the index from the set
+            } else if (name.includes('inKind_donation_type')) {
+                existingInKindIndices.delete(parseInt(index)); // Remove the index from the set
+            }
+
+            row.remove(); // Remove the row from the DOM
+        });
+
+        // Handle Remove Row buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-row-btn')) {
+                e.target.closest('.donation-row').remove();
+            }
+        });
+
+
+
         $('.modal').on('hidden.bs.modal', function() {
             var form = $(this).find('form');
             form.find('.is-invalid').removeClass('is-invalid');
@@ -675,6 +738,7 @@
 
 
     });
+
 
 
 
@@ -878,147 +942,147 @@
             .done(function(data) {
                 // Construct the content to be displayed in the modal
                 let modalContent = `
-            <h4 class="text-primary">{{__('Donor Information')}}</h4>
-            <div class="row mb-3">
-                <div class="col-md-3">
-                            <p><strong>{{__('Name')}}:</strong> ${data.donor.name}</p>
-                </div>
-                 <div class="col-md-3">
-                  <p><strong>{{__('Donor Type')}}:</strong> 
-                    ${data.donor.donor_type === 'normal' ? '{{__("Normal")}}' : '{{__("Monthly")}}'}
-                    </p>
-                </div>
-                <div class="col-md-6">
-                            <p><strong>{{__('Address')}}:</strong> ${data.donor.address}</p>
-                </div>
-               
-
-            </div>
-          
-
-            <h4 class="text-danger">{{__('Donation Information')}}</h4>
-             <div class="row">
-                <div class="col-md-3">
-                    <p><strong>{{__('Donation Type')}}:</strong>
-                    ${data.donation_type === 'financial' ? '{{__("Financial")}}' : data.donation_type === 'inKind' ? '{{__("In-Kind")}}' : '{{__("Both")}}'}
-                    </p>
-                </div>
-                <div class="col-md-3">
-                    <p><strong>
-                    ${data.donation_category === 'gathered' ? '{{__("Due Date")}}' : '{{__("Donation Date")}}'}:
-                    </strong>
-                     ${data.date}</p>
-                </div>
-                <div class="col-md-3">
-                    <p><strong>{{__('Status')}}:</strong> 
-                
-                    ${data.status === 'collected' ? '{{__("Collected")}}' : '{{__("Not Collected")}}'}</p>
-                </div>
-                </div>
-                 <div class="row">
-                  <div class="col-md-3">
-                    <p><strong>
-                    ${data.donation_category === 'gathered' ? '{{__("Collecting Date")}}' : '{{__("Reporting Date")}}'}:</strong> 
-                    
-                    ${data.donation_category === 'gathered' ? formatDate(data.collecting_donation.collecting_date) : formatDate(data.created_at)}</p>
-                 </div>
-                 <div class="col-md-3">
-                    <p><strong>{{__('Reporting Way')}}:</strong> 
-                    ${data.reporting_way === 'call' ? '{{__("Call")}}' 
-                    : data.reporting_way === 'whatsapp_chat' ? '{{__("Whatsapp Chat")}}' 
-                    : data.reporting_way === 'location' ? '{{__("Location")}}' 
-                    : '{{__("Other")}}' }</p>
-                 </div>
-                  <div class="col-md-3">
-                    <p><strong>{{__('Created By')}}:</strong> ${data.created_by?.name}</p>
-                 </div>
-                  <div class="col-md-3">
-                    <p><strong>{{__('Department')}}:</strong> ${data.created_by?.department?.name ?? 'N/A'}</p>
-                 </div>
-                 </div>
-                  <div class="row">
-                  <div class="col-md-6">
-                    <p><strong>{{__('Collecting Time')}}:</strong> ${data.collecting_time ?? 'N/A'}</p>
-                  </div>
+                <h4 class="text-primary">{{__('Donor Information')}}</h4>
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                                <p><strong>{{__('Name')}}:</strong> ${data.donor.name}</p>
+                    </div>
+                     <div class="col-md-3">
+                      <p><strong>{{__('Donor Type')}}:</strong>
+                        ${data.donor.donor_type === 'normal' ? '{{__("Normal")}}' : '{{__("Monthly")}}'}
+                        </p>
+                    </div>
                     <div class="col-md-6">
-                    <p><strong>{{__('Notes')}}:</strong> ${data.notes ?? 'N/A'}</p>
-                  </div>
-                  </div>
-                        `;
+                                <p><strong>{{__('Address')}}:</strong> ${data.donor.address}</p>
+                    </div>
+
+
+                </div>
+
+
+                <h4 class="text-danger">{{__('Donation Information')}}</h4>
+                 <div class="row">
+                    <div class="col-md-3">
+                        <p><strong>{{__('Donation Type')}}:</strong>
+                        ${data.donation_type === 'financial' ? '{{__("Financial")}}' : data.donation_type === 'inKind' ? '{{__("In-Kind")}}' : '{{__("Both")}}'}
+                        </p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>
+                        ${data.donation_category === 'gathered' ? '{{__("Due Date")}}' : '{{__("Donation Date")}}'}:
+                        </strong>
+                         ${data.date}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>{{__('Status')}}:</strong>
+
+                        ${data.status === 'collected' ? '{{__("Collected")}}' : '{{__("Not Collected")}}'}</p>
+                    </div>
+                    </div>
+                     <div class="row">
+                      <div class="col-md-3">
+                        <p><strong>
+                        ${data.donation_category === 'gathered' ? '{{__("Collecting Date")}}' : '{{__("Reporting Date")}}'}:</strong>
+
+                        ${data.donation_category === 'gathered' ? formatDate(data.collecting_donation.collecting_date) : formatDate(data.created_at)}</p>
+                     </div>
+                     <div class="col-md-3">
+                        <p><strong>{{__('Reporting Way')}}:</strong>
+                        ${data.reporting_way === 'call' ? '{{__("Call")}}'
+                            : data.reporting_way === 'whatsapp_chat' ? '{{__("Whatsapp Chat")}}'
+                                : data.reporting_way === 'location' ? '{{__("Location")}}'
+                                    : '{{__("Other")}}'}</p>
+                     </div>
+                      <div class="col-md-3">
+                        <p><strong>{{__('Created By')}}:</strong> ${data.created_by?.name}</p>
+                     </div>
+                      <div class="col-md-3">
+                        <p><strong>{{__('Department')}}:</strong> ${data.created_by?.department?.name ?? 'N/A'}</p>
+                     </div>
+                     </div>
+                      <div class="row">
+                      <div class="col-md-6">
+                        <p><strong>{{__('Collecting Time')}}:</strong> ${data.collecting_time ?? 'N/A'}</p>
+                      </div>
+                        <div class="col-md-6">
+                        <p><strong>{{__('Notes')}}:</strong> ${data.notes ?? 'N/A'}</p>
+                      </div>
+                      </div>
+                            `;
 
                 // Financial Donations Table
                 if (data.donation_type === 'financial' || data.donation_type === 'both') {
                     modalContent += `
-                <h4 class="text-warning">{{__('Financial Donations')}}</h4>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>{{__('Donation Category')}}</th>
-                            <th>{{__('Amount')}}</th>
-                            <th>{{__('Financial Receipt Number')}}</th>
-                             <th>{{__('Total Gathered Amount')}}</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
+                    <h4 class="text-warning">{{__('Financial Donations')}}</h4>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>{{__('Donation Category')}}</th>
+                                <th>{{__('Amount')}}</th>
+                                <th>{{__('Financial Receipt Number')}}</th>
+                                 <th>{{__('Total Gathered Amount')}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
 
                     data.donate_items
                         .filter(item => item.donation_type === 'financial')
                         .forEach(item => {
                             modalContent += `
-                        <tr>
-                            <td>${item.donation_category.name}</td>
-                            <td>${item.amount}</td>
-                            <td>${item.financial_receipt_number ?? "{{ __('N/A') }}"}</td>
-                            <td>${data.total_gathered_amount ?? "{{ __('N/A') }}"}</td>
-                        </tr>`;
+                            <tr>
+                                <td>${item.donation_category.name}</td>
+                                <td>${item.amount}</td>
+                                <td>${item.financial_receipt_number ?? "{{ __('N/A') }}"}</td>
+                                <td>${data.total_gathered_amount ?? "{{ __('N/A') }}"}</td>
+                            </tr>`;
                         });
 
                     modalContent += `
-                    </tbody>
-                </table>`;
+                        </tbody>
+                    </table>`;
                 }
 
                 // In-Kind Donations Table
                 if (data.donation_type === 'inKind' || data.donation_type === 'both') {
                     modalContent += `
-                <h4 class="text-warning">{{__('In-Kind Donations')}}</h4>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>{{__('Item Name')}}</th>
-                            <th>{{__('Quantity')}}</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
+                    <h4 class="text-warning">{{__('In-Kind Donations')}}</h4>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>{{__('Item Name')}}</th>
+                                <th>{{__('Quantity')}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
 
                     data.donate_items
                         .filter(item => item.donation_type === 'inKind')
                         .forEach(item => {
                             modalContent += `
-                        <tr>
-                            <td>${item.item_name}</td>
-                            <td>${item.amount}</td>
-                        </tr>`;
+                            <tr>
+                                <td>${item.item_name}</td>
+                                <td>${item.amount}</td>
+                            </tr>`;
                         });
 
                     modalContent += `
-                    </tbody>
-                </table>`;
+                        </tbody>
+                    </table>`;
                 }
 
                 if (data.donation_category !== 'gathered') {
                     // Collecting Donation Info
                     modalContent += `
-            <h4 class="text-success">{{__('Collecting Donation Information')}}</h4>
-                <p>
-                <strong>{{ __('Collecting Date') }}:</strong> 
-                ${data.collecting_donation?.collecting_date ? formatDate(data.collecting_donation?.collecting_date) : "{{ __('N/A') }}"}
-                </p>
-                <p>
-                <strong>{{ __('In Kind Receipt Number') }}:</strong> 
-                ${data.collecting_donation?.in_kind_receipt_number ?? "{{ __('N/A') }}"}
-                </p>
-                `;
+                <h4 class="text-success">{{__('Collecting Donation Information')}}</h4>
+                    <p>
+                    <strong>{{ __('Collecting Date') }}:</strong>
+                    ${data.collecting_donation?.collecting_date ? formatDate(data.collecting_donation?.collecting_date) : "{{ __('N/A') }}"}
+                    </p>
+                    <p>
+                    <strong>{{ __('In Kind Receipt Number') }}:</strong>
+                    ${data.collecting_donation?.in_kind_receipt_number ?? "{{ __('N/A') }}"}
+                    </p>
+                    `;
                 }
 
                 // Add the constructed content to the modal body
@@ -1083,6 +1147,7 @@
             success: function(data) {
                 // Handle data population here
 
+
                 // Populate basic fields
                 $('#edit_donor_id').val(data.donor_id).trigger('change');
                 $('#edit_date').val(data.date);
@@ -1133,82 +1198,81 @@
 
     }
 
-
-
     function renderFinancialRow(donationItem, index, categories) {
         const categoryOptions = categories.map(category =>
             `<option value="${category.id}" ${category.id == donationItem.donation_category_id ? 'selected' : ''}>${category.name}</option>`
         ).join('');
 
         return `
-        <div class="row donation-row">
-            <input type="hidden" name="donates[${index}][financial_donation_type]" value="financial">
-            <input type="hidden" name="donates[${index}][financial_donation_item_id]" value="${donationItem.id || ''}">
-            <div class="col-md-3">
-                <label class="form-label">{{__('Donation Category')}}</label>
-                <select class="form-control" name="donates[${index}][financial_donation_categories_id]">
-                    ${categoryOptions}
-                </select>
-                <div class="invalid-feedback"></div>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">{{__('Amount')}}</label>
-                <input type="number" step="0.01" class="form-control" name="donates[${index}][financial_amount]" value="${donationItem.amount || ''}">
-                <div class="invalid-feedback"></div>
-            </div>
-             <div class="col-md-3">
-                <label class="form-label">{{__('Financial Receipt Number')}}</label>
-                <input type="text" class="form-control" name="donates[${index}][financial_receipt_number]" value="${donationItem.financial_receipt_number || ''}">
-                <div class="invalid-feedback"></div>
-            </div>
-             <div class="col-md-3">
-                <div class="mb-3">
-                    <label class="form-label">{{__('Donation Item Type')}}</label>
-                    <select class="form-control" name="donates[${index}][financial_donation_item_type]">
-                        <option value="normal" ${donationItem.donation_item_type === 'normal' ? 'selected' : ''}>{{__('Normal')}}</option>
-                        <option value="monthly" ${donationItem.donation_item_type === 'monthly' ? 'selected' : ''}>{{__('Monthly')}}</option>
+            <div class="row donation-row">
+                <input type="hidden" name="donates[${index}][financial_donation_type]" value="financial">
+                <input type="hidden" name="donates[${index}][financial_donation_item_id]" value="${donationItem.id || ''}">
+                <div class="col-md-3">
+                    <label class="form-label">{{__('Donation Category')}}</label>
+                    <select class="form-control" name="donates[${index}][financial_donation_categories_id]">
+                        ${categoryOptions}
                     </select>
                     <div class="invalid-feedback"></div>
                 </div>
-            </div>
-            <div class="col-md-1 d-flex align-items-center">
-                <button type="button" class="btn btn-danger remove-row-btn-edit">{{__('Remove')}}</button>
-            </div>
-        </div>`;
+                <div class="col-md-2">
+                    <label class="form-label">{{__('Amount')}}</label>
+                    <input type="number" step="0.01" class="form-control" name="donates[${index}][financial_amount]" value="${donationItem.amount || ''}">
+                    <div class="invalid-feedback"></div>
+                </div>
+                 <div class="col-md-3">
+                    <label class="form-label">{{__('Financial Receipt Number')}}</label>
+                    <input type="text" class="form-control" name="donates[${index}][financial_receipt_number]" value="${donationItem.financial_receipt_number || ''}">
+                    <div class="invalid-feedback"></div>
+                </div>
+                 <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="form-label">{{__('Donation Item Type')}}</label>
+                        <select class="form-control" name="donates[${index}][financial_donation_item_type]">
+                            <option value="normal" ${donationItem.donation_item_type === 'normal' ? 'selected' : ''}>{{__('Normal')}}</option>
+                            <option value="monthly" ${donationItem.donation_item_type === 'monthly' ? 'selected' : ''}>{{__('Monthly')}}</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="col-md-1 d-flex align-items-center">
+                    <button type="button" class="btn btn-danger remove-row-btn-edit">{{__('Remove')}}</button>
+                </div>
+            </div>`;
     }
 
     function renderInKindRow(donationItem, index) {
         return `
-        <div class="row donation-row">
-            <input type="hidden" name="donates[${index}][inKind_donation_type]" value="inKind">
-            <input type="hidden" name="donates[${index}][inKind_donation_item_id]" value="${donationItem.id || ''}">
-            <div class="col-md-3">
-                <label class="form-label">{{__('Item Name')}}</label>
-                <input type="text" class="form-control" name="donates[${index}][in_kind_item_name]" value="${donationItem.item_name || ''}">
-                <div class="invalid-feedback"></div>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">{{__('Quantity')}}</label>
-                <input type="number" step="0.01" class="form-control" name="donates[${index}][in_kind_quantity]" value="${donationItem.amount || ''}">
-                <div class="invalid-feedback"></div>
-            </div>
-             <div class="col-md-3">
-                <div class="mb-3">
-                    <label class="form-label">{{__('Donation Item Type')}}</label>
-                    <select class="form-control" name="donates[${index}][in_kind_donation_item_type]">
-                        <option value="normal" ${donationItem.donation_item_type === 'normal' ? 'selected' : ''}>{{__('Normal')}}</option>
-                        <option value="monthly" ${donationItem.donation_item_type === 'monthly' ? 'selected' : ''}>{{__('Monthly')}}</option>
-                    </select>
+            <div class="row donation-row">
+                <input type="hidden" name="donates[${index}][inKind_donation_type]" value="inKind">
+                <input type="hidden" name="donates[${index}][inKind_donation_item_id]" value="${donationItem.id || ''}">
+                <div class="col-md-3">
+                    <label class="form-label">{{__('Item Name')}}</label>
+                    <input type="text" class="form-control" name="donates[${index}][in_kind_item_name]" value="${donationItem.item_name || ''}">
                     <div class="invalid-feedback"></div>
                 </div>
-            </div>
-            <div class="col-md-3 d-flex align-items-center">
-                <button type="button" class="btn btn-danger remove-row-btn-edit">{{__('Remove')}}</button>
-            </div>
-        </div>`;
+                <div class="col-md-3">
+                    <label class="form-label">{{__('Quantity')}}</label>
+                    <input type="number" step="0.01" class="form-control" name="donates[${index}][in_kind_quantity]" value="${donationItem.amount || ''}">
+                    <div class="invalid-feedback"></div>
+                </div>
+                 <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="form-label">{{__('Donation Item Type')}}</label>
+                        <select class="form-control" name="donates[${index}][in_kind_donation_item_type]">
+                            <option value="normal" ${donationItem.donation_item_type === 'normal' ? 'selected' : ''}>{{__('Normal')}}</option>
+                            <option value="monthly" ${donationItem.donation_item_type === 'monthly' ? 'selected' : ''}>{{__('Monthly')}}</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="col-md-3 d-flex align-items-center">
+                    <button type="button" class="btn btn-danger remove-row-btn-edit">{{__('Remove')}}</button>
+                </div>
+            </div>`;
     }
 
     function toggleAddRowButton() {
+        console.log($('#edit-financial-donation-rows-container .donation-row').length)
         if ($('#edit-financial-donation-rows-container .donation-row').length === 0) {
             $('#add-financial-row-edit').show(); // Show button if no rows
         } else {
@@ -1393,39 +1457,39 @@
             const formattedDate = collectingDate.toISOString().split('T')[0];
 
             const row = `
-            <div class="row donation-row">
-                <input type="hidden" name="donates[${i}][financial_donation_type]" value="financial">
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label class="form-label">{{__('Donation Category')}}</label>
-                        <select class="form-control donation-category" name="donates[${i}][financial_donation_categories_id]">
-                            <option value="">{{__('Select Category')}}</option>
-                            @foreach($donationCategories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback"></div>
+                <div class="row donation-row">
+                    <input type="hidden" name="donates[${i}][financial_donation_type]" value="financial">
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">{{__('Donation Category')}}</label>
+                            <select class="form-control donation-category" name="donates[${i}][financial_donation_categories_id]">
+                                <option value="">{{__('Select Category')}}</option>
+                                @foreach($donationCategories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">{{__('Amount')}}</label>
+                            <input type="number" step="0.01" class="form-control amount" name="donates[${i}][financial_amount]">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">{{__('Date')}}</label>
+                            <input type="date" class="form-control" name="donates[${i}][date]" value="${formattedDate}">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center">
+                        <button type="button" class="btn btn-danger mt-2 remove-row-btn">{{__('Remove')}}</button>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label class="form-label">{{__('Amount')}}</label>
-                        <input type="number" step="0.01" class="form-control amount" name="donates[${i}][financial_amount]">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label class="form-label">{{__('Date')}}</label>
-                        <input type="date" class="form-control" name="donates[${i}][date]" value="${formattedDate}">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="col-md-3 d-flex align-items-center">
-                    <button type="button" class="btn btn-danger mt-2 remove-row-btn">{{__('Remove')}}</button>
-                </div>
-            </div>
-        `;
+            `;
             container.append(row); // Add the row to the container
         }
     }

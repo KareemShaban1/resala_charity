@@ -115,6 +115,9 @@ class CollectingLineController extends Controller
                 ->addColumn('areaGroup', function ($row) {
                     return $row->areaGroup->name;
                 })
+                ->addColumn('collecting_date',function($row){
+                    return $row->collecting_date ? Carbon::parse($row->collecting_date)->format('Y-m-d') : null;
+                })
                 ->addColumn('representative', function ($row) {
                     return $row->representative->name ?? '';
                 })
@@ -181,7 +184,7 @@ class CollectingLineController extends Controller
 
                     return $btn;
                 })
-                ->rawColumns(['action', 'all_collected', 'status'])
+                ->rawColumns(['action', 'all_collected', 'status','collecting_date'])
                 ->make(true);
         }
     }
@@ -296,6 +299,7 @@ class CollectingLineController extends Controller
 
             $totalFinancialAmount = $collectingLine->donations()
                 ->where('donations.donation_type', '!=', 'inKind')
+                ->where('donations.status','=','collected')
                 ->join('donation_items', 'donations.id', '=', 'donation_items.donation_id')
                 ->where('donation_items.donation_type', 'financial') // <-- this line filters only financial
                 ->sum('donation_items.amount');
@@ -479,7 +483,8 @@ class CollectingLineController extends Controller
                 } elseif ($dateFilter === 'week') {
                     $data->whereBetween('donations.date', [now()->startOfWeek(), now()->endOfWeek()]);
                 } elseif ($dateFilter === 'month') {
-                    $data->whereBetween('donations.date', [now()->startOfMonth(), now()->endOfMonth()]);
+                    $data->whereBetween('donations.date', [ now()->startOfMonth()->toDateString(),
+                    now()->endOfMonth()->toDateString()]);
                 } elseif ($dateFilter === 'range' && $startDate && $endDate) {
                     $data->whereBetween('donations.date', [$startDate, $endDate]);
                 }
@@ -748,24 +753,60 @@ class CollectingLineController extends Controller
                         ->whereColumn('monthly_form_donations.monthly_form_id', 'monthly_forms.id')
                         ->whereMonth('monthly_form_donations.donation_date', $month);
                 });
-            } elseif ($dateFilter === 'range' && $startDate && $endDate) {
+            } 
+            // elseif ($dateFilter === 'range' && $startDate && $endDate) {
+            //     $startMonth = date('m', strtotime($startDate));
+            //     $endMonth = date('m', strtotime($endDate));
+            //     $daysInRange = collect(range((int)date('j', strtotime($startDate)), (int)date('j', strtotime($endDate))));
+
+            //     // get monthly form donations that are not in the range of start date and end date
+            //     $query->whereNotExists(function ($subQuery) use ($startDate, $endDate) {
+            //         $subQuery->select(DB::raw(1))
+            //             ->from('monthly_form_donations')
+            //             ->whereColumn('monthly_form_donations.monthly_form_id', 'monthly_forms.id')
+            //             ->whereBetween('monthly_form_donations.donation_date', [$startDate, $endDate]);
+            //             // ->whereBetween(DB::raw('MONTH(monthly_form_donations.donation_date)'), [$startMonth, $endMonth]);
+            //     });
+
+            //     $query->whereHas('donor', function ($q) use ($daysInRange) {
+            //         $q->whereIn('donors.monthly_donation_day', $daysInRange);
+            //     });
+            // }
+
+            elseif ($dateFilter === 'range' && $startDate && $endDate) {
+                $daysInRange = collect(range(
+                    (int)date('j', strtotime($startDate)),
+                    (int)date('j', strtotime($endDate))
+                ));
                 $startMonth = date('m', strtotime($startDate));
-                $endMonth = date('m', strtotime($endDate));
-                $daysInRange = collect(range((int)date('j', strtotime($startDate)), (int)date('j', strtotime($endDate))));
-
-                $query->whereHas('donor', function ($q) use ($daysInRange) {
-                    $q->whereIn('donors.monthly_donation_day', $daysInRange);
+            
+                // Filter records where there is no donation in the given date range
+                $query->where(function ($query) use ($startDate, $endDate) {
+                    $startMonth = date('m', strtotime($startDate));
+                    $startYear = date('Y', strtotime($startDate));
+                
+                    $query->whereNotExists(function ($subQuery) use ($startDate, $endDate, $startMonth, $startYear) {
+                        $subQuery->select(DB::raw(1))
+                            ->from('monthly_form_donations')
+                            ->whereColumn('monthly_form_donations.monthly_form_id', 'monthly_forms.id')
+                            ->where(function ($sub) use ($startDate, $endDate, $startMonth, $startYear) {
+                                $sub->whereBetween('monthly_form_donations.donation_date', [$startDate, $endDate])
+                                    ->orWhere(function ($or) use ($startMonth, $startYear) {
+                                        $or->whereMonth('monthly_form_donations.donation_date', $startMonth)
+                                           ->whereYear('monthly_form_donations.donation_date', $startYear);
+                                    });
+                            });
+                    })->whereHas('donor', function ($q) use ($startDate, $endDate) {
+                        $daysInRange = collect(range(
+                            (int)date('j', strtotime($startDate)),
+                            (int)date('j', strtotime($endDate))
+                        ));
+                        $q->whereIn('donors.monthly_donation_day', $daysInRange);
+                    });
                 });
-
-                // get monthly form donations that are not in the range of start date and end date
-                $query->whereNotExists(function ($subQuery) use ($startDate, $endDate) {
-                    $subQuery->select(DB::raw(1))
-                        ->from('monthly_form_donations')
-                        ->whereColumn('monthly_form_donations.monthly_form_id', 'monthly_forms.id')
-                        ->whereBetween('monthly_form_donations.donation_date', [$startDate, $endDate]);
-                        // ->whereBetween(DB::raw('MONTH(monthly_form_donations.donation_date)'), [$startMonth, $endMonth]);
-                });
+                
             }
+            
         }
 
 
