@@ -169,7 +169,7 @@
                     d.department = $('#department-filter').val();
                     d.follow_up_department = $('#follow-up-department-filter').val();
                     d.employee = $('#employee-filter').val();
-                    
+
                 }
             },
             columns: [{
@@ -444,7 +444,7 @@
                     <label class="form-label">{{__('Donation Category')}}</label>
                     <select class="form-control donation-category" name="items[${newIndex}][financial_donation_categories_id]">
                           @foreach($donationCategories as $category)
-                                            <option value="{{ $category->id }}" ${category.id == donation.donation_category_id ? 'selected' : ''} >{{ $category->name }}</option>
+                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
                                         @endforeach
                     </select>
                     <div class="invalid-feedback"></div>
@@ -1011,6 +1011,12 @@
                         financialContainer.empty(); // Clear only if there is data
                         financialDonations.forEach((donation, index) => {
                             existingFinancialIndices.add(index);
+                            // Generate the options dynamically
+                            let optionsHtml = '';
+                            donationCategories.forEach(category => {
+                                const selected = category.id == donation.donation_category_id ? 'selected' : '';
+                                optionsHtml += `<option value="${category.id}" ${selected}>${category.name}</option>`;
+                            });
                             const financialRow = `
                         <div class="row donation-row">
                            <input type="hidden" name="items[${index}][id]" value="financial">
@@ -1021,9 +1027,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">{{__('Donation Category')}}</label>
                                     <select class="form-control donation-category" name="items[${index}][financial_donation_categories_id]">
-                                         @foreach($donationCategories as $category)
-                                            <option value="{{ $category->id }}" ${category.id == donation.donation_category_id ? 'selected' : ''} >{{ $category->name }}</option>
-                                        @endforeach
+                                       ${optionsHtml}
                                     </select>
                                     <div class="invalid-feedback"></div>
                                 </div>
@@ -1086,6 +1090,12 @@
                         financialContainer.empty(); // Clear only if there is data
                         financialDonations.forEach((donation, index) => {
                             existingFinancialIndices.add(index);
+                            // Generate the options dynamically
+                            let optionsHtml = '';
+                            donationCategories.forEach(category => {
+                                const selected = category.id == donation.donation_category_id ? 'selected' : '';
+                                optionsHtml += `<option value="${category.id}" ${selected}>${category.name}</option>`;
+                            });
                             const financialRow = `
                         <div class="row donation-row">
                             <input type="hidden" name="items[${index}][financial_donation_type]" value="financial">
@@ -1094,9 +1104,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">{{__('Donation Category')}}</label>
                                     <select class="form-control donation-category" name="items[${index}][financial_donation_categories_id]">
-                                          @foreach($donationCategories as $category)
-                                            <option value="{{ $category->id }}" ${category.id == donation.donation_category_id ? 'selected' : ''} >{{ $category->name }}</option>
-                                        @endforeach
+                                         ${optionsHtml}
                                     </select>
                                     <div class="invalid-feedback"></div>
                                 </div>
