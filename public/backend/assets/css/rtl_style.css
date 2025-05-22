@@ -22428,8 +22428,8 @@ th.no-sort.sorting::after {
     color:white;
  }
 
- #monthly-forms-table th:nth-child(2),
-#monthly-forms-table td:nth-child(2) { 
+ #donations-table th:nth-child(2),
+#donations-table td:nth-child(2) { 
     width: 70px !important;
     white-space: normal !important;
  }  /* Name */
