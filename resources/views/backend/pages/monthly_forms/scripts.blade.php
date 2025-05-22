@@ -443,7 +443,9 @@
                 <div class="mb-3">
                     <label class="form-label">{{__('Donation Category')}}</label>
                     <select class="form-control donation-category" name="items[${newIndex}][financial_donation_categories_id]">
-                       ${donationCategoryOptions}
+                          @foreach($donationCategories as $category)
+                                            <option value="{{ $category->id }}" ${category.id == donation.donation_category_id ? 'selected' : ''} >{{ $category->name }}</option>
+                                        @endforeach
                     </select>
                     <div class="invalid-feedback"></div>
                 </div>
@@ -934,7 +936,7 @@
     let existingInKindIndices = new Set();
 
     const donationCategoryOptions = donationCategories.map(category => `
-        <option value="${category.id}">${category.name}</option>
+        <option value="${category.id}" >${category.name}</option>
         `).join('');
 
 
@@ -1019,7 +1021,9 @@
                                 <div class="mb-3">
                                     <label class="form-label">{{__('Donation Category')}}</label>
                                     <select class="form-control donation-category" name="items[${index}][financial_donation_categories_id]">
-                                       ${donationCategoryOptions}
+                                         @foreach($donationCategories as $category)
+                                            <option value="{{ $category->id }}" ${category.id == donation.donation_category_id ? 'selected' : ''} >{{ $category->name }}</option>
+                                        @endforeach
                                     </select>
                                     <div class="invalid-feedback"></div>
                                 </div>
@@ -1090,7 +1094,9 @@
                                 <div class="mb-3">
                                     <label class="form-label">{{__('Donation Category')}}</label>
                                     <select class="form-control donation-category" name="items[${index}][financial_donation_categories_id]">
-                                       ${donationCategoryOptions}
+                                          @foreach($donationCategories as $category)
+                                            <option value="{{ $category->id }}" ${category.id == donation.donation_category_id ? 'selected' : ''} >{{ $category->name }}</option>
+                                        @endforeach
                                     </select>
                                     <div class="invalid-feedback"></div>
                                 </div>
