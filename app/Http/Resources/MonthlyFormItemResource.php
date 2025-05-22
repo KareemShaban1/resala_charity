@@ -21,7 +21,6 @@ class MonthlyFormItemResource extends JsonResource
             'donation_type'=>$this->donation_type,
             'item_name'=>$this->item_name,
             'amount'=>$this->amount,
-            'notes'=>$this->notes,
             'status'=>$this->status,
         ];
     }

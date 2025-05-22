@@ -20,7 +20,7 @@ class MonthlyFormResource extends JsonResource
             'employee_id' => $this->employee_id,
             'department_id' => $this->department_id,
             'follow_up_department_id' => $this->follow_up_department_id,
-            'notes' => $this->notes,
+            'notes' => $this->donor->notes,
             'status' => $this->status,
             'donation_type' => $this->donation_type,
             'collecting_donation_way' => $this->collecting_donation_way,
